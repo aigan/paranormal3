@@ -1,0 +1,60 @@
+[% META
+	title = 'Fler intressen?'
+	next_action = 'intrest_update_multi'
+	next_template = 'done.tt'
+	level = 5
+%]
+
+[%
+   PROCESS load_member.tt;
+   tid = q.param('tid');
+   interests = q.param('_interests');
+   hidden('tid', tid);
+   hidden('interest_connected', 30);
+   hidden('_interests', interests);
+%]
+
+[% IF interests %]
+
+<p>Du har angivit fler intressen.  Låt oss fortsätta med dem.</p>
+
+[% go('Nästa intresse', 'specify_list.tt', 'interest_find_new') %]
+
+[% ELSE %]
+
+
+[% list = select_list("select t from t, intrest where intrest_member=? and intrest_topic=t and t_active is true and intrest_defined < 10 and t_entry is false order by t limit 5", m.member) %]
+
+[% IF list.size %]
+   <p>Hur intresserad är du av följande ämnen?
+
+   [% FOREACH rec = list %]
+     [% t = topic(rec.t) %]
+     [% tid = t.id %]   
+
+     <h3>[% PROCESS tlink2 %]</h3>
+
+     <p>[% t.text | html %]</p>
+   
+     [% interest = select_possible_record("from intrest where intrest_member=? and intrest_topic=?",
+   					   m.member, tid) %]
+   
+     <p>Ointresserad [% slider( field="_meta_intrest_$tid" current=interest.intrest )%]
+   	Mycket intresserad
+   
+     [% hr %]
+   
+   [% END %]
+
+   <p>
+[% ELSE %]
+
+   <p>Vill du lägga till fler intressen?
+
+   <p>[% go('Fler intressen', 'enter_list.tt', 'nop') %]
+
+[% END %]
+
+[% submit %]
+
+[% END %]

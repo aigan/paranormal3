@@ -1,0 +1,127 @@
+#!/usr/bin/perl -w
+
+#  $Id$  -*-perl-*-
+
+#=====================================================================
+#
+# DESCRIPTION
+#   Paranormal.se creation
+#
+# AUTHOR
+#   Jonas Liljegren   <jonas@paranormal.se>
+#
+# COPYRIGHT
+#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#
+#   This module is free software; you can redistribute it and/or
+#   modify it under the same terms as Perl itself.
+#
+#=====================================================================
+
+BEGIN
+{
+    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
+    warn "Starting creation $VERSION\n";
+}
+
+
+use lib "/var/www/test.paranormal.se/paraframe/lib";
+use lib "/var/www/test.paranormal.se/lib";
+
+use Para::Frame;
+use Para::Frame::DBIx;
+use Para::Frame::Time;
+use Para::Frame::Email;
+use Para::Frame::Email::Address;
+
+use Para::Member;
+use Para::Topic;
+use Para::Widget;
+use Para::Interest;
+use Para::Interest::Tree;
+use Para::Email;
+
+{
+    my $cfg =
+    {
+	'appbase' => 'Para',
+	'approot' => '/var/www/test.paranormal.se',
+
+	'user_class' => 'Para::Member',
+
+	# Should not be used
+#	'webroot' => '/var/www/test.paranormal.se',
+
+	# Path in  URL to website
+	'webhome' => '',
+
+	DEBUG     => 2,
+    };
+    Para::Frame->configure( $cfg );
+
+
+    # Connect to database
+    #
+    $Para::dbix = Para::Frame::DBIx ->
+	new({
+	    connect => ["dbi:Pg:dbname=psi1"],
+	});
+    $Para::dbh = $Para::dbix->dbh;
+
+
+    my $global_params =
+    {
+	'interest_next_step'=> \&Para::Widget::interest_next_step,
+	'select_persons'    => \&Para::Widget::select_persons,
+	'diff'              => \&Para::Widget::diff,
+
+	'select_persons_by_name' => sub{ Para::Member->by_name( @_ ) },
+	'getmember'         => sub{ Para::Member->get_by_id( @_ ) },
+	'getmember_by_nick' => sub{ Para::Member->get_by_nickname( @_ ) },
+	'count_online'      => sub{ Para::Member->count_currently_online },
+
+	'topic'             => sub{ Para::Topic->new( @_ ) },
+	'find_topic'        => sub{ Para::Topic->find( @_ ) },
+	'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
+
+	'touch_interest'    => sub{ Para::Interest->touch(@_) },
+	'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
+
+	'getarc'            => sub{ Para::Arc->get( @_ ) },
+	'getreltype'        => sub{ Para::Arctype->new( @_ ) },
+	'get_arctype_list'  => sub{ Para::Arctype->list( @_ ) },
+
+	'getpayment'        => sub{ Para::Payment->new( @_ ) },
+
+	'age'               => sub{ localtime->year - $_[0]->{'bdate_ymd_year'} },
+	'year'              => sub{ localtime->year },
+	'now'               => sub{ scalar localtime },
+	'date'              => sub{ Para::Frame::Time->get(@_) },
+#	'elapsed_time'      => \&elapsed_time,
+
+	'delay'             => sub{ sleep(@_) },
+	'uc'                => sub{ "\U$_[0]" },
+	'lc'                => sub{ "\L$_[0]" },
+
+	'css'               => "/meta/meta.css",
+	'favicon'           => "/favicon.ico",
+    };
+    Para::Frame->add_global_tt_params( $global_params );
+
+    # Define TT filters
+    #
+    Para::Frame->add_tt_filters('html', {
+	'html_psi' => \&Para::Widget::html_psi,
+	'html_psi_nolinks' => sub{ Para::Widget::html_psi($_[0], 1) },
+    });
+
+    Para::Frame->startup();
+}
+
+#########################################################
+
+END
+{
+    warn "Closing down creation\n";
+}
+

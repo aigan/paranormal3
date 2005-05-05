@@ -1,0 +1,58 @@
+[% META
+	otitle = 'Diskutanter'
+        level = 5
+	next_template = '../view/'
+%]
+
+[%
+   tid = q.param('tid');
+   DEFAULT tid = q.param('t');
+   t = topic(tid);
+   PROCESS buttons.tt;
+%]
+
+<h1>Folk som vill diskutera [% PROCESS tlink.tt %]</h1>
+
+[% PROCESS topic_edit_menu.tt %]
+
+[% PROCESS static/part/interests interest_limit=150 %]
+
+<p>
+[ [% jump('Lista alla', '/member/db/person/find/type2_result.tt' interest=tid _discussion=1) +%]
+]</p>
+
+[% trobart = 1 IF t.has_rel(1, 10) %]
+[% upplevbart = 1 IF t.has_rel(1, 12) %]
+[% praktiserbart = 1 IF t.has_rel(1, 11) %]
+
+<p>
+I = Intresse.
+K = Kunskap.
+[% 'T = Tro. ' IF trobart %]
+[% 'U = Upplevt. ' IF upplevbart %]
+[% 'P = Praktiserat. ' IF praktiserbart %]
+
+</p>
+<div class="entry">
+<table>
+<tr><th>Namn
+    <th>I
+    <th>K
+[% '<th>T</th>' IF trobart %]
+[% '<th>U</th>' IF upplevbart %]
+[% '<th>P</th>' IF praktiserbart %]
+    <th>Kommentarer
+
+[% FOREACH interest = interest_discussion %]
+   <tr>
+      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', member=interest.member) %]</td>
+      <td valign="top">[% (interest.intrest||0) / 17 | replace(',','.') | format('%d') %]</td>
+      <td valign="top">[% (interest.knowledge||0) / 17 | replace(',','.') | format('%d') %]</td>
+      [% IF trobart %]<td valign="top">[% (interest.belief||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
+      [% IF upplevbart %]<td valign="top">[% (interest.experience||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
+      [% IF praktiserbart %]<td valign="top">[% (interest.practice||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
+      <td valign="top">[% interest.intrest_description %]</td>
+   </tr>
+[% END %]
+</table>
+</div>

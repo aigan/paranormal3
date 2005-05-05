@@ -1,0 +1,37 @@
+[% META title="Medlemskap" %]
+
+<p>Nej, du behöver inte [% jump('vara medlem',
+'/topic/medlemskap_i_paranormalse.html') %] för att använda [%
+jump('den här webbplatsen', '/topic/paranormalse.html') %].</p>
+
+<p><code>[% jump('Paranormal.se', '/topic/paranormalse.html')
+%]</code> är ett uppslagsverk.  [% jump('Alla uppslagsord', '/topic/')
+%] är fria för alla.  Du behöver inte [% jump('logga in',
+'/member/db/member_login') %] för att läsa dem.</p>
+
+<p>[% jump('Medlemskap', '/topic/medlemskap_i_paranormalse.html') %]
+är till för de som aktivt vill delta med att förbättra denna
+webbplats.</p>
+
+<p>Du hjälper andra besökare genom att berätta om dina intressen,
+erfarenheter och kunskaper.  Kanske vill någon kontakta just dig?</p>
+
+<p>Uppslagsverket är tidslöst. Ditt medlemskap är för evigt!</p>
+
+<p>Läs om:
+
+<ol>
+  <li>[% jump('webbplatsen', '/topic/paranormalse.html') %]
+  <li>[% jump('vår målsättning', '/topic/malsattningen_med_paranormalse.html') %]
+  <li>[% jump('företaget', '/topic/paranormal_sweden.html') %]
+</ol>
+</p>
+
+<div align="center">
+
+[% hr %]
+
+<p>Konturerna syns tydligare nu. Du närmar dig porten till staden.</p>
+
+<p>[% jump('Fortsätt', 'terms.tt') %]</p>
+</div>

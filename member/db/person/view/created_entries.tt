@@ -1,0 +1,49 @@
+[% META
+	otitle = 'Skapade texter'
+	level = 5
+%]
+
+[% PROCESS load_member.tt %]
+
+[% order_default = 't';
+   direction_default = 'desc';
+   PROCESS pagify.tt;
+%]
+
+<h1>Skapade texter: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<div class="entry">
+<table>
+
+<tr><th>[% sort('tid','t') %]
+    <th>Titel
+    <th>[% sort('Skapad', 't_created') %]
+    <th>Senast ändrad av
+</tr>
+
+[% FOREACH rec = select_list("from t where t_createdby=? and t_ver=1 and t_entry is true 
+order by $order $direction offset ? limit ?", m.member, part_offset, [], pagesize, []) %]
+   [% t = topic(rec.t, rec.t_ver) %]
+
+   [%tr2%]
+        <td align="right">[% t.id %]</td>
+        <td[% UNLESS t.active_ver %] style="text-decoration: line-through"[% END %]>[% jump(t.desig, '/member/db/topic/view/', tid=t.id) %] [% PROCESS typelist.tt rel=t.id %]</td>
+	<td>[% t.created.ymd %]</td>
+	<td>
+        [% IF t.active %]
+           oförändrad
+        [% ELSIF t.active_ver %]
+           [% t.active_ver.created_by.link %] [% t.active_ver.created %]
+        [% ELSE %]
+           inaktiv
+        [% END %]</td>
+   </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+
+</table>
+</div>
+
+[% PROCESS pagify_footer.tt %]

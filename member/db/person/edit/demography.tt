@@ -1,0 +1,35 @@
+[% META
+	otitle = 'Inställningar - Personuppgifter'
+	next_action = 'member_update'
+	focus = 'bdate_ymd_year'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Personuppgifter: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+[% WRAPPER draw_string title='Födelseår' field='bdate_ymd_year' size=4 %]
+Används för att beräkna ålder.
+[% END %]
+
+[% genders =
+   {
+	''  => 'Vill ej ange',
+	'M' => 'Man',
+	'F' => 'Kvinna',
+   }
+%]
+  <h3>Kön</h3>
+  <p>Vad finns det för anledning att ange kön da?  Inte vet jag....
+  <p>
+  [% gender = q.param('gender') || m.gender %]
+  [% FOREACH key = genders.keys.sort %]
+     <input type="radio" name="gender" value="$key"
+     [% IF key == gender %]checked[% END %]> [% genders.$key %]<br>
+  [% END %]
+  [% hr %]
+
+<p>[% submit %]

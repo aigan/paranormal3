@@ -1,0 +1,48 @@
+[% META
+	title = 'Slå samman två ämnen'
+	next_action = 'topic_merge'
+	next_template = '/member/db/topic/view/'
+	level = 12
+%]
+
+[%
+   tid = q.param('tid');
+   DEFAULT tid = q.param('t');
+
+   import(select_record("from t where t=? order by t_active desc, t_ver", tid ));
+   hidden('t2', t);
+   preserve_data('t1', 't2');
+%]
+
+<p>Slå samman <code>$t</code> <strong>[% t_title %]</strong> [% PROCESS typelist.tt rel=t %] med:</p>
+
+[%
+   talias = q.param('t1_alias');
+   IF talias;
+      list = select_list('from talias, t where talias_t=t and talias=lower(?) and talias_active is true and t_active is true', talias );
+      IF list.size == 0;
+         THROW notfound, "Det finns inget ämne med alias $talias";
+      END;
+   END;
+  found = 0;
+%]
+
+   <table>
+   [% FOREACH rec = list %]
+      [% IF rec.t != t %]
+      <tr><td>[% radio('t1', rec.t, 0) %]</td>
+          <td>$rec.t</td>
+          <td>[% jump(rec.t_title, '/member/db/topic/view/', tid=rec.t) %], v$rec.t_ver<td>[% PROCESS typelist.tt rel=rec.t %]</td>
+         [% found = 1 %]
+      [% END %]
+   [% END %]
+   </table>
+
+[% IF found %]
+
+<p>[% submit('Slå samman') %]
+
+[% ELSE;
+      THROW notfound, "Det finns inget ämne med alias $talias";
+   END;
+%]

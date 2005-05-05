@@ -1,0 +1,7 @@
+[% DEFAULT t = topic(tid) %]
+[% IF t.file %]
+   [% jump(t.desig, t.file) %]
+[% ELSE %]
+   <code>[% t.desig | html %]</code>
+[% END +%]
+[%+ t.type_list_string %]

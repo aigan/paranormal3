@@ -1,0 +1,52 @@
+[% META otitle="Beställningshistoria"
+	level = 5
+%]
+
+[% p = getpayment(q.param('pid')) %]
+[% mid = p.member.id %]
+
+[% PROCESS load_member.tt %]
+
+<h1>Beställningshistoria: [% m.tlink %]</h1>
+
+[% keep = ['pid'] %]
+[% PROCESS person_view_menu.tt %]
+[% PROCESS payment_menu.tt %]
+
+[% before = select_possible_record("from payment where payment_id < ? and payment_completed is true order by payment_id desc limit 1", p.id) %]
+[% after = select_possible_record("from payment where payment_id > ? and payment_completed is true order by payment_id asc limit 1", p.id) %]
+
+<p>[
+[% IF before.payment_id %]
+   [% jump('<<', me, pid=before.payment_id) %] |
+[% END %]
+
+[%+ jump('Uppdatera', 'update.tt', pid=p.id) %]
+
+[% IF before.payment_id %]
+   | [% jump('>>', me, pid=after.payment_id) %]
+[% END %]
+
+]</p>
+
+<div class="entry">
+<table>
+<tr><td>ID        <td>[% p.id %]
+<tr><td>Beställd  <td>[% p.order_date %]
+<tr><td>Faktura   <td>[% p.invoice_date %]
+<tr><td>Betald    <td>[% p.payment_date %]
+<tr><td>Loggad    <td>[% p.log_date %]
+<tr><td>Medlem    <td>[% p.member.tlink %]
+<tr><td>Företag   <td>[% IF p.company; p.company.link; END %]
+<tr><td>Produkt   <td>[% p.product.link %]
+<tr><td>Pris      <td>[% p.price %] kr
+<tr><td>Varav moms<td>[% p.vat %] kr
+<tr><td>Antal     <td>[% p.quantity %]
+<tr><td>Metod     <td>[% p.method.link %]
+<tr><td>Mottagare <td>[% p.receiver.link %]
+<tr><td>Ver.nr    <td>[% p.vernr %]
+<tr><td>Referens  <td>[% p.reference %]
+<tr><td valign="top">Meddelande <td>[% p.message | html | html_line_break %]
+<tr><td valign="top">Kommentar <td>[% p.comment | html | html_line_break %]
+</table>
+</div>

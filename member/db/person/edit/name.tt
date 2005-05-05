@@ -1,0 +1,56 @@
+[% META
+	otitle = 'Inställningar - Namn'
+	next_action = 'member_update'
+	focus = 'name_given'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Namn: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<p>Namnuppgifterna är frivilliga.  Det går bra att utelämna
+efternamnet.  Hitta inte på något namn.  Vi vill veta ditt riktiga
+(lagliga) namn.
+
+<table>
+  <tr>
+    <td>Förnamn</td>
+    <td>[% input('name_given', m.name_given) %]</td>
+    <td>(Tilltalsnamn)</td>
+  </tr>
+  <tr>
+    <td>Mellannamn</td>
+    <td>[% input('name_middle', m.name_middle) %]</td>
+    <td>(Övriga namn, om de används vid tilltal)</td>
+  </tr>
+  <tr>
+    <td>Efternamn</td>
+    <td>[% input('name_family', m.name_family) %]</td>
+    <td>(Familjenamn)</td>
+  </tr>
+</table>
+
+[% hr %]
+
+<h3>Aliases</h3>
+
+<p>Ditt (användar)namn måste basera sig på ett av dina alias.
+
+<ul>
+[% FOREACH nick = m.nicks %]
+  <li>[% nick %]
+[% END %]
+</ul>
+
+[% IF u.level > 40 %]
+  <p>Så som livbringare kan du skapa ett nytt nickname, utöver de på
+  listan ovan.</p>
+[% END %]
+
+<p>Namn: [% input('nickname',m.nickname) %]
+
+
+<p> [% submit %]

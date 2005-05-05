@@ -1,0 +1,33 @@
+[% META
+	title = 'Kontaktinformation'
+	next_template = 'presentation.tt'
+	next_action = 'member_update'
+	focus = 'home_online_email'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+<p align="right">Steg 9 av 10</p>
+
+<p>Hur kan andra medlemmar få tag på dig?</p>
+
+<p>Den e-postadress du tidigare angivit är hemlig.  Här anger du den
+adress du vill sprida till andra.  Om du vill kan du "spam-skydda"
+adressen.</p>
+
+<table>
+  <tr>
+    <td>Publik E-post</td>
+    <td>[% input('home_online_email', m.home_online_email, size=50) %]</td>
+  </tr>
+  <tr>
+    <td>Hemsida</td>
+    <td>[% input('home_online_uri', m.home_online_uri, size=50) %]</td>
+  </tr>
+  <tr>
+    <td>ICQ</td>
+    <td>[% input('home_online_icq', m.home_online_icq, size=10) %]</td>
+  </tr>
+</table>
+
+ [% submit %]

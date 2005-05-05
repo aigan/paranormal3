@@ -1,0 +1,11 @@
+[% META
+	otitle = 'Inställningar - Lösenord'
+	next_action = 'member_passwd_update'
+	level = 41
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Lösenord: [% m.tlink %]</h1>
+
+<p>Skriv in det nya lösenordet: [% input("passwd") %] [% submit('Uppdatera') %]</p>

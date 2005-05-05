@@ -1,0 +1,100 @@
+[% META title="Resultat"
+        level = 5
+%]
+
+[% PROCESS person_find_menu.tt %]
+[% PROCESS load_member.tt %]
+
+[% 
+   subpart = {};
+   preserve_data('body','subject', 'offset', 'mid');
+   hidden('offset');
+%]
+
+<p>
+[ [% jump('Ny sökning', 'combined.tt') +%]
+| [% forward('Bokmärka sökningen') +%]
+| [% forward('Ändra sökbegrepp', 'combined.tt') +%]
+[% #  go("Karta", 'map', 'geo_image_create', offset = 0, pagesize=1000) +%]
+]</p>
+
+
+[% TRY %]
+
+<div class="entry">
+<table>
+<tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th>
+</tr>
+
+[% FOREACH select_persons() %]
+   [% m = getmember( member ) %]
+
+  [% tr2 %]
+       <td>$m.id</td>
+       <td>[% jump(m.nickname, "../view/", mid=m.id) %]</td>
+       <td>[% m.level %]</td>
+       <td>[% m.name %]</td>
+       <td>[% IF dist.length; dist / 1000 | replace(',','.') | format('%d km'); END %]</td>
+       <td>[% m.home_postal_city %]</td>
+   </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+</table>
+</div>
+
+[% 
+   offset = q.param('offset');
+   pagesize = q.param('pagesize') + 0;
+
+   prev_from = offset - pagesize;
+   prev_to = offset - 1;
+   this_from = offset;
+   this_to = offset + subpart.shown - 1;
+   next_from = offset + pagesize;
+   next_to = offset + pagesize + pagesize - 1;
+%]
+
+<p>
+[% IF offset > pagesize %]
+   [% go("$prev_from - $prev_to", 'type2_result', 'nop' offset = prev_from) %] | 
+[% END %]
+$this_from - $this_to
+[% IF subpart.shown == pagesize %]
+   | [% go("$next_from - $next_to", 'type2_result', 'nop' offset = next_from) %]
+[% END %]
+</p>
+
+
+[% IF u.level > 6 %]
+
+[% hr %]
+
+<h2>Skicka e-post till personerna ovan</h2>
+
+<p>Rubrik: [% input('subject') %]
+
+<p>[% textarea('body') %]
+
+<p>Skickar medan du vänta. Är det många kanske du ska skicka till 20 åt gången eller liknande...
+
+
+<p>[% go('Skicka brevet','type2_result','email_type2_list') %]
+
+[% END %]
+
+
+[% CATCH; CLEAR %]
+   [% warn("error:") %]
+   [% warn(error) %]
+
+   [% result.exception(error) %]
+   [% FOREACH part = result.parts; box(part); END %]
+
+[% IF result.info.alternatives;
+   alts = result.info.alternatives;
+   PROCESS topic_list3 talias=alts.talias list=alts.list replace=alts.replace run=alts.run;
+   RETURN;
+END;
+%]
+[% END %]
+

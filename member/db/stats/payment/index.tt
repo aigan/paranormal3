@@ -1,0 +1,64 @@
+[% META otitle="Statistik över gåvor från medlemmarna"
+	level = 5
+%]
+
+<h1><a href="/member/payment/"><img src="/images/icon/arrow.gif" alt=
+      "Meny"></a> Statistik över gåvor från medlemmarna</h1>
+
+[% PROCESS stats_menu.tt %]
+[% PROCESS payment_menu.tt %]
+
+<div class="entry">
+<table>
+
+[% gc = select_record("select count(payment_id) as cnt from payment where payment_product=422154 and payment_completed is true") %]
+<tr><td>Antal gåvor <td align="right">$gc.cnt <td>st
+
+[% gpc = select_record("select count(payment_member) as cnt from (select distinct payment_member from payment where payment_product=422154 and payment_completed is true) as distinct_member") %]
+<tr><td>Antal medlemmar som givit <td align="right">$gpc.cnt <td>st
+
+[% gs = select_record("select sum(payment_price) as sum from payment where payment_product=422154 and payment_completed is true") %]
+<tr><td>Summa belopp <td align="right">$gs.sum <td>kr
+
+[% gqa = select_record("select avg(payment_quantity) as avg from payment where payment_product=422154 and payment_completed is true") %]
+<tr><td>Genomsnittlig längd per gåva<td align="right">[% gqa.avg | format('%d') %] <td>dagar
+
+[% gpqa = select_record("select avg(quantity_sum) as avg from (select sum(payment_quantity) as quantity_sum, payment_member from payment where payment_product=422154 and payment_completed is true group by payment_member) as sum_member_quantity") %]
+<tr><td>Genomsnittlig längd per person <td align="right">[% gpqa.avg | format('%d') %] <td>dagar
+
+<tr><td>Genomsnittlig gåva per person <td align="right">[% gs.sum / gpc.cnt | format('%d') %] <td>kr
+
+<tr><td>Genomsnittlig gåva per person och månad <td align="right">[% 30.4 * gs.sum / gpc.cnt / gpqa.avg | format('%d') %] <td>kr
+
+<tr><td>Summa gåva/månad sedan början (1995) <td align="right">[% gs.sum /((now.epoch - date('1995-06-01').epoch) / (60*60*24*30.4)) | format('%d') %] <td>kr / månad
+
+[% gstypm = select_record("select sum(payment_price) as sum from payment where payment_product=422154 and payment_completed is true and payment_date > to_date(now(),'YYYY') and payment_date < to_date((now()+'1 year'::interval),'YYYY')") %]
+<tr><td>Summa gåvor inkomna i år, per månad <td align="right">[% gstypm.sum / 12 | format('%d') %] <td>kr / månad
+
+[% pns = select_record("select count(member) as cnt from member where member_payment_period_expire > now() and member_payment_total > 0") %]
+<tr><td>Antal prenumeranter just nu <td align="right">$pns.cnt <td>st
+
+[% gpm = select_record("select max(payment_price) as max from payment where payment_product=422154 and payment_completed is true") %]
+<tr><td>Största gåvan <td align="right">$gpm.max <td>kr
+
+[% gpms = select_record("select max(member_payment_total) as max from member") %]
+<tr><td>Summa gåvor från den mest generösa medlemmen <td align="right">$gpms.max <td>kr
+
+[% gl = select_record("from payment where payment_product=422154 and payment_completed is true and payment_date = (select max(payment_date) from payment where payment_product=422154 and payment_completed is true)") %]
+<tr><td>Senaste gåvan inkommen <td colspan="2">[% date(gl.payment_date) %]
+
+<tr><td>Senaste gåvan var på <td align="right">[% gl.payment_price %] <td>kr
+<tr><td>Senaste gåvan gäller för <td align="right">[% gl.payment_quantity %] <td>dagar
+
+</table>
+</div>
+
+<p align="center">[% jump('Hysta in mer pengar!', '/member/payment/') %]
+
+[% hr %]
+
+<p>[% jump('Jag', '/topic/jonas_liljegren.html') %] jobbar i
+det närmaste heltid med Paranormal.se.  Månad för månad sipprar mina
+besparingar iväg.
+
+</p>

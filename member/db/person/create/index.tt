@@ -1,0 +1,10 @@
+[% META
+	title = 'Skapa ny medlem'
+	next_template = '../edit/'
+	next_action = 'member_create'
+	focus = 'nick'
+	level = 41
+%]
+
+<p>Nick [% input('nick') %] [% submit('Skapa') %]
+<input type="hidden" name="confirmed_chat_nick" value="[% q.param('confirmed_chat_nick') | html %]">

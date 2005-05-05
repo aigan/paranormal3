@@ -1,0 +1,36 @@
+[% META title = 'Välkommen till nivå 2'
+        level = 2
+%]
+
+<p>Grattis, novis [% u.nickname %]!</p>
+
+<p>Du har nu tagit andra steget på vägen mot att bli [%
+jump('medborgare', '/topic/medborgare_i_paranormalse.html', target='published') %].</p>
+
+<p>Alla medlemmar [% jump('har en teknik-nivå',
+'/topic/nivasystemet_for_paranormalse.html', target='published') %].
+Teknik-nivån är ett mått på hur involverad du är i webbplatsen och hur
+stort ansvar du åtagit dig för innehållet här.</p>
+
+<p>[% jump('Medborgare', '/topic/medborgare_i_paranormalse.html',
+target='published') %] är en medlem som fullfört registreringen och
+skrivit en presentation av sig själv.</p>
+
+<p>Överst på sidan ser du några länkar. [% jump('Hem', '/index.tt',
+target='published') %] tar dig till startsidan. [% jump('Torget',
+'/member/db/', target='published') %] är platsen du går till för att
+arbeta med webbplatsen utifrån <em>dina</em> intressen. Du kan när som
+helst fortsätta din registrering via en länk på  [% jump('Torget',
+'/member/db/', target='published') %].</p>
+
+<p>Om du vill kan du välja [% jump('ett eget lösenord',
+'/member/db/person/edit/passwd.tt', route=me) %] nu..</p>
+
+<p>Kom ihåg. Alla uppgifter är frivilliga. De är till för dina
+medmänniskor.</p>
+
+[% hr %]
+
+<p>Tag ett djupt andetag.</p>
+
+<p>När du är redo; [% jump('gå vidare','privacy.tt') %]</p>

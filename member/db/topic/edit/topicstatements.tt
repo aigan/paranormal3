@@ -1,0 +1,51 @@
+[% META
+	otitle = 'Editera ämnesuttalanden'
+	next_template = 'topicstatements'
+	next_action = 'ts_update'
+%]
+
+[% IF result.info.alternatives;
+   PROCESS topic_list.tt list=result.info.alternatives.list replace='_meta_talias' run='ts_update';
+   RETURN;
+END;
+%]
+
+[%
+   tid = q.param('tid');
+   hidden('tid', tid);
+   t = topic(tid);
+   PROCESS buttons.tt;
+%]
+
+<h1>Uttalanden om [% PROCESS tlink.tt %]</h1>
+
+[% PROCESS edit_menu.tt %]
+
+
+<table border="1">
+  <tr><th>Behåll</th><th>Ämne</th><th>Kommentar</th></tr>
+  [% FOREACH ts = t.ts_list %]
+  <tr>
+  <td>
+  [% checkbox("_ts__${loop.count}_keep", 't', 1);
+     hidden("_ts__${loop.count}_topic", ts.topic.id);
+  %]
+  </td>
+  <td>[% jump(ts.topic.title, '/member/db/topic/view/', tid=ts.topic.id) %]</td><td>[% ts.comment | html %]</td></tr>
+  [% END %]
+</table>
+
+<h3><code>$t.desig</code> behandlar även dessa ämnen:</h3>
+
+<p>Fler ämnen, ett per rad:<br>
+<textarea cols="30" rows="5" name="_meta_talias">[% list2block('_meta_talias') %]</textarea>
+
+<p>[% submit('Ändra') %]
+
+<p>Det här ska vara en lista om vad detta objekt behandlar.  Objektet
+måste vara media, så som en bok, tidskrift, diskussioninlägg eller
+liknande.  Det kan vara en artikel, en text i databasen, en grupp
+eller föredrag.  Dvs något som talar om ett ämne.  Här beskriver vi
+vad ämnet talar om.</p>
+
+<p>Listan bör vara kort men fullständig.</p>

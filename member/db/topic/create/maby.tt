@@ -1,0 +1,62 @@
+[% META
+	title = 'Nytt ämne'
+	next_template = 'check.tt'
+	level = 5
+	focus = 't_title'
+%]
+
+[% preserve_data('t_title','_aliases') %]
+
+[% IF q.param('_name') %]
+   <p>Ämnet finns inte i databasen.  Här har du chansen att lägga till ämnet.
+
+   <p>Vi vill bara ha ämnen som har någon relation till paranormala fenomen.
+
+   <p>Genom att beskriva ämnet här bidrar du till att göra vårat uppslagsverk mer komplett.
+
+[% END %]
+
+<p>Ämnets titel ska vara i obestämd form singularis.  Det ska alltså
+vara <em>Spöke</em> och inte <em>Spöken</em> eller <em>Spöket</em>.
+Inte heller <em>Spökerier</em>, <em>Spökfenomen</em> eller
+<em>spökande</em>.  Vid namn används <em>förnamn efternamn</em> med
+eventuella mellannamn.  För titlar på böcker etc anges inte
+undertitel.
+
+
+<p>Ämnets titel:<br>
+[% input('t_title', q.param('_name')) %]
+
+
+<p>Ange ett alias per rad:<br>
+<table cellpadding="10"><tr><td>
+
+[% textarea( '_aliases', '', rows=20, cols=20, align='left' ) %]
+
+</td><td valign="top">
+
+<p>Skriv in så många alternativa namn på ämnet som du kan komma på.
+
+<ol>
+
+  <li>Olika ändelser som kan användas i löpande text.  Exempelvis
+<em>spökandets</em>, <em>spökets</em>, <em>spökar</em>, osv.
+
+  <li>Andra uttryck för samma sak.  Exempelvis <em>vålnad</em>, <em>vålnader</em>, osv.
+
+  <li>Motsvarande ord på engelska, latin, etc för de ord som man kan tänkas söka på
+
+  <li>Förkortningar i olika former, med eller utan punkter, osv.
+
+  <li>Alternativa stavningar eller vanliga felstavningar
+
+</ol>
+
+<p>En viktig anledning till att skriva ned så många ord som möjligt är
+för att kontrollera ifall ämnet redan existerar under något annat
+namn.
+
+</td></tr></table>
+
+<p>[% submit('Skapa ämnet') %]
+[% go('Ångra', backtrack, 'nop') %]

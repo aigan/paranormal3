@@ -1,0 +1,187 @@
+[% META
+	otitle = 'Versioner'
+	next_action = 'topic_update'
+%]
+
+[%
+   tid = q.param('tid');
+   v = q.param('v');
+   t = topic(tid,v);
+   hidden('tid', tid);
+   hidden('v', v);
+   PROCESS buttons.tt;
+%]
+
+       <script>
+        toggle_plus_status = 1;
+        toggle_minus_status = 1;
+        function dis_plus() {
+            for(i=0; (a = document.getElementsByTagName("span")[i]); i++) {
+                if(a.className == "plus") {
+                    a.style.display="none";
+                }
+            }
+        }
+        function dis_minus() {
+            for(i=0; (a = document.getElementsByTagName("span")[i]); i++) {
+                if(a.className == "minus") {
+                    a.style.display="none";
+                }
+            }
+        }
+        function view_plus() {
+            for(i=0; (a = document.getElementsByTagName("span")[i]); i++) {
+                if(a.className == "plus") {
+                    a.style.display="inline";
+                }
+            }
+        }
+        function view_minus() {
+            for(i=0; (a = document.getElementsByTagName("span")[i]); i++) {
+                if(a.className == "minus") {
+                    a.style.display="inline";
+                }
+            }
+        }
+
+        function toggle_plus() {
+            if (toggle_plus_status == 1) {
+                dis_plus();
+                toggle_plus_status = 0;
+            }
+            else {
+                view_plus();
+                toggle_plus_status = 1;
+            }
+        }
+
+        function toggle_minus() {
+            if (toggle_minus_status == 1) {
+                dis_minus();
+                toggle_minus_status = 0;
+            }
+            else {
+                view_minus();
+                toggle_minus_status = 1;
+            }
+        }
+        </script>
+
+<h1>[% PROCESS tlink_ver.tt %]</h1>
+
+[% PROCESS edit_menu.tt %]
+
+[%
+   cv = t.active_ver;
+   cdesc = 'Aktiv version';
+   IF cv.ver == t.ver;
+      IF t.previous_ver and t.previus_ve.ver != t.ver;
+         cv = t.previous_ver;
+         cdesc = "Föregående (v$cv.ver)";
+      ELSIF t.last_ver and t.last_ver.ver != t.ver;
+         cv = t.last_ver;
+         cdesc = "Senaste (v$cv.ver)";
+      ELSE;
+         cv = undef;
+      END;
+   END;
+%]
+
+<table width="100%">
+<tr><td valign="top">
+
+<table border="0">
+   <tr>
+      <th></th>
+[% IF cv %]      <th>[% cdesc %]</th> [% END %]
+      <th>Denna version</th>
+   </tr>
+   <tr>
+      <td><strong>Titel</strong></td>
+[% IF cv %]      <td><code>[% cv.title | html %]</code></td> [% END %]
+      <td><code>[% t.title | html %]</code></td>
+   </tr>
+[% IF not t.entry %]
+   <tr>
+      <td><strong>Korttitel</strong></td>
+[% IF cv %]      <td><code>[% cv.real_short | html %]</code></td> [% END %]
+      <td><code>[% t.real_short | html %]</code></td>
+   </tr>
+   <tr>
+      <td><strong>Pluraltitel</strong></td>
+[% IF cv %]      <td><code>[% cv.real_plural | html %]</code></td> [% END %]
+      <td><code>[% t.real_plural | html %]</code></td>
+   </tr>
+[% END %]
+</table>
+
+</td><td valign="top">
+
+<p>Status: $t.status -
+[% PROCESS topic_status.tt  +%]
+[%+ PROCESS active.tt        %]
+</p>
+
+<p><small>
+Ämnet skapat av [% t.first_ver.created_by.link %] [%+ t.first_ver.created %]<br>
+Vers. skapad av [% t.created_by.link %] [%+ t.created %]<br>
+Vers. uppd. av [% t.updated_by.link %] [%+ t.updated %]
+</small></p>
+
+
+<p>
+[% IF t.ver > 1 %]
+   Ersätter [% forward("version $t.previous_ver.ver", me, tid=tid, v=t.previous_ver.ver) %].
+[% END %]
+[% IF t.replace %]
+   [% r = t.replace %]
+   Ersätter [% jump("$r.rid $r.desig", me, tid=r.id) %].
+[% END %]
+
+[% nv = t.next_ver %]
+[% IF nv %]
+   Ersätts av [% forward("version $nv.ver", me, tid=tid, v=nv.ver) %].
+[% ELSIF t.replaced_by %]
+   [% rb = t.replaced_by %]
+   Ersätts av [% forward("$rb.id $rb.desig", me, tid=rb.id, v=rb.ver) %].
+[% END %]
+</p>
+
+</td><td valign="top">
+
+[% PROCESS topic_status_change.tt %]
+<p>[% go('Uppdatera', me, 'topic_update') %]
+   [% submit %]
+</p>
+
+</td></tr></table>
+
+[% UNLESS t.active_ver %]
+   <p><strong>Ingen aktiv version finns</strong></p>
+[% END %]
+
+[% IF cv %]
+   <table border="0" cellspacing="5" width="100%">
+     <td><input type="button" class="togglep" value="visa/göm nytt" onclick="toggle_plus(); return false;" /></td><td width="10">&nbsp;</td>
+     <td><input type="button" class="togglem" value="visa/göm gammalt" onclick="toggle_minus(); return false;" /></td><td width="10">&nbsp;</td>
+     <td>Jämförelse med [% jump("version $cv.ver", me, tid=tid, v=cv.ver) %]</td>
+     <td>[% jump('Redigera', "/member/db/topic/edit/text.tt",  tid=tid, v=t.ver, class='link_button') %]</td>
+   </table>
+
+   <div class="diff">
+   [%# cv.text | html_psi %]
+   [%# t.text | html_psi %]
+   [% diff(cv.text, t.text)  %]
+   </div>
+[% ELSE %]
+   <p align="right">[% jump('Redigera', "/member/db/topic/edit/text.tt",  tid=tid, v=t.ver, class='link_button') %]</p>
+   <div class="diff">
+   [% t.text | html_break %]
+   </div>
+[% END %]
+
+[% IF ! t.entry and t.admin_comment %]
+<div class="important">
+   [% t.admin_comment | html %]
+</div>
+[% END %]

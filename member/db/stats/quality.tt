@@ -1,0 +1,30 @@
+[% META otitle = 'Statistik' %]
+[% order = q.param('order') || 'accepted_thing' %]
+[% direction = q.param('direction') %]
+
+<h1 align="center">Statistik</h1>
+
+[% PROCESS stats_menu.tt %]
+
+
+<h2>Resultat från modereringar</h2>
+
+<p align="center">Personer som kopplat minst 10 ämnen</p>
+
+<div class="entry" align="center">
+<table>
+<tr><th>[% sort('Person', 'nickname') %]
+    <th>[% sort('Nivå', 'member_level') %]
+    <th>[% sort('Poäng', 'score') %]
+    <th>[% sort('Kvalitet', 'quality') %]
+    <th>[% sort('Godkänd', 'total_accepted') %]
+    <th>[% sort('Avvisad', 'thing_rejected') %]
+    <th>[% sort('Kopplat', 'topic_connected') %]
+
+[% FOREACH select_list("select nickname, member, member_level, thing_finalised, thing_accepted, thing_rejected, topic_connected, (thing_finalised*10 + thing_accepted - thing_rejected) as score, (thing_finalised + thing_accepted) / (thing_rejected+1) as quality, thing_finalised + thing_accepted as total_accepted from member, score where score_member=member and member_level < 12 and topic_connected >= 10 order by $order $direction limit 160") %]
+
+[% tr2 %]<td>[% jump(nickname, '/member/db/person/view/', mid=member) %] <td>$member_level <td>$score <td>[% quality | replace(',', '.') | format('%d') %] <td>$total_accepted <td>$thing_rejected <td>$topic_connected
+
+[% END %]
+</table>
+</div>

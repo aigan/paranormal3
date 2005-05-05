@@ -1,0 +1,13 @@
+[% META
+	title = 'Topic create form'
+	next_template = '../edit/meta.tt'
+	next_action = 'topic_create'
+	level = 11
+	focus = 't_title'
+%]
+
+<p>Ange ämnets titel</p>
+
+<p>[% input("t_title", q.param('t_title'), size=50) %]
+
+[% submit('Skapa') %]

@@ -1,0 +1,85 @@
+[% META
+	otitle = 'Redigera text'
+	next_action = 'topic_update'
+	focus = 't_text'
+	next_template = 'text'
+	level = 5
+%]
+
+[%
+   tid = q.param('tid');
+   v   = q.param('v');
+   t   = topic(tid, v);
+
+   hidden('tid', tid);
+   hidden('v', t.ver);
+   PROCESS buttons.tt;
+%]
+
+
+[% IF t.entry %]
+   <h1>Text [% PROCESS tlink_ver.tt %]</h1>
+   [% PROCESS entry_edit_menu.tt %]
+   [% rows = 25 %]
+   [% PROCESS entry_belonging.tt %]
+[% ELSE %]
+   <h1>Ämne [% PROCESS tlink_ver.tt %]</h1>
+   [% PROCESS topic_edit_menu.tt %]
+   [% rows = 2 %]
+[% END %]
+
+<p>Texthantering
+[ [% jump('Lägg till en ny text', 'new_entry.tt' parent=tid run='mark' ) %]
+   [% IF u.level > 10 %]
+|      [% jump('Ändra redaktörskommentar', 'text_admin.tt' tid=tid ) %]
+   [% END %]
+]</p>
+
+<p>Status: $t_status - [% PROCESS topic_status.tt %]
+[% IF t.active; '  <strong><em>aktiv</em></strong>';
+   ELSE;        '  <em>ej aktiv</em>';
+   END;
+%]
+[% UNLESS t.active %]
+- <strong>
+<blink>Denna version gäller inte</blink>
+[% IF t.active_ver %]
+- [% jump("Version $t.active_ver.ver", me, tid=t.id) %] gäller nu
+[% END %]
+</strong>
+[% ELSE %]
+
+<table>
+[% IF t.entry %]
+   <tr><td>Rubrik <td>[% input('t_title', t.title, size=50 maxlength=128) %]
+[% ELSE %]
+   <tr><td>Fullständig titel <td>[% input('t_title', t.title, size=50 maxlength=128) %] Singular. <strong>ej undertitel</strong>
+   <tr><td>Kort titel <td>[% input('t_title_short', t.real_short, size=25 maxlength=50) %]
+      Att användas när vi vet kontexten. När överämnet är känt.
+   <tr><td>Pluralform <td>[% input('t_title_short_plural', t.real_plural, size=25 maxlength=50) %]
+      som rubrik för listor av instanser. (ex lista på <em>böcker</em>)
+[% END %]
+</table>
+
+[% IF t.entry %]
+   Texten:
+[% ELSE %]
+   Kortbeskrivning:
+[% END %]
+<br>
+[% textarea('t_text', t.text, cols=70 rows=rows class="big_input") %]
+
+<p>[% submit %]<br>
+»...«<br>| ...<br>"..."[link]
+</p>
+
+[% END %]
+
+[% hr %]
+
+[% IF not t.entry %]
+   <p>Kortbeskrivningen ska vara kort. Vill du skriva något om detta ämnet; [% jump('Lägg till en ny text', 'new_entry.tt' parent=tid run='mark' ) %]</p>
+[% END %]
+<p>Se [% jump("instruktion för att formatera texten", "/topic/instruktion_for_att_formatera_text_i_paranormalse.html", target='published') %]</p>
+
+

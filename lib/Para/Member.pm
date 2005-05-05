@@ -1,0 +1,2545 @@
+#  $Id$  -*-perl-*-
+package Para::Member;
+#=====================================================================
+#
+# DESCRIPTION
+#   Paranormal.se Member class
+#
+# AUTHOR
+#   Jonas Liljegren   <jonas@paranormal.se>
+#
+# COPYRIGHT
+#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#
+#   This module is free software; you can redistribute it and/or
+#   modify it under the same terms as Perl itself.
+#
+#=====================================================================
+
+use strict;
+use Data::Dumper;
+use Mail::Address;
+#use BerkeleyDB::Hash;
+#use DB_File;
+use Carp;
+use Time::Seconds;
+
+BEGIN
+{
+    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
+    warn "  Loading ".__PACKAGE__." $VERSION\n";
+}
+
+use Para::Frame::Reload;
+use Para::Frame::Time;
+use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd );
+use Para::Frame::Email;
+
+use Para::Topic;
+use Para::Change;
+use Para::Interests;
+use Para::Interest;
+use Para::Constants qw( :all );
+#use Para::Mailbox;
+use Para::Arc;
+use Para::Payment;
+use Para::Email::Address;
+use Para::Member::Email;
+
+use base qw( Para::Frame::User );
+use base qw( Exporter );
+BEGIN
+{
+    our @EXPORT_OK = qw( name2nick name2chat_nick trim_name );
+
+}
+
+ INIT:
+{
+    my $rec = 
+    {
+	'member'        => 0,
+	'nickname'      => 'guest',
+	'member_level'  => 0,
+	'name_given'    => 'Gäst',
+    };
+    $Para::Member::CACHE->{0} = bless($rec, __PACKAGE__);
+}
+
+
+sub get
+{
+    my( $this, $member_in ) = @_;
+
+    if( ref $member_in )
+    {
+	return $member_in;
+    }
+    elsif( $member_in =~ /^-?\d+$/ )
+    {
+	return $this->get_by_id( $member_in );
+    }
+    else
+    {
+	# No censor default, to make it compatible with Para::Frame::User
+	return $this->get_by_nickname( $member_in, 0 );
+    }
+}
+
+sub get_by_id
+{
+    my( $this, $mid, $rec, $no_cache ) = @_;
+    my $class = ref($this) || $this;
+    # $rec can be provided as a mean for optimization
+
+    return undef unless defined $mid;
+    return $mid if ref $mid eq 'Para::Member';
+    confess "mid not a number: $mid" unless $mid =~ /^-?\d+$/;
+
+    if( not $no_cache or not $rec )
+    {
+	if( $Para::Member::CACHE->{$mid} )
+	{
+	    return $Para::Member::CACHE->{$mid};
+	}
+    }
+
+    return $Para::Member::CACHE->{0} if $mid == 0;
+
+    unless( $rec )
+    {
+	my $st = "select * from member LEFT JOIN passwd ON member=passwd_member where member=?";
+	my $sth = $Para::dbh->prepare_cached( $st );
+	$sth->execute( $mid );
+	$rec =  $sth->fetchrow_hashref;
+	$sth->finish;
+    }
+
+    if( $rec )
+    {
+	my $m = $Para::Member::CACHE->{$mid} = bless($rec, $class);
+	$m->changes_reset; # FIXME
+	return $m;
+    }
+    else
+    {
+	$Para::Member::CACHE->{$mid} = undef;
+	return Para::Member->get_by_id(-2); # Old member
+    }
+}
+
+sub get_by_tid
+{
+    my( $this, $tid ) = @_;
+    my $class = ref($this) || $this;
+
+    return undef unless defined $tid;
+
+    my $st = "select * from member LEFT JOIN passwd ON member=passwd_member where member_topic=?";
+    my $sth = $Para::dbh->prepare_cached( $st );
+    $sth->execute( $tid );
+    my $rec =  $sth->fetchrow_hashref;
+    $sth->finish;
+
+    return undef unless $rec;
+    return $this->get_by_id( $rec->{'member'}, $rec );
+}
+
+sub get_by_nickname
+{
+    my( $class, $identity, $censor, $no_cache ) = @_;
+
+    my $DEBUG = 1;
+    trim( \$identity );
+    $identity = lc( $identity );
+    my $nick = name2nick( $identity );
+
+    warn "  Get member $nick\n" if $DEBUG;
+
+#    # Bootstrap user
+#    $Para::Frame::U ||= $Para::Member::CACHE->{0};
+
+    return $Para::Member::CACHE->{0} if $nick eq 'guest';
+
+    $censor = 1 unless defined $censor;
+
+    if( $nick eq 'mig' )
+    {
+	$nick = $Para::Frame::U->id;
+    }
+
+    unless( $no_cache )
+    {
+	if( $Para::Member::CACHE->{$nick} )
+	{
+	    return $Para::Member::CACHE->{$nick};
+	}
+    }
+
+
+    my $censor_part = "";
+    if( $censor and $Para::Frame::U->level < 41)
+    {
+	$censor_part .= " and present_contact > 1";
+	$censor_part .= " and member_level > 0";
+    }
+
+
+    if( $nick =~ m/^\d+$/ )
+    {
+	my $st = "select * from member LEFT JOIN passwd ON member=passwd_member where member=? $censor_part";
+	my $sth = $Para::dbh->prepare_cached( $st );
+	$sth->execute( $nick );
+	my $rec =  $sth->fetchrow_hashref;
+	$sth->finish;
+	if( $rec )
+	{
+	    return $class->get_by_id($rec->{'member'}, $rec, $no_cache);
+	}
+	return undef;
+    }
+    else
+    {
+	my $st = "select * from nick JOIN member ON nick_member=member LEFT JOIN passwd ON member=passwd_member where uid=? $censor_part";
+	my $sth = $Para::dbh->prepare_cached( $st );
+#	warn "  Executing $st ($nick)\n" if $DEBUG;
+	$sth->execute( $nick );
+	my $rec =  $sth->fetchrow_hashref;
+	$sth->finish;
+	if( $rec )
+	{
+	    return $Para::Member::CACHE->{$nick} =
+	      $class->get_by_id($rec->{'member'}, $rec, $no_cache);
+	}
+	return undef;
+    }
+}
+
+######################
+
+
+sub create
+{
+    my( $this, $nick ) = @_;
+    my $class = ref($this) || $this;
+
+    trim_name(\$nick);
+    my $uid = name2nick($nick);
+    my $chat_nick = name2chat_nick($nick);
+
+    Para::Member->validate_nick( $uid );
+
+    my $mid = $Para::dbix->get_nextval( "member_seq" );
+
+    my $sth_nick = $Para::dbh->prepare_cached("insert into nick
+                                   ( uid, nick_member, nick_created )
+                                   values ( ?, ?, now())");
+
+    $sth_nick->execute( $uid, $mid );
+
+    my $sth_member = $Para::dbh->prepare_cached("insert into member
+               ( member, nickname, chat_nick, member_level, member_created, member_updated, present_contact, present_intrests, present_activity, sys_logging, geo_precision )
+               values ( ?, ?, ?, 1, now(), now(), 15, 30, 10, 30, 0 )");
+    $sth_member->execute($mid, $nick, $chat_nick);
+	
+    my $sth_score = $Para::dbh->prepare_cached("insert into score
+               ( score_member ) values ( ? )");
+    $sth_score->execute($mid);
+	
+    my $passwd = make_passwd();
+    my $sth_passwd = $Para::dbh->prepare_cached("insert into passwd
+               ( passwd_member, passwd, passwd_updated, passwd_changedby )
+               values ( ?, ?, now(), -1 )");
+    $sth_passwd->execute($mid, $passwd);
+	
+    return $this->get_by_id( $mid );
+}
+
+##################################################
+
+sub verify_user
+{
+    my( $this, $username, $password ) = @_;
+
+    my $m = $this->get_by_nickname( $username );
+    $m or throw('validation', "Medlemmen $username existerar inte");
+    return $m->verify_password( $password );
+}
+
+sub verify_password
+{
+    my( $m, $password_encrypted ) = @_;
+
+    $password_encrypted ||= '';
+
+    if( $password_encrypted eq passwd_crypt($m->{'passwd'}) )
+    {
+	return 1;
+    }
+    else
+    {
+	my $expected = passwd_crypt($m->{'passwd'});
+	warn "  Expected $expected but got $password_encrypted\n";
+	return 0;
+    }
+}
+
+sub set_passwd
+{
+    my( $m, $old, $new, $confirm ) = @_;
+    trim(\$old);
+    trim(\$new);
+    trim(\$confirm);
+    return if $m->{'passwd'} eq $new;
+
+    my $mid = $m->id;
+
+#    my $admin = ( $Para::Frame::U->id != $mid and  $Para::Frame::U->level >= 41 )? 1:0;
+    my $admin = $Para::Frame::U->level >= 41 ? 1:0;
+
+    if( not $admin and not $m->verify_password( $old ) )
+    {
+	return $m->change->fail("Det gamla lösenordet stämde inte\n");
+    }
+
+    warn "Trying to change passwd to '$new'\n";
+    length($new) >= 4 or return $m->change->fail("Lösenordet är för kort. Använd åtminstonne 4 tecken\n");
+    length($new) <= 12 or return $m->change->fail("Lösenordet är för långt. Använd som mest 12 tecken\n");
+    $new =~ /^[\x21-\x7e]+$/ or return $m->change->fail("Lösenordet har ogiltiga tecken.\n".
+							"(Använd ASCII x21-x74 (Allting utom mellanslag (och åäö))\n");
+
+    if( $new ne $confirm )
+    {
+	return $m->change->fail("De två lösenorden stämde inte överens\n");
+    }
+
+    my $now = time;
+    my $now_str = localtime($now)->date;
+    my $st = "update passwd set passwd_updated=?, passwd_changedby=?, ".
+	"passwd_previous=?, passwd=? where passwd_member=?";
+    my $sth = $Para::dbh->prepare_cached( $st );
+    $sth->execute( $now_str, $Para::Frame::U->id, $m->{'passwd'}, $new, $mid );
+
+    $m->{'passwd_updated'} = $now;
+    $m->{'passwd_changedby'} = $Para::Frame::U->id;
+    $m->{'passwd_previous'} = $m->{'passwd'};
+    $m->{'passwd'} = $new;
+
+    $m->set_dbm_passwd;
+
+    if( $mid == $Para::Frame::U->id )
+    {
+	# Update cookie for new password
+	#
+	$Para::cookie = $Para::query->cookie( -name  => 'passwd',
+					    -value => $Para::query->param('passwd'),
+					    -path  => '/',
+					    );
+    }
+
+    return $m->change->success("Nytt lösenord lagrat");
+}
+
+
+##################################################
+
+sub id       { shift->{'member'} }
+sub member   { shift->{'member'} } # Compatible mode
+sub uid      { shift->{'member'} } # Used by Para::Frame::User
+
+
+sub presentation   { shift->{'presentation'} } # Compatible mode?
+
+sub sys_uid   { shift->{'sys_uid'} }
+sub set_sys_uid
+{
+    my( $m, $nick ) = @_;
+
+    $nick ||= $m->_nickname;
+    my $sys_uid = name2nick($nick);
+    unless( $m->has_nick( $sys_uid ) )
+    {
+	return $m->change->fail("Namnet '$nick' liknar inte något av dina alias\n");
+    }
+
+
+    my $st = "update member set sys_uid=? where member=?";
+    my $sth = $Para::dbh->prepare_cached( $st );
+    $sth->execute( $sys_uid, $m->id );
+    $m->{'sys_uid'} = $sys_uid;
+}
+
+sub present_contact   { shift->{'present_contact'} }
+sub present_contact_public { shift->{'present_contact_public'} }
+sub present_activity  { shift->{'present_activity'} }
+sub present_interests { shift->{'present_intrests'} }
+sub present_gifts { shift->{'present_gifts'} }
+
+sub topic
+{
+    my $tid =  shift->{'member_topic'};
+    return undef unless $tid;
+
+    return Para::Topic->new( $tid );
+}
+
+
+
+sub interests
+{
+    my( $member ) = @_;
+
+    unless( $member->{'interests'} )
+    {
+	$member->{'interests'} = Para::Interests->new( $member );
+    }
+    return $member->{'interests'};
+}
+
+sub interest
+{
+    my( $m, $t ) = @_;
+
+    warn "Getting the interest $t for $m\n";
+
+    # Use already loaded intrest, if found:
+    if( $m->{'interests'} )
+    {
+	return $m->{'interests'}->get_interest( $t );
+    }
+    else
+    {
+	return Para::Interest->get( $m, $t );
+    }
+}
+
+sub title
+{
+    my( $m, $publ, $verbose ) = @_;
+
+    # publ has the same rules as other
+    $verbose ||= 0;
+
+    unless( $Para::mtitle )
+    {
+	$Para::mtitle =
+	{
+	    -2 => ['zombie','zombie'],
+	    -1 => ['saknade','saknade'],
+	    0  => ['',''],
+	    1  => ['nykomling','nykomling'],
+	    11  => ['lärling','lärling'],
+	    40 => ['mäster','mäster'],
+	    41 => ['livbringare','livbringare'],
+	    42 => ['','skapare'],
+	};
+
+	for( 2..4 ){ $Para::mtitle->{$_} = ['novis','novis'] }
+	for( 5..10 ){ $Para::mtitle->{$_} = ['','medborgare'] }
+	for( 12..39 ){ $Para::mtitle->{$_} = ['gesäll','gesäll'] }
+    }
+
+    if( $m->present_interests >= 5 or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $Para::mtitle->{ $m->level }[ $verbose ];
+    }
+
+    return undef;
+}
+
+sub file
+{
+    my( $m ) = @_;
+
+    if( my $tid = $m->{'member_topic'} )
+    {
+	return Para::Topic->new( $tid )->file;
+    }
+
+    return undef;
+}
+
+sub link
+{
+    my( $m ) = @_;
+
+    if( my $file = $m->file )
+    {
+	return &Para::Frame::Widget::jump( $m->{'nickname'}, $m->file );
+    }
+    else
+    {
+	return &Para::Frame::Widget::jump( $m->{'nickname'}, '/member/db/person/view', { mid => $m->id } );
+    }
+}
+
+sub tlink  # Link to page with title. No link to adminpage
+{
+    my( $m ) = @_;
+
+    if( my $file = $m->file )
+    {
+	return &Para::Frame::Widget::jump( $m->title .' '. $m->{'nickname'}, $m->file );
+    }
+    else
+    {
+	return $m->title .' '. $m->{'nickname'};
+    }
+}
+
+sub geo_x
+{
+    my( $m ) = @_;
+    return $m->{'geo_x'};
+}
+
+sub geo_y()
+{
+    my( $m ) = @_;
+    return $m->{'geo_y'};
+}
+
+sub dist
+{
+    my( $m, $obj, $publ ) = @_;
+
+    my $DEBUG = 0;
+
+    unless( $m->present_contact >= 15 or ($publ and
+	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return undef;
+    }
+
+
+    warn "in dist m $m->{'geo_x'} n $obj->{'geo_x'}" if $DEBUG;
+    if( UNIVERSAL::isa( $obj, 'Para::Member') and
+	$m->{'geo_x'} and $obj->{'geo_x'})
+    {
+	my $scale = 70.86666666666; # km
+
+	my $x = $m->{'geo_x'};
+	warn "x: $x\n" if $DEBUG;
+	my $xdp = $x - $obj->{'geo_x'};
+	warn "xdp: $xdp\n" if $DEBUG;
+	my $xd = $xdp * $scale;
+	warn "xd: $xd\n" if $DEBUG;
+
+	my $y = $m->{'geo_y'};
+	warn "y: $y\n" if $DEBUG;
+	my $ydp = $y - $obj->{'geo_y'};
+	warn "ydp: $ydp\n" if $DEBUG;
+	my $yd = $ydp * $scale;
+	warn "yd: $yd\n" if $DEBUG;
+
+
+	my $dist = sqrt($xd ** 2 + $yd ** 2);
+	$dist =~ tr/,/./;
+	warn "dist is $dist\n" if $DEBUG;
+	$dist = sprintf("%.1f", $dist);
+	warn "dist is $dist\n" if $DEBUG;
+	return $dist;
+
+
+
+# 	use Math::BigFloat;
+# 	my $scale = 70.86666666666; # km
+#
+# 	my $x = Math::BigFloat->new( $m->{'geo_x'} );
+# 	warn "x: $x\n" if $DEBUG;
+# 	my $xdp = $x->fsub( $obj->{'geo_x'} );
+# 	warn "xdp: $xdp\n" if $DEBUG;
+# 	my $xd = $xdp * $scale;
+# 	warn "xd: $xd\n" if $DEBUG;
+#
+# 	my $y = Math::BigFloat->new( $m->{'geo_y'} );
+# 	warn "y: $y\n" if $DEBUG;
+# 	my $ydp = $y->fsub( $obj->{'geo_y'} );
+# 	warn "ydp: $ydp\n" if $DEBUG;
+# 	my $yd = $ydp * $scale;
+# 	warn "yd: $yd\n" if $DEBUG;
+#
+#
+# 	my $dist = sqrt($xd ** 2 + $yd ** 2);
+# 	$dist =~ tr/,/./;
+# 	warn "dist is $dist\n" if $DEBUG;
+# 	$dist = Math::BigFloat->new($dist)->ffround(-3);
+# 	warn "dist is $dist\n" if $DEBUG;
+# 	return $dist;
+    }
+
+    return undef;
+}
+
+sub comment
+{
+    if( $Para::Frame::U->level >= 41 )
+    {
+	return shift->{'member_comment_admin'};
+    }
+    return "";
+}
+
+sub equals
+{
+    my( $m, $m2 ) = @_;
+
+    return 0 unless ref $m2;
+    if( $m->id == $m2->id )
+    {
+	return 1;
+    }
+    else
+    {
+	return 0;
+    }
+}
+
+sub desig
+{
+    my( $m, $publ ) = @_;
+    # Set publ true if this will be given to the public
+
+    return $m->name( $publ ) || $m->nickname( $publ );
+}
+
+sub name
+{
+    my( $m, $publ ) = @_;
+    # Set publ true if this will be given to the public
+
+    if( (not $publ and $m->present_contact >= 12) or ($publ and
+	    $m->present_contact_public >= 11) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	my $first = $m->{name_given} || '';
+	my $middle = $m->{name_middle} || '';
+	my $last = $m->{name_family} || '';
+	return undef unless length($first.$last);
+	my $name = join ' ', $first, $middle, $last;
+	$name =~ s/  +/ /g;
+	return $name;
+    }
+
+    return undef;
+}
+
+sub name_given
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 12) or ($publ and
+	    $m->present_contact_public >= 12) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{name_given};
+    }
+
+    return undef;
+}
+
+sub name_middle
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 12) or ($publ and
+	    $m->present_contact_public >= 12) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{name_middle};
+    }
+
+    return undef;
+}
+
+sub name_family
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 12) or ($publ and
+	    $m->present_contact_public >= 12) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{name_family};
+    }
+
+    return undef;
+}
+
+sub age
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 5) or ($publ and
+	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return undef unless $m->{'bdate_ymd_year'};
+	return localtime->year - $m->{'bdate_ymd_year'};
+    }
+    return undef;
+}
+
+sub gender
+{
+    my( $m, $publ ) = @_;
+
+    # M or F
+
+    if( (not $publ and $m->present_contact >= 5) or ($publ and
+	    $m->present_contact_public >= 5) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'gender'};
+    }
+    return undef;
+}
+
+sub city
+{
+    return shift->home_postal_city(@_);
+}
+
+sub home_postal_name
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 15) or ($publ and
+	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_postal_name'};
+    }
+
+    return undef;
+}
+
+sub home_postal_city
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 15) or ($publ and
+	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_postal_city'};
+    }
+
+    return undef;
+}
+
+sub home_postal_code
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 15) or ($publ and
+	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $_[0]->{'home_postal_code'};
+    }
+
+    return undef;
+}
+
+sub home_online_email
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 5 and $m->newsmail > 0)
+        or ($publ and $m->present_contact_public >= 5) or
+        $Para::Frame::U->level >= 41 or $m->equals( $Para::Frame::U ) )
+    {
+	return $_[0]->{'home_online_email'};
+    }
+
+    return undef;
+}
+
+sub home_online_uri
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 5) or ($publ and
+        $m->present_contact_public >= 5) or $Para::Frame::U->level >= 41 or
+        $m->equals( $Para::Frame::U ) )
+    {
+	return $_[0]->{'home_online_uri'};
+    }
+
+    return undef;
+}
+
+sub home_online_icq
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 5) or ($publ and
+	$m->present_contact_public >= 5) or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_online_icq'};
+    }
+
+    return undef;
+}
+
+sub home_online_msn
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 5) or ($publ and
+	$m->present_contact_public >= 5) or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_online_msn'};
+    }
+
+    return undef;
+}
+
+sub general_belief
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_belief'};
+    }
+    return undef;
+}
+
+sub general_theory
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_theory'};
+    }
+    return undef;
+}
+
+sub general_practice
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_practice'};
+    }
+    return undef;
+}
+
+sub general_editor
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_editor'};
+    }
+    return undef;
+}
+
+sub general_helper
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_helper'};
+    }
+    return undef;
+}
+
+sub general_meeter
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_meeter'};
+    }
+    return undef;
+}
+
+sub general_bookmark
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_bookmark'};
+    }
+    return undef;
+}
+
+sub general_discussion
+{
+    my( $m ) = @_;
+    if( $m->present_interests >= 10  or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'general_discussion'};
+    }
+    return undef;
+}
+
+sub newsmail
+{
+    my( $m ) = @_;
+    return $m->{'newsmail'};
+}
+
+sub mailbox
+{
+    my( $m ) = @_;
+
+    unless( $m->{'mailbox'} )
+    {
+	$m->{'mailbox'} = Para::Mailbox->new( $m );
+    }
+    return $m->{'mailbox'};
+}
+
+sub nicks
+{
+    my( $m ) = @_;
+
+    unless( $m->{'nicks'} )
+    {
+	my $recs = $Para::dbix->select_list('from nick where nick_member=? order by uid', $m->id);
+	my @nicks;
+	foreach my $rec ( @$recs )
+	{
+	    push @nicks, $rec->{'uid'};
+	}
+	$m->{'nicks'} =  \@nicks;
+    }
+    return $m->{'nicks'};
+}
+
+sub add_nick
+{
+    my( $m, $nick, $override ) = @_;
+
+    trim_name(\$nick);
+    my $uid = name2nick($nick);
+    Para::Member->validate_nick( $uid );
+
+    my $st = "insert into nick
+              ( uid, nick_member, nick_created )
+              values ( ?, ?, now() )";
+    my $sth = $Para::dbh->prepare_cached( $st );
+    $sth->execute($uid, $m->id);
+
+    $m->{'nicks'} = undef;
+
+    $m->update_topic_aliases;
+    $m->update_mail_forward;
+}
+
+sub has_nick
+{
+    my( $m, $nick ) = @_;
+
+    $nick = name2nick($nick);
+
+  MYNICK: # Is $nick an nick for $m ?
+  {
+      foreach my $enick ( @{$m->nicks} )
+      {
+	  if( $nick eq $enick )
+	  {
+	      last MYNICK;
+	  }
+      }
+      return 0;
+  }
+    return 1;
+}
+
+sub validate_nick
+{
+    my( $this, $nick, $override ) = @_;
+
+    trim_name(\$nick);
+    my $uid = name2nick($nick);
+
+    if( $uid =~ /guest|admin|sysadm|root|master|skapelse|system|vaktare|guard|member|-bot|visit|temp|test|spam|skugga|ghost|serv|list|mail/ )
+    {
+	throw('validation', "Det här namnet är reserverat. Välj ett annat\n");
+    }
+
+    if( $uid =~ /^(ekoby|sgfb|irc|help)/ )
+    {
+	throw('validation', "Det här namnet är reserverat. Välj ett annat\n");
+    }
+
+    if( $uid =~ /^(mig|red|www-data|info|sales|gifts|pengar|money|shop|ekonomi|devel)$/ )
+    {
+	throw('validation', "Det här namnet är reserverat. Välj ett annat\n");
+    }
+
+    if( $uid =~ /^\d+$/ )
+    {
+	throw('validation', "Ett namn får inte bestå enbart av siffror. Välj ett annat\n");
+    }
+
+    if( $uid =~ /^\w\d+/ )
+    {
+	throw('validation', "Ett namn får inte bestå av en ensam bokstav följt av siffror. Välj ett annat\n");
+    }
+
+    if( length($uid) < 3 and not $override )
+    {
+	throw('validation', "Namnet måste vara minst 3 tecken\n");
+    }
+
+    my $topics = Para::Topic->find( $uid );
+    my $person = Para::Topic->new( T_PERSON );
+    warn "  Look for existing topic\n";
+    foreach my $t ( @$topics )
+    {
+	warn sprintf "  Are %s a person?\n", $t->desig;
+	if( $Para::Frame::U->level < 41 and  $t->has_rel( 1, $person ) )
+	{
+	    throw('validation', "Det finns en person i uppslagsverket med detta namn.\nOm detta verkligen är ditt namn, hör av dig till red\@paranormal.se\n");
+	}
+    }
+
+    return 1;
+}
+
+sub mailaliases
+{
+    my( $m ) = @_;
+
+    my $ma = $m->{'mailaliases'} ||= [];
+
+    unless( @$ma )
+    {
+	#Start the list with the system email
+	my $sys_email = $m->sys_email;
+	push @$ma, $sys_email;
+
+	my $recs = $Para::dbix->select_list('from mailalias where mailalias_member=? order by mailalias', $m->id);
+	foreach my $rec ( @$recs )
+	{
+	    my $email = Para::Member::Email->new( $m, $rec->{mailalias}, $rec );
+	    push @$ma, $email unless $email->equals($sys_email);
+	}
+    }
+
+    return wantarray ? @$ma : $ma;
+}
+
+sub set_mailaliases
+{
+    my( $m, $alist ) = @_;
+
+    my $new = {};
+    my $add = [];
+    my $del = [];
+
+    warn "Update mailalias list\n";
+    foreach my $row ( @$alist )
+    {
+	trim(\$row); next unless length($row);
+	my( $addro ) = Para::Email::Address->parse( $row ) or next;
+	my $addr = $addro->format;
+
+	$new->{$addr} ++;
+	warn "\t$addr\n";
+    }
+    $new->{$m->sys_email->format} ++; # In case it's not present
+
+    warn "Old aliases\n";
+    foreach my $old_alias ( $m->mailaliases )
+    {
+	unless( delete $new->{$old_alias->as_string} )
+	{
+	    warn "\t$old_alias\n";
+	    push @$del, $old_alias->as_string;
+	}
+    }
+    @$add = keys %$new;
+
+    # Del things
+    warn "Remove\n";
+    foreach my $thing ( @$del )
+    {
+	warn "\t$thing\n";
+	$m->del_mailalias( $thing );
+    }
+
+    warn "Add\n";
+    # Add things
+    foreach my $thing ( @$add )
+    {
+	warn "\t$thing\n";
+	$m->add_mailalias( $thing );
+    }
+
+    return 1;
+}
+
+sub add_mailalias
+{
+    my( $m, $mailalias_in ) = @_;
+
+    my $mailalias = Para::Email::Address->parse( $mailalias_in );
+
+    # Check if already existing
+    foreach my $email ( $m->mailaliases )
+    {
+	return $email if $email->equals( $mailalias );
+    }
+
+    Para::Member::Email->add($m, $mailalias)
+	and return $m->change->success("Lade till $mailalias_in");
+    return 0;
+}
+
+sub del_mailalias
+{
+    my( $m, $mailalias_in ) = @_;
+
+    my $mailalias = Para::Email::Address->parse( $mailalias_in );
+
+    # Check if alias in list
+    return 0 unless grep {$_->equals($mailalias)} $m->mailaliases;
+
+    $mailalias->delete and
+	return $m->change->success("Tog bort $mailalias");
+    return 0;
+}
+
+sub set_home_online_msn
+{
+    my( $m, $email ) = @_;
+    return unless defined $email;
+    trim(\$email);
+    return if $email eq ($m->{home_online_msn}||'');
+    if( length $email )
+    {
+	$email = $m->validate_email( $email ) or return undef;
+    }
+
+    $m->store_db_field({ home_online_msn => $email });
+    return $m->change->success("Ändrade home_online_msn till '$email'");
+}
+
+sub sys_email
+{
+    my( $m ) = @_;
+
+    return undef unless $m->{'sys_email'};
+    return $m->{'sys_email_obj'} ||= Para::Member::Email->new( $m, $m->{'sys_email'} );
+}
+
+sub set_sys_email
+{
+    my( $m, $ea_str ) = @_; #ea == email_address
+    die unless defined $ea_str;
+
+    trim(\$ea_str);
+    unless( length $ea_str )
+    {
+	return $m->change->fail("Du måste ha en e-postadress!");
+    }
+
+    my $ea = Para::Email::Address->parse( $ea_str );
+
+    return $m->sys_email if $m->sys_email and
+	$m->sys_email->equals( $ea );
+
+    $ea->validate( $m ) or return undef;
+
+    eval
+    {
+	$m->store_db_field({ sys_email => $ea->as_string });
+	$m->add_mailalias($ea);
+	$m->update_mail_forward;
+    };
+    if( $@ )
+    {
+	warn "Error: $@";
+	if( $Para::dbh->errstr and $Para::dbh->errstr =~ /duplicate key/ )
+	{
+	    if( $Para::dbh->errstr =~ /member_sys_email_key/ )
+	    {
+		throw('validation', "E-postadressen '$ea_str' är knuten till en annan medlem\n");
+	    }
+	    if( $Para::dbh->errstr =~ /mailalias_pkey/ )
+	    {
+		throw('validation', "E-postadressen '$ea_str' är knuten till en annan medlems alternativa e-postadresser\n");
+	    }
+	}
+	die $@;
+    }
+
+    return $m->change->success("Ändrade primär e-postadress till '$ea_str'");
+}
+
+sub set_bdate_ymd_year
+{
+    my( $m, $year ) = @_;
+    return unless defined $year;
+    trim(\$year);
+    return if $year eq ($m->{bdate_ymd_year}||'');
+    if( length $year )
+    {
+	if( $year =~ /^\d\d$/ )
+	{
+	    $year += 1900;
+	    if( $year < 1970 )
+	    {
+		return $m->change->fail("Ange ditt födelseår med 4 siffror");
+	    }
+	}
+	elsif( $year !~ /^(19|20)\d\d$/ )
+	{
+	    return $m->change->fail("Födelseår har felaktigt format");
+	}
+
+	if( localtime->year < $year + 6 )
+	{
+	    return $m->change->fail("Du är för ung för att vara här");
+	}
+    }
+    $m->store_db_field({ bdate_ymd_year => $year });
+    return $m->change->success("Ändrade födelseår till '$year'");
+}
+
+sub set_member_level { shift->level(@_) }
+sub level
+{
+    my( $m, $level, $u ) = @_;
+    if( defined $level )
+    {
+	$u ||= $Para::Frame::U;
+	return $level if $level == $m->{'member_level'};
+
+	unless( $u->level > 40 )
+	{
+	    throw("Nej, så får du inte göra!");
+	}
+
+	if( $level < -2 or $level > 40 )
+	{
+	    return $m->change->fail("Level out of range");
+	}
+
+	$m->store_db_field({ member_level => $level });
+	$m->create_topic;
+
+	return $m->change->success("Ändrade nivån till $level");
+    }
+    return $m->{'member_level'};
+}
+
+sub create_topic
+{
+    my( $m ) = @_;
+
+    return if $m->topic;
+    return if $m->level < 6;
+    return if $m->present_contact_public < 5;
+
+    my $t = Para::Topic->create( $m->_nickname );
+    $m->store_db_field({ 'member_topic' => $t->id });
+
+    $m->update_topic_aliases;
+    $m->update_topic_member;
+    $m->topic->mark_publish_now;
+
+    return $t;
+}
+
+sub update_topic_member
+{
+    my( $m ) = @_;
+
+    my $t = $m->topic;
+    return unless $t;
+
+    my @mglist = (406499, 396665, 396675, 396717, 396608, 396728);
+    my $mg;
+
+    my $level = $m->level;
+    if( $level  >  4 ){ $mg = 406499 } # medborgare
+    if( $level == 11 ){ $mg = 396665 } # lärling
+    if( $level  > 11 ){ $mg = 396675 } # gesäll
+    if( $level == 40 ){ $mg = 396717 } # mästare
+    if( $level == 41 ){ $mg = 396608 } # livbringare
+    if( $level == 42 ){ $mg = 396728 } # skapare
+
+    $mg = 0 if $m->id == -1;
+
+    foreach my $tid ( @mglist )
+    {
+	if( $tid == $mg )
+	{
+	    Para::Arc->create( 1,
+			      $t,
+			      $tid,
+			      {
+				  active => 1,
+			      },
+			      );
+	}
+	else
+	{
+	    if( my $arc = $t->arc({pred=>1, obj=>$tid}) )
+	    {
+		$arc->remove;
+	    }
+	}
+    }
+    
+}
+
+sub status { shift->new_status(1) }
+sub new_status
+{
+    my( $m, $final ) = @_;
+    my $level = $m->level;
+
+    return S_PROPOSED if $level < 5;
+    return S_PENDING if $level < 12;
+    return S_NORMAL if $level < 40;
+    return $final ? S_FINAL : S_NORMAL; ### Only make final explicitly
+}
+
+
+sub set_gender
+{
+    my( $m, $gender ) = @_;
+
+    return unless defined $gender;
+    trim(\$gender);
+    return if $gender eq ($m->{'gender'}||'');
+    if( length $gender )
+    {
+	$gender = uc($gender);
+	if( $gender !~ m/^[MF]?$/ )
+	{
+	    return $m->change->fail("Använd M/F");
+	}
+    }
+    $m->store_db_field({ gender => $gender });
+    return $m->change->success("Könsbyte genomfört utan komplikationer");
+}
+
+sub set_name_given
+{
+    my( $m, $fn ) = @_;
+    return unless defined $fn;
+    trim(\$fn);
+    return if $fn eq ($m->{'name_given'}||'');
+    if( length $fn )
+    {
+	if( $fn =~ m/\s/ )
+	{
+	    return $m->change->fail("Du får bara ange ett förnamn");
+	}
+    }
+    $m->store_db_field({ name_given => $fn });
+    $m->update_topic_aliases;
+    if( length( $fn ) )
+    {
+	my $comment = "";
+	if( $m->id == $Para::Frame::U->id )
+	{
+	    $comment = ".  Hej \U$fn";
+	}
+	return $m->change->success("Förnamn ändrat till $fn");
+    }
+    else
+    {
+	return $m->change->success("Förnamn raderat");
+    }
+}
+
+sub set_name_family
+{
+    my $m = shift;
+    $m->set_field('name_family', @_);
+    $m->update_topic_aliases;
+}
+
+sub set_name_middle
+{
+    my $m = shift;
+    $m->set_field('name_middle', @_);
+    $m->update_topic_aliases;
+}
+
+sub set_present_contact_public
+{
+    my( $m, $value ) = @_;
+
+    if( $value > $m->present_contact )
+    {
+	throw('validation', "Det makar ingen sense att visa mindre för medlemmar än resten av världen!!!");
+    }
+    $m->set_field_number('present_contact_public', $value);
+    $m->topic and $m->topic->generate_url;
+}
+
+sub set_present_contact
+{
+    my( $m, $value ) = @_;
+    $m->set_field_number('present_contact', $value);
+}
+
+sub set_home_postal_code
+{
+    my( $m, $zip ) = @_;
+    return unless defined $zip;
+    trim(\$zip);
+    return if $zip eq ($m->{'home_postal_code'}||'');
+    if( length $zip )
+    {
+	$zip =~ m/^([A-Z]+-)?([\d ]+)$/;
+	my $prefix = $1 || 'S-';
+	my $number = $2 || '';
+	$number =~ s/ //g;
+
+	if( $prefix eq 'S-' )
+	{
+	    unless( length $number == 5 )
+	    {
+		return $m->change->fail("Postnummret måste ha 5 siffror");
+	    }
+	    if( $number =~ /^...00/ )
+	    {
+		return $m->change->fail("Det där ser inte ut som ett riktigt postnummer\n".
+					"Det är okej att lämna fältet tomt");
+	    }
+	}
+
+	$zip = $prefix . $number;
+    }
+
+    $m->store_db_field({ home_postal_code => $zip });
+    $m->zip2city;
+
+    if( my $city = $m->home_postal_city )
+    {
+	return $m->change->success("Postnummer ändrat. Jag gissar att du bor i $city");
+    }
+    else
+    {
+	return $m->change->success("Postnummer ändrat. Fortsätt medan jag slår upp din ort...");
+    }
+}
+
+sub phone
+{
+    my( $m, $publ ) = @_;
+
+    warn "  Getting home_tele_phone\n";
+
+    if( (not $publ and $m->present_contact >= 20) or ($publ and
+        $m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
+        $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_tele_phone'};
+    }
+
+    return undef;
+}
+
+sub phone_comment
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 20) or ($publ and
+        $m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
+        $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_tele_phone_comment'};
+    }
+
+    return undef;
+}
+
+sub mobile
+{
+    my( $m, $publ ) = @_;
+
+    warn "  Getting home_tele_mobile\n";
+
+    if( (not $publ and $m->present_contact >= 20) or ($publ and
+        $m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
+        $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_tele_mobile'};
+    }
+
+    return undef;
+}
+
+sub mobile_comment
+{
+    my( $m, $publ ) = @_;
+
+    if( ( not $publ and $m->present_contact >= 20) or ($publ and
+	$m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_tele_mobile_comment'};
+    }
+
+    return undef;
+}
+
+sub set_home_tele_phone
+{
+    my( $m, $phone ) = @_;
+    return unless defined $phone;
+    trim(\$phone);
+    return if $phone eq ($m->{'home_tele_phone'}||'');
+    if( length $phone )
+    {
+	$phone = $m->validate_phone( $phone ) or return undef;
+    }
+    $m->store_db_field({ home_tele_phone => $phone });
+    return $m->change->success("Hemtelefonnummer ändrat till '$phone'");
+}
+
+sub set_home_tele_mobile
+{
+    my( $m, $phone ) = @_;
+    return unless defined $phone;
+    trim(\$phone);
+    return if $phone eq ($m->{'home_tele_mobile'}||'');
+    if( length $phone )
+    {
+	$phone = $m->validate_phone( $phone ) or return undef;
+    }
+    $m->store_db_field({ home_tele_mobile => $phone });
+    return $m->change->success("Mobilnummer ändrat till '$phone'");
+}
+
+sub set_home_tele_fax
+{
+    my( $m, $phone ) = @_;
+    return unless defined $phone;
+    trim(\$phone);
+    return if $phone eq ($m->{'home_tele_fax'}||'');
+    if( length $phone )
+    {
+	$phone = $m->validate_phone( $phone ) or return undef;
+    }
+    $m->store_db_field({ home_tele_fax => $phone });
+    return $m->change->success("Fax ändrat till '$phone'");
+}
+
+sub set_home_online_uri
+{
+    my( $m, $uri ) = @_;
+    return unless defined $uri;
+    trim(\$uri);
+    return if $uri eq ($m->{'home_online_uri'}||'');
+    if( length $uri )
+    {
+	$uri = $m->validate_uri( $uri ) or return undef;
+    }
+    $m->store_db_field({ home_online_uri => $uri });
+    return $m->change->success("Webbplats ändrad till '$uri'");
+}
+
+
+sub username { shift->{'nickname'} }  # Used by Para::Frame::User
+sub _nickname { shift->{'nickname'} } # Internal method
+sub nickname
+{
+    my( $m, $publ ) = @_;
+    # Set publ true if this will be given to the public
+
+    if( (not $publ and $m->present_contact >= 2) or ($publ and
+	    $m->present_contact_public >= 2) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'nickname'};
+    }
+    else
+    {
+	return undef;
+    }
+}
+sub set_nickname
+{
+    my( $m, $nickname ) = @_;
+    return unless defined $nickname;
+
+    trim_name(\$nickname);
+    return if $nickname eq ($m->_nickname||'');
+
+    # NOT NULL
+    length $nickname or
+	return $m->change->fail("Du måste ha ett namn\n");
+
+    my $uid = name2nick($nickname);
+
+    # TODO: use $m->has_nick($uid)
+
+  TEST:
+    {
+	foreach my $nick ( @{$m->nicks} )
+	{
+	    last TEST if $nick eq $uid;
+	}
+
+	if( $Para::Frame::U->level > 40 )
+	{
+	    $m->add_nick( $uid, 1 );
+	}
+	else
+	{
+	    return $m->change->fail("Namnet '$nickname' liknar inte något av dina alias\n");
+	}
+    }
+
+    if( $nickname eq $m->_nickname )
+    {
+	return 1; # No change
+    }
+
+
+    # TODO: chatnick for every nick
+    my $chat_nick = name2chat_nick($nickname);
+
+    $m->store_db_field({ nickname  => $nickname,
+			 chat_nick => $chat_nick,
+		     });
+    $m->update_topic_aliases;
+    return $m->change->success( "Ändrade alias till $nickname\n" );
+}
+
+sub chatnick
+{
+    my( $m ) = @_;
+
+    return $m->{'chat_nick'};
+}
+
+sub chat_level
+{
+    my( $m ) = @_;
+
+    ## See C_... in Constants
+    return $m->{'chat_level'};
+}
+
+sub latest_in
+{
+    my( $m, $time ) = @_;
+
+    if( $time )
+    {
+	$time = Para::Frame::Time->get( $time );
+	my $st = "update member set latest_in=? where member=?";
+	my $sth = $Para::dbh->prepare_cached($st);
+	$sth->execute( $time->cdate, $m->id );
+	$m->{'latest_in'} = $time->epoch;
+    }
+
+    my $latest_in = $m->{'latest_in'};
+    if( not $latest_in and $m->equals($Para::Frame::U) )
+    {
+	$latest_in = time;
+    }
+
+    return Para::Frame::Time->get( $latest_in );
+}
+
+sub latest_out
+{
+    my( $m, $time ) = @_;
+
+    if( $time )
+    {
+	$time = Para::Frame::Time->get( $time );
+	my $st = "update member set latest_out=? where member=?";
+	my $sth = $Para::dbh->prepare_cached($st);
+	$sth->execute( $time->cdate, $m->id );
+	$m->{'latest_out'} = $time->epoch;
+    }
+
+    return Para::Frame::Time->get( $m->{'latest_out'} || $m->latest_in );
+}
+
+sub created
+{
+    my( $m ) = @_;
+    return Para::Frame::Time->get( $m->{'member_created'} );
+}
+
+sub updated
+{
+    my( $m ) = @_;
+    return Para::Frame::Time->get( $m->{'member_updated'} );
+}
+
+sub payment_expire
+{
+    my( $m ) = @_;
+    return Para::Frame::Time->get( $m->{'member_payment_period_expire'} );
+}
+
+sub payment_active
+{
+    my( $m ) = @_;
+    my $expire = $m->payment_expire or return 0;
+    return 0 if localtime > $expire;
+    return 1;
+}
+
+sub payment_period_length
+{
+    my( $m ) = @_;
+    return $m->{'member_payment_period_length'};
+}
+
+sub payment_period_cost
+{
+    my( $m ) = @_;
+    return $m->{'member_payment_period_cost'};
+}
+
+sub payment_level
+{
+    my( $m ) = @_;
+    return $m->{'member_payment_level'};
+}
+
+sub payment_total
+{
+    my( $m ) = @_;
+    return $m->{'member_payment_total'};
+}
+
+sub payment_rate
+{
+    my( $m ) = @_;
+    return sprintf('%.2f', $m->{'member_payment_period_cost'} * (ONE_MONTH/ONE_DAY) / $m->{'member_payment_period_length'} );
+}
+
+sub payment_total_rate
+{
+    my( $m ) = @_;
+    my $months = (localtime->epoch - $m->created->epoch) / ONE_MONTH;
+    return sprintf('%.2f', $m->{'member_payment_total'} / $months );
+}
+
+sub payments
+{
+    my( $m ) = @_;
+
+#    warn "in payments";
+    if( $Para::Frame::U->level >= 41 or $m->equals( $Para::Frame::U ) or
+	$m->present_gifts >= 30  )
+    {
+	my $recs = $Para::dbix->select_list('from payment where payment_member=? and payment_completed is true order by payment_date', $m->id);
+#	warn Dumper $recs;
+	my @payments = map Para::Payment->new($_), @$recs;
+	return wantarray ? @payments : \@payments;
+    }
+
+    throw('denied', "Hemliga uppgifter");
+}
+
+sub update_mail_forward
+{
+    my( $m ) = @_;
+
+    ### NB! changes are made even if the action results in a rollback
+
+    warn sprintf "Update_mail_forward for %s\n", $m->nickname;
+
+    my $mid = $m->id;
+    my $address = $m->sys_email;
+    my $sys_uid = $m->sys_uid || '';
+    my $nicks = $m->nicks;
+
+    # Special handling for local e-mail
+    #
+    if( $address =~ /^(.*?)\@paranormal\.se$/ )
+    {
+	$address = $1;
+
+	$sys_uid or return $m->change->fail("Du har inte en postlåda här\n");
+
+	unless( $m->has_nick( $address ) )
+	{
+	    return $m->change->fail("Du kan inte skicka posten ".
+				    "till någon annan\n");
+	}
+
+	$address = $sys_uid; # Send to actual mailbox, not an alias
+    }
+
+    # Forward mail if citizen or having a mailbox
+    if( $m->level >= 5 or $m->sys_uid )
+    {
+	foreach my $nick ( @{$nicks} )
+	{
+	    $m->set_dbm_alias( $nick, $address );
+	}
+    }
+    else
+    {
+	foreach my $nick ( @{$nicks} )
+	{
+	    $m->unset_dbm_alias( $nick );
+	}
+    }
+
+    return 1;
+}
+
+sub update_topic_aliases
+{
+    my( $m ) = @_;
+
+    my $t = $m->topic;
+    return 0 unless $t;
+
+    my %al;
+
+    my $ng = trim_name( $m->name_given  );
+    my @nm = split /\s/, trim_name( $m->name_middle );
+    my $nf = trim_name( $m->name_family );
+    my $ngi = substr trim_name( $m->name_given  ),0,1;
+    my @nmi = map substr($_, 0, 1), @nm;
+    my $nfi = substr trim_name( $m->name_family ),0,1;
+
+    if( $ng and $nf )
+    {
+	$al{ lc trim_name("$ng $nf") }               = [1,0];
+	$al{ lc trim_name("$ng @nm $nf") }           = [1,1];
+	$al{ lc trim_name("$ngi $nfi") }             = [0,0];
+	$al{ lc trim_name("$ngi$nfi") }              = [0,0];
+	$al{ lc trim_name($ngi.join('',@nmi).$nfi) } = [0,0];
+	$al{ lc trim_name("$ngi @nmi $nfi") }        = [0,0];
+	$al{ lc trim_name("$ng $nfi") }              = [0,0];
+	$al{ lc trim_name("$ng @nmi $nfi") }         = [0,0];
+
+	$al{ lc trim_name("$ngi $nf") }              = [0,0];
+	$al{ lc trim_name("$ngi @nmi $nf") }         = [0,0];
+	$al{ lc trim_name("$nf, $ng") }              = [1,0];
+	$al{ lc trim_name("$nf, $ng @nmi") }         = [1,0];
+	$al{ lc trim_name("$nf, $ng @nm") }          = [1,1];
+	$al{ lc trim_name("$nf, $ngi") }             = [0,0];
+	$al{ lc trim_name("$nf, $ngi @nmi") }        = [1,0];
+    }
+    if( $ng )
+    {
+	$al{ lc trim_name("$ng") }        = [0,0];
+    }
+    if( $nf )
+    {
+	$al{ lc trim_name("$nf") }        = [0,0];
+    }
+
+    foreach my $nick (@{ $m->nicks })
+    {
+	$al{lc $nick}                     = [0,1];
+    }
+
+    $al{lc $m->_nickname}                 = [0,1];
+    $al{lc $m->chatnick}                  = [0,1];
+
+    foreach my $alias ( keys %al )
+    {
+	next unless length $alias;
+	unless( $t->has_alias( $alias ) )
+	{
+	    $t->add_alias( $alias,
+			   {
+			       'autolink' => $al{$alias}[0],
+			       'index' => $al{$alias}[1],
+			   }
+			   );
+	}
+	
+    }
+}
+
+sub dbm_alias
+{
+    my( $m, $nick ) = @_;
+
+    $m->has_nick( $nick ) or
+      throw 'denied', sprintf "%s doesn't have the nick '%s'\n",
+	$m->_nickname, $nick;
+
+    my $db = paraframe_dbm_open( DB_ALIAS );
+    return $db->{ $nick };
+}
+
+sub set_dbm_alias
+{
+    my( $m, $nick, $address ) = @_;
+
+    $address ||= $m->sys_uid || $m->sys_email;
+    $nick or throw 'incomplete', "nick param missing";
+
+    my $db = paraframe_dbm_open( DB_ALIAS );
+    warn "Setting $nick forward to $address\n";
+    return $db->{ $nick } = $address;
+}
+
+sub unset_dbm_alias
+{
+    my( $m, $nick ) = @_;
+
+    $nick or throw 'incomplete', "nick param missing";
+
+    my $db = paraframe_dbm_open( DB_ALIAS );
+    warn "Removing $nick forward\n";
+    return delete $db->{ $nick };
+}
+
+sub dbm_passwd_check
+{
+    my( $m ) = @_;
+
+    my $db = paraframe_dbm_open( DB_PASSWD );
+    my $dbm_passwd = $db->{ $m->sys_uid };
+
+    if( $dbm_passwd eq $m->{'passwd'} )
+    {
+	return 1;
+    }
+    else
+    {
+	return 0;
+    }
+}
+
+sub dbm_passwd_exist
+{
+    my( $m ) = @_;
+
+    return 0 unless $m->sys_uid;
+    my $db = paraframe_dbm_open( DB_PASSWD );
+    my $dbm_passwd = $db->{ $m->sys_uid };
+    return length $dbm_passwd ? 1 : 0;
+}
+
+sub validate_phone
+{
+    my( $m, $phone ) = @_;
+
+    my $orig_phone = $phone;
+    $phone =~ s/\s*-\s*/-/g;
+    $phone =~ s/\s+/ /g;
+    $phone =~ s/\(\)//g;
+
+    my( $country, $number ) = $phone =~
+      m/^(\+\d{1,3} )?0?([\d\- ]+)$/
+	or return $m->change->fail("'$orig_phone' är inte en korrekt telefonnummer\n");
+    unless( $country )
+    {
+	$country = '+46 ';
+	$m->change->note("Jag antar att '$phone' är ett svenskt telefonnummer");
+    }
+    return $country . $number;
+}
+
+sub validate_uri
+{
+    my( $m, $url ) = @_;
+
+    my( $prot, $host, $port, $path ) = $url =~
+      m/^(?:(https?:)\/\/)?([\w\-\.]+)(:\d+)?(\/\S+)?/
+	or return $m->change->fail("URL '$url' har ett felaktigt format");
+    unless( $host =~ /\.\w{2,4}$/ )
+    {
+	return $m->change->fail("URL '$url' har ett felaktigt format");
+    }
+    $prot ||= 'http:';
+    $port ||= '';
+    $path ||= '/';
+    return "$prot//$host$port$path";
+}
+
+sub store_db_field
+{
+    my( $m, $props ) = @_;
+
+    my @keys = keys %$props; # Ensure ordering
+
+    # Make value undef if its set to ""
+    foreach my $field ( @keys )
+    {
+	$props->{$field} = undef unless length $props->{$field};
+    }
+
+    my $now = time;
+    my $now_str = localtime($now)->date;
+    my $st = "update member set member_updated=?, ".
+	join( ', ', map("$_=?", @keys)) .
+	" where member = ?";
+    my $sth = $Para::dbh->prepare_cached( $st );
+    warn "Member_db_update: $st (@{$props}{@keys})\n";
+#    die Dumper [@{$props}{@keys}];
+    $sth->execute( $now_str, @{$props}{@keys}, $m->id );
+
+    # DB changed. Now change object. REMEMBER change chached atributes
+    foreach my $field ( @keys )
+    {
+	$m->{$field} = $props->{$field};
+    }
+    $m->{'member_updated'} = $now;
+
+##    $Para::dbh->commit;
+}
+
+sub changes_reset
+{
+    my( $m ) = @_;
+
+    $m->{'changes'} = new Para::Change;
+}
+
+sub change { shift->{'changes'} }
+
+sub set
+{
+    my( $m, $field, @args ) = @_;
+
+    no strict qw( refs );
+    return &{"set_$field"}($m, @args);
+}
+
+sub set_field
+{
+    my( $m, $field, $value ) = @_;
+
+    return unless defined $value;
+    trim(\$value);
+    $m->{$field} ||= '';
+    return if $value eq $m->{$field};
+    $m->store_db_field({ $field => $value });
+    return $m->change->success("$field uppdaterad");
+}
+
+sub set_field_number
+{
+    my( $m, $field, $value ) = @_;
+
+    return unless defined $value;
+    trim(\$value);
+    return if $m->{$field} and $value eq $m->{$field};
+    if( length $value )
+    {
+	unless( $value =~ /^-?\d+$/ )
+	{
+	    return $m->change->fail("$field tillåter bara nummer");
+	}
+    }
+    $m->store_db_field({ $field => $value });
+    return $m->change->success("$field uppdaterad");
+}
+
+sub zip2city
+{
+    my( $m ) = @_;
+
+    my $zip = $m->home_postal_code;
+    my $prop = {};
+
+    if( $zip and $zip =~ s/^S-// )
+    {
+	warn "Fixing zip $zip\n";
+
+	my $sth = $Para::dbh->prepare_cached(
+	      "select * from zip, city where zip_city=city and zip=?") or die;
+	$sth->execute($zip) or die;
+	my $rec = $sth->fetchrow_hashref;
+	$sth->finish;
+
+	if( my $city_name = $rec->{'city_name'} )
+	{
+	    $city_name = undef if $zip eq '';
+	    warn "\tFound city $city_name\n";
+	    $prop->{'home_postal_city'} = $city_name;
+	}
+	else
+	{
+	    warn "\tRemoving city\n";
+	    $prop->{'home_postal_city'} = undef;
+	}
+
+	if( my $x = $rec->{'zip_x'} || $rec->{'city_x'} )
+	{
+	    my $y = $rec->{'zip_y'} || $rec->{'city_y'};
+
+	    warn "\tGot koordinates $x:$y\n";
+	    my $precision = $rec->{'zip_precision'} || $rec->{'city_precision'};
+
+	    $prop->{'geo_x'} = $x;
+	    $prop->{'geo_y'} = $y;
+	    $prop->{'geo_precision'} = $precision || 0;
+	}
+	else
+	{
+	    warn "\tRemoving koordinates\n";
+
+	    $prop->{'geo_x'} = undef;
+	    $prop->{'geo_y'} = undef;
+
+	    # Set geo precision to undef so that it will trigger a coord loading
+	    $prop->{'geo_precision'} = undef;
+	}
+    }
+    else
+    {
+	warn "\tRemoving koordinates and city\n";
+
+	$prop->{'home_postal_city'} = undef;
+	$prop->{'geo_x'} = undef;
+	$prop->{'geo_y'} = undef;
+	$prop->{'geo_precision'} = 0;
+    }
+
+    $m->store_db_field($prop);
+}
+
+sub set_dbm_passwd
+{
+    my( $m ) = @_;
+
+    my $passwd = $m->{'passwd'};
+    my $sys_uid = $m->sys_uid;
+    return unless $sys_uid;
+
+    my $db = paraframe_dbm_open( DB_PASSWD );
+
+    return $db->{ $sys_uid } = $passwd;
+}
+
+sub score_change
+{
+    my( $m, $field, $delta ) = @_;
+
+    my $mid = $m->id;
+    $delta ||= 1;
+
+    my $value = $m->score($field) + $delta;
+
+    my $statement = "update score set $field=? where score_member=?";
+    my $sth = $Para::dbh->prepare_cached( $statement );
+    $sth->execute( $value, $mid );
+    $m->{'score'}{$field} = $value;
+}
+
+sub score
+{
+    my( $m, $field ) = @_;
+
+    unless( $m->{'score'} )
+    {
+	my $rec = $Para::dbix->select_record("from score where score_member=?", $m->id);
+	$m->{'score'} = $rec;
+    }
+
+    return $m->{'score'}{$field};
+}
+
+sub total_time_online
+{
+    my( $m ) = @_;
+    if( $m->equals( $Para::Frame::U ) )
+    {
+	return Time::Seconds->new( time - $m->latest_in->epoch + $m->score('time_online') );
+    }
+    else
+    {
+	return $m->score('time_online');
+    }
+}
+
+sub visits
+{
+    return shift->score('logged_in');
+}
+
+sub mark_publish
+{
+    my( $m ) = @_;
+
+    if( my $t = $m->topic )
+    {
+	$t->mark_publish;
+    }
+}
+
+sub publish
+{
+    my( $m ) = @_;
+
+    if( my $t = $m->topic )
+    {
+	$t->publish;
+    }
+}
+
+sub vacuum
+{
+    my( $m ) = @_;
+
+    # Fix mailbox data
+    $m->update_mail_forward;
+    $m->set_dbm_passwd;
+
+    if( $m->sys_uid )
+    {
+	unless( $m->mailbox->exist )
+	{
+	    $m->mailbox->create;
+	}
+    }
+
+    $m->create_topic;
+
+    if( $m->topic )
+    {
+	$m->update_topic_aliases;
+	$m->update_topic_member;
+	$m->topic->vacuum;
+	$m->topic->mark_publish_now;
+    }
+
+    $m->reset_payment_stats;
+}
+
+sub reset_payment_stats
+{
+    my( $m ) = @_;
+
+    warn "$$: Resetting payment stats\n";
+
+    my $sth = $Para::dbh->prepare_cached("update member set
+               member_payment_period_length=?,
+               member_payment_period_expire=?,
+               member_payment_period_cost=0,
+               member_payment_total=0
+               where member=?");
+
+    my $period_length = 30;
+    my $expire = $m->created + ONE_DAY*7;
+
+    $sth->execute($period_length, $expire->cdate, $m->id );
+
+    $m->{'member_payment_period_length'} = 30;
+    $m->{'member_payment_period_expire'} = $expire->cdate;
+    $m->{'member_payment_period_cost'}   = 0;
+    $m->{'member_payment_total'}         = 0;
+
+    foreach my $p ( $m->payments )
+    {
+	warn sprintf "$$:   Readd payment %d\n", $p->id;
+	$p->add_to_member_stats;
+    }
+}
+
+
+sub remove
+{
+    my( $m, $reason ) = @_;
+
+    my $mid = $m->id;
+
+    if( $Para::Frame::U->level < 41 )
+    {
+	throw('denied', "Du har inte access för att ta bort någon");
+    }
+
+    if( $mid < 2 )
+    {
+	throw('denied', "Den här meta-medlemmen kan inte raderas");
+    }
+
+    if($m->payment_total)
+    {
+	throw('denied', "Den här medlemen är kopplad till bokföringen");
+    }
+
+    eval
+    {
+	# Don't bother about failed email
+	my $e = Para::Frame::Email->new;
+	$e->send_email({
+	    subject => "Medlemskap raderat",
+	    m => $m,
+	    template => 'member_remove.tt',
+	});
+    };
+    if( $@ )
+    {
+	warn sprintf("Error while e-mailing %s: %s\n", $m->nickname, $@);
+	$@ = undef;
+    }
+
+
+    $Para::dbh->do("delete from nick where nick_member = ?", undef, $mid);
+    $Para::dbh->do("delete from passwd where passwd_member = ?", undef, $mid);
+    $Para::dbh->do("delete from member where member = ?", undef, $mid);
+    $Para::dbh->do("delete from mailalias where mailalias_member = ?", undef, $mid);
+    $Para::dbh->do("delete from memberhost where memberhost_member = ?", undef, $mid);
+    $Para::dbh->do("delete from intrest where intrest_member = ?", undef, $mid);
+    $Para::dbh->do("delete from score where score_member = ?", undef, $mid);
+    $Para::dbh->do("update t set t_changedby=-2 where t_changedby = ?", undef, $mid);
+    $Para::dbh->do("update t set t_createdby=-2 where t_createdby = ?", undef, $mid);
+    $Para::dbh->do("update rel set rel_changedby=-2 where rel_changedby = ?", undef, $mid);
+    $Para::dbh->do("update rel set rel_createdby=-2 where rel_createdby = ?", undef, $mid);
+    $Para::dbh->do("update publ set publ_changedby=-2 where publ_changedby = ?", undef, $mid);
+    $Para::dbh->do("update publ set publ_createdby=-2 where publ_createdby = ?", undef, $mid);
+    $Para::dbh->do("update ts set ts_changedby=-2 where ts_changedby = ?", undef, $mid);
+    $Para::dbh->do("update ts set ts_createdby=-2 where ts_createdby = ?", undef, $mid);
+    $Para::dbh->do("update reltype set reltype_changedby=-2 where reltype_changedby = ?", undef, $mid);
+    $Para::dbh->do("update talias set talias_changedby=-2 where talias_changedby = ?", undef, $mid);
+    $Para::dbh->do("update talias set talias_createdby=-2 where talias_createdby = ?", undef, $mid);
+    $Para::dbh->do("update ipfilter set ipfilter_changedby=-2 where ipfilter_changedby = ?", undef, $mid);
+    $Para::dbh->do("update ipfilter set ipfilter_createdby=-2 where ipfilter_createdby = ?", undef, $mid);
+
+    if( my $t = $m->topic )
+    {
+	$t->delete_cascade;
+    }
+
+    $Para::dbh->commit;
+
+    # Sync with u
+    #
+    if( $mid == $Para::Frame::U->id )
+    {
+	$Para::Frame::U->authenticate_user();
+    }
+
+    return 1;
+}
+
+sub log_activity
+{
+    my( $m ) = @_;
+
+    # FIXME - use internal counter
+    die "not implemented";
+#    my $db = paraframe_dbm_open( DB_ONLINE );
+#    my $last = $db->{ $m->id } || 0;
+#    $db->{ $m->id } = time;
+#    return $last;
+}
+
+#################################################################
+
+sub by_name  ## LIST CONSTRUCTOR
+{
+    my( $class, $identity, $complete, $censor ) = @_;
+
+    my %recs;
+
+    trim( \$identity );
+    $identity = lc( $identity );
+    my $nick = name2nick( $identity );
+
+    my $found = 0;
+
+    if( $identity eq 'mig' )
+    {
+	$identity = $Para::Frame::U->id;
+    }
+
+    my $censor_part = "";
+    if( $censor and $Para::Frame::U->level < 41)
+    {
+	$censor_part .= " and present_contact > 1";
+	$censor_part .= " and member_level > 0";
+    }
+
+
+    if( $identity =~ m/\@/ )
+    {
+	my $recs2 = $Para::dbix->select_list("from member, mailalias where
+                          mailalias_member=member and
+                          lower(mailalias) = lower(?) $censor_part",
+			       $identity);
+
+	my $recs3 =  $Para::dbix->select_list("from member where
+                          lower(home_online_msn) = lower(?) $censor_part",
+			       $identity);
+
+	foreach my $rec ( @$recs2, @$recs3 )
+	{
+	    next unless $rec;
+	    $recs{$rec->{'member'}} = $rec;
+	    $found ++;
+	}
+    }
+    elsif( $identity =~ m/^\d+$/ )
+    {
+	if( my $rec = $Para::dbix->select_possible_record("from member where member=? $censor_part", $identity) )
+	{
+	    $recs{$rec->{'member'}} = $rec;
+	}
+	elsif( my $recs = $Para::dbix->select_list("from member where home_online_icq=? $censor_part", $identity) )
+	{
+	    foreach my $rec ( @$recs )
+	    {
+		$recs{$rec->{'member'}} = $rec;
+		$found ++;
+	    }
+	}
+	else
+	{
+	    warn "Ingen medlem har medlemsnumret $identity\n";
+#	    die ['notfound', "Ingen medlem har medlemsnumret $identity\n"];
+	    throw('notfound', "Ingen medlem har medlemsnumret eller ICQ $identity\n");
+	}
+    }
+    else
+    {
+	if( my $rec = $Para::dbix->select_possible_record("from member, nick where nick_member=member
+                                              and uid=? $censor_part", $nick) )
+	{
+	    $recs{$rec->{'member'}} = $rec;
+	    $found ++;
+	}
+
+	if( $complete or not $found )
+	{
+	    my( @names ) = split /\s+/, $identity;
+	    my @parts;
+	    my @data;
+
+	    foreach my $name ( @names )
+	    {
+		push @parts, "(lower(name_given)=? or lower(name_middle)=? or lower(name_family)=?)";
+		push @data, $name, $name, $name;
+	    }
+	    my $part = join " and ", @parts;
+	    warn "select * from member where $part (@data)\n";
+	    my $recs2 = $Para::dbix->select_list("from member where $part $censor_part", @data);
+	    foreach my $rec ( @$recs2 )
+	    {
+		$recs{$rec->{'member'}} = $rec;
+		$found++;
+	    }
+	}
+
+	if( $complete or not $found )
+	{
+	    my $recs2 = $Para::dbix->select_list("from member where lower(home_online_email) like ? $censor_part", "$identity%");
+	    foreach my $rec ( @$recs2 )
+	    {
+		next unless $rec->{'home_online_email'} =~ /^${identity}[^a-zA-Z]/;
+		$recs{$rec->{'member'}} = $rec;
+		$found ++;
+	    }
+	}
+
+	if( $complete or not $found )
+	{
+	    my $recs2 = $Para::dbix->select_list("from member, mailalias where mailalias_member=member and lower(mailalias) like ? $censor_part",
+                                    "$identity%");
+	    foreach my $rec ( @$recs2 )
+	    {
+#		warn "Checking $identity against $rec->{'mailalias'}\n";
+		next unless $rec->{'mailalias'} =~ /^${identity}[^a-zA-Z]/;
+#		warn "\tYes\n";
+		$recs{$rec->{'member'}} = $rec;
+		$found ++;
+	    }
+	}
+
+	if( $complete or not $found )
+	{
+	    my $recs2 = $Para::dbix->select_list("from member where lower(home_online_msn) like ? $censor_part", "$identity%");
+	    foreach my $rec ( @$recs2 )
+	    {
+		next unless $rec->{'home_online_msn'} =~ /^${identity}[^a-zA-Z]/;
+		$recs{$rec->{'member'}} = $rec;
+		$found ++;
+	    }
+	}
+
+    }
+
+    my @sorted = sort { lc($a->{'nickname'}) cmp lc($b->{'nickname'}) } values %recs;
+
+    my @objs;
+    foreach my $rec ( @sorted )
+    {
+	push @objs, Para::Member->get_by_id( $rec->{'member'}, $rec );
+    }
+
+    return \@objs;
+}
+
+sub count_currently_online
+{
+    # FIXME - use internal counter
+    # my $db = paraframe_dbm_open( DB_ONLINE );
+    # return scalar keys %$db;
+    return 999;
+}
+
+######################################################
+
+sub name2nick
+{
+    my $name = $_[0];
+
+    $name = lc($name);
+    $name =~ tr/åäöéè ./aaoee__/;
+    $name =~ s/[^a-z0-9_\-]//g;
+    $name =~ s/(^_+|_+$)//g;
+    return $name
+}
+
+sub name2chat_nick
+{
+    my $name = $_[0];
+
+    $name =~ tr/åäöéèÅÄÖÉÈ ./aaoeeAAOEE__/;
+    $name =~ s/[^a-zA-Z0-9_\-]//g;
+    $name =~ s/(^_+|_+$)//g;
+    return $name
+}
+
+sub trim_name
+{
+    my $ref = shift;
+    if( ref $ref )
+    {
+	return undef unless defined $$ref;
+	$$ref =~ s/( ^\s+ | \s+$ )//gx;
+	$$ref =~ s/\s+/ /g;
+	$$ref = substr($$ref,0,24);
+	return $$ref;
+    }
+    else
+    {
+	return undef unless defined $ref;
+	$ref =~ s/( ^\s+ | \s+$ )//gx;
+	$ref =~ s/\s+/ /g;
+	$ref = substr($ref,0,24);
+	return $ref;
+    }
+}
+
+
+# warn "Loaded Para::Member\n";
+
+1;

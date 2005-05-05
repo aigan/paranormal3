@@ -1,0 +1,19 @@
+<p>
+[ [% jump('Chatta', '/member/chat/login.tt') +%]
+| [% jump('Lägg till nytt filter', '/member/chat/admin/filter_create.tt') +%]
+| [% jump('IP-filter', '/member/chat/admin/') +%]
+| [% jump('Vita listan', '/member/chat/admin/ops.tt') +%]
+| [% jump('Svarta listan', '/member/chat/admin/bans.tt') +%]
+]</p>
+
+[% BLOCK select_chat_level %]
+<select name="chat_level-[% member %]">
+  <option value="-2"[% ' selected' IF chat_level==-2 %]>Kill
+  <option value="-1"[% ' selected' IF chat_level==-1 %]>Ban
+  <option value="0"[% ' selected' IF chat_level==0 %]>Normal
+  <option value="2"[% ' selected' IF chat_level==2 %]>Voice
+  <option value="3"[% ' selected' IF chat_level==3 %]>Halv-op
+  <option value="4"[% ' selected' IF chat_level==4 %]>Op
+  <option value="5"[% ' selected' IF chat_level==5 %]>Oper
+</select>
+[% END %]

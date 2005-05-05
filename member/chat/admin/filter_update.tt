@@ -1,0 +1,20 @@
+[% META title="Uppdatera filter"
+        next_handler = "/member/db/chat/"
+	next_action  = "filter_update"
+	level = 5
+%]
+
+[% PROCESS chat_menu.tt %]
+
+[% import(select_record("from ipfilter where ipfilter_pattern=?", q.param('pattern'))) %]
+
+<table>
+<tr><td>Mönster   <td>[% ipfilter_pattern; hidden('pattern', ipfilter_pattern) %]
+<tr><td>Anledning <td>[% input('reason', ipfilter_reason) %]
+<tr><td>Utgår     <td>[% input('expire', ipfilter_expire) %]
+<tr><td>Skapad    <td>[% ipfilter_created %] av [% getmember(ipfilter_createdby).tlink %]
+<tr><td>Uppdaterad<td>[% ipfilter_updated %] av [% getmember(ipfilter_changedby).tlink %]
+</table>
+
+[% submit('Uppdatera') %]
+[% submit('Radera','remove') %]

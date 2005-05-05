@@ -1,0 +1,82 @@
+[% MACRO row_edit(field) BLOCK %]
+   <tr><td>$field </td><td><input name="$field" value="[% 
+      ( q.param(field) || m.$field )| html 
+   %]"></td></tr>
+[% END %]
+[% MACRO row_view(field) BLOCK %]
+   <tr><td>$field </td><td>[% m.$field | html %]
+   </td></tr>
+[% END %]
+[% BLOCK draw_string %]
+  [% DEFAULT size=30
+	maxlength=size*2
+	record = 'm';
+  %]
+  <h3>[% title || field %]</h3>
+  <p>$content
+  <p><input size="$size" name="$field" maxlength="$maxlength" value="[% 
+     ( q.param(field) || $record.$field ) | html %]">
+  [% hr %]
+[% END %]
+[% BLOCK draw_textbox %]
+  <h3>[% title || field %]</h3>
+  <p>$content
+  <textarea wrap="virtual" cols="60" rows="4"
+         name="$field">[% ( q.param(field) || m.$field ) | html %]</textarea>
+  [% hr %]
+[% END %]
+[% BLOCK draw_valuelist %]
+  <h3>[% title || field %]</h3>
+  <p>$content
+  <p><em><small>Detta är en lista av värden, där varje värde står på en egen rad.</small></em><br>
+  <textarea cols="40" rows="4" name="$field">[%
+  IF enumerate;
+     FOREACH rec = list;
+        rec.${enumerate}; "\n";
+     END;
+  ELSE;
+     FOREACH entry = list;
+        entry; "\n";
+     END;
+  END;
+  %]</textarea>
+  [% hr %]
+[% END %]
+[% BLOCK draw_slider;
+   DEFAULT min_txt = 'min'
+	   max_txt = 'max'
+           title = field;
+   current = m.${field};
+%]
+  <h3>[% title %]</h3>
+  <p>$content
+  <p>$min_txt [% slider(	field=field
+				number=number
+				current=current
+				min=min
+				max=max) %] $max_txt
+  [% hr %]
+[% END %]
+[% BLOCK draw_boolean %]
+  <h3>[% title || field %]</h3>
+  <p>$content
+  <p><input type="radio" name="$field" value="t"
+     [% 'checked' IF  ( q.param(field) || m.$field ) %]> Ja
+  <p><input type="radio" name="$field" value="f"
+     [% 'checked' UNLESS  ( q.param(field) || m.$field ) %]> Nej
+  [% hr %]
+[% END %]
+[% BLOCK draw_alt %]
+  <h3>[% title || field %]</h3>
+  <p>$content
+  <p>
+  [% value = FILTER format('%.2d'); q.param(field) || m.$field || current; END %]
+  [% checked = 0; #Set mark in nearest place %]
+  [% IF min; min; '<br>'; END; %]
+  [% FOREACH key = values.keys.sort %]
+     <input type="radio" name="$field" value="$key"
+     [% IF key >= value and not checked; checked = 1 %]checked[% END %]> [% values.$key %]<br>
+  [% END %]
+  [% IF max; max; '<br>'; END; %]
+  [% hr %]
+[% END %]

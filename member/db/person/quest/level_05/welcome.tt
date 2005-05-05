@@ -1,0 +1,47 @@
+[% META title = 'Välkommen till nivå 5'
+        level = 5
+%]
+
+<p>Nu är det dags att berätta mer om de intressen du har.  Det här är
+nödvändigt:
+
+<ol>
+  <li>för att vi ska kunna anpassa webbplatsen efter dina önskemål
+
+  <li>för att du ska kunna hitta medborgare med samma intressen
+
+</ol>
+
+<p>Ett ämne är ett uppslagsord här på webbplatsen.  Du kan ange hur
+intresserad du är i vart och ett av alla ämnen som vi har i vår
+databas.  Är det något ämne vi inte har, kan du skapa det direkt.
+
+<p>För att gruppera intressen måste vi veta hur ämnena är relaterade
+till varandra.  En person som är intresserad av parapsykologi är
+troligen också intresserad av telepati.  Därför behöver vi veta att
+parapsykologi och telepati är relaterade till varandra.
+
+<p>Om du är den första personen som specifierar ditt intresse för ett
+ämne behöver du också hjälpa oss med att tala om hur ämnet relaterar
+sig till andra ämnen.  Ju högre värde du anger på "Redaktör", desto
+fler frågor om ämnet får du svara på.
+
+<p>Alla dina svar kommer slutligen att kontrolleras av en gesäll eller
+mästare.  Du kommer att få plus- eller minuspoäng beroende på om vi
+anser att ditt svar är rätt eller fel.  Vad du säger om ditt intresse
+kontrolleras förståss inte.  Bara det du säger om ämnet i sig självt.
+
+<p>Det här är inte allt. För var och ett av ämnena kommer du senare
+kunna diskutera, ställa frågor eller bidra med information.  Du kommer
+kunna få listor på webbsidor, böcker, filmer, grupper, medborgare osv
+för det ämne du är intresserad av.
+
+[% hr %]
+
+<p>Men låt oss börja med ett par grundinställningar.
+
+<p>
+[% go('Börja', '/member/db/person/edit/email.tt', 'nop', 
+         route='/member/db/person/interest/enter_list.tt?run=presentation_topics /member/db/person/edit/general_interest.tt')
+%]
+

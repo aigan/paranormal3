@@ -1,0 +1,124 @@
+[% META
+	otitle = 'Inställningar - Intressetyper'
+	next_action = 'member_update'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Intressetyper: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<p>Dessa värden är utgångspunkt för vad du tycker om respektive ämne
+som du är intresserad av.  Är du allmänt sett 80% teoretiker och anger
+att du är 50% intresserad av exempelvis UFO kommer vi anta att du är
+intresserad av UFO-teori till 40%.
+
+
+[% WRAPPER draw_slider 
+	   title='Tro'
+           field='general_belief' 
+           number=9
+           min=-100 max=100
+           min_txt='Inget alls'
+           max_txt='Allt, benhårt'
+%]
+
+  Tror du på allt det här paranormala?  Existerar fenomenen?  Hur stor
+andel tror du existerar? Tror du på <a target="external" href="/psi/telepati.html">Telepati</a>, <a target="external" href="/psi/varsel.html">varsel</a> och <a target="external" href="/psi/droem/esp.html">sanndrömmar</a>?  <a target="external" href="/psi/spoeke.html">Spöken</a>, <a target="external" href="/psi/aengel.html">änglar</a> och
+<a target="external" href="/psi/demon.html">demoner</a>?  <a target="external" href="/psi/naturvaesen.html">Tomtar</a>, <a target="external" href="/psi/naturvaesen.html">troll</a> och <a target="external" href="/psi/snoemannen.html">snömän</a>?  <a target="external" href="/psi/flygande_tefat.html">Flygande tefat</a>, <a target="external" href="/psi/sjaelv/antaendning.html">spontan
+självförbränning</a> och <a target="external" href="/psi/rspk.html">poltergeists</a>?  <a target="external" href="/psi/healing.html">Healing</a>, <a target="external" href="/psi/magi.html">magi</a> och <a target="external" href="/psi/slagruta.html">slagruta</a>?
+Osv..
+
+[% END %]
+
+
+[% WRAPPER draw_slider 
+	   title='Teoretiker'
+           field='general_theory' 
+           number=9
+%]
+
+Grundar sig intresset i en nyfikenhet i hur världen fungerar?  Dvs
+ett intresse av att analysera, studera och logiskt begrunda fenomenen?
+
+[% END %]
+
+
+[% WRAPPER draw_slider 
+	   title='Praktiker'
+           field='general_practice' 
+           number=9
+%]
+
+Är det din önskan att praktisera och uppleva dessa fenomen?
+Söker du en intuitiv förståelse av fenomenen?
+
+[% END %]
+
+
+[% WRAPPER draw_slider 
+	   title='Redaktör'
+           field='general_editor' 
+           number=9
+%]
+
+Är du intresserad av att ta hand om och uppdatera ett eller flera
+ämnen på webbplatsen?  Är du beredd att lägga ned tid och energi på
+att skriva texter och kategoriesera dem?
+
+[% END %]
+
+
+[% WRAPPER draw_slider 
+	   title='Hjälpare'
+           field='general_helper' 
+           number=9
+%]
+
+Vill ni ställa upp med att svara på frågor från personer som söker
+svar?  Hjälpa dem hitta rätt väg / rätt person / rätt plats att leta
+vidare?
+
+[% END %]
+
+
+[% WRAPPER draw_slider 
+	   title='Söker kontakt'
+           field='general_meeter' 
+           number=9
+%]
+
+Söker ni nya kontakter / nya vänner?  Intresse av att chatta eller
+brevväxla?
+
+[% END %]
+
+
+[% WRAPPER draw_slider 
+	   title='Student'
+           field='general_bookmark' 
+           number=9
+%]
+
+Vill ni lära er mer om erat intresse genom att läsa böcker och texter
+på webben?  Mer specifikt; vill ni läsa allt som står om ämnet på
+denna webbplatsen?
+
+[% END %]
+
+
+[% WRAPPER draw_slider 
+	   title='Diskutant'
+           field='general_discussion' 
+           number=9
+%]
+
+Vill du delta i diskussioner om dessa ämnen?  Syftar främst då på
+diskussioner via webbforum och mail.  Inte chatt.
+
+[% END %]
+
+
+<p>[% submit %]

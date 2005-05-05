@@ -1,0 +1,27 @@
+[% META
+	title = 'Väntar på nivå 5'
+	level = 11
+%]
+
+<p>
+[ [% jump('Ladda om sidan', me) %]
+]</p>
+
+<div class="entry">
+<table>
+<tr><th>Nr</th><th>Namn</th><th>Skapad</th>
+[% IF u.level < 41 %]
+   [% recs = select_list("from member where member_level=3 and present_contact >= 10") %]
+[% ELSE %]
+   <th>AN</th>
+   [% recs = select_list("from member where member_level=3") %]
+[% END %]
+</tr>
+[% FOREACH rec = recs %]
+   [% m = getmember(rec.member, rec) %]
+   [% tr2 %]<td>$m.id</td><td>[% jump(m.nickname, "/member/db/person/edit/check_presentation.tt", mid=m.id) %]</td><td>[% m.created %]</td>
+   [% IF u.level > 40 %]<td>[% m.present_contact %]</d>[% END %]
+</tr>
+[% END %]
+</table>
+</div>

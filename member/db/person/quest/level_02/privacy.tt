@@ -1,0 +1,57 @@
+[% META
+	title = 'Anonymitet'
+	next_template = 'belief.tt'
+	next_action = 'member_update'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+<p align="right">Steg 1 av 10</p>
+
+<p><strong>OBSERVERA!</strong> Det är mycket värdefullt att andra
+medlemmar kan hitta just dig.  Du kan läsa andra medlemmars
+presentation.  Låt dem läsa din!</p>
+
+<p>Du kan gott och väl välja att <em>avslöja allt</em> eftersom det
+bara innefattar det du själv skrivit in.  Skriver du inte in ditt
+efternamn kommer inte efternamnet att presenteras, oavsett vad du
+väljer för anonymitetsgrad här.</p>
+
+<p>Följande är en sammanfattning av existerande konfigurationsalternativ.  Du
+kan senare ändra och välja ytterligare detaljer.
+
+[% hr %]
+
+[% WRAPPER draw_alt title='Visande av kontaktinformation' field='_meta_present_contact' current=15
+   values = 
+   {
+	'00' => 'Bli totalt osynlig.  Som om du aldrig varit här'
+	'02' => 'Visa ditt primära alias (namn), men inget annat'
+	'10' => 'Visa publik e-post, webbadress, ålder och presentation'
+	'15' => 'Visa ditt fulla namn och bostadsort samt ovanstående (REKOMMENDERAS)'
+	'30' => 'Allt'
+   }
+%]
+
+Hur mycket av din identitet vill du avslöja för omvärlden? (Inklusive
+icke-medlemmar.)  Observera att det kan dröja mycket längre innan du
+blir medlem om du vill vara anonym!
+
+[% END %]
+
+
+
+[% WRAPPER draw_alt title='Visande av intressen och engagemang' field='present_intrests'
+   values = 
+   {
+	'05' => 'Göm dina intressen inför andra'
+	'10' => 'Sammanfattning av intressen'
+	'30' => 'Alla detaljer'
+   }
+%]
+
+Hur mycket av dina intressen vill du avslöja?
+
+[% END %]
+
+[% submit %]

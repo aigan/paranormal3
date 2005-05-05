@@ -1,0 +1,41 @@
+[% META
+	otitle = 'Kalendarium'
+%]
+
+[%
+   t   = topic(81959);
+%]
+[%
+BLOCK event_desig;
+   DEFAULT event = t;
+   exof = event.arc(40).obj;
+   DEFAULT exof = event;
+   base = exof.arc(31).obj;
+   DEFAULT base = exof;
+   str = base.title;
+
+   IF exof.title != base.title;
+      str = "$str: $exof.title";
+   END;
+   IF event.title and event.title != exof.title;
+      str = "$str - $event.title";
+   END;
+   str;
+END;
+%]
+
+<div class="entry">
+<table>
+<tr><th>Datum <th>Händelse
+</tr>
+[% FOREACH arc = t.rev_arcs(true=1, pred=1, active=1) %]
+   [% event = arc.subj %]
+   <tr>
+   [% IF date(event.arc(19).value ).epoch > now.epoch %]
+      <td>[% event.arc(19).value %]</td>
+      <td>[% desig = INCLUDE event_desig; jump(desig, event.file) %]</td>
+   [% END %]
+   </tr>
+[% END %]
+</table>
+</div>

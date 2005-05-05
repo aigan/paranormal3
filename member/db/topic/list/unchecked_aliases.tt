@@ -1,0 +1,86 @@
+[% META title="Aliases att kontrollera"
+	next_action = 'multi_set_talias'
+	next_template = 'unchecked_aliases.tt'
+        level = 11
+%]
+[%
+   subpart = {};
+   offset = q.param('offset');
+   DEFAULT offset=1;
+   part_offset = offset - 1;
+%]
+[% langrecs = select_list('from rel, t where t=rev and rel_type=1 and rel=33859 and t_active is true and rel_active is true order by t_title') %]
+
+<p>[ [% jump('Ladda om sidan', me) %] ]</p>
+
+
+<div class="entry">
+<table>
+   <tr><th>Ja</th><th>?</th><th>Nej</th><th>S</th><th>alias</th><th>Antal</th><th>Skapa</th><th>autolink</th><th>index</th><th>Språk</th><th>Ämne</th><th>Är</th><th>Av</th></tr>
+[% FOREACH select_list("select t, t_title, talias, talias_status, talias_autolink, talias_index, talias_language, talias_createdby from t, talias where t=talias_t and (talias_status=2 or talias_status=3) and t_active is true order by t_title, talias limit 15 offset ?", part_offset, [] ) %]
+[% acnt = select_record("select count(talias_t) as cnt from talias, t where talias=? and talias_t=t and t_active is true and talias_active is true",talias) %]
+
+   [% tr2 %]
+      <td>[% radio("_talias__${loop.count}_keep", 't' ) %]
+      <td>[% radio("_talias__${loop.count}_keep", '', 1 ) %]
+      <td>[% radio("_talias__${loop.count}_keep", 'f' ) %]
+
+          [% hidden("_talias__${loop.count}_talias", talias) %]
+          [% hidden("_talias__${loop.count}_topic", t) %]
+      </td>
+      <td>[% talias_status %]</td>
+      <td>[% jump(talias, '/member/db/topic/view/', talias=talias, target='info') %]</td>
+      <td>$acnt.cnt</td>
+      <td>[% jump('Skapa', '/member/db/topic/create_maby', route=me, _name=talias, target='_blank') %]</td>
+      <td>[% checkbox("_talias__${loop.count}_talias_autolink", 't', talias_autolink) %]</td>
+      <td>[% checkbox("_talias__${loop.count}_talias_index", 't', talias_index) %]</td>
+
+      <td>
+      <select name="_talias__${loop.count}_talias_language">
+         <option value=""> ---
+         [% FOREACH rec = langrecs %]
+            <option value="[% rec.t %]"
+               [% 'selected' IF rec.t == talias_language %]
+            >[% rec.t_title %]</option>
+         [% END %]
+      </select>
+      </td>
+
+
+      <td>[% jump(t_title, '/member/db/topic/edit/meta', tid=t, target='info') %]</td>
+      <td>[% PROCESS typelist.tt rel=t %]</td>
+      <td>[% getmember(talias_createdby).link %]</td>
+  </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+</table>
+</div>
+
+<p>[% submit %]
+
+
+[%
+   prev_from = offset - 15;
+   prev_to = offset - 1;
+   this_from = offset;
+   this_to = offset + subpart.shown - 1;
+   next_from = offset + 15;
+   next_to = offset + 29;
+%]
+
+
+<p>
+[% IF offset > 15 %]
+   [% jump("$prev_from - $prev_to", me offset = prev_from) %] | 
+[% END %]
+$this_from - $this_to
+[% IF subpart.shown == 15 %]
+   | [% jump("$next_from - $next_to", me offset = next_from) %]
+[% END %]
+</p>
+
+
+<ul>
+<li><em>Antal</em> anger hur många ämnen som har detta alias
+<li>Skapa gärna ämnet om ett alias bör höra till eget ämne
+</ul>

@@ -1,0 +1,158 @@
+[% META
+	otitle = 'Inställningar - Intressen'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Intressen: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<p>
+[ [% jump('Lägg till fler intressen', '/member/db/interest/enter_list', run='mark', mid=m.id) %]
+]
+[% m.interests.count %] intressen
+</p>
+
+[% 
+   subpart = {};
+   pagesize = 100;
+   offset = q.param('offset');
+   DEFAULT offset=1;
+   part_offset = offset - 1;
+
+   part = q.param('part');
+   IF part;
+      sel = "like '$part%'";
+   ELSE;
+      sel = "< 'a'";
+   END;
+
+   order = q.param('order') || 't_title';
+   direction = q.param('direction') || 'asc';
+
+%]
+
+[%
+   CALL keep.splice(-1, 0, 'include_noninterest', 'include_nonsure', 'include_date', 'include_comment', 'part', 'offset', 'order', 'direction');
+   DEFAULT ifilter =
+   {
+      include_noninterest = q.param('include_noninterest'),
+      include_nonsure     = q.param('include_nonsure'),
+      include_date        = q.param('include_date'),
+      include_comment     = q.param('include_comment'),
+   };
+%]
+
+
+<p>Visa även
+[
+[%
+   extra = "";
+   IF ifilter.include_noninterest;
+      jump('ointressanta', me, keep_params=keep, class='selected', include_noninterest=0, offset=0);
+   ELSE;
+      jump('ointressanta', me, keep_params=keep, include_noninterest=1, offset=0);
+      extra = "$extra and intrest > 30";
+   END;
+   ' | ';
+   IF ifilter.include_nonsure;
+      jump('osäkra', me, keep_params=keep, class='selected', include_nonsure=0, offset=0);
+   ELSE;
+      jump('osäkra', me, keep_params=keep, include_nonsure=1, offset=0);
+      extra = "$extra and intrest_defined > 10";
+   END;
+   ' | ';
+   IF ifilter.include_date;
+      jump('datum', me, keep_params=keep, class='selected', include_date=0);
+   ELSE;
+      jump('datum', me, keep_params=keep, include_date=1);
+   END;
+   ' | ';
+   IF ifilter.include_comment;
+      jump('kommentarer', me, keep_params=keep, class='selected', include_comment=0);
+   ELSE;
+      jump('kommentarer', me, keep_params=keep, include_comment=1);
+   END;
+%]
+]</p>
+
+[% IF m.interests.count > 500 %]
+   <h2>- [% part | upper %] -</h2>
+   <p align="center" class="small">[% alfanum_bar(me, 'part', '', keep_params=keep) %]</p>
+   [% extra = "$extra and lower(t_title) $sel" %]
+[% END %]
+
+
+[%
+   ilist = select_list("from intrest, t where intrest_member=?
+                        and intrest_topic=t and t_active is true and t_entry is false
+                        $extra
+                        order by $order $direction
+                        limit $pagesize
+                        offset $part_offset", m.id);
+%]
+
+
+[% FOREACH i IN ilist %]
+   [% IF loop.first %]
+      <div class="entry">
+      <table>
+      <tr>
+         <th>[% sort('Ämne', 't_title') %]
+         <th>[% sort('%', 'intrest') %]
+         <th>[% sort('S', 'intrest_defined') %]
+      [% IF ifilter.include_date %]
+         <th>[% sort('Uppdaterad', 'intrest_updated') %]
+      [% END %]
+      [% IF ifilter.include_comment %]
+         <th>[% sort('Kommentarer', 'CASE WHEN intrest_description is null THEN 0 ELSE length(intrest_description) END') %]
+      [% END %]
+      </tr>
+   [% END %]
+
+   [% next = interest_next_step(i.intrest_topic, i.intrest_member, redefine=1) %]
+   [% tr2 %]
+      <td>[% forward(i.t_title, next.handler, run='mark', tid=i.t) %]
+      <td align="right">[% i.intrest %]
+      <td>[% i.intrest_defined %]
+      [% IF ifilter.include_date %]
+         <td>[% date(i.intrest_updated) %]
+      [% END %]
+      [% IF ifilter.include_comment %]
+         <td>[% i.intrest_description | html %]
+      [% END %]
+   [% IF loop.last %]
+      </table>
+      </div>
+   [% END %]
+   [% subpart.shown = loop.size %]
+[% END %]
+
+[%
+   DEFAULT subpart.shown = 0;
+
+   prev_from = offset - pagesize;
+   prev_to = offset - 1;
+   this_to = offset + subpart.shown - 1;
+   this_from = this_to ? offset : 0;
+   next_from = offset + pagesize;
+   next_to = offset + pagesize + pagesize - 1;
+%]
+
+<p>
+[% IF offset > pagesize %]
+   [% forward("$prev_from - $prev_to", me, offset = prev_from) %] | 
+[% END %]
+$this_from - $this_to
+[% IF subpart.shown == pagesize %]
+   | [% forward("$next_from - $next_to", me, offset = next_from) %]
+[% END %]
+</p>
+
+[% hr %]
+
+<p>Kolumnen <code>S</code> anger intressets definieringsgrad.  Det är
+ett mått på hur säkra vi är på att intressenivån stämmer.  Ju fler
+detaljer om intresset som besvarats, desto högre säkerhet.</p>

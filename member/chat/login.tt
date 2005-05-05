@@ -1,0 +1,161 @@
+[% META
+	title='Logga in på chatten'
+	next_handler = "/member/chat/cgiirc/irc.cgi"
+	onsubmit = "setjs()"
+%]
+<script language="JavaScript"><!--
+function setjs() {
+ if(navigator.product == 'Gecko') {
+   document.f["interface"].value = 'mozilla';
+ }else if(navigator.appName == 'Microsoft Internet Explorer' &&
+    navigator.userAgent.indexOf("Mac_PowerPC") > 0) {
+    document.f["interface"].value = 'konqueror';
+ }else if(navigator.appName == 'Microsoft Internet Explorer') {
+   document.f["interface"].value = 'ie';
+ }else if(navigator.appName == 'Konqueror') {
+    document.f["interface"].value = 'konqueror';
+ }else if(window.opera) {
+   document.f["interface"].value = 'opera';
+ }
+
+ // validate nick
+ if(document.f.Nickname.value.length == 0)
+ {
+    alert("Välj ett unikt alias innan du börjar!");
+    document.f.action='$me';
+ }
+
+}
+//-->
+</script>
+
+[% PROCESS load_member.tt %]
+[% IF m %]
+   [% PROCESS chat_menu.tt %]
+[% END %]
+
+    <ol>
+
+      <li>När du loggar in för första gången, välj då #hjälp. Kanalen
+      är till för att du ska lära dig att hantera chatten.</li>
+
+      <li>Bekanta dig med <a href="/topic/regler_pa_chatten.html">våra ordningsregler</a>.</li>
+
+	<li>Om du är ovan vid IRC behöver du läsa <a href="/topic/chathjalp.html">instruktionerna</a>.</li>
+
+      <li>Stanna kvar minst 10 minuter.  Allt för ofta är det någon
+som går in och lämnar chatten innan vi andra sett att någon tittat in.
+Mest aktivitet är det vid arbetsdagens slut samt senare på
+      kvällen (tisdag-torsdag)</li>
+    
+
+     <li>Välkommen!</li>
+
+   </ol>
+
+
+      <input type="hidden" name="myaction" value="load" />
+
+      <p>
+
+ [% IF u.level %]
+           [% hidden('Nickname', u.chat_nick) %]
+           [% hidden('Server', 'irc.paranormal.se') %]
+           [% hidden('Realname', u.name) %]
+           [% hidden('Password', q.cookie('password')) %]
+           [% hidden('login', u.id) %]
+           [% hidden('interface', 'nonjs') %]
+
+           Du är <strong>$u.chat_nick</strong>.	  <input style="clear:left" type="submit" value=" Börja " />
+
+
+  [% ELSE %]
+
+
+           [% hidden('Server', 'irc.paranormal.se') %]
+           [% hidden('Realname', 'Guest / Anonymous') %]
+           [% hidden('interface', 'nonjs') %]
+
+    <p>Jag föreslår att du <a href="/member/db/member_login">LOGGAR
+	 IN</a> med ditt registrerade namn.  Men vill du vara anonym
+	 kan du skriva ett alias nedan:</p>
+
+    <p><strong>Alias:</strong> 
+
+    <input type="text" size="10" maxlength="9" name="Nickname" value="" />
+
+ [% END %]
+
+
+	  <h3>Välj ingångskanal:</h3>
+
+	  <input name="Channel" type="radio" value="#Torget,#Hjälp" checked="1"/> [% jump('#Hjälp', "/topic/hjalp.html") %] - Få hjälp med hur man hanterar chatten<br/>
+	  <input name="Channel" type="radio" value="#Hjälp,#Torget"/> [% jump('#Torget', "/topic/torget.html") %] - Huvudkanalen där du hittar alla på chatten<br/>
+	  <input name="Channel" type="radio" value="#Hjälp,#30+"/> [% jump('#30+', "/topic/torget.html") %] - Allmänt om det paranormala och andliga, för de över 30 jordår<br/>
+	  <input name="Channel" type="radio" value="#Torget,#devel"/> [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, få hjälp med att skapa texter och ämnen<br/>
+	  <input name="Channel" type="radio" value="#Torget,#Vetenskap"/> [% jump('#Vetenskap', "/topic/paranormalse/vetenskap.html") %] - Paranormala fenomen ur ett vetenskapligt (västerländskt) perspektiv<br/>
+	  <input name="Channel" type="radio" value="#Torget,#Drömmar"/> [% jump('#Drömmar', "/topic/paranormalse/drommar.html") %] - Drömmar och astralprojektion<br/>
+          <input name="Channel" type="radio" value="#Torget,#Magi"/> [% jump('#Magi', "/topic/paranormalse/magi.html") %] - För gediget och seriöst magiskt arbete<br/>
+	  <input name="Channel" type="radio" value="#Torget,#Hälsa"/> [% jump('#Hälsa', "/topic/paranormalse/halsa.html") %] - Alternativmedicin, helande, kost, yoga,  motion etc<br/>
+	  <input name="Channel" type="radio" value="#Torget,#Guide"/> [% jump('#Guide', "/topic/paranormalse/guide.html") %] - För de som söker, vill ha hjälp, vägledning, stöd, bekräftelse. Också för hjälparna inom [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %]<br/>
+	  <input name="Channel" type="radio" value="#Torget,#TV"/> [% jump('#TV', "/topic/tv.html") %] - Film, TV, musik och böcker <br/>
+
+	  <p>Du kan gå in på fler kanaler när du är på chatten genom att säga: <strong>/join #kanalnamn</strong>. Använd <strong>/list</strong> för att se vad som finns.<br/>
+<br>
+
+	  <h3>Välj utseende:</h3>
+
+	  <input name="Format" type="radio" value="default" checked="1"/> Standard - ljust<br/>
+	  <input name="Format" type="radio" value="dark"/> Mörk - Ljus text på mörk bakgrund<br/>
+	  <input name="Format" type="radio" value="gothic"/> Gotisk - Mörkt med pytte-text<br/>
+	  <input name="Format" type="radio" value="russian"/> Rysk<br/>
+	  <input name="Format" type="radio" value="mirc"/> mIRC<br/>
+
+<br>
+
+	  <input style="clear:left" type="submit" value=" Börja " /><br/>
+
+
+      <p>Avancerat: Chatten har adressen <a
+
+      href="irc://irc.paranormal.se:6667/torget" >irc.paranormal.se
+
+      port 6667 kanal #torget</a></p>
+
+
+
+<P>Vill du vara värd för en speciell chatt? Skriv till <a
+href="mailto:irc@paranromal.se">irc@paranormal.se</a>.  Kanske du vill
+bjuda in en kändis eller expert på något område?</p>
+
+
+
+
+      <ul>
+
+
+
+ <li><a href="/topic/chathjalp.html">Introduktion till
+
+ chatten</a></li>
+
+     <li><a href="/topic/regler_pa_chatten.html">Ordningsregler</a></li>
+
+
+<li><a href="/topic/kanal_pa_chatten.html">Registrerade kanaler</a></li>
+
+
+ <li><a href="/member/chat/logs/index.html">Chatt-loggar</a></li>
+
+
+
+<li><a href="/cgi-bin/mailman/listinfo/irc">E-postlista för diskussioner om IRC-chatten</a></li>
+
+
+
+ <li><a href="/member/chat/sitelink.html">Hur du lägger in
+
+ chatten på din egen webbplats</a></li>
+
+      </ul>
+

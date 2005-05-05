@@ -1,0 +1,55 @@
+[% META otitle = 'Statistik' %]
+
+<h1 align="center">Statistik</h1>
+
+[% PROCESS stats_menu.tt %]
+
+
+<h2>Distribution av åldrar</h2>
+
+<table><tr><th>Födelseår</th><th>Ålder</th><th>Antal</th></tr>
+[% bdlist = select_list("select bdate_ymd_year, count(member) as cnt from member where bdate_ymd_year > 0 and bdate_ymd_year < 2000 group by bdate_ymd_year order by bdate_ymd_year") %]
+
+[% maxcount = 0 %]
+[% FOREACH bd IN bdlist %]
+   [%# warn("$bd.cnt > $maxcount?") %]
+   [% IF bd.cnt > maxcount %]
+      [% maxcount = bd.cnt %]
+   [% END %]
+[% END %]
+[% warn("Maxcount is now $maxcount") %]
+
+[% FOREACH bdlist %]
+
+[% expected_year = bdate_ymd_year - 1 %]
+[% IF last and last < expected_year %]
+<tr><td>....</td><td>..</td></tr>
+[% END %]
+
+<tr>
+   <td>$bdate_ymd_year</td>
+   <td>[% year - bdate_ymd_year %]</td>
+   <td>$cnt</td>
+   <td><img src="/images/bar/roed.gif" width="[% 100 * cnt / maxcount | format('%d%%') %]" height="14"></td>
+</tr>
+
+[% last = bdate_ymd_year %]
+[% END %]
+</table>
+
+
+[% tm = select_record("select count(member) as cnt from member where gender='M'") %]
+[% tf = select_record("select count(member) as cnt from member where gender='F'") %]
+[% to = select_record("select count(member) as cnt from member where gender is null") %]
+
+<h2>Könsfördelning</h2>
+
+[% total = tm.cnt + tf.cnt %]
+
+<div class="entry">
+<table>
+<tr><td>Hanar <td>[% tm.cnt %]  <td>[% tm.cnt * 100 / total  | format('%d %%'); %]
+<tr><td>Honor <td>[% tf.cnt %]  <td>[% tf.cnt * 100 / total  | format('%d %%'); %]
+<tr><td>Övriga <td>[% to.cnt %] <td>&nbsp;
+</table>
+</div>

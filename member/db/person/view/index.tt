@@ -1,0 +1,155 @@
+[% META
+	otitle = 'Presentation'
+        next_template = '-me'
+	level = 5
+%]
+[% IF q.param('nick');
+      nick = q.param('nick');
+      members = select_persons_by_name(nick, 1, 1);
+      IF members.size == 0;
+         PROCESS member_not_found;
+         RETURN;
+      ELSIF members.size == 1;
+         mid = members.0.id;
+      ELSE;
+         PROCESS member_list;
+         RETURN;
+      END;
+   END;
+   PROCESS load_member.tt;
+%]
+
+
+
+[% IF m.present_contact < 15 and u.level > 40 %]
+   <p align="center" class="important">
+      OBS!!! Konfidentiella uppgifter
+   </p>
+[% END %]
+
+<h1>[% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<table align="left">
+
+[% IF m.name_given %]
+   <tr><td>Namn <td>$m.name
+[% END %]
+<tr><td>[% jump('Nivå', '/topic/nivasystemet_for_paranormalse.html') %] <td>$m.member_level
+<tr><td>Medlem <td>$m.id
+<tr><td>Kön <td>
+[% IF m.gender == 'M' %]
+   Man
+[% ELSIF m.gender == 'F' %]
+   Kvinna   
+[% END %]
+[% IF m.home_postal_city %]
+   <tr><td>Bor i <td>
+<a href="http://www.sna.se/bin/ort.cgi?LANG='SE'&S='E'&O=$m.home_postal_city" target="_blank">$m.home_postal_city</a>
+   [%- IF u.dist(m); u.dist(m) | format(', %s km bort'); END %]
+[% END %]
+
+[% IF m.bdate_ymd_year %]
+   <tr><td>Ålder <td>[% m.age %]
+[% END %]
+[% IF m.home_online_email and m.newsmail > 0 and u.level > 5 %]
+      <tr><td>E-post <td><a href="mailto:$m.home_online_email">$m.home_online_email</a>
+	([% jump('Skicka e-post', 'send_email.tt' mid=m.id) %] via formulär)
+[% ELSE %]
+   [% IF m.newsmail > 2 or u.level > 40 or (m.newsmail > 0 and u.level > 5) %]
+      <tr><td>E-post <td>[% jump('Skicka e-post', 'send_email.tt' mid=m.id) %]
+   [% END %]
+[% END %]
+
+[% IF u.level >= 41 %]
+      <tr><td>[% jump("Primär e-post", "../edit/email.tt", mid=mid) %]
+          <td><a href="mailto:$m.sys_email">$m.sys_email</a>
+      <tr><td>Mängd e-post         <td>$m.newsmail
+      <tr><td>[% jump("Anonymitet", "../edit/privacy.tt", mid=mid) %]
+          <td>$m.present_contact
+      <tr><td>[% jump("Publik anonymitet", "../edit/privacy.tt", mid=mid) %]
+          <td>$m.present_contact_public
+[% END %]
+[% IF u.level >= 41 or m.present_activity >= 10 %]
+      <tr><td>Inloggad senast  <td>$m.latest_in
+      <tr><td>Utloggad senast  <td>$m.latest_out
+[% END %]
+      <tr><td>Uppdaterad       <td>[% m.updated %]
+
+[% IF m.home_online_uri %]
+   <tr><td>Webbplats <td><a href="$m.home_online_uri" target="_blank">$m.home_online_uri</a>
+[% END %]
+[% IF m.home_online_icq %]
+   <tr><td>ICQ <td>
+<a href="http://web.icq.com/wwp?Uin=$m.home_online_icq" target="_blank">[% m.home_online_icq %]
+<img src="http://web.icq.com/whitepages/online?icq=$m.home_online_icq&img=5" width="18" height="18" alt="" border="0">
+</a>
+[% END %]
+[% IF m.home_online_msn %]
+   <tr><td>MSN <td>
+<a href="http://members.msn.com/$m.home_online_msn" target="_blank">[% m.home_online_msn %] <img src="http://paranormal.se/images/icon/msn.png" alt="" border="0"></a>
+[% END %]
+[% IF (m.present_contact > 19 and u.level > 7) or u.level > 40 %]
+    [% IF m.home_tele_phone %]
+        <tr><td>Telefon hem <td>$m.home_tele_phone
+        [% IF m.home_tele_phone_comment %]
+             - $m.home_tele_phone_comment
+        [% END %]
+    [% END %]
+    [% IF m.home_tele_mobile %]
+        <tr><td>Mobiltelefon <td>$m.home_tele_mobile
+        [% IF m.home_tele_mobile_comment %]
+             - $m.home_tele_mobile_comment
+        [% END %]
+    [% END %]
+    [% IF m.home_tele_fax %]
+        <tr><td>Fax <td>$m.home_tele_fax
+        [% IF m.home_tele_fax_comment %]
+             - $m.home_tele_fax_comment
+        [% END %]
+
+    [% END %]
+[% END %]
+</table>
+
+[% IF u.level >= 41 and m.comment %]
+   <p>
+      [% jump("Adminkommentar", "../edit/admin.tt", mid=mid) %]:<br><br>
+      [% m.comment | html | html_line_break %]
+   </p>
+[% END %]
+
+<br clear="all">
+
+
+[% IF m.presentation %]
+   <h3>Presentation</h3>
+   [% CALL new_entry() %]
+   <p>[% m.presentation | html_psi %]
+[% END %]
+
+
+[% BLOCK member_list %]
+   <h1>Det finns $members.size <code>$nick</code></h1>
+
+   [% pm = getmember_by_nick(nick) %]
+   [% IF pm %]
+      <p>Se [% jump(pm.name, me, mid=pm.id) %], som har detta användarnamn</p>
+   [% END %]
+
+
+   <table>
+   [% FOREACH m = members %]
+      <tr><td>[% jump(m.nickname, me, mid=m.id) %]
+      [% IF m.name_given %]
+         <td>$m.name
+      [% END %]
+   [% END %]
+   </table>
+[% END %]
+
+[% BLOCK member_not_found %]
+   <h1>Jag hittar ingen <code>[% nick %]</code></h1>
+   <p>Sök igen: [% input('nick') %] [% submit('Sök') %]</p>
+[% END %]

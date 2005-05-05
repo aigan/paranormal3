@@ -1,0 +1,25 @@
+[% META otitle = 'Statistik' %]
+[% order = q.param('order') || 'accepted_thing' %]
+[% direction = q.param('direction') %]
+
+<h1 align="center">Statistik</h1>
+
+[% PROCESS stats_menu.tt %]
+
+<h2>Egna bidrag till ämnen</h2>
+
+<div class="entry" align="center">
+<table>
+<tr><th>[% sort('Person','nickname') %]
+    <th>[% sort('Nivå', 'member_level') %]
+    <th>[% sort('Skapat', 'topic_submitted') %]
+    <th>[% sort('Skrivit', 'entry_submitted') %]
+    <th>[% sort('Kopplat', 'topic_connected') %]
+
+[% FOREACH select_list("from member, score where score_member=member and (topic_submitted>0 or entry_submitted>0) order by $order $direction limit 30") %]
+
+[% tr2 %]<td>[% jump(nickname, '/member/db/person/view/', member=member) %] <td>$member_level <td>$topic_submitted <td>$entry_submitted <td>$topic_connected
+
+[% END %]
+</table>
+</div>

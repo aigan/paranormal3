@@ -1,0 +1,163 @@
+[% META
+	otitle = 'Ämne'
+        level = 0
+	next_template = '../view/'
+%]
+
+[%
+   talias = q.param('talias');
+   DEFAULT talias = q.param('search');
+   IF talias;
+      TRY;
+         t = find_one_topic( talias );
+      CATCH alternatives;
+         alts = result.info.alternatives;
+         PROCESS topic_list.tt list=alts.list replace='talias' run='nop' view=me;
+         RETURN;
+      CATCH notfound;
+         PROCESS new.tt;
+         RETURN;
+      END;
+      tid = t.id;
+      CALL q.delete('talias');
+      CALL q.param('tid',t.id);
+   ELSE;
+      tid = q.param('tid');
+      DEFAULT tid = q.param('t');
+      DEFAULT tid = 1;
+      ver = q.param('v');
+      t = topic(tid, ver);
+   END;
+
+   PROCESS buttons.tt;
+   warn("Topic: $t.id v$t.ver $t.desig");
+%]
+
+
+<h1>[% PROCESS tlink.tt %]<span style="font-size: small; vertical-align: text-top;">([% forward('Ändra', '../edit/text.tt', tid=tid run='mark') %])</span></h1>
+
+[% PROCESS edit_menu.tt %]
+
+[% INCLUDE metadata.tt %]
+
+[% IF t.entry %]
+   [% t.text | html_psi_nolinks %]
+
+[% ELSE %]
+
+   <p>Alias:
+   [% FOREACH alias = t.alias_list %]
+      [%- IF loop.first %]
+      [% ELSIF loop.last %] och
+      [% ELSE %],
+      [% END %]
+      <em>[% alias.name | html %]</em>
+   [%- END %]
+   [%+ forward('Ändra alias', '../edit/aliases.tt', tid=tid run='mark') %]
+   
+   
+   [% IF t.text %]
+      <h3>Kortbeskrivning</h3>
+      
+      <blockquote>
+         <p><strong>[% t.text | html %]</strong>
+         [%+ forward('Ändra', '../edit/text.tt', tid=tid run='mark') %]</p>
+      </blockquote>
+   [% ELSE %]
+      <p>[% forward('Skapa kortbeskrivning', '../edit/text.tt', tid=tid run='mark') %]</p>
+   [% END %]
+   
+   [% IF t.admin_comment %]
+      <div class="important">[% t.admin_comment | html | html_para  %]
+         [% forward('Ändra redaktionskommentar', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]
+      </div>
+   [% ELSE %]
+      <p>[% forward('Lägg till kommentar för redaktörer', '../edit/text_admin.tt', tid=tid previous=me run='mark') IF u.level > 10 %]</p>
+   [% END %]
+   
+   <p>[% jump('Lägg till ny text', '../edit/new_entry.tt' parent=tid previous=me run='mark')  %]</p>
+
+[% END # t_entry %]
+
+
+[% FOREACH e = t.entry_list(tfilter) %]
+   <hr>
+   <div class="entry">
+   [% IF e.title %]
+      <h2>[% e.title | html %]</h2>
+   [% END %]
+
+   [% INCLUDE entry_edit_menu.tt t=e %]
+   [% INCLUDE metadata.tt t=e %]
+
+   [% e.text | html_psi_nolinks %]
+   [% INCLUDE subentry %]
+
+   </div>
+[% END %]
+
+[% FOREACH ts = t.ts_revlist %]
+   [% tse = ts.entry %]
+   [% IF loop.first %]
+      <hr>
+      <h2>Media</h2>
+      <ul>
+   [% END %]
+
+   [% IF tse.media %]
+      [% IF tse.media_type.search('image') %]
+         <li><img alt="[% tse.desig | html %]" src="[% tse.media_url %]"> 
+      [% ELSE %]
+         <li>[% jump(tse.desig, tse.media_url, target="media") %]
+      [% END %]
+   [% ELSIF tse.file %]
+      <li>[% jump(tse.desig, tse.file, target="media") %] (file ts)
+   [% ELSE %]
+      <li>[% jump(tse.desig, me, tid=tse.id) %]
+   [% END %]
+
+   [% tse.type_list_string %]
+
+   [% IF ts.comment %]
+      - [% ts.comment | html %]
+   [% END %]
+
+ ([% forward('Ändra', '/member/db/topic/edit/topicstatements.tt' tid=tse.id) %])
+
+   [% IF loop.last %]
+      </ul>
+   [% END %]
+[% END %]
+
+
+[% BLOCK subentry %]
+   [% DEFAULT level=3 %]
+
+   [% FOREACH se = e.entry_list(tfilter) %]
+      [% IF se.title %]
+         <h[% level+1 %]>[% se.title | html %]</h[% level+1 %]>
+         [% INCLUDE entry_edit_menu2 t=se %]
+         [% INCLUDE metadata2 t=se %]
+         [% se.text | html_psi_nolinks %]
+         [% INCLUDE subentry e=se level=level+1 %]
+      [% ELSE %]
+         <blockquote>
+            [% INCLUDE entry_edit_menu2 t=se %]
+            [% INCLUDE metadata2 t=se %]
+            [% se.text | html_psi_nolinks %]
+            [% INCLUDE subentry e=se level=level+1 %]
+         </blockquote>
+      [% END %]
+   [% END %]
+
+   [% IF e.next(tfilter) %]
+      [% ne = e.next(tfilter) %]
+      [% IF ne.title %]
+         <h$level>[% ne.title | html %]</h$level>
+      [% END %]
+      [% INCLUDE entry_edit_menu2 t=ne %]
+      [% INCLUDE metadata2 t=ne %]
+      [% ne.text | html_psi_nolinks %]
+      [% INCLUDE subentry e=ne level=level %]
+  [% END %]
+[% END %]

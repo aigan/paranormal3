@@ -1,0 +1,135 @@
+[% META
+	otitle = 'Disposition'
+        level = 5
+	next_template = 'outline.tt'
+	next_action  = 'outline_update'
+%]
+[%
+   tid = q.param('tid');
+   t = topic(tid);
+   global.row = 1;
+   global.seen = {};
+   hidden('tid', tid);
+   PROCESS buttons.tt;
+
+   #now for the safty net
+   template.seen.init = 1;
+%]
+
+<h1>Disposition för [% PROCESS tlink.tt %]</h1>
+
+[% PROCESS edit_menu.tt %]
+
+<p>
+<input type="submit" name="do_move_branch" value="Flytta gren">
+<input type="submit" name="do_move_node" value="Flytta nod">
+<input type="submit" name="do_add" value="Lägg till">
+<!--
+<input type="submit" name="do_delete" value="Ta bort">
+<input type="submit" name="do_split" value="Dela upp">
+<input type="submit" name="do_merge" value="Slå samman">
+-->
+</p>
+
+<table border="0" width="100%">
+
+[% IF t.entry %]
+   <tr><td width="10">[%  radio("place", "0-0", 1) %]</td><td colspan="9"></td></tr>
+[% END %]
+
+[% INCLUDE ident_outline ident=0 e=t %]
+[% INCLUDE ident_place ident=0 e=t %]
+[% INCLUDE subentry e=t %]
+</table>
+
+[% hr %]
+
+<p>Kryssa i den/de texter du vill flytta.  Pricka i den plats dit du vill flytta texten.</p>
+
+<p>En gren innefattar alla följande och undervarande texter. (Fram
+till eventuell HR på samma nivå.)</p>
+
+<p>En gren kan inte flyttas till en plats på den gren som flyttas.
+Flytta nod för att plocka ut en text från en gren som ska placeras på
+annan plats.</p>
+
+<p>"\ O" används om du vill placera en text under ovanstående del,
+utan att ange ordning bland de andra texterna på samma nivå.  För de
+fall då de inte hör ihop.</p>
+
+<p>HR (horisontell avgränsare) används för att visa att de två
+texterna är undertext till samma övertext, men de har inte en
+innebördes ordning.  Det skulle exempelvis kunna röra sig om två
+kommentarer till samma text, snarare än en kommentar som fortsätter
+med ny rubrik.</p>
+
+
+[% BLOCK subentry %]
+   [% DEFAULT elevel=0 %]
+
+   [% IF global.seen.$e; THROW recursion "on $e.id"; END %]
+   [% global.seen.$e = 1 %]
+
+   [% FOREACH se = e.entry_list(tfilter) %]
+      [% warn("$e.id -sub($elevel)-> $se.id\n") %]
+      [% INCLUDE ident_outline ident=elevel+1 e=se %]
+      [% INCLUDE ident_place ident=elevel+1 e=se%]
+      [% INCLUDE subentry e=se elevel=elevel+1 %]
+      [% UNLESS loop.last %]
+         [% ident = elevel+1 %]
+         [% span = 10 - ident %]
+         <tr><td colspan="$ident"><td colspan="$span"><hr/></td></tr>
+      [% END %]
+   [% END %]
+
+   [% IF e.next(tfilter) %]
+      [% ne = e.next(tfilter) %]
+      [% warn("$e.id -next($elevel)-> $ne.id\n") %]
+      [% INCLUDE ident_outline ident = elevel e=ne %]
+      [% INCLUDE ident_place ident=elevel e=ne %]
+      [% INCLUDE subentry e=ne elevel=elevel %]
+  [% END %]
+[% END %]
+
+
+[% BLOCK ident_outline %]
+   <tr>
+   [% span  = 10 - ident %]
+   [% i = 0 %]
+   [% IF ident %]<td colspan="$ident"></td>[% END %]
+   <td colspan="$span">
+   [% IF e.entry %]
+      [% checkbox("thing", e.id, 0) %]
+   [% END %]
+   [% jump(e.id,me, tid=e.id) +%]
+   [% hidden("placing_$global.row", e.id) %]
+   [% hidden("ident_$global.row", ident) %]
+   [%+ e.outline | html %]
+   [%# warn("$ident> $e.id\n") %]
+   <span style="font-size: small; vertical-align: text-middle;">- [% jump('ändra', '/member/db/topic/edit/text.tt', tid=e.id) %]</span>
+   </td></tr>
+[% END %]
+
+[% BLOCK ident_place %]
+   <tr>
+   [% span  = 7 - ident %]
+   <td width="10">
+   [% IF t.entry %]
+      [% radio("place", "${global.row}-0", 0) %]
+   [% END %]
+   </td>
+   [% i = 1 %]
+   [% WHILE i < ident + 2 %]
+      <td width="10">[% radio("place", "${global.row}-$i", 0) %]</td>
+      [% i = i + 1 %]
+   [% END %]
+   [% IF e.has_child(tfilter) %]
+      <td colspan="$span" width="100%"> &nbsp; \ [% radio("place", "${global.row}-$i-s", 0) %]</td>
+   [% ELSE %]
+      <td colspan="$span" width="100%">&nbsp;</td>
+   [% END %]
+   </tr>
+
+   [% global.row = global.row + 1 %]
+[% END %]
+

@@ -1,0 +1,5 @@
+[% UNLESS t.entry %]
+[% interest_vault = interest_next_step(tid, u.member, redefine=1) %]
+[% jump('Visa ditt intresse', interest_vault.handler, tid=tid class='link_button') %]
+[% jump('Navigera', "/member/db/topic/view/tree.tt", tid=tid class='link_button') %]
+[% END %]

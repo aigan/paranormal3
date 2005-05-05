@@ -1,0 +1,119 @@
+<small>
+  [% IF t.entry %]
+  <ul>
+     <li>Text [% t.id %],
+  [% ELSE %]
+  <ul>
+     <li>Ämne [% t.id %],
+  [% END %]
+
+  version $t.ver
+  [% IF t.file %]
+      ([% jump(t.file, t.file, target='published') %])
+  [% END %]
+
+  - Status: $t.status - [% PROCESS topic_status.tt %]
+  [% IF t.active; '  <strong><em>aktiv</em></strong>';
+     ELSE;              '  <em>ej aktiv</em>';
+     END;
+  %]
+
+[% UNLESS t.entry %]
+   - [% PROCESS publish_status.tt %]
+[% END %]
+
+  [%#### Skapad och uppdaterad ####%]
+  <li>Skapad av [% t.first_ver.created_by.link %] [%+ t.first_ver.created %]
+  uppdaterad av [% t.updated_by.link %] [%+ t.updated %]
+
+
+  [%#### Representerar medlem ####%]
+  [% IF t.member %]
+     <li>Representerar medlemmen [% jump( t.member.nickname,
+                                          '/member/db/person/view/',
+                                          mid=t.member.id ) %]
+  [% END %]
+
+
+  [%#### Importerad från ####%]
+  [% IF ! t.entry %]
+     [% IF t.oldfile %]
+        <li>Gammal sida: [% jump(t.oldfile, "/old${t.oldfile}") %]
+     [% ELSE %]
+        <li>Ingen gammal sida länkad hit
+     [% END %]
+     ([% forward('Ändra', '../edit/oldfile.tt', tid=t.id run='mark') %])
+  [% END %]
+
+
+  [%#### Behandlar ####%]
+  [% FOREACH ts = t.ts_list;
+    IF loop.first; '<li>Behandlar '; END;
+    IF loop.first; ELSIF loop.last; ' och '; ELSE; ', '; END;
+    jump(ts.topic.desig, me, tid=ts.topic.id); ' ';
+    INCLUDE typelist.tt rel=ts.topic.id;
+    IF ts.comment; ' ('; ts.comment | html; ') '; END;
+  END;
+  %]
+
+  [%#### Har URL ####%]
+  [% IF t.media_url %]
+     [% IF t.media_type == 'text/html' %]
+        <li>Representerar webbsidan [% jump(t.media_url, t.media_url, target='external') %]
+     [% ELSIF t.media_type.search('^image/') %]
+        <li>Representerar bilden [% jump(t.media_url, t.media_url, target='external') %]
+     [% ELSIF t.media_type == 'email' %]
+        <li>Representerar e-postadressen [% jump(t.media_url, t.media_url) %]
+     [% ELSE %]
+        <li>Representerar det av typ [% t.media_type %] som har adressen [% jump(t.media_url, t.media_url, target='external') %]
+     [% END %]
+     ([% forward('Ändra', '/member/db/topic/edit/media.tt') %])</li>
+  [% END %]
+
+
+  [%#### rel ####%]
+  [% FOREACH rt = t.rel.types %]
+     <li>[% rt.name('rel') +%]
+     [% FOREACH arc = t.rel( type=rt.id direct=1 ).arcs %]
+        [%- IF loop.first %]
+        [% ELSIF loop.last %] och
+        [% ELSE %],
+        [% END +%]
+
+        [% IF arc.type.literal %]
+           [% arc.value | html %]
+        [% ELSE %]
+           [% jump( arc.obj.desig, me, tid=arc.obj.id) %]
+        [%- END %]
+        [%- IF arc.comment %]
+           (<em>[% arc.comment %]</em>)
+        [% END %]
+     [%- END %]
+     </li>
+  [% END %]
+
+  [%#### rev ####%]
+  [% FOREACH rt = t.rev.types %]
+     [% NEXT IF rt.id == 0 %]
+     <li>[% rt.name('rev') %]
+     [% arcs = t.rev( type=rt.id direct=1 ).arcs %]
+     [% IF arcs.size > 25 %]
+        <strong>för många för att listas! [% jump("$arcs.size stycken", "/member/db/topic/edit/meta.tt", include_rev=1, tid=t.id) %].</strong>
+     [% ELSE %]
+        [% FOREACH arc = t.rev( type=rt.id direct=1 ).arcs %]
+           [%- IF loop.first %]
+           [% ELSIF loop.last %] och
+           [% ELSE %],
+           [% END %]
+   
+           [% jump( arc.subj.desig, me, tid=arc.subj.id) %]
+           [%- IF arc.comment %]
+              (<em>[% arc.comment %]</em>)
+           [% END %]
+        [%- END %]
+     [% END %]
+     </li>
+  [% END %]
+
+  </ul>
+</small>

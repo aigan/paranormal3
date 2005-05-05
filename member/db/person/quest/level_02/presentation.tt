@@ -1,0 +1,46 @@
+[% META
+	title = 'Presentation'
+	next_template = '../level_03/welcome.tt'
+	next_action = 'member_update'
+	focus = 'presentation'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+<p align="right">Steg 10 av 10</p>
+
+<textarea name="presentation" cols="55" rows="20" wrap="virtual">[% m.presentation|html %]</textarea>
+<br>
+<input type="hidden" name="done_presentation" value="1">
+
+<table width="95%">
+  <tr>
+    <td align="center">
+      <input type="button" value="Snabbspara" OnClick="javascript:document.f.action='presentation'; document.f.done_presentation.value=0; document.f.submit()">
+    </td>
+    <td align="denter">
+      <input type="submit" value="Klar!">
+    </td>
+  </tr>
+</table>
+
+<p>Det här är sista steget. Du kommer inte vidare förrän du skrivit en
+ganska lång presentation av dig själv.  Skriv <strong>inte</strong>
+vad du heter, hur du ser ut, hur gammal du är, var du bor, etc. (De
+sakerna har du redan svarat på.) Använd <strong>inte</strong> HTML.
+Ha en tomrad mellan varje stycke. (<strong>Inte</strong> varje rad.)</p>
+
+<p>Du kan skriva om varför du är intresserad av det paranormala.  Vad
+är det du vill lära dig?  Vad söker du?  Skriv gärna också vad det är
+som definierar dig som människa. Exempelvis jobb, familj,
+fitidsintressen, etc.</p>
+
+<p>Var uppriktig och sanningsenlig. Vi kommer att kontrollera dina
+uppgifter. Anledningen till kontrollen är att sortera bort de riktigt
+oseriösa registreringar.  Du behöver dock inte vara orolig över att ha
+<em>fel</em> intressen eller åsikter.</p>
+
+<p>(Tänk på att snabbspara lite då och då.  Om datorn krachar förlorar
+du inte allt du skrivit.  Om du vill kan du fortsätta i morgon eller
+nästa gång du loggar in.)</p>
+

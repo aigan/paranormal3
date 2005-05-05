@@ -1,0 +1,6 @@
+[% IF t.file %]
+   [% jump(t.desig, t.file) %]
+[%- ELSE %]
+   <code>[% t.desig | html %]</code>
+[%- END %],
+v[% t.ver %]

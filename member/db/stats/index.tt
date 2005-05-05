@@ -1,0 +1,45 @@
+[% META title = 'Statistik' %]
+
+[% PROCESS stats_menu.tt %]
+
+<ul>
+
+[% nov = select_record('select count(member) as cnt from member where member_level = 2 or member_level=3') %]
+<li>[% nov.cnt %] sökanden
+
+
+[% ord = select_record('select count(member) as cnt from member where member_level > 4 and member_level < 11') %]
+<li>[% ord.cnt %] medborgare
+
+[% aka = select_record('select count(member)-1 as cnt from member where member_level > 10 and member > 0') %]
+<li>[% jump("$aka.cnt väktare", '/member/db/person/find/advanced_result.tt' _min_member=1, _min_member_level=11) %]
+
+[% pre1 = select_record('select count(member) as cnt from member where member > 0') %]
+<li>[% pre1.cnt %] medlemmar
+
+[% ta = select_record('select count(t) as cnt from t where t_entry is false and t_active is true') %]
+<li>[% ta.cnt %] ämnen
+
+[% tns = select_record('select count(t) as cnt from t where t_active is true and t_text is null and t_entry is false and not exists (select 1 from media where media = t)') %]
+<li>[% jump("$tns.cnt ämnen utan kortbeskrivning", '/member/db/topic/list/no_description.tt') %]
+
+[% tnr = select_record('select count(t) as cnt from t main where t_active is true and t_entry is false and not exists (select 1 from rel where (rev=main.t or rel=main.t) and rel_active is true and rel_strength >= 30)') %]
+<li>[% jump("$tnr.cnt ämnen utan kopplingar", '/member/db/topic/list/no_relations.tt') %]
+
+[% ea = select_record('select count(t) as cnt from t where t_entry is true and t_active is true') %]
+<li>[% ea.cnt %] texter
+
+[% aa = select_record('select count(talias) as cnt from talias where talias_active is true') %]
+<li>[% aa.cnt %] uppslagsord
+
+<li>[% jump('Besöksstatistik', '/webalizer/') %]
+
+[% cnt_online = count_online %]
+<li>Vi har just nu [% cnt_online %] medlem[% 'mar' IF cnt_online > 1 %] online
+
+[% IF u.level > 41 %]
+<li>Under utveckling: [% jump('Spridning', '/member/db/person/find/map.tt', run='geo_image_create', fastsearch=1) %]
+[% END %]
+
+</ul>
+

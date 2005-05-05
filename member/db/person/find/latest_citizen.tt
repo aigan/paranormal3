@@ -1,0 +1,23 @@
+[% META title="Nya medborgare"
+        level = 5
+%]
+
+[% PROCESS load_member.tt %]
+
+[% PROCESS person_find_menu.tt %]
+
+<div class="entry">
+<table>
+<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Ort</th>
+</tr>
+[% FOREACH rec = select_list("from member where member_level=5 and present_contact >= 5 order by member_created desc limit 20") %]
+   [% m = getmember( rec.member, rec ) %]
+   [% tr2 %]
+       <td>$m.id</td>
+       <td>$m.created</td>
+       <td>$m.link</td>
+       <td>$m.home_postal_city</td>
+   </tr>
+[% END %]
+</table>
+</div>

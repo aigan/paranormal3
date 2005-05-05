@@ -1,0 +1,33 @@
+[% META title="Toppkategorier"
+        level = 11
+%]
+
+<div class="entry">
+<table>
+<tr><th>tid<th>Titel</tr>
+[% FOREACH select_list("from t, rel where rev=t and rel=1 and rel_type=1 and rel_active is true and t_active is true order by t") %]
+   [% tr2 %]
+      <td>$t</td>
+      <td>[% jump(t_title, 'view/', tid=t) %]</td>
+   </tr>
+[% END %]
+</table>
+</div>
+
+<p>Dessa kategorier är tänkt att utgöra basen för ett träd av ämnen.
+Man ska kunna klicka sig fram till intressanta ämnen ungefär som i <a
+href="http://directory.google.com/" target="google">Google Web
+Directory</a>.
+
+<p>Alla ämnen ska vara underämne till en eller flera av dessa
+kategorier.  Senare förfinar vi trädet så att vi får fler
+nivåer. Kanske runt 4 nivåer kan vara lagom i gemonsnitt?  Förrutom
+dessa huvudkategorier får vi väl ha lista över personer, grupper,
+böcker, filmer, etc.
+
+<p>Kategorin <code>Underhållning</code> hette tidigare
+<code>Mystik</code>.  Den är tänkt att innefatta det som är "Coolt".
+Dvs sådant som folk utan "seriöst intresse" kan tycka är
+underhållande.  Vad vill en person läsa om hon/han är ung och gillar
+skräckfilmer?
+

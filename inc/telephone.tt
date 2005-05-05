@@ -1,0 +1,17 @@
+[% DEFAULT m = u %]
+[% IF m.phone %]
+   Hem:
+   [% m.phone %]
+   [% IF m.phone_comment %]
+      ([% m.phone_comment %])
+   [% END %]
+   <br>
+[% END %]
+[% IF m.mobile %]
+   Mob:
+   [% m.mobile %]
+   [% IF m.mobile_comment %]
+      ([% m.mobile_comment %])
+   [% END %]
+   <br>
+[% END %]

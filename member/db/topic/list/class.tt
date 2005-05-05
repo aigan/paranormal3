@@ -1,0 +1,21 @@
+[% META title="Klasslista"
+        level = 5;
+%]
+
+<div class="entry">
+<table>
+   <tr>
+      <th>Nr
+      <th>Namn
+      <th>Beskrivning
+   </tr>
+
+[% FOREACH select_list("from t where t_class is true and t_active is true order by t_title") %]
+   [% tr2 %]
+      <td>$t
+      <td>[% jump(t_title, '../view/' tid=t) %]
+      <td>[% t_text | html %]
+   </tr>
+[% END %]
+</table>
+</div>

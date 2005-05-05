@@ -1,0 +1,22 @@
+[% META
+	otitle = 'Inställningar - Lösenord'
+	next_action = 'member_passwd_update'
+	focus = 'passwd_old'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Lösenord: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt IF u.level >= 5 %]
+
+<table>
+[% IF u.level < 41 %]
+<tr><td>Ange det gamla lösenordet </td><td><input type="password" name="passwd_old"></td></tr>
+[% END %]
+<tr><td>Skriv in det nya lösenordet </td><td><input type="password" name="passwd"></td></tr>
+<tr><td>Skriv om det nya lösenordet </td><td><input type="password" name="passwd_confirm"></td></tr>
+</table>
+
+<p>[% submit('Uppdatera') %]</p>

@@ -1,0 +1,33 @@
+[% META
+	otitle = 'Skicka e-post'
+	next_action = 'email_member'
+	next_template = '/member/db/person/view/'
+	focus = 'subject'
+	level = 0
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Skicka e-post till [% jump("$m.title $m.nickname", '/member/db/person/view/' member=m.member) %]</h1>
+
+[% UNLESS (u.level and m.newsmail > 2) or (u.level > 40) or (m.newsmail > 0 and u.level > 5) or (m.newsmail > 3 and m.general_helper > 30 ) %]
+   [% THROW denied "Du har för låg nivå för att skicka e-post till denna medlem" %]
+[% END %]
+
+[% t = topic(q.param('tid')) %]
+[% IF t %]
+   [% DEFAULT subject = "Hjälp angående $t.desig" %]
+[% END %]
+
+[% IF u.level %]
+   [% name_string = "\"$u.desig\" <$u.sys_email>" %]
+[% END %]
+<table>
+<tr><td>Från <td>: [% input('from', name_string, size=50) %]
+<tr><td>Rubrik <td>: [% input('subject',subject size=50) %]
+</table>
+
+<p>[% textarea('body','' ) %]
+
+[% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
+<p>[% submit('Skicka brevet') %]

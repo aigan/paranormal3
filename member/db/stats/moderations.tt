@@ -1,0 +1,32 @@
+[% META otitle = 'Statistik' %]
+[% order = q.param('order') || 'accepted_thing' %]
+[% direction = q.param('direction') %]
+
+<h1 align="center">Statistik</h1>
+
+[% PROCESS stats_menu.tt %]
+
+
+<h2>Modereringar</h2>
+
+<div class="entry" align="center">
+<table>
+<tr><th>[% sort('Person','nickname') %]
+    <th>[% sort('Nivå', 'member_level') %]
+    <th>[% sort('Godkänt', 'accepted_thing') %]
+    <th>[% sort('Avvisat', 'rejected_thing') %]
+    <th>[% sort('Kvot', 'CASE WHEN rejected_thing=0 THEN 0 ELSE (accepted_thing + rejected_thing) / rejected_thing END') %]
+
+[% FOREACH select_list("from member, score where score_member=member and (accepted_thing>0 or rejected_thing>0) and member_level>9 order by $order $direction limit 30") %]
+
+[% tr2 %]
+   <td>[% jump(nickname, '/member/db/person/view/', mid=member) %]
+   <td>$member_level
+   <td>$accepted_thing
+   <td>$rejected_thing
+   [% IF rejected_thing %]
+   <td align="right">[% (accepted_thing + rejected_thing) / rejected_thing  | replace(',','.') | format('%d') %]
+   [% END %]
+[% END %]
+</table>
+</div>

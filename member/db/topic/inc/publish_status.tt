@@ -1,0 +1,5 @@
+[% IF t.published %]
+   Är publicerad
+[% ELSIF t.file %]
+   Publiceras snart
+[% END %]

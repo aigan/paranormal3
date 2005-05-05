@@ -1,0 +1,22 @@
+[% META title="Ämnen utan texter"
+        level = 5
+%]
+<p>
+[ [% jump('Ladda om sidan', me) +%]
+]</p>
+
+<p>25 slumpvis utvalda ämnen</p>
+
+<div class="entry">
+<table>
+   <tr><th>S</th><th>Ämne</th><th>Skapad</th></tr>
+[% FOREACH rec = select_list("select t, random() as rnd from t main where t_active is true and t_entry is false and not exists (select 1 from t where t_active is true and t_entry_parent=main.t) order by rnd limit 25" ) %]
+   [% t = topic(rec.t) %]
+   [% tr2 %]
+      <td>[% t.status %]</td>
+      <td>[% jump(t.desig, '/member/db/topic/view/', tid=t.id, target='info') %]</td>
+      <td>[% t.created %]</td>
+  </tr>
+[% END %]
+</table>
+</div>

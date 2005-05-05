@@ -1,0 +1,17 @@
+[% META
+	title = 'Flytta text'
+	next_template = 'move_find.tt'
+	level = 12
+	focus = 'talias'
+%]
+
+[%
+   t = topic(q.param('tid'));
+   hidden('tid', t.id);
+   PROCESS buttons.tt;
+   PROCESS edit_menu.tt;
+%]
+
+<p>Flytta <code>$t.id:$t.desig</code> till [% input('talias') %]
+
+[% submit('Sök') %]

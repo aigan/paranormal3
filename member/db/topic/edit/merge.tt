@@ -1,0 +1,21 @@
+[% META
+	title = 'Slå samman två ämnen'
+	next_template = 'merge_find.tt'
+	level = 12
+	focus = 't1_alias'
+%]
+
+[%
+   tid = q.param('tid');
+   DEFAULT tid = q.param('t');
+
+   t = topic(tid);
+   hidden('tid', tid);
+   PROCESS buttons.tt;
+%]
+
+[% PROCESS edit_menu.tt %]
+
+<p>Slå samman <code>$tid: $t.title</code> med [% input('t1_alias') %]
+
+[% submit('Sök') %]

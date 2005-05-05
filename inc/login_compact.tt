@@ -1,0 +1,16 @@
+<p align="center"><strong>[% message | html %]</strong></p>
+
+<table align="center">
+<tr><th align="left" colspan="2">Logga in:</th>
+</tr>
+
+<tr><td>Namn </td><td><input tabindex="1" name="username"></td>
+<td valign="top" rowspan="4" style="font-size: 80%; padding-left: 1em">[% jump('Skriv in dig','/member/db/person/quest/level_00/') %] om du är nykomling<br>
+Fortsätt med en [% jump('påbörjad registrering','/member/db/person/quest/level_01/list_new.tt') %]<br>
+<a href="/member/db/person/forgot_pwd.tt">Har du glömt lösenordet?</a><br>
+<input type='checkbox' name="remember_login" value="1"> Kom ihåg inloggningen
+</td></tr>
+
+<tr><td>Lösen </td><td><input tabindex="2" type="password" name="password"></td></tr>
+<tr><td colspan="2" align="right"><input tabindex="3" type="image" src="/images/icon/logga_in.gif" border="0" value="Login" class="imgbutton"></td></tr>
+</table>

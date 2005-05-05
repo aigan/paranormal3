@@ -1,0 +1,64 @@
+[%
+   base = '/member/db/topic';
+   tid=t.id;
+   v=t.ver;
+%]
+
+<p>
+[ [% jump('Läs', "$base/view/", tid=tid, v=v) +%]
+| [% jump('Metadata', "$base/edit/meta.tt", tid=tid route=uri, v=v) +%]
+| [% jump('Versioner', "$base/edit/versions.tt", tid=tid route=uri, v=v) +%]
+| [% jump('Skriv', "$base/edit/text.tt", tid=tid route=uri, v=v) +%]
+| [% jump('TS', "$base/edit/topicstatements.tt", tid=tid, v=v) +%]
+[% IF u.level > 10 %]
+| [% jump('Flytta', "$base/edit/move.tt", tid=tid route=uri, v=v) +%]
+| [% jump('Disposition', "$base/edit/outline.tt", tid=tid, v=v) +%]
+[% END %]
+| [% jump('Bokmärka', me, tid=tid, v=v) +%]
+]
+
+[% IF edit_arcs %] <br>
+[%
+   DEFAULT keep=[ 'tid' 'v' 'include_inactive'];
+   DEFAULT tfilter =
+   {
+      include_inactive = q.param('include_inactive'),
+      include_false = q.param('include_false'),
+      include_indirect = q.param('include_indirect'),
+      include_rev = q.param('include_rev'),
+   };
+   hidden('include_inactive', tfilter.include_inactive);
+   hidden('include_false', tfilter.include_false);
+   hidden('include_indirect', tfilter.include_indirect);
+   hidden('include_rev', tfilter.include_rev);
+%]
+Visa även
+[ 
+[%
+IF tfilter.include_inactive;
+   jump('inaktiva', me, keep_params=keep, class='selected', include_inactive=0);
+ELSE;
+   jump('inaktiva', me, keep_params=keep, include_inactive=1);
+END;
+' | ';
+IF tfilter.include_false;
+   jump('falska', me, keep_params=keep, class='selected', include_false=0);
+ELSE;
+   jump('falska', me, keep_params=keep, include_false=1);
+END;
+' | ';
+IF tfilter.include_indirect;
+   jump('indirekta', me, keep_params=keep, class='selected', include_indirect=0);
+ELSE;
+   jump('indirekta', me, keep_params=keep, include_indirect=1);
+END;
+' | ';
+IF tfilter.include_rev;
+   jump('omvända', me, keep_params=keep, class='selected', include_rev=0);
+ELSE;
+   jump('omvända', me, keep_params=keep, include_rev=1);
+END;
+%]
+]
+[% END %]
+</p>

@@ -1,0 +1,22 @@
+<p>Ändra status för version $t_ver<br>
+[%
+IF u.level > 11;
+   radio('t_status', '', 1); 'Ingen ändring<br>';
+   SWITCH t_status;
+      CASE 0; radio('t_status', 4); 'Återaktivera<br>';
+      CASE 1; radio('t_status', 4); 'Återaktivera<br>';
+      CASE 2; radio('t_status', 4); 'Godkänn<br>'; radio('t_status', 0, 'f'); 'Avslå<br>';
+      CASE 3; radio('t_status', 4); 'Godkänn<br>'; radio('t_status', 0, 'f'); 'Avslå<br>';
+      CASE 4; radio('t_status', 0, 'f'); 'Deaktivera<br>';
+   END;  
+   IF u.level > 39;
+      IF t_status == 5;
+   	 radio('t_status', 4); 'Sätt som normal<br>';
+   	 radio('t_status', 0, 'f'); 'Deaktivera<br>';
+      ELSE;
+   	 radio('t_status', 5); 'Toppa<br>';
+      END;  
+   END;  
+END;
+%]
+</p>

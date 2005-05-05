@@ -1,0 +1,48 @@
+[% META
+	title = 'Kontrollera presentation'
+	level = 12
+%]
+
+[% PROCESS load_member.tt %]
+
+<h2>[% m.tlink %]</h2>
+
+[% PROCESS person_view_menu.tt %]
+
+
+<table>
+<tr><td>
+
+<table>
+<tr><td>Medlem</td><td>[% m.id %]</td></tr>
+<tr><td>Priv E-post</td><td>[% m.sys_email %]</td></tr>
+<tr><td>Publ E-post</td><td>[% input('home_online_email', m.home_online_email size=20) %]</td></tr>
+<tr><td>Förnamn</td><td>[% input('name_given',m.name_given size=20) %]</td></tr>
+<tr><td>Efternamn</td><td>[% input('name_famliy', m.name_family size=20) %]</td></tr>
+<tr><td>Födelseår</td><td>[% input('bdate_ymd_year', m.bdate_ymd_year, size=5) %]</td></tr>
+<tr><td>Webbsida</td><td><a href="[% m.home_online_uri %]">[% m.home_online_uri %]</a></td></tr>
+<tr><td>ICQ</td><td>[% m.home_online_icq %]</td></tr>
+</table>
+
+</td><td>
+
+<p>Presentation:<br />
+<textarea name="presentation" cols="40" rows="15" wrap="virtual">[% 
+    ( q.param('presentation') || m.presentation ) | html %]</textarea>
+
+</td></tr>
+<tr><td colspan=2>
+
+<p>Kommentar på registrering (följer med brevet till [% m.nickname | html %]):<br>
+<textarea name="comment" cols=80 rows=5>[% q.param('comment') %]</textarea>
+
+</td></tr>
+<tr><td>
+   [% go('Godkänn','/member/db/person/find/pending_lvl5.tt','approve_lvl5') %]
+
+</td><td align="right">
+
+   [% go('Tillrättavisa','/member/db/person/find/pending_lvl5.tt','disapprove_lvl5') %]
+</td></tr>
+</table>
+

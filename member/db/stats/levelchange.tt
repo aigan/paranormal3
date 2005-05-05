@@ -1,0 +1,34 @@
+[% META otitle = 'Statistik' %]
+[% order = q.param('order') || 'accepted_thing' %]
+[% direction = q.param('direction') %]
+
+<h1 align="center">Statistik</h1>
+
+[% PROCESS stats_menu.tt %]
+
+
+<h2>Ändrat annans nivå</h2>
+
+<div class="entry" align="center">
+<table>
+<tr><th>[% sort('Person','nickname') %]
+    <th>[% sort('Nivå', 'member_level') %]
+    <th>[% sort('Ökat', 'promoted_user') %]
+    <th>[% sort('Minskat', 'demoted_user') %]
+    <th>[% sort('Kvot', 'CASE WHEN demoted_user=0 THEN 0 ELSE (promoted_user + demoted_user) / demoted_user END') %]
+
+[% quota = 0 %]
+
+[% FOREACH select_list("from member, score where score_member=member and present_contact > 0 and promoted_user>0 order by $order $direction limit 20") %]
+
+[% tr2 %]
+   <td>[% jump(nickname, '/member/db/person/view/', mid=member) %]
+   <td>$member_level
+   <td>$promoted_user
+   <td>$demoted_user
+   [% IF demoted_user %]
+   <td align="right">[% (promoted_user + demoted_user) / demoted_user  | replace(',','.') | format('%d') %]
+   [% END %]
+[% END %]
+</table>
+</div>

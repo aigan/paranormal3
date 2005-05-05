@@ -1,0 +1,35 @@
+[% META
+	title = 'Namn'
+	next_template = 'demography.tt'
+	next_action = 'member_update'
+	focus = 'name_given'
+	level = 2
+%]
+<p align="right">Steg 7 av 10</p>
+
+[% PROCESS load_member.tt %]
+
+<p>För att medlemsregistret ska vara användbart är det viktigt att
+veta vem som är vem.  Vi vill därför att du här anger ditt
+<strong>verkliga</strong> namn.</p>
+
+<p>Om du vill vara anonym går det bra att hoppa över denna sida.</p>
+
+<table>
+  <tr>
+    <td>Förnamn</td>
+    <td>[% input('name_given', m.name_given) %]</td>
+    <td>(Tilltalsnamn)</td>
+  </tr>
+  <tr>
+    <td>Efternamn</td>
+    <td>[% input('name_family', m.name_family) %]</td>
+    <td>(Familjenamn)</td>
+  </tr>
+</table>
+
+<p>(Kom ihåg att alla uppgifter kommer att vara mer eller mindre
+sökbara för allmänheten.  Du kommer senare ha möjlighet att ändra och
+komplettera uppgifterna.)</p>
+
+ [% submit %]

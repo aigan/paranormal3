@@ -1,0 +1,24 @@
+[% META title="Filter"
+%]
+
+[% PROCESS chat_menu.tt %]
+
+<div class="entry">
+<table>
+   <tr>
+      <th>Mönster
+      <th>Skapad
+      <th>Anledning
+      <th>Utgår
+   </tr>
+
+[% FOREACH select_list("from ipfilter order by ipfilter_created") %]
+   <tr>
+      <td>[% jump(ipfilter_pattern, 'filter_update.tt', pattern=ipfilter_pattern) %]
+      <td>[% ipfilter_created %] av [% getmember(ipfilter_createdby).tlink %]
+      <td>[% ipfilter_reason | html %]
+      <td>[% ipfilter_expire %]
+   </tr>
+[% END %]
+</table>
+</div>

@@ -1,0 +1,22 @@
+[% META
+	title = 'Hitta medlemmar'
+	next_template = '../view/'
+	focus = 'nick'
+	level = 5
+%]
+
+[% PROCESS person_find_menu.tt %]
+
+<p>Medlem [% input('nick') %] [% submit('Sök') %] <em>Söker på flera sätt</em></p>
+
+
+<p class="small">[% alfanum_bar('list.tt', 'part') %]</p>
+
+<p class="big"><a href="combined.tt">Kombinerad sökning</a></p>
+<p class="big">[% jump('Nya medborgare', 'latest_citizen.tt') %]</p>
+<p class="big">[% jump('Senast inloggade', 'latest_visitor.tt') %]</p>
+<p>[% jump('ICQ-adresser', 'icq_list.tt') %]</p>
+
+[% IF u.level >= 41 %]
+   <p>[% jump("Skapa ny medlem", "/member/db/person/create/") %]</p>
+[% END %]

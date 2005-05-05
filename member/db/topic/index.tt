@@ -1,0 +1,38 @@
+[% META
+	title = 'Administrera ämnen'
+	next_template = 'view/'
+	focus = 'talias'
+%]
+
+<h2>[% jump('Navigera bland ämnena', '/member/db/topic/view/tree.tt?tid=1') %]</h2>
+
+<p align="center">[% input('talias') %] [% submit('Sök') %]
+
+<p>[% alfanum_bar('alias_list.tt', 'part') %]
+
+
+<table><tr><td valign="top">
+<ul>
+[% IF u.level > 10 %]
+  <li>[% jump('Skapa ämne', 'create/admin.tt') %]
+  <li>[% jump('Hitta förlorade texter', '/member/db/topic/edit/outline.tt', run='entry_find_lost', tid=137624) %]
+  <li>[% jump('Publicera / synka sidor', me, run='publish_sync', class="") %]
+[% END %]
+  <li>[% jump('Viktiga klasser', 'list/class.tt') %]
+  <li>[% jump('Rel-typer', '/member/db/reltype/list.tt') %]
+  <li>[% jump('Toppkategorier', '/member/db/topic/list/topcat.tt') %]
+</ul>
+
+</td><td valign="top">
+
+<ul>
+  <li>[% jump('Senast uppdaterade ämnena', 'list/latest_topics.tt') %]
+  <li>[% jump('Senast uppdaterade texterna', 'list/latest_texts.tt') %]
+  <li>[% jump('Dubletter alias', 'list/doubles_aliases.tt') %]
+  <li>[% jump('Dubletter titlar', 'list/doubles_titles.tt') %]
+  <li>[% jump('Ämnen utan kortbeskrivning', 'list/no_description.tt') %]
+  <li>[% jump('Ämnen utan texter', 'list/no_entries.tt') %]
+  <li>[% jump('Ämnen med för lång kortbeskrivning', 'list/long_description.tt') %]
+  <li>[% jump('Ämnen utan relationer', 'list/no_relations.tt') %]
+</ul>
+</td></tr></table>

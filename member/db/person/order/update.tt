@@ -1,0 +1,50 @@
+[% META title="Uppdatera beställning"
+        next_tempalte = "details.tt"
+	next_action  = "payment_update"
+	level = 42
+%]
+
+[% p = getpayment(q.param('pid')) %]
+[% mid = p.member.id %]
+
+[% PROCESS load_member.tt %]
+[% PROCESS person_view_menu.tt %]
+[% PROCESS payment_menu.tt %]
+
+[% product_list = {} %]
+[% FOREACH product = topic(422155).rev_arcs('är') %]
+   [% product_list.${product.subj.id} = product.subj.desig %]
+[% END %]
+
+[% method_list = {} %]
+[% FOREACH method = topic(422433).rev_arcs('är') %]
+   [% method_list.${method.subj.id} = method.subj.desig %]
+[% END %]
+
+<div class="entry">
+<table align="left">
+<tr><td>ID        <td>[% p.id; hidden('pid', p.id) %]
+<tr><td>Beställd     <td>[% input('order_date', p.order_date) %]
+<tr><td>Faktura     <td>[% input('invoice_date', p.invoice_date) %]
+<tr><td>Betald     <td>[% input('payment_date', p.payment_date) %]
+<tr><td>Loggad     <td>[% input('log_date', p.log_date) %]
+
+<tr><td>Medlem    <td>[% input('nickname', m.nickname) %]
+<tr><td>Företag   <td>[% input('company', p.company.sysdesig) %]
+<tr><td>Produkt   <td>[% select('product', p.product.id, product_list) %]
+<tr><td>Pris      <td>[% input('price', p.price) %] kr
+<tr><td>varav moms<td>[% input('vat', p.vat) %] kr
+<tr><td>Antal     <td>[% input('quantity', p.quantity) %]
+<tr><td>Metod     <td>[% select('method', p.method.id, method_list) %]
+<tr><td>Mottagare <td>[% input('receiver', p.receiver.sysdesig) %]
+<tr><td>Ver.nr    <td>[% input('vernr', p.vernr) %]
+<tr><td>Referens  <td>[% input('reference', p.reference) %]
+</table>
+</div>
+
+<p>Meddelande:<br>[% textarea('message',p.message, rows=5) %]
+<p>Kommentar:<br>[% textarea('comment',p.comment, rows=5) %]
+<p>
+[% submit %]
+
+<br clear="all">

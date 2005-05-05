@@ -1,0 +1,37 @@
+[% META
+	otitle = 'Inställningar - Adressuppgifter'
+	next_action = 'member_update'
+	focus = 'home_online_icq'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Kommunikation: [% m.tlink2 %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+
+<h3>IRC</h3>
+
+<p>På chatten använder du aliaset <code>[% m.chat_nick %]</code>
+
+[% hr %]
+
+
+[% WRAPPER draw_string title='ICQ' field='home_online_icq' size=18 %]
+ICQ-nummer
+[% END %]
+
+
+[% WRAPPER draw_string title='AOL' field='home_online_aol' size=18 %]
+AOL-adress
+[% END %]
+
+
+[% WRAPPER draw_string title='MSN' field='home_online_msn' size=18 maxlength=36 %]
+MSN-adress
+[% END %]
+
+
+<p> [% submit %]

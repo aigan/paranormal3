@@ -1,0 +1,17 @@
+  [%- DEFAULT mid = q.param('mid') || q.param('member') || u.id || 0 %]
+  [%- DEFAULT level = 0 %]
+  [%- m =  getmember( mid ) %]
+  [%- IF m.level < -1 and u.level < 41;
+         THROW denied "Det här är en zombie.\nEndast en livbringare kan uttyda något ur mörkret som råder här.";
+      END;
+  %]
+  [%- IF m.present_contact < 2 and u.level < 41; m.nickname = 'Anonym'; END %]
+  [%- THROW notfound "$mid existerar inte" IF m.present_contact < 1 and mid != u.id and u.level < 41 %]
+  [%- IF level > 40 %]
+     [%- DEFAULT reason = "$m.nickname har valt att dölja sina uppgifter\n" %]
+  [%- END %]
+  <input type="hidden" name="mid" value="$m.id">
+  [%- IF (u.level < level) and (u.id != mid);
+        THROW denied "$reason\nDu måste vara inloggad som $m.nickname\neller vara minst nivå $level för att se denna sida";
+     END
+  %]

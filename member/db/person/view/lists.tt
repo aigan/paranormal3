@@ -1,0 +1,70 @@
+[% META
+	otitle = 'Lista aktiviteter'
+	level = 5
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Lista aktiviteter: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<h2>Skapande</h2>
+
+<ul>
+
+[% ta1 = select_record('select count(t) as cnt from t where t_createdby=? and t_ver=1 and t_entry is false', m.id) %]
+<li>[% jump("$ta1.cnt ämnen $m.nickname skapat", 'created_topics.tt', mid=m.id) %]</li>
+
+[% tav = select_record('select count(t) as cnt from t where t_createdby=? and t_active is true and t_entry is false and t_ver>1', m.id) %]
+<li>[% jump("$tav.cnt aktiva ämnen där senaste uppdateringen är gjord av $m.nickname", 'created_versions_topics_active.tt', mid=m.id) %]</li>
+
+[% ea1 = select_record('select count(t) as cnt from t where t_createdby=? and t_ver=1 and t_entry is true', m.id) %]
+<li>[% jump("$ea1.cnt texter $m.nickname skrivit", 'created_entries.tt', mid=m.id) %]</li>
+
+[% eav = select_record('select count(t) as cnt from t where t_createdby=? and t_active is true and t_entry is true and t_ver>1', m.id) %]
+<li>[% jump("$eav.cnt aktiva texter där senaste uppdateringen är gjord av $m.nickname", 'created_versions_entries_active.tt', mid=m.id) %]</li>
+
+[% ra = select_record('select count(rel_topic) as cnt from rel where rel_createdby=? and (rel_active is true and rel_strength >= 30)', m.id) %]
+<li>[% jump("$ra.cnt relationer (aktiva och sanna) skapade av $m.nickname", 'created_rels.tt', mid=m.id) %]</li>
+
+</ul>
+
+<h2>Misstag (ej avslagna av sig själv)</h2>
+
+<ul>
+
+[% td = select_record('select count(t) as cnt from t where t_createdby=? and t_changedby<>? and t_status = 0 and t_entry is false', m.id, m.id) %]
+<li>[% jump("$td.cnt versioner av ämnen skapade av $m.nickname som avslagits (ej av sig själv)", 'denied_topics.tt', mid=m.id) %]</li>
+
+[% ed = select_record('select count(t) as cnt from t where t_createdby=? and t_changedby<>? and t_status = 0 and t_entry is true', m.id, m.id) %]
+<li>[% jump("$ed.cnt versioner av texter skrivna av $m.nickname som avslagits (ej av sig själv)", 'denied_versions_entries.tt', mid=m.id) %]</li>
+
+[% rd = select_record('select count(rel_topic) as cnt from rel where rel_createdby=? and rel_changedby<>? and (rel_active is false and rel_strength >= 30)', m.id, m.id) %]
+<li>[% jump("$rd.cnt relationer (sanna) skapade av $m.nickname som avslagits (ej av sig själv)", 'denied_rels.tt', mid=m.id) %]</li>
+
+</ul>
+
+<h2>Modereringar av andras aktiviteter, gjorda av $m.nickname</h2>
+
+<ul>
+
+[% at = select_record('select count(t) as cnt from t where t_createdby<>? and t_changedby=? and t_status>=4 and t_entry is false', m.id, m.id) %]
+<li>[% jump("$at.cnt versioner av ämnen som $m.nickname godkänt (ej egna)", '', mid=m.id) %]</li>
+
+[% dt = select_record('select count(t) as cnt from t where t_createdby<>? and t_changedby=? and t_status=0 and t_entry is false', m.id, m.id) %]
+<li>[% jump("$dt.cnt versioner av ämnen som $m.nickname avslagit (ej egna)", 'moderated_denied_topics.tt', mid=m.id) %]</li>
+
+[% ae = select_record('select count(t) as cnt from t where t_createdby<>? and t_changedby=? and t_status>=4 and t_entry is true', m.id, m.id) %]
+<li>[% jump("$ae.cnt versioner av texter som $m.nickname godkänt (ej egna)", '', mid=m.id) %]</li>
+
+[% de = select_record('select count(t) as cnt from t where t_createdby<>? and t_changedby=? and t_status=0 and t_entry is true', m.id, m.id) %]
+<li>[% jump("$de.cnt versioner av texter som $m.nickname avslagit (ej egna)", 'moderated_denied_entries.tt', mid=m.id) %]</li>
+
+[% ar = select_record('select count(rel_topic) as cnt from rel where rel_changedby=? and rel_createdby<>? and (rel_active is true and rel_strength >= 30)', m.id, m.id) %]
+<li>[% jump("$ar.cnt relationer (aktiva och sanna) godkända av $m.nickname (ej egna)", 'moderated_created_versions_rels_active.tt', mid=m.id) %]</li>
+
+[% dr = select_record('select count(rel_topic) as cnt from rel where rel_changedby=? and rel_createdby<>? and (rel_status=0 and rel_strength >= 30)', m.id, m.id) %]
+<li>[% jump("$dr.cnt relationer (sanna) avslagna av $m.nickname (ej egna)", '', mid=m.id) %]</li>
+
+</ul>

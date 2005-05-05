@@ -1,0 +1,12 @@
+<p>Stats: 
+[ [%+ jump('Allmänt', '/member/db/stats/') +%]
+| [%+ jump('Aktiviteter', '/member/db/stats/activity.tt') +%]
+| [%+ jump('Ålder', '/member/db/stats/age.tt') +%]
+| [%+ jump('Nivåer', '/member/db/stats/level.tt') +%]
+| [%+ jump('Nivåbyte', '/member/db/stats/levelchange.tt') +%]
+| [%+ jump('Modereringar', '/member/db/stats/moderations.tt') +%]
+[% IF u.level > 10 +%]
+| [%+ jump('Kvalite', '/member/db/stats/quality.tt') +%]
+[% END +%]
+| [%+ jump('Gåvor', '/member/db/stats/payment/') +%]
+]</p>

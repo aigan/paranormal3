@@ -1,0 +1,59 @@
+[% META title="Alfabetisk lista"
+        level = 5
+%]
+
+[% PROCESS person_find_menu.tt %]
+
+[%
+   subpart = {};
+   offset = q.param('offset');
+   DEFAULT offset=1;
+   part_offset = offset - 1;
+
+   part = q.param('part');
+   IF part;
+      sel = "like '$part%'";
+   ELSE;
+      sel = "< 'a'";
+   END;
+%]
+
+<h2>- [% part | upper %] -</h2>
+
+<p align="center" class="small">[% alfanum_bar('list.tt', 'part') %]</p>
+
+<div class="entry" align="center">
+<table>
+<tr><th>Nr</th><th>Alias</th><th>Namn</th><th>Nivå</th></tr>
+[% FOREACH select_list("from nick, member where member=nick_member and member_level>0 and present_contact > 4 and uid $sel order by uid limit 10 offset $part_offset") %]
+   [% tr2 %]
+       <td>$nick_member</td>
+       <td><a href="../view/?mid=$nick_member">$uid</a></td>
+       <td>$nickname</th>
+       <td>$member_level</td>
+   </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+</table>
+</div>
+
+[%
+   DEFAULT subpart.shown = 0;
+
+   prev_from = offset - 10;
+   prev_to = offset - 1;
+   this_to = offset + subpart.shown - 1;
+   this_from = this_to ? offset : 0;
+   next_from = offset + 10;
+   next_to = offset + 19;
+%]
+
+<p align="center">
+[% IF offset > 10 %]
+   [% forward("$prev_from - $prev_to", 'list.tt' offset = prev_from) %] | 
+[% END %]
+$this_from - $this_to
+[% IF subpart.shown == 10 %]
+   | [% forward("$next_from - $next_to", 'list.tt' offset = next_from) %]
+[% END %]
+</p>

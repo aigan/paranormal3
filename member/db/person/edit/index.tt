@@ -1,0 +1,61 @@
+[% META
+	otitle = 'Inställningar'
+	next_action = 'member_update'
+	level = 2
+%]
+
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<p>Nivå [% m.level %]
+
+
+<p>
+Medlemsnummer [% m.member %].
+Skapad [% m.created.ymd %].
+Uppgifter uppdaterade [% m.updated.ymd %].
+</p>
+
+<p>
+Loggat in [% m.visits %] gång[% 'er' IF m.visits > 1 %].
+Spenderat [% elapsed_time(m.total_time_online) %] online
+<em>(sedan 2003-10-26)</em>
+</p>
+
+<ul>
+	<li>[% jump('Namn och alias', 'name.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Lösenord', 'passwd.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Anonymitet', 'privacy.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Intressetyper', 'general_interest.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Intressen', 'interest.tt', run='mark', mid=m.id) %]
+	<li>[% jump('E-post', 'email.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Kommunikation', 'communication.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Sidutseende', 'skin.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Adressuppgifter', 'address.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Personuppgifter', 'demography.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Presentation', 'presentation.tt', run='mark', mid=m.id) %]
+[% IF u.level > 40 %] 
+	<li>[% jump('Innersta väsen', 'admin.tt', run='mark', mid=m.id) %]
+[% END %]
+</ul>
+
+
+[% WRAPPER draw_alt title='Komplexitet' field='show_complexity'
+   values = 
+   {
+	'00' => '0. Minimalt'
+	'05' => '5. Visa det grundläggande'
+	'10' => '10. Normalläge'
+        '30' => '30. Visa allt'
+   }
+%]
+
+Anger hur många konfigurationsalternativ som visas. (Under utveckling)
+
+[% END %]
+
+[% submit('Spara') %]

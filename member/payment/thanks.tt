@@ -1,0 +1,31 @@
+[% META title="Tack" %]
+
+[% p = getpayment(q.param('oid')) %]
+[% m = p.member %]
+
+<p>[% jump("Din gåva på $p.price kr",
+           '/member/db/person/order/details',
+           pid=p.id) %] har mottagits.
+
+<p>Du har nu totalt skänkt [% m.payment_total %] kr till oss.  Jätte
+jättemycket tack!!!  <img alt=":-)" src="/images/icon/smiley.gif">
+
+<p>Din stödprenumeration löper till [% m.payment_expire.ymd
+%]. (Självklart får du skicka mer pengar innan dess.)
+
+<p>Du har [% jump("i dina anonymitetsinställninga", '/member/db/person/edit/privacy') %] valt att
+[% IF m.present_gifts >= 30 -%]
+   visa alla detaljer kring dina gåvor
+[%- ELSIF m.present_gifts >= 5 -%]
+   visa gåvornas storlek i din medlemsöversikt
+[%- ELSIF m.present_gifts >= 1 -%]
+   visa om du är stödmedlem
+[%- ELSE -%]
+   hålla dina gåvor hemliga
+[%- END -%]
+.</p>
+
+<ul>
+ <li> [% jump("Visa din historik", '/member/db/person/order/history') %]
+ <li> [% jump("Se global statistik", '/member/db/stats/payment/') %]
+</ul>

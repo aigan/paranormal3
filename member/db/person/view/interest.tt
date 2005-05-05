@@ -1,0 +1,39 @@
+[% META
+	otitle = 'Intressen'
+	level = 5
+%]
+[%
+   max    = q.param('max');
+   cutof  = q.param('cutof');
+
+   DEFAULT
+	max   = 20
+	cutof = 95
+%]
+
+
+[% PROCESS load_member.tt %]
+
+<h1>Intressen: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<p>Lista intressen 
+[ [% jump('Lagom', me, mid=m.id) %]
+| [% jump('Flera', me, max=25, cutof=75, mid=m.id) %]
+]</p>
+
+<p>Klicka på siffran för att säga hur intresserad du själv är i ämnet</p>
+
+[% interests = m.interests.summary( max, cutof ) %]
+
+<table>
+[% FOREACH intr = interests %]
+<tr>
+   [% t = intr.topic %]
+   <td valign="top">[% PROCESS tlink.tt %]</td>
+   <td align="right" valign="top">[% jump(intr.general, '/member/db/intrest/specify', plan=me, run='mark', tid=t.id) %]%</td>
+   <td valign="top">[% intr.comment %]</td>
+</tr>
+[% END %]
+</table>

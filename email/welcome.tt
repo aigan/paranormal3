@@ -1,0 +1,11 @@
+Hej och välkommen till paranormal.se
+
+Du kan logga in på paranormal.se med:
+
+Användarnamn: [% m.nickname +%]
+Lösenord    : [% m.passwd %]
+
+
+Gå till denna sida för att logga in automatiskt:
+
+    http://paranormal.se/member/db?run=member_login&uid=[% m.nickname | uri %]&passwd=[% m.passwd | uri %]

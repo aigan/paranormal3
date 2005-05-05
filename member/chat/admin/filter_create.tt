@@ -1,0 +1,24 @@
+[% META title="Skapa nytt filter"
+        next_handler = "/member/chat/admin/"
+	next_action  = "filter_create"
+	level = 5
+%]
+
+[% PROCESS chat_menu.tt %]
+
+<table>
+<tr><td>Mönster   <td>[% input('pattern') %]
+<tr><td>Anledning <td>[% input('reason') %]
+<tr><td>Utgår     <td>[% input('expire') %]
+</table>
+
+[% submit %]
+
+[% hr %]
+
+<p>Mönster är i formen <code>111.222.333.444</code> eller
+<code>111.222.333.*</code></p>
+
+<p>När IP matchas spärras personen från cgi-chatten ifall han inte är
+inloggad.  För att spärra en inloggad medlem, placera medlemmen på
+svarta listan.</p>

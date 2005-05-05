@@ -1,0 +1,160 @@
+[% META
+	title = 'Hitta medlemmar: Kombinerad sökning'
+	next_template = 'result.tt'
+	level = 5
+%]
+
+[% PROCESS person_find_menu.tt %]
+[% PROCESS load_member.tt %]
+
+<table>
+<tr>
+<td>
+
+<table border>
+<tr><td>[% radio('_belief', -1) %] Skeptiker</td>
+<td>[% radio('_belief') %] --</td>
+<td>[% radio('_belief', 1) %] Troende</td></tr>
+
+<tr bgcolor="#73A4A7">
+<th align="right">Teori</th>
+<td>[% checkbox('_knowledge', 1) %] Kan</td>
+<td>[% checkbox('_theory', 1) %] Vill lära</td>
+</tr>
+
+<tr bgcolor="#73A4A7">
+<th align="right">Praktik</th>
+<td>[% checkbox('_skill', 1) %] Kan</td>
+<td>[% checkbox('_practice', 1) %] Vill lära</td>
+</tr>
+
+<tr>
+<td>[% checkbox('_bookmark', 1) %] Vill läsa</td>
+<td>[% checkbox('_editor', 1) %] Redaktör</td>
+<td>[% checkbox('_discussion', 1) %] Vill diskutera</td></tr>
+
+<tr>
+<td>[% checkbox('_meeter', 1) %] Vill mötas</td>
+<td>[% checkbox('_experience', 1) %] har upplevt</td>
+<td>[% checkbox('_helper', 1) %] Vill hjälpa</td></tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+<p>Vill ha brev [% select("_newsmail", 2,
+{
+	'1' = "ett par gånger om året",
+	'2' = "varje månad",
+	'3' = "varje vecka",
+	'4' = "ett par gånger i veckan",
+	'5' = "varje dag",
+	'6' = "hela tiden",
+}) %] eller mer
+</p>
+
+<p>Bor inom 
+[% select("dist", "",
+{
+	''     = "7 ljusår",
+	'0002' = "2 km",
+	'0005' = "5 km",
+	'0010' = "10 km",
+	'0020' = "2 mil",
+	'0030' = "3 mil",
+	'0050' = "5 mil",
+	'0080' = "8 mil",
+	'0100' = "10 mil",
+	'0200' = "20 mil",
+	'0300' = "30 mil",
+	'0500' = "50 mil",
+	'1000' = "100 mil",
+	'2000' = "200 mil",
+	'5000' = "500 mil",
+
+}) %]
+
+från
+
+[% input("place", "mig", size=20) %]
+<br><small>(Ange person eller ort)</small>
+</p>
+
+<table cellpadding="10">
+<tr><td>
+
+<table>
+<tr><td>Mer än      <td>[% input("_age_min", "", size="3") %] år    
+<tr><td>Mindre än   <td>[% input("_age_max", "" size="3") %] år
+<tr><td>Lägst nivå  <td>[% input("_level_min", "" size="3") %]
+<tr><td>Högsta nivå <td>[% input("_level_max", "" size="3") %]
+</table>
+<br>
+[% checkbox("_phone", 1) %] Har telefon<br>
+
+
+<td>
+[% checkbox("_sex_m", 1) %] män<br>
+[% checkbox("_sex_f", 1) %] kvinnor<br>
+<br>
+[% checkbox("_uri", 1) %] Har hemsida<br>
+[% checkbox("_icq", 1) %] Har ICQ<br>
+</td>
+</tr></table>
+
+<p>Presentation innehåller: [% input('_presentation') %]
+
+<table cellpadding="10">
+<tr><td>
+[% radio('union', 1, 1) %] Med minst ett av intressena<br>
+[% radio('union', 0, 0) %] Med alla dessa intressen<br>
+
+
+[% textarea('intrest','' rows=5 cols=20) %]<br>
+<em>Ett intresse per rad</em>
+
+</td><td valign="top">
+
+<p>
+
+Sortera på:<br>
+
+[% radio("order", "dist", 1) %] Avstånd<br>
+[% radio("order", "latest_in desc") %] Senast inloggad<br>
+[% radio("order", "member_level desc") %] Nivå<br>
+[% radio("order", "nickname") %] Namn<br>
+[% radio("order", "member") %] Mnr<br>
+
+<br>
+
+
+Visa
+[% IF u.level > 10 %]
+[% select("pagesize", 10,
+{
+	'00010' = 10,
+	'00020' = 20,
+	'00030' = 30,
+	'00050' = 50,
+	'00100' = 100,
+	'00200' = 200,
+	'00500' = 500,
+	'10000' = 10000,
+}) %]	
+[% ELSE %]
+[% select("pagesize", 10,
+{
+	'00010' = 10,
+	'00020' = 20,
+}) %]	
+[% END %]
+träffar
+
+</p>
+
+</td></tr>
+</table>
+
+<p>[% submit('Sök') %]

@@ -1,0 +1,50 @@
+[% META title = "ICQ-lista" level = 5 %]
+
+[% PROCESS person_find_menu.tt %]
+
+[% 
+   subpart = {};
+   offset = q.param('offset');
+   DEFAULT offset=1;
+   step = q.param('step');
+   DEFAULT step=25;
+   part_offset = offset - 1;
+%]
+
+<div class="entry" align="center">
+<table>
+<tr><th>Medlem</th><th>UIN (ICQ-nr)</th><th>Lägg till</th><th>Skicka meddelande</th></tr>
+
+[% FOREACH select_list("SELECT member, nickname, home_online_icq FROM member WHERE member_level >= 5 AND home_online_icq IS NOT NULL ORDER BY nickname LIMIT $step OFFSET $part_offset") %]
+    [% tr2 %]
+    <td>[% jump(nickname, '/member/db/person/view/', mid=member) %]</td>
+    <td><a href="http://web.icq.com/wwp?Uin=$home_online_icq" target="_blank">$home_online_icq</a></td>
+    <td><a href="http://web.icq.com/whitepages/add_me?uin=$home_online_icq&action=add" target="_blank">Lägg till</a></td>
+    <td><a href="http://web.icq.com/whitepages/message_me?uin=$home_online_icq&action=message" target="_blank">Skicka meddelande</a></td>
+    </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+
+</table>
+</div>
+
+[%
+   DEFAULT subpart.shown = 0;
+
+   prev_from = offset - step;
+   prev_to = offset - 1;
+   this_to = offset + subpart.shown - 1;
+   this_from = this_to ? offset : 0;
+   next_from = offset + step;
+   next_to = offset + step + step - 1;
+%]
+
+<p align="center">
+[% IF offset > step %]
+   [% forward("$prev_from - $prev_to", 'icq_list.tt' offset = prev_from) %] | 
+[% END %]
+$this_from - $this_to
+[% IF subpart.shown == step %]
+   | [% forward("$next_from - $next_to", 'icq_list.tt' offset = next_from) %]
+[% END %]
+</p>

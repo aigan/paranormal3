@@ -1,0 +1,77 @@
+[% META
+	title = 'Skapa ämne - Kontroll av alias'
+	level = 5
+%]
+[%
+	t_title = q.param('t_title');
+	preserve_data('t_title');
+	hidden('plan');
+	found = 0;     #Hittat ett redan kopplat ämne
+%]
+
+<h2>[% t_title | html %]</h2>
+
+<p>Här undersöker vi om någon av dessa alias redan existerar i
+databasen.  Om så är fallet kanske du vill använda det existerande
+ämnet istället för att skapa ett nytt.
+
+[% title_list = select_list('from talias, t where talias_t=t and talias=lower(?) and talias_active is true and t_active is true',t_title) %]
+[% IF title_list.size %]
+   <p>Titeln [% t_title | html %] är redan knuten till annat ämne:
+      <ul>
+      [% FOREACH title_list %]
+         <li>$talias_t [% jump(t_title, '/member/db/topic/view/', tid=talias_t, target='info') %]
+             [% INCLUDE typelist rel=talias_t %]
+             <em>[% t_text | html %]</em>
+	     [% plan('/member/db/topic/edit/aliases.tt', tid=talias_t) %]
+      [% END %]
+      </ul>
+      [% found = 1 %]
+
+   <p>Markera de alias du vill koppla till något av dessa ämnen.</p>
+
+[% END %]
+
+   <p>Om du vill gå vidare och skapa ämnet <code>[% t_title | html
+   %]</code> ska du markera de alias du vill använda.  Ett alias bör
+   enbart knytas till det ämne som passar bäst.  Ibland passar ett
+   alias dock lika bra till två helt skilda ämnen.</p>
+
+   [% hidden('t_title', t_title) %]
+
+
+<table border>
+[% FOREACH row = rowlist('_aliases') %]
+   [% alias_list = select_list('from t, talias where t=talias_t and talias=lower(?) and talias_active is true and t_active is true',row) %]
+   [% IF alias_list.size %]
+      [% found = 1 %]
+      <tr><td>[% checkbox('_aliaslist',row,'f') %]
+      <td>[% row | html %] <td>finns redan, kopplad till ämnet:
+      <ul>
+      [% FOREACH alias_list %]
+         <li>[% jump(t_title, '/member/db/topic/view/', tid=t, target='info') %]
+             [% INCLUDE typelist rel=t %]
+             <em>[% t_text | html %]</em>
+             [% plan('/member/db/topic/edit/aliases.tt', tid=t) %]
+      [% END %]
+      </ul>
+   [% ELSE %]
+      <tr><td>[% checkbox('_aliaslist',row,'t') %]
+      <td>[% row | html %] <td>Nytt alias
+   [% END %]
+[% END %]
+</table>
+
+<p>
+
+   [%# plan_after('/member/db/topic/view/', tid=tid) %]
+   [% go('Skapa ämnet', '../edit/description.tt', 'topic_create',
+	route=q.param('route')
+	) %]
+
+
+[% IF found %]
+   [% go('Använd ämne som redan finns', backtrack, 'nop', route=q.param('route')) %]
+[% END %]
+
+   [% submit('Ångra') %]

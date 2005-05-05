@@ -1,0 +1,331 @@
+[% META
+	otitle = 'Editera metadata'
+	next_template = 'meta.tt'
+	next_action = 'topic_update'
+%]
+
+
+[% IF result.info.alternatives;
+   alts = result.info.alternatives;
+   PROCESS topic_list.tt talias=alts.talias list=alts.list replace=alts.replace run=alts.run;
+   RETURN;
+END;
+%]
+[% IF result.info.create_confirm;
+   RETURN;
+END;
+%]
+
+
+[%
+   tid = q.param('tid');
+   t   = topic(tid, v);
+   hidden('tid', tid);
+   PROCESS buttons.tt;
+   keep = [ 'tid' 'v' 'include_indirect' 'include_false' 'include_inactive' 'include_rev' ];
+%]
+
+<h1>Metadata [% INCLUDE tlink.tt %]</h1>
+
+[% PROCESS edit_menu.tt edit_arcs=1 %]
+
+
+[% arctypes = get_arctype_list([0,1,2,3,4,6,7,8,9,10,11,12,14,16,21,22,23,28,29,30,31,32,33,34,35,36,37,38,39,40,41]);
+   count = {};
+   count.row = 0;
+%]
+
+[% submit('Ändra') %]
+
+<table border>
+<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ämne <th>Uppdaterad av</tr>
+
+[% FOREACH arc = t.arcs(arctypes) %]
+   [% NEXT UNLESS arc.true   or tfilter.include_false %]
+   [% NEXT UNLESS arc.active or tfilter.include_inactive %]
+   [% NEXT UNLESS arc.direct or tfilter.include_indirect %]
+   <tr>
+      <td align="right">
+      [% IF arc.indirect;
+         'A ' IF arc.active;
+      ELSE;
+	 count.row = count.row + 1;
+         checkbox("_rel__${count.row}_keep", 't', arc.active);
+         hidden("_rel__${count.row}_rel_topic", arc.id);
+         hidden("_rel__${count.row}_rel_origdir", 'rel');
+      END;
+      jump('E', 'rel.tt',rel_topic = arc.id);
+      %]
+      </td>
+
+      <td>$arc.status</td>
+
+      <td align="right">
+         [% checkbox("_rel__${count.row}_true", 't', arc.true) UNLESS arc.indirect %]
+         $arc.strength
+      </td>
+
+      [% IF arc.indirect %]
+         <td>$arc.pred.id $arc.pred.rel_name</td>
+      [% ELSE %]
+      <td><select name="_rel__${count.row}_type">
+      [% FOREACH at=arctypes %]
+         [% IF at.id == 0 %]
+            <option value="[% at.id %]_rel"
+               [% 'selected' IF at.id == arc.pred.id %]
+            >&lt;--&gt; [% at.rel_name %]</option>
+         [% ELSE %]
+            <option value="[% at.id %]_rel"
+               [% 'selected' IF at.id == arc.pred.id %]
+            >$at.id -> [% at.rel_name %]</option>
+            [% IF at.rev_name %]
+               <option value="[% at.id %]_rev">$at.id <- [% at.rev_name %]</option>
+            [% END %]
+         [% END %]
+      [% END %]
+      </select>
+      </td>
+      [% END %]
+ 
+      <td>[% jump("$arc.obj.id $arc.obj.title", 'meta' tid=arc.obj.id) %]</td>
+      <td>[% arc.updated_by.link %] [% arc.updated %]</td>
+   </tr>
+[% END %]
+
+<tr><td colspan="5"></td></tr>
+
+[% IF tfilter.include_rev %]
+
+[% FOREACH arc = t.rev_arcs(arctypes) %]
+   [% NEXT UNLESS arc.true   or tfilter.include_false %]
+   [% NEXT UNLESS arc.active or tfilter.include_inactive %]
+   [% NEXT UNLESS arc.direct or tfilter.include_indirect %]
+   [% NEXT IF     arc.pred.id == 0 %]
+   <tr>
+      <td align="right">
+      [% IF arc.indirect;
+         'A ' IF arc.active;
+      ELSE;
+         count.row = count.row + 1;
+         checkbox("_rel__${count.row}_keep", 't', arc.active);
+         hidden("_rel__${count.row}_rel_topic", arc.id);
+         hidden("_rel__${count.row}_rel_origdir", 'rev');
+      END;
+      jump('E', 'rel.tt', rel_topic = arc.id );
+      %]
+      </td>
+
+      <td>$arc.status</td>
+
+      <td align="right">
+         [% checkbox("_rel__${count.row}_true", 't', arc.true) UNLESS arc.indirect %]
+         $arc.strength
+      </td>
+
+       [% IF arc.indirect %]
+         <td>$arc.pred.id $arc.pred.rev_name</td>
+      [% ELSE %]
+      <td><select name="_rel__${count.row}_type">
+      [% FOREACH at=arctypes %]
+         [% IF at.id == 0 %]
+            <option value="[% at.id %]_rel">&lt;--&gt; [% at.rel_name %]</option>
+         [% ELSE %]
+            <option value="[% at.id %]_rel">$at.id -> [% at.rel_name %]</option>
+            [% IF at.rev_name %]
+               <option value="[% at.id %]_rev"
+                  [% 'selected' IF at.id == arc.pred.id %]
+               >$at.id <- [% at.rev_name %]</option>
+            [% END %]
+         [% END %]
+      [% END %]
+      </select>
+      </td>
+      [% END %]
+
+      <td>[% jump("$arc.subj.id $arc.subj.title", 'meta' tid=arc.subj.id) %]</td>
+      <td>[% arc.updated_by.link %] [% arc.updated %]</td>
+   </tr>
+[% END %]
+
+[% END %]
+
+</table>
+[% hr %]
+
+<table border>
+<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Värde <th>Uppdaterad av </tr>
+
+[% FOREACH arc = t.arcs(get_arctype_list('literals')) %]
+   [% NEXT UNLESS arc.true   or tfilter.include_false %]
+   [% NEXT UNLESS arc.active or tfilter.include_inactive %]
+   [% NEXT UNLESS arc.direct or tfilter.include_indirect %]
+   <tr>
+      <td align="right">
+      [% IF arc.indirect;
+         'A ' IF arc.active;
+      ELSE;
+	 count.row = count.row + 1;
+         checkbox("_rel__${count.row}_keep", 't', arc.active);
+         hidden("_rel__${count.row}_rel_topic", arc.id);
+         hidden("_rel__${count.row}_type", "${arc.pred.id}_rel");
+         hidden("_rel__${count.row}_rel_origdir", 'rel');
+      END;
+      jump('E', 'rel.tt', rel_topic = arc.id);
+      %]
+      </td>
+
+      <td>$arc.status</td>
+
+      <td align="right">
+         [% checkbox("_rel__${count.row}_true", 't', arc.true) UNLESS arc.indirect %]
+         $arc.strength
+      </td>
+
+      <td>[% jump("$arc.pred.id $arc.pred.rel_name", '/member/db/reltype/edit' reltype=arc.pred.id) %]</td>
+      
+      [% IF arc.indirect %]
+         <td><code>$arc.value</code></td>
+      [% ELSE %]
+         <td>[% input( "_rel__${count.row}_rel_value", arc.value, maxlength=200 ) %]</td>
+      [% END %]
+
+      <td>[% arc.updated_by.link %] [% arc.updated %]</td>
+   </tr>
+[% END %]
+</table>
+[% hr %]
+
+<table border>
+<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ämne <th>Uppdaterad av</tr>
+
+[% FOREACH arc = t.arcs(pred_not = arctypes) %]
+   [% NEXT IF arc.pred.literal %]
+   [% NEXT UNLESS arc.true   or tfilter.include_false %]
+   [% NEXT UNLESS arc.active or tfilter.include_inactive %]
+   [% NEXT UNLESS arc.direct or tfilter.include_indirect %]
+   <tr>
+      <td align="right">
+      [% IF arc.indirect;
+         'A ' IF arc.active;
+      ELSE;
+	 count.row = count.row + 1;
+         checkbox("_rel__${count.row}_keep", 't', arc.active);
+         hidden("_rel__${count.row}_rel_topic", arc.id);
+         hidden("_rel__${count.row}_type", "${arc.pred.id}_rel");
+         hidden("_rel__${count.row}_rel_origdir", 'rel');
+      END;
+      jump('E', 'rel.tt', rel_topic = arc.id);
+      %]
+      </td>
+
+      <td>$arc.status</td>
+
+      <td align="right">
+         [% checkbox("_rel__${count.row}_true", 't', arc.true) UNLESS arc.indirect %]
+         $arc.strength
+      </td>
+
+      <td>[% jump("$arc.pred.id $arc.pred.rel_name", '/member/db/reltype/edit' reltype=arc.pred.id) %]</td>
+      
+      <td>[% jump("$arc.obj.id $arc.obj.title", 'meta' tid=arc.obj.id) %]</td>
+      <td>[% arc.updated_by.link %] [% arc.updated %]</td>
+   </tr>
+[% END %]
+
+
+[% IF tfilter.include_rev %]
+
+[% FOREACH arc = t.rev_arcs(pred_not = arctypes) %]
+   [% NEXT UNLESS arc.true   or tfilter.include_false %]
+   [% NEXT UNLESS arc.active or tfilter.include_inactive %]
+   [% NEXT UNLESS arc.direct or tfilter.include_indirect %]
+   <tr>
+      <td align="right">
+      [% IF arc.indirect;
+         'A ' IF arc.active;
+      ELSE;
+	 count.row = count.row + 1;
+         checkbox("_rel__${count.row}_keep", 't', arc.active);
+         hidden("_rel__${count.row}_rel_topic", arc.id);
+         hidden("_rel__${count.row}_type", "${arc.pred.id}_rev");
+         hidden("_rel__${count.row}_rel_origdir", 'rev');
+     END;
+     jump('E', 'rel.tt',rel_topic = arc.id);
+     %]
+      </td>
+
+      <td>$arc.status</td>
+
+      <td align="right">
+         [% checkbox("_rel__${count.row}_true", 't', arc.true) UNLESS arc.indirext %]
+         $arc.strength
+      </td>
+
+      <td>[% jump("$arc.pred.id $arc.pred.rev_name", '/member/db/reltype/edit' reltype=arc.pred.id) %]</td>
+ 
+      <td>[% jump("$arc.subj.id $arc.subj.title", 'meta' tid=arc.subj.id) %]</td>
+      <td>[% arc.updated_by.link %] [% arc.updated %]</td>
+   </tr>
+[% END %]
+
+[% END %]
+
+   </table>
+
+   [% hidden("_rel__rows", count.row) %]
+   [% hr %]
+
+[% submit('Ändra') %]
+
+<h3>Skapa nya relationer</h3>
+
+<table>
+<tr><th>[% jump('Relation', '/member/db/reltype/list' target='reltype') %] <th>Till 
+   <th>Kommentar
+
+[% FOREACH [1..5] %]
+   <tr>
+   <td><input name="_rel__n_${loop.count}_rel_type" size="15"
+              value="[% q.param("_rel__n_${loop.count}_rel_type") %]"></td>
+   <td><input name="_rel__n_${loop.count}_rel"
+              value="[% q.param("_rel__n_${loop.count}_rel") %]"></td>
+   <td><input name="_rel__n_${loop.count}_rel_comment" size="30"
+              value="[% q.param("_rel__n_${loop.count}_rel_comment") %]"></td>
+   </tr>
+[% END %]
+</table>
+
+[% IF u.level >= 40 %]
+   <p>Är klass: [% checkbox('t_class', 't', t.class) %]</p>
+   [% hidden("_meta_class", 1) %]
+[% END %]
+
+[% IF u.level > 12 %]
+<p>Kopplingsgrad? S[% t.connected_status %]:
+[% IF u.new_status > t.connected_status %]
+   [% hidden( 't_connected_status', u.new_status ) %]
+[% END %]
+[% input('t_connected', t.connected, size=4) %]
+(0 är okopplad. 30 är färdigkopplad)
+</p>
+[% END %]
+
+
+<p>Ange namn/alias eller nummer.  Existerande relationer visar nummer och namn.
+
+<p>Exempel: Om ämnet är "ljusfenomen" kan du vilja säga att
+"Ljusfenomen är en sorts fenomen", såhär:<br>
+<pre>| 2              || fenomen          |</pre></p>
+
+<p>I exempelt ovan valde jag att ange relationens nummer i vänster
+fält och ett av aliasen till det relaterade ämnet i höger fält.</p>
+
+<p>Klicka på rubriker "Relation" för att se relationstyperna.</p>
+
+<table width="95%">
+<tr><td>[% submit('Ändra') %]
+
+</td><td>[% go('Radera', '/member/db/topic/', 'topic_delete') %]
+
+</td></tr>
+</table>

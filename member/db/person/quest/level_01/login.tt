@@ -1,0 +1,14 @@
+[% META
+	title = 'Logga in'
+	next_template = '/member/db/'
+	next_action = 'user_login'
+	focus = 'password'
+%]
+[% PROCESS load_member.tt %]
+[% THROW validation "medlems-id saknas" UNLESS mid %]
+
+<table>
+<tr><td>Namn </td><td><input name="username" value="[% m.nickname | html %]"></td></tr>
+<tr><td>Lösenord </td><td><input type="password" name="password"></td></tr>
+<tr><td colspan="2" align="right"><input type="image" src="/images/icon/logga_in.gif" border="0" value="Login"></td></tr>
+</table>

@@ -1,0 +1,15 @@
+<h1 align="center">Logga in</h1>
+
+<p align="center"><strong>[% message | html %]</strong></p>
+
+<table align="center">
+<tr><td>Namn </td><td><input name="username"></td></tr>
+<tr><td>Lösenord </td><td><input type="password" name="password"></td></tr>
+<tr><td colspan="2" align="right"><input type="image" src="/images/icon/logga_in.gif" border="0" value="Login"></td></tr>
+</table>
+
+<p align="center"><input type='checkbox' name="remember_login" value="1"> Kom ihåg inloggningen</p>
+
+<p align="center">[% jump('Skriv in dig','/member/db/quest_level_00/') %] om du är nykomling</p>
+
+<p align="center"><a href="/member/db/member_forgot_pwd">E-posta lösenord</a> som påminnelse</p>

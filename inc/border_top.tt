@@ -1,0 +1,27 @@
+<form action="/member/db/topic/view/">
+<p id="admin_menu">
+ [ [% u.level +%] [%+ jump('Hem', '/') %]
+[% IF u.level >= 2 %]
+  |  [% jump('Torget', '/member/db/') %]
+  [% IF u.level >= 5 %]
+     |  [% jump('Admin', '/member/db/topic/') %]
+     |  <a href="/member/db/person/edit/">Inställningar</a>
+     |  <a href="/member/db/person/find/">Medlemmar</a>
+     |  <input name="search" size="10">
+  [% END %]
+ |  [% jump('Logga ut', '/', run='user_logout', class="") %]
+ ]
+</p>
+[% ELSE %]
+ |  [% jump('Logga in','/login.tt') %]
+ |  [% jump('Registrera dig','/member/db/person/quest/level_00/') %]
+ ]
+</p>
+[% END %]
+</form>
+
+<div id="search_field"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published">Sök <input size="10" name="talias"></form></div>
+
+[% PROCESS form_start.tt %]
+[% PROCESS headline.tt %]
+[% PROCESS info_box.tt %]

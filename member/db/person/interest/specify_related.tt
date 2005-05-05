@@ -1,0 +1,53 @@
+[% META
+	otitle = 'Relaterade intressen'
+	next_action = 'interest_update_multi'
+	level = 2
+%]
+
+[%
+   PROCESS load_member.tt;
+   tid = q.param('tid');
+   hidden('tid', tid);
+   hidden('intrest_defined', 90);
+   t=topic(tid);
+#   import(select_possible_record("select t_title as topic from t where t=? and t_active is true", tid ));
+%]
+
+<h1>[% PROCESS tlink.tt %]</h1>
+
+[% list = select_list("select t from t, rel where rev=? and rel=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and rel_indirect is false and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1) order by t", tid, m.member) %]
+
+[% revlist = select_list("select t from t, rel where rel=? and rev=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and rel_indirect is false and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1) and t not in (select t from t, rel where rev=? and rel=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1)) order by t", tid, m.member, tid, m.member) %]
+
+[% IF list.size or revlist.size %]
+   <p>Är du möjligen intresserad av något av dessa relaterade ämnen?
+   [% hr %]
+
+   [% FOREACH rec = list %]
+     [% t = topic(rec.t) %]
+     <h3>[% PROCESS tlink2 %]</h3>
+     <p>[% t.text | html %]</p>
+     <p>Ointresserad [% slider( field="_meta_intrest_$t.id" )%]
+   	Mycket intresserad
+     [% hr %]
+   
+   [% END %]
+   [% FOREACH rec = revlist %]
+     [% t = topic(rec.t) %]
+     <h3>[% PROCESS tlink2 %]</h3>
+     <p>[% t.text | html %]</p>
+     <p>Ointresserad [% slider( field="_meta_intrest_$t.id" )%]
+   	Mycket intresserad
+     [% hr %]
+   
+   [% END %]
+[% ELSE %]
+
+  <p> Här kunde du tidigare ange fler relateradeintressen till detta ämnet.</p>
+
+<p>Den funktionen kommer att göras om. Nu kan du bara fortsätta...</p>
+
+[% END %]
+
+[% next = interest_next_step(tid, m.member, defined=90) %]
+[% go('Fortsätt', next.handler, 'interest_update_multi') %]

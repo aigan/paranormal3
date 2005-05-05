@@ -1,0 +1,15 @@
+[% META title="Avbrutet" %]
+
+<p>Du avbröt innan några pengar skickades.
+
+<ul>
+
+<li>Du kanske vill [% jump('börja om och justera värde eller längd', '/member/payment/paynova.tt') %]?
+
+<li>[% jump('Välja en annan betalmetod', '/member/payment/') %]?
+
+<li>Eller vill du [% jump('Skicka oss en kommentar', '/member/mail.cgi?G&aring;va') %]?
+
+<li> [% jump("Visa din historik", '/member/db/person/order/history') %]
+
+</ul>

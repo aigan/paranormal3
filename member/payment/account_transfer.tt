@@ -1,0 +1,45 @@
+[% META	otitle = "Gåvor till Paranormal.se: Insättning på konto"
+%]
+
+<h1><a href="/member/payment/"><img src="/images/icon/arrow.gif" alt=
+      "Meny"></a> Gåvor till Paranormal.se: Insättning på konto</h1>
+
+[% PROCESS payment_menu.tt %]
+
+<p>Skicka mig ett meddelande när ni sätter in pengar på kontot.</p>
+
+<p>Nedan är kontonummer till Paranormal Sweden. Det här är inte
+postgiro och inte bankgiro. Det är ett kontonummer på
+<em>Föreningssparbanken</em>.</p>
+
+<p class="important">
+Clearingnummer 8105-9, kontonummer 974.929.868-4 : Paranormal Sweden
+</p>
+
+<p>Det blir mycket enklare för mig om ni [% jump("använder paynova",
+"paynova.tt") %].  Men även [% jump("bankgiro", "/member/payment/") %]
+är bättre eftersom ni oftast då kan lämna ett meddelande till mig vid
+insättning (via internetbank, såvida ni inte själv använder
+Föreningssparbanken.</p>
+
+<p>I samband med gåvor eller liknande, skicka ett meddelande via
+e-post eller snigelpost.</p>
+
+<p>E-post: <em><a href="mailto:info@paranormal.se">info@paranormal.se</a></em></p>
+
+<p>Snigelpost:<br>
+Paranormal Sweden<br>
+c/o Jonas Liljegren<br>
+Parmmätaregatan 10<br>
+S-417 04  Göteborg
+</p>
+
+<p>Telefon: 070-670 85 68</p>
+
+<p>Organisationsnummer: 720529-5095</p>
+
+<p>Innehar F-skattebevis.  Momsregnr: SE720529509501</p>
+
+[% hr %]
+
+<p>[% jump('Tillbaka', '/member/payment/') %]

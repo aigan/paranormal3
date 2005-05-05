@@ -1,0 +1,31 @@
+[% META
+	title = 'Teori eller praktik'
+	next_template = 'meeter.tt'
+	next_action = 'member_update'
+	level = 2
+%]
+
+[% PROCESS load_member %]
+<p align="right">Steg 3 av 10</p>
+
+<p>På villket sätt är du intresserad av området?</p>
+
+<p>Grundar sig intresset i en nyfikenhet i hur världen fungerar?  Dvs
+ett intresse av att analysera, studera och logiskt begrunda fenomenen?
+(Teori)</p>
+
+<p>Eller är det din önskan att praktisera och uppleva dessa fenomen?
+Söker du en intuitiv förståelse av fenomenen? (Praktik)</p>
+
+<p>Teoretiker
+[% slider(
+   field='_meta_theory_practice' 
+   number=7
+   min=10 max=90
+   current = 50
+)%] Praktiker
+</p>
+
+<p>[% submit %]</p>
+
+

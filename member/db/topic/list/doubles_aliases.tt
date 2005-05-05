@@ -1,0 +1,18 @@
+[% META title="Alias med flera ämnen"
+        level = 5
+%]
+<p>
+[ [% jump('Ladda om sidan', me) +%]
+]</p>
+
+<div class="entry">
+<table>
+   <tr><th>alias</th><th>Antal</th></tr>
+[% FOREACH select_list("select talias, count(talias_t) as cnt from talias where talias_active is true group by talias having count(talias_t) > 1 order by talias" ) %]
+   [% tr2 %]
+      <td>[% jump(talias, '/member/db/topic/view/', talias=talias, target='info') %]</td>
+      <td>[% cnt %]</td>
+  </tr>
+[% END %]
+</table>
+</div>

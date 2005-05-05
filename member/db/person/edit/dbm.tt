@@ -1,0 +1,53 @@
+[% META
+	otitle = 'Inställningar - DBM'
+	level = 41
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - DBM: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<table align="left" border>
+<tr><th colspan="2">E-post
+<tr><td>mid <td>[% m.id %]
+<tr><td>nickname <td>[% m.nickname %]
+<tr><td>chat_nick <td>[% m.chatnick %]
+<tr><td>name <td>[% m.name %]
+<tr><td>sys_uid <td>[% m.sys_uid %]
+<tr><td>sys_email <td>[% m.sys_email %]
+
+[% IF m.mailbox.exist %]
+<tr><td>Mailbox <td>[% m.mailbox.root %]
+<tr><td>Mbx quota <td>[% input('quota', m.mailbox.quota, size=8) %] KB [% submit('ändra') %]
+<tr><td>Mbx used <td>[% m.mailbox.used %] KB
+[% ELSE %]
+<tr><td>Mailbox <td>Nej
+[% END %]
+
+<tr><td>DBM Passwd <td>
+   [% IF m.dbm_passwd_check %]
+      samma
+   [% ELSIF m.dbm_passwd_exist %]
+      skiljer
+   [% ELSE %]
+      finns inte
+   [% END %]
+
+
+</table>
+
+<table border>
+<tr><th colspan="2">Alias
+[% FOREACH nick = m.nicks %]
+<tr><td>[% nick %] <td>[% m.dbm_alias(nick) %]
+[% END %]
+</table>
+
+<br clear="all">
+[% IF m.mailbox.exist %]
+<p>[% go('Radera brevlåda', '/member/db/', 'member_remove_sysuid') %]
+[% ELSE %]
+<p>[% go('Skapa brevlåda', '/member/db/', 'member_create_sysuid') %]
+[% END %]

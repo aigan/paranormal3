@@ -1,0 +1,41 @@
+[% META
+	otitle = 'Editera text'
+	next_action = 'topic_update'
+	focus = 't_text'
+	next_template = 'outline'
+	level = 11
+%]
+
+[%
+   tid = q.param('tid');
+   v   = q.param('v');
+   t   = topic(tid, v);
+
+   hidden('tid', tid);
+   hidden('v', t.ver);
+   PROCESS buttons.tt;
+%]
+
+
+[% IF t.entry %]
+   <h1>Text [% PROCESS tlink_ver.tt %]</h1>
+   [% PROCESS entry_edit_menu.tt %]
+   [% rows = 25 %]
+   [% PROCESS entry_belonging.tt %]
+[% ELSE %]
+   <h1>Ämne [% PROCESS tlink_ver.tt %]</h1>
+   [% PROCESS topic_edit_menu.tt %]
+   [% rows = 2 %]
+[% END %]
+
+
+<p>Status: $t_status - [% PROCESS topic_status.tt %]
+[% IF t.active; '  <strong><em>aktiv</em></strong>';
+   ELSE;        '  <em>ej aktiv</em>';
+   END;
+%]
+   <p>Kommentar <span class="important">för redaktörer</span> om varför vissa relationer ska eller inte ska användas, etc:<br />
+   [% textarea('t_comment_admin', t.admin_comment, cols=70 rows=12) %]
+
+<p>[% submit %]
+

@@ -1,0 +1,56 @@
+[% META otitle="Ämnen"
+%]
+[%
+   subpart = {};
+   offset = q.param('offset');
+   DEFAULT offset=1;
+   part_offset = offset - 1;
+
+   part = q.param('part');
+   IF part;
+      sel = "like '$part%'";
+   ELSE;
+      sel = "< 'a'";
+   END;
+%]
+
+<h1 align="center">Ämnen</h1>
+<h2>- [% part | upper %] -</h2>
+
+<p align="center">[% alfanum_bar('alias_list.tt', 'part') %]</p>
+
+<div class="entry">
+<table>
+<tr><th>tid</th><th>alias</th><th>title</th><th>description</th></tr>
+[% FOREACH select_list("from t, talias where t=talias_t and talias $sel and talias_index is true and t_active is true and talias_active is true order by talias, talias_t limit 10 offset $part_offset") %]
+   [% tr2 %]
+      <td>$t</td>
+      <td>[% jump(talias, 'view/', tid=t) %]</td>
+      <td>$t_title</td>   
+      <td>$t_text</td>
+   </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+</table>
+</div>
+
+[%
+   DEFAULT subpart.shown = 0;
+
+   prev_from = offset - 10;
+   prev_to = offset - 1;
+   this_to = offset + subpart.shown - 1;
+   this_from = this_to ? offset : 0;
+   next_from = offset + 10;
+   next_to = offset + 19;
+%]
+
+<p align="center">
+[% IF offset > 10 %]
+   [% forward("$prev_from - $prev_to", 'alias_list.tt' offset = prev_from) %] | 
+[% END %]
+$this_from - $this_to
+[% IF subpart.shown == 10 %]
+   | [% forward("$next_from - $next_to", 'alias_list.tt' offset = next_from) %]
+[% END %]
+</p>

@@ -1,0 +1,74 @@
+[% META
+	otitle = 'Inställningar - Sidutseende'
+	next_action = 'member_update'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Sidutseende: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<p>Här kommer du kunna välja sidutseende, så som färger, textstorlek,
+bakgrundsbilder och till viss mån layout.</p>
+
+
+[% WRAPPER draw_alt title='Visa teknik-nivå' field='show_level'
+   values = 
+   {
+	'00' => '00. Nej tack'
+	'10' => '10. Normalläge'
+        '30' => '30. Visa allt'
+   }
+%]
+
+På den här webbplatsen kallar sig administratörerna för "väktare".
+Det är ungefär det samma som "webbmaster" eller "skribent".  Vi
+använder en teknik-nivå för att uppmuntra medlemmar till att medverka
+i det administrativa och skapande arbetet på webbplatsen.  Om du är
+ointresserad av dessa nivåer är du välkommen att helt enkelt ignorera
+dem.
+
+[% END %]
+
+	
+[% WRAPPER draw_alt title='Visa detaljer' field='show_detail'
+   values = 
+   {
+	'05' => '05. Sparsamt'
+	'10' => '10. Normalläge'
+        '30' => '30. Visa allt'
+   }
+%]
+
+Anger hur mycket fakta och detaljer du vill se.  Troligen vill du
+slippa få alla uppgifter på samma sida. (Det kan se kompakt och rörigt
+ut då.)  Även om du väljer att inte se allt här, kan du se detaljerna
+på en undersida.
+
+[% END %]
+
+	
+[% WRAPPER draw_alt title='Uppdateringsfunktioner' field='show_edit'
+   values = 
+   {
+	'00' => '00. Nej tack'
+	'05' => '05. Sparsamt'
+	'10' => '10. Normalläge'
+        '30' => '30. Visa allt'
+   }
+%]
+
+Ju högre värde, desto enklare har du att ändra uppgifter du ser.
+Detta anger bara huruvida du vill se editeringsknappar överallt för
+att direkt editera en viss detalj, eller ifall du vill gå via
+editeringsläge för att ändra en uppgift.
+
+[% END %]
+
+	
+
+
+
+[% submit %]

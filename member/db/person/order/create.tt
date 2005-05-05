@@ -1,0 +1,43 @@
+[% META title="Mata in beställning"
+        next_template = "history.tt"
+	next_action  = "payment_create"
+	level = 5
+%]
+
+[% PROCESS load_member.tt %]
+[% PROCESS person_view_menu.tt %]
+[% PROCESS payment_menu.tt %]
+
+[% product_list = {} %]
+[% FOREACH product = topic(422155).rev_arcs('är') %]
+   [% product_list.${product.subj.id} = product.subj.desig %]
+[% END %]
+
+[% method_list = {} %]
+[% FOREACH method = topic(422433).rev_arcs('är') %]
+   [% method_list.${method.subj.id} = method.subj.desig %]
+[% END %]
+
+<div class="entry">
+<table>
+<tr><td>ID        <td> Autogenereras
+<tr><td>Beställd  <td>[% input('order_date', now) %]
+<tr><td>Faktura   <td>[% input('invoice_date', now) %]
+<tr><td>Betald    <td>[% input('payment_date', now) %]
+<tr><td>Loggad    <td> Autogenereras
+<tr><td>Medlem    <td>[% input('nickname', m.nickname) %]
+<tr><td>Företag   <td>[% input('company') %]
+<tr><td>Produkt   <td>[% select('product', 422154, product_list) %]
+<tr><td>Pris      <td>[% input('price') %] kr
+<tr><td>varav moms<td>[% input('vat') %] kr
+<tr><td>Antal     <td>[% input('quantity') %]
+<tr><td>Metod     <td>[% select('method', 422435, method_list) %]
+<tr><td>Mottagare <td>Paranormal Sweden
+<tr><td>Ver.nr    <td>[% input('vernr') %]
+<tr><td>Referens  <td>[% input('reference') %]
+<tr><td valign="top">Meddelande <td>[% textarea('message','', rows=5) %]
+<tr><td valign="top">Kommentar <td>[% textarea('comment','', rows=5) %]
+</table>
+</div>
+
+[% submit %]

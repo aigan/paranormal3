@@ -1,0 +1,27 @@
+[% META title="Svarta listan"
+	next_action  = "chat_level_update"
+        next_handler = "/member/db/chat/bans"
+%]
+
+[% PROCESS chat_menu.tt %]
+
+<div class="entry">
+<table>
+   <tr>
+      <th>Medlem
+      <th>Nivå
+   </tr>
+
+[% FOREACH select_list("from member where chat_level<0 order by chat_level, member_level, member") %]
+   <tr>
+      <td>[% getmember(member).tlink %]
+      <td>[% PROCESS select_chat_level %]
+   </tr>
+[% END %]
+</table>
+</div>
+
+<p>Lägg till medlem: [% input('new') %]
+[% hidden('chat_level', '-2') %]
+
+<p>[% submit %]

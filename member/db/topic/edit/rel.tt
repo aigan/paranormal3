@@ -1,0 +1,133 @@
+[% META
+	otitle = 'Editera relation'
+	next_template = 'rel.t'
+	next_action = 'rel_update'
+%]
+
+[%
+   arc = getarc( q.param('rel_topic') );
+   rev = arc.revt;
+   rel = arc.relt;
+   t = rev;
+   tid = t.id;
+   CALL q.param('tid', tid);
+   explain = arc.explain;
+
+   hidden('rel_topic', arc.id);
+   hidden('tid', tid);
+   keep = ['rel_topic' 'tid' 'v' 'include_inactive'];
+
+   PROCESS buttons.tt;
+%]
+
+<h1>Editera relation [% arc.id %]</h1>
+
+[% PROCESS edit_menu.tt %]
+
+[% rev_value = "$rev.id $rev.title" %]
+[% IF rel %]
+   [% rel_value = "$rel.id $rel.title" %]
+[% ELSE %]
+   [% rel_value = arc.value %]
+[% END %]
+
+<table>
+<tr><th>REV</th><th>TYPE</th><th>REL</th></tr>
+<tr>
+    <td>[% input('rev', rev_value, size=20) %]</td>
+    <td>[% input('rel_type', arc.type.rel_name, size=15) %]</td>
+    <td>[% input('rel', rel_value, size=40) %]</td>
+</tr>
+</table>
+<p>Kommentar: [% input('rel_comment', arc.comment, size=50) %][% submit %]</p>
+
+<table>
+<tr><td>Status</td><td>[% arc.status %]</td></tr>
+<tr><td>Styrka</td><td>[% arc.strength %]</td></tr>
+<tr><td>Flaggor</td><td>
+[% IF arc.active; "Aktiv"; ELSE; "Inaktiv"; END %] -
+[% IF arc.indirect; "Indirekt"; ELSE; "Direkt"; END %] -
+[% IF arc.implicit; "Implicit"; ELSE; "Explicit"; END %]
+</td></tr>
+<tr><td>Skapad</td><td>[% arc.created %] av
+[%+ arc.created_by.link %]</td></tr>
+<tr><td>Uppdaterad</td><td>[% arc.updated %] av
+[%+ arc.updated_by.link %]</td></tr>
+</table>
+
+[% IF arc.indirect %]
+      <h2>Härledning</h2>
+      <p>Varje punkt utgör tillräcklig anledning</p>
+
+      <ol>
+      [% FOREACH part =  arc.explain %]
+         <li>a) [% part.a1.desig %]<br>
+             b) [% part.a2.desig %]<br>
+             => [% part.a3.desig %]</li>
+      [% END %]
+      </ol>
+[% END %]
+
+[% IF u.level > 11 %]<p align="right">[% go('Radera', 'meta', 'rel_delete') %]</p>[% END %]
+
+
+<h2>Information</h2>
+
+<p>Just denna relation kan ha ersätt tidigare relationer med delvis
+liknande egenskaper.  Vi har inte uttryckligen versionsnummer på
+relationerna.  Vi visar en specifik relaion här, men alla ändringar
+appliceras på relationen REV TYPE REL som i databasen kan finnas i
+flera versioner varav högst en är aktiv.  Om du nu tittar på en
+inaktiv relation men det finns aktiva versioner av samma REV TYPE REL,
+kommer du återgå till denna tidigare version.</p>
+
+<p>Vi kompletterar formuläret med fler funktioner senare...</p>
+
+<h3>Från Psi::Relations</h3>
+<pre>
+#
+# - rel with status below 2 should always be inactive
+# - strength below 30 is conciderd false
+#
+# For a relation, you could:
+#  - deactivate  (only when replaced with a new versin)
+#  - activate    (go back to an older version from a new)
+#  - make true   (increase strength)
+#  - make false  (decrease strength)
+#  - accept      (increase status)
+#  - decline     (decrease status)
+#  - remove      (never for explicit rels)
+
+# accepting a new version of a relation activates the new relation and
+# deactivates all the old versions (with the same reltype, rev, rel
+# and rel_value).  The old active versions gets a status of 1.  The
+# new version status must be equal or higher than the highest status
+# of the old versions.  The maximum status given to a relation is
+# determined by the level of the member accepting the relation.
+
+# declining a new version of a relation, not yet activated, sets it's
+# status to 0 and changes nothing else.
+
+# declining a new active version of a relation, sets it's status to 0,
+# deactivates it and activates the latest version of the relation with
+# the highest status.
+
+# Making a relation true/fales is the same as finding or creating a
+# true/false relation and accepting it
+
+# Removing a relation is done if it was infered from other relations
+# and not yet existing.  A relation to be removed must be implicit.
+</pre>
+
+
+[% BLOCK status %]
+  [% # NOT FINISHED %]
+  <select name="rel_status">
+  [% FOREACH [{level = 0, label = ''}] %]
+     <option value="[% row.$valkey %]"
+        [% 'selected' IF row.$valkey == value %]
+     >[% row.$tagkey %]</option>
+  [% END %]
+  </select>
+
+[% END %]

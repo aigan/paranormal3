@@ -1,0 +1,22 @@
+[% META
+	title = 'Intressen'
+	level = 5
+%]
+
+[% PROCESS load_member.tt %]
+
+<table border>
+<tr><th>Str <th>Name <th>Con <th>Status <th>MyCon <th>MyDef
+[% FOREACH select_list('from intrest where intrest_member=? and intrest>10
+                        order by intrest_defined, intrest desc', m.member) %]
+
+   [% next = interest_next_step(intrest_topic, intrest_member) %]
+
+      <tr>
+         <td>$intrest
+         <td>[% jump(next.t_title, next.url ) %]
+         <td>$next.connected <td>$next.status <td>$intrest_connected <td>$intrest_defined
+      </tr>
+
+[% END %]
+</table>

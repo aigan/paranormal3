@@ -1,0 +1,45 @@
+[% META
+	otitle = 'Editera URL för media'
+	next_handler = 'media'
+	next_template = 'media_update'
+%]
+
+[%
+   tid = q.param('tid');
+   hidden('tid', tid);
+   t = topic(tid);
+   PROCESS buttons.tt;
+%]
+
+<h1>URL för media [% PROCESS tlink.tt %]</h1>
+
+[% PROCESS edit_menu.tt %]
+
+<table>
+<tr><td>Mimetype</td>
+<td>
+   <select name="media_mimetype">
+   [% PROCESS option value="" %]
+   [% PROCESS option value="image/gif" %]
+   [% PROCESS option value="image/jpeg" %]
+   [% PROCESS option value="image/png" %]
+   [% PROCESS option value="application/pdf" %]
+   [% PROCESS option value="text/html" %]
+   [% PROCESS option value="text/plain" %]
+   [% PROCESS option value="email" %]
+   </select>
+</td>
+</tr>
+<tr><td>URL</td><td>[% input('media_url', t.media_url, size=75) %]</td></tr>
+</table>
+
+
+<p>[% submit('Ändra') %]
+
+[% hr %]
+
+<p>Även ämnen som representerar något med en URL (dvs en webbsida, etc) ska ha alias</p>
+
+[% BLOCK option -%]
+<option value="[% value %]"[% IF t.media_type == value %] selected[% END %]>[% value %]
+[% END %]

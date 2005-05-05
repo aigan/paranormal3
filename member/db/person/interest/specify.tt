@@ -1,0 +1,247 @@
+[% META
+	otitle = 'Berätta om ditt intresse'
+	next_action = 'interest_update'
+	level = 5
+%]
+
+[%
+   tid = q.param('tid');
+   DEFAULT tid = q.param('t');
+   CALL touch_interest(tid);
+   mid = q.param('mid') || u.id;
+
+   bt = select_record('from t where t=? order by t_active desc, t_ver desc', tid);
+
+   m = select_record("from member, intrest, t
+                           where member=intrest_member 
+                           and t = intrest_topic
+                           and member=? and intrest_topic=?
+	 		   and t_ver=?",
+ 		mid, tid, bt.t_ver );
+
+	t = topic(tid);
+	hidden('tid', tid);
+	hidden('intrest_defined', 75);
+	hidden('mid', mid);
+%]
+
+<h1>Ditt intresse för [% PROCESS tlink.tt %]</h1>
+
+<p>Överdriv inte i dina svar.  Bäst effekt får du om dina markeringar
+har en jämn fördelning så att det i medel hamnar nära mitten.  Markera
+bara max ifall du verkligen kan stå för det.
+
+<p>Dina val här avgör var du hamnar på listor när en annan medlem
+söker efter kontakter.
+
+<p>Tänk dig att rutorna nedan är numrerade från 0 längst till vänster
+till 10 längst till höger.  I vanliga fall gäller att ruta 0-2 tolkas
+som <em>Nej</em> och ruta 3-10 tolkas som <em>Ja</em>.
+
+[% hr %]
+
+[% WRAPPER draw_slider
+	   field='intrest'
+	   title='Intresse'
+	   number=11
+	   min_txt='Inte alls'
+	   max_txt='Det är i mina tankar dygnet runt'
+%]
+Hur intresserad är du av ämnet?
+[% END %]
+
+
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=10 and rel_active is true and rel_strength >= 30', m.t) %]
+[% WRAPPER draw_slider 
+           field='belief' 
+	   title='Tro'
+           number=11
+           min=-100 max=100
+           min_txt='Nej'
+           max_txt='Ja'
+%]
+
+Tror du på det här?
+
+<p>Exempel på fenomen är <a
+href="/psi/astral/projektion.html">astralprojektion</a>, <a
+href="/psi/klaervoajans.html">klärvoajans</a> och <a
+href="/psi/kundalini.html">kundalini</a>.  För fenomen är frågan om
+dessa fenomen existerar?  Existerar fenomenet på det vis som det är
+definierat?
+
+<p>Exempel på läror är <a href="/psi/astrologi.html">astrologi</a>, <a
+href="/psi/hinduism.html">hinduism</a> och <a
+href="/psi/materialism.html">materialism</a>.  För läror är frågan om
+det läran påstår är riktigt.
+
+<p>Ett svar i mitten betyder att du är osäker på om det är sant eller inte.
+
+[% END %]
+[% END %]
+
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=12 and rel_active is true and rel_strength >= 30', m.t) %]
+[% WRAPPER draw_slider
+	   field='experience'
+	   title='Har du upplevt detta?'
+	   number=11
+	   min_txt='Aldrig'
+	   max_txt='Jag har omfattande erfarenhet av detta'
+%]
+
+Har du upplevt detta nån gång? Hur mycket har upplevelsen påverkat dig?
+
+[% END %]
+[% END %]
+
+[% WRAPPER draw_slider
+	   field='knowledge'
+	   number=11
+	   title='Kunskap'
+	   min_txt='Vad är det?'
+	   max_txt='Jag har skrivit en bok om ämnet'
+%]
+
+Hur mycket teoretisk kunskap har du om ämnet?  Har du läst allt som
+går att läsa om det? Har du spenderat åratal med att tänka på och
+analysera ämnet?
+
+[% END %]
+
+
+[% WRAPPER draw_slider
+           field='theory'
+           title='Vilja att lära teori'
+           number=11
+	   min_txt='Nej'
+	   max_txt='Absolut, ja! Resten av mitt liv.'
+%]
+
+Är du intresserad av att lära dig mer om ämnet?  Vill du lägga andra
+intressen åt sidan för att studera detta ämne?
+
+[% END %]
+
+
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=11 and rel_active is true and rel_strength >= 30', m.t) %]
+[% WRAPPER draw_slider
+	   field='skill'
+	   title='Praktisk skicklighet'
+	   number=11
+	   min_txt='Noll'
+	   max_txt='Jag är så bra man kan bli'
+%]
+
+Hur bra är du på att praktisera detta?
+
+<p>Vissa saker är enklare än andra. I många fall finns det inte en
+människa på hela jorden som kan praktisera perfekt.  Är du bland de
+bästa i världen får du lov att markera näst högsta alternativet...
+
+[% END %]
+[% WRAPPER draw_slider
+	   field='practice'
+	   title='Vilja att lära sig det praktiska'
+	   number=11
+	   min_txt='Nej tack'
+	   max_txt='Det här är mitt liv!'
+%]
+
+Är du intresserad av att praktisera detta?  Hur långt vill du gå?  Ju mer intresserad du är, desto mindre kommer du ha tid att göra något annat.
+
+[% END %]
+[% END %]
+
+[% WRAPPER draw_slider
+	   field='helper'
+	   title='Hjälpare'
+	   number=11
+	   min_txt='Nej'
+	   max_txt='Ja'
+%]
+
+Vill du hjälpa andra i detta ämnet?  Vi frågar inte vad du har för
+förmåga att hjälpa. Du har redan svarat vad du har för kunskap
+och/eller skicklighet.  Beroende på intresset för detta ämnet, och hur
+mycket e-post du valt att få, kommer du få brev från andra medlemmar
+som vill ha hjälp.
+
+<p>Om du inte begär betalt får du välja mellan 0-10.  Om du vill ha
+betalt för din hjälp måste du hålla dig på vänster del; ruta 0-4.
+
+<p>Alltså; vill du ta dig tid att hjälpa folk som frågar dig om det?
+
+[% END %]
+
+[% WRAPPER draw_slider
+	   field='meeter'
+	   title='Vill träffa andra med detta intresset'
+	   number=11
+	   min_txt='Nej'
+	   max_txt='Ja'
+%]
+
+Vill du träffa andra med intresse av detta ämne?
+
+<p>Av svaren ovan kan vi räkna ut om du vill träffa någon som kanske
+kan lära dig något, eller om du vill träffa någon som du kan hjälpa.
+Eller om du bara vill träffa någon med samma intresse.
+
+<p>Är du intresserad av att brevväxla eller kanske träffa någon som
+bor i närheten?
+
+[% END %]
+
+
+[% WRAPPER draw_slider
+	   field='bookmark'
+	   title='Bokmärka det här ämnet'
+	   number=11
+%]
+
+Här kan du ange om du vill läsa existerande och framtida texter och
+diskussioner om ämnet via webben.  Vi kan hjälpa dig med tips när det
+finns mer att läsa eller när vi upptäckt en ny bok eller webbsida.
+
+[% END %]
+
+
+[% WRAPPER draw_slider
+	   field='editor'
+	   title='Redaktör'
+	   number=11
+%]
+
+Vill du hjälpa till med att administrera det här ämnet?
+
+<p>Kan du exempelvis tänka dig att definiera relationer mellan detta
+och andra ämnen, titta igenom nya texter, länkar och annan information
+och rätta sådant som ser fel ut?
+
+<p>Ju högre värde, desto större ansvar vill du ta för ämnet.
+
+[% END %]
+
+[% WRAPPER draw_textbox
+	   field='intrest_description'
+	   title='Hur / Varför ?'
+%]
+Något mer du vill säga om ditt intresse?
+
+<p>Det här är inte platsen att redogöra för åsikter, teorier, etc.
+Skriv bara om ditt intresse för ämnet. Inte om ämnet självt.
+
+<p>Du kan exempelvis säga villket årtal du började, vad du gjort, osv.
+Du kan se den här texten som en rad i din meritförteckning.
+
+<p>Berätta<br>
+[% END %]
+
+
+<p>Dessa värden är inte statiska.  De kommer gradeligen och
+kontinuerligen att förändras för att motsvara det intresse du visar
+genom vad du gör på webbplatsen.
+
+[% next = interest_next_step(m.t, u.member, defined=50) %]
+
+<p>[% go('Fortsätt', next.handler, 'interest_update') %]

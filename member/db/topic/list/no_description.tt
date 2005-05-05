@@ -1,0 +1,41 @@
+[% META title="Ämnen utan kortbeskrivning"
+        level = 5
+%]
+<p>
+[ [% jump('Ladda om sidan', me) +%]
+]</p>
+
+<p>25 utvalda ämnen, exklusive medlemsämnen</p>
+
+<div class="entry">
+<table>
+   <tr><th>S</th><th>Ämne</th><th>Skapad</th></tr>
+[% FOREACH rec = select_list("select t from t main where t_active is true and t_text is null and t_entry is false EXCEPT select media from media EXCEPT select member_topic from member limit 25" ) %]
+   [% t = topic(rec.t) %]
+   [% tr2 %]
+      <td>[% t.status %]</td>
+      <td>[% jump(t.desig, '/member/db/topic/view/', tid=t.id, target='info') %]</td>
+      <td>[% t.created %]</td>
+  </tr>
+[% END %]
+</table>
+</div>
+
+
+[% RETURN %]
+
+select t, random() as rnd from t main where t_active is true and t_text is null and t_entry is false and not exists (select 1 from media where media = t) and not exists (select 1 from member where member_topic = t)  order by rnd limit 25;
+
+
+select t, random() as rnd from t main where t_active is true and t_text is null and t_entry is false and not exists (select 1 from media where media = t) order by rnd limit 25;
+
+
+select t, random() as rnd from t main where t_active is true and t_text is null and t_entry is false and t not in (select media from media) order by rnd limit 25;
+
+select t from t main where t_active is true and t_text is null and t_entry is false and t not in (select media from media) limit 25;
+
+
+
+select t from t main where t_active is true and t_text is null and t_entry is false EXCEPT select media from media EXCEPT select member_topic from member limit 25;
+
+

@@ -1,0 +1,9 @@
+# order deny,allow
+# deny from all
+# allow from 213.88.136.
+# allow from 62.95.18.
+
+<Files notify.cgi>
+        SetHandler perl-script
+        PerlHandler Psi::Paynova_notify
+</Files>

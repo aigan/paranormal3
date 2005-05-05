@@ -1,0 +1,61 @@
+[% META
+	otitle = 'Intresse'
+	level = 5
+%]
+
+[%
+   PROCESS load_member.tt;
+   IF u.level > 11;
+	import(select_possible_record('from intrest, t where t=intrest_topic
+			and t_active is true
+			and intrest_member=? and intrest>10
+                        and intrest_connected < 30 and intrest_defined < 90
+                        order by intrest_defined desc, intrest desc', m.member));
+   ELSE;
+	import(select_possible_record('from intrest, t where t=intrest_topic
+			and t_active is true
+			and intrest_member=? and intrest>10 
+                       	and intrest_connected < 30 and intrest_defined < 90
+                       	order by intrest_defined, intrest desc', m.member));
+   END;
+   IF intrest_topic;
+      import(interest_next_step(intrest_topic, intrest_member));
+   END;
+   hidden('tid');
+%]
+[% IF intrest_topic %]
+
+<h1>Dagens ämne: [% PROCESS tlink %]</h1>
+
+<p>[% INCLUDE typelist rel=intrest_topic %]
+
+[% IF u.level >= 11 %]
+<table border>
+<tr><td>tid <td>[% intrest_topic %]
+<tr><td>interest <td>[% intrest %]
+<tr><td>i_defined <td>[% intrest_defined %]
+<tr><td>i_connected <td>[% intrest_connected %]
+<tr><td>t_connected <td>[% connected %]
+<tr><td>t_c_status <td>[% status %]
+<tr><td>handler <td>[% handler %]
+</table>
+[% END %]
+
+<blockquote>[% t_text | html %]</blockquote>
+
+
+<p>Vi vill veta mer om ditt intresse för <code>[% t_title | html
+%]</code>.  Du väljer själv hur mycket du vill svara på.  Du kan när
+som helst avbryta för att fortsätta vid ett senare tillfälle.  Allt du
+gjort hittills kommer att finnas kvar.
+
+<p>Frågor kan ställas i kanalen #devel på [% jump('chatten', '/member/chat/login.tt', target='chat') %].
+
+<p>[% go('Påbörja resan', handler, 'nop', tid=intrest_topic) %]
+
+[% ELSE %]
+
+<p>Det finns inget kvar att göra...
+
+[% END %]
+

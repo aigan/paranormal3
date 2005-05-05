@@ -1,0 +1,4 @@
+  [% IF t.active; '  <strong><em>aktiv</em></strong>';
+     ELSE;              '  <em>ej aktiv</em>';
+     END;
+  %]

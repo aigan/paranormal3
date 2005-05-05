@@ -1,0 +1,10 @@
+<p>
+[ [%+ jump('Index', '/member/db/person/find/') +%]
+| [%+ jump('Kombinerad', '/member/db/person/find/combined.tt') +%]
+| [%+ jump('Nya', '/member/db/person/find/latest_citizen.tt') +%]
+| [%+ jump('Senast inne', '/member/db/person/find/latest_visitor.tt') +%]
+| [%+ jump('ICQ', '/member/db/person/find/icq_list.tt') +%]
+[% IF u.levell >= 41 %]
+   | [% jump("Skapa", "/member/db/person/create/") +%]
+[% END +%]
+]</p>

@@ -1,0 +1,22 @@
+[% META
+	title = 'Lista dina intressen'
+	level = 5
+	next_template = 'specify_list.tt'
+	next_action = 'interest_find_new'
+%]
+
+[% PROCESS load_member.tt %]
+
+<p>Vi kommer <strong>automatiskt</strong> att leta upp de intressen du
+anger i vår databas.  Skriv <strong>namnen</strong> på de ämnen du är intresserad.
+
+<p>Vi vill bara veta om intressen som är relaterade till paranormala fenomen.</p>
+
+[% IF q.param('_interests') %]
+   <p>Ta bort de rader du inte är intresserad av.
+[% END %]
+
+<p>Ange ett intresse per rad<br>
+[% textarea( '_interests', '', rows=20, cols=20 ) %]
+
+<p>[% submit %]

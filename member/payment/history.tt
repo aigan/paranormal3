@@ -1,0 +1,24 @@
+[% META title="Beställningshistoria"
+	level = 42
+%]
+
+[% PROCESS payment_menu.tt %]
+
+<div class="entry">
+<table>
+<tr><th>ID<th>vnr<th>Datum<th>Medlem<th>Produkt<th>Pris<th>Antal
+[% recs = select_list("from payment where payment_completed is true order by payment_id") %]
+[% FOREACH rec = recs %]
+[% tr2 %]
+   [% p = getpayment(rec) %]
+   <td>[% jump(p.id, '/member/db/person/order/details.tt', pid=p.id) %]
+   <td align="right">[% p.vernr %]
+   <td>[% p.date.ymd %]
+   <td>[% p.member.link %]
+   <td>[% p.product.link %]
+   <td align="right">[% p.price %]
+   <td align="right">[% p.quantity %]
+</tr>
+[% END %]
+</table>
+</div>

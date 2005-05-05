@@ -1,0 +1,44 @@
+[% META
+	otitle = 'Versioner av texter som avslagits'
+	level = 5
+%]
+
+[% PROCESS load_member.tt %]
+
+[% order_default = 't';
+   direction_default = 'desc';
+   PROCESS pagify.tt;
+%]
+
+<h1>Versioner av texter som avslagits: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<div class="entry">
+<table>
+
+<tr><th>[% sort('tid','t') %]
+    <th>Titel
+    <th>[% sort('Skapad', 't_created') %]
+    <th>Ursprungligen av
+</tr>
+
+[% FOREACH rec = select_list("from t where t_createdby=? and t_changedby<>? and t_status = 0 and t_entry is true order by $order $direction 
+offset ? limit ?", m.member, m.member, part_offset, [], pagesize, []) %]
+   [% t = topic(rec.t) %]
+
+   [%tr2%]
+        <td align="right">[% t.id %]</td>
+        <td>[% jump(t.desig, '/member/db/topic/view/', tid=t.id) %]
+            v[% t.ver %]
+            [% PROCESS typelist.tt rel=t.id %]</td>
+	<td>[% t.created %]</td>
+	<td>[% t.first_ver.created_by.link %] [%+ t.first_ver.created %]</td>
+   </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+
+</table>
+</div>
+
+[% PROCESS pagify_footer.tt %]

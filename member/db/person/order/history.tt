@@ -1,0 +1,44 @@
+[% META otitle="Beställningshistoria"
+	level = 5
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Beställningshistoria: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+[% PROCESS payment_menu.tt %]
+
+<h2>Prenumeration</h2>
+
+<p>Prenumeration går ut [% m.payment_expire %].
+
+<p>Prenumerationssätt: [% m.payment_period_length %] dagar för [% m.payment_period_cost %] kr.  Det blir [% m.payment_rate %] kr / månad.
+
+<p>[% m.name %] har totalt betalat [% m.payment_total %] kr.
+
+<p>Beräknat från medlemskapets början [% m.created.ymd %] blir det [% m.payment_total_rate %] kr / månad.
+
+[% IF u.equals(m) %]
+<ul>
+   <li>[% jump("Förläng prenumerationen!", '/member/payment/') %]
+   <li>[% jump("Se statistik", '/member/db/stats/payment/') %]
+</ul>
+[% END %]
+
+<h2>Historik</h2>
+
+<div class="entry">
+<table>
+<tr><th>ID<th>Datum<th>Produkt<th>Pris<th>Antal
+[% FOREACH p = m.payments %]
+[% tr2 %]
+   <td>[% jump(p.id, 'details', pid=p.id) %]
+   <td>[% p.date.ymd %]
+   <td>[% p.product.link %]
+   <td align="right">[% p.price %]
+   <td align="right">[% p.quantity %]
+</tr>
+[% END %]
+</table>
+</div>

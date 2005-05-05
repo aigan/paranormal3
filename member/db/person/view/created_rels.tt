@@ -1,0 +1,45 @@
+[% META
+	otitle = 'Skapade relationar'
+	level = 5
+%]
+
+[% PROCESS load_member.tt %]
+
+[% order_default = 'rel_topic';
+   direction_default = 'desc';
+   PROCESS pagify.tt;
+%]
+
+<h1>Skapade relationer: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<div class="entry">
+<table>
+
+<tr><th>[% sort('id','rel_topic') %]
+    <th>[% sort('rev', 'rev') %]
+    <th>[% sort('type', 'rel_type') %]
+    <th>[% sort('rel', 'rel') %]
+    <th>[% sort('Ändrad', 'rel_changedby') %]
+    <th>S
+    <th>Sty
+</tr>
+
+[% FOREACH rec = select_list("select rel_topic from rel where rel_createdby=? and (rel_active is true and rel_strength >= 30) order by $order $direction offset ? limit ?", m.id, part_offset, [], pagesize, []) %]
+   [% arc = getarc(rec.rel_topic) %]
+
+   [%tr2%]
+        <td align="right">[% jump(arc.id, '/member/db/topic/edit/rel', rel_topic=arc.id) %]</td>
+        <td colspan="3">[% arc.as_string %]</td>
+	<td>[% arc.updated_by.link %]</td>
+        <td>[% arc.status %]</td>
+        <td>[% arc.strength %]</td>
+   [% subpart.shown = loop.size %]
+   </tr>
+[% END %]
+
+</table>
+</div>
+
+[% PROCESS pagify_footer.tt %]

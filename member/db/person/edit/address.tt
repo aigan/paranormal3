@@ -1,0 +1,79 @@
+[% META
+	otitle = 'Inställningar - Adressuppgifter'
+	next_action = 'member_update'
+	focus = 'home_postal_code'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Adressuppgifter: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+<p>Tills vidare kommer enbart postort att visas för andra medlemmar.
+Innan vi släpper andra uppgifter kommer du ha möjlighet att välja din
+grad av anonymitet.  <em>Lämna inga uppgifter du inte vill ska vara
+allmänt kända.</em> </p>
+
+
+<h3>Adress</h3>
+
+<p>Postnumret används för att beräkna avstånd mellan två medlemmar.  Vi
+kan också sluta oss till på villken ort du bor utifrån denna uppgift.
+Detta fungerar dock bara om du bor i Sverige.  Saknas ditt postnummer
+i registret kommer det att ta en kvart innan koordinaterna
+laddats ned.</p>
+
+
+<table>
+
+[%# default_name = m.home_postal_name || "$m.name_given $m.name_middle $m.name_family" %]
+<tr><td>Namn (c/o) <td>[% input('home_postal_name', m.home_postal_name) %]
+
+<tr><td>Gatuadress / Postlåda <td>[% input('home_postal_street', m.home_postal_street) %]
+
+<tr><td>Besöksadress <td>[% input('home_postal_visiting', m.home_postal_visiting) %]
+
+<tr><td>Postadress <td>[% input('home_postal_code', m.home_postal_code, size=8) %]
+                        &nbsp; <code><strong>$m.home_postal_city</strong></code>
+
+</table>
+
+[% hr %]
+
+
+
+[% WRAPPER draw_string title='Hemsida' field='home_online_uri' size=64 %]
+
+URL till den sida som beskriver dig.  En presentationssida på din
+webbplats eller en annan sida som ger mer information om dig själv.
+
+[% END %]
+
+
+<h3>Telefonnummer</h3>
+
+<table>
+
+<tr><th><th>Nummer <th>Kommentar
+
+<tr>
+  <td>Hem 
+  <td>[% input('home_tele_phone', m.home_tele_phone, size=16) %]
+  <td>[% input('home_tele_phone_comment', m.home_tele_phone_comment, size=40) %]
+
+<tr>
+  <td>Mobil
+  <td>[% input('home_tele_mobile', m.home_tele_mobile, size=16) %]
+  <td>[% input('home_tele_mobile_comment', m.home_tele_mobile_comment, size=40) %]
+
+<tr>
+  <td>Fax
+  <td>[% input('home_tele_fax', m.home_tele_fax, size=16) %]
+  <td>[% input('home_tele_fax_comment', m.home_tele_fax_comment, size=40) %]
+
+</table>
+
+
+<p> [% submit %]

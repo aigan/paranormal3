@@ -1,0 +1,51 @@
+[% META	otitle = "Gåvor till Paranormal.se"
+	level=0
+%]
+
+<h1><a href="/member/db/"><img src="/images/icon/arrow.gif" alt=
+      "Meny"></a> Gåvor till Paranormal.se</h1>
+
+[% PROCESS payment_menu.tt %]
+
+<p>Du kan stödja Paranormal.se genom ett <a
+href="/topic/prenumeration_pa_paranormalse.html">stödmedlemskap</a>.
+Du väljer hur mycket och för hur länge.</p>
+
+<h2>Alternativ</h2>
+
+<ol>
+
+<li><a href="paynova.tt">Paynova</a> - Betala via din internetbank, ditt kontokort eller med postgiro (Omedelbar registrering)
+
+<li><a href="bankgiro.tt">Bankgiro</a> (Mer arbete för oss och lång väntetid innan registrering)
+
+<li><a href="account_transfer.tt">Direkt insättning</a> (undvik denna metod)
+
+</ol>
+
+<p>Förslagsvis: 250 kr för ett år.</p>
+
+[% hr %]
+
+
+<p>Moms på 25% ingår i mottagna gåvor.  Mottagaren, <a href="/topic/paranormal_sweden.html">Paranormal Sweden</a>, (org.nr 720529-5095) innehar F-skattesedel.  (Eventuellt kan vi vid större gåvor räkna gåvan som gåva istället för försäljning ur beskattningssynpunkt.  [% jump('kontakta mig', 'account_transfer.tt') %].)</p>
+
+[% hr %]
+
+<p>Paranormal.se vill [% jump('öka kunskapen om de paranormala
+fenomenen', '/topic/malsattningen_med_paranormalse.html') %]. Vi
+kopplar samman tusentals uppslagsord och tusentals experter på alla
+områden.  Vi vill bli det ultimata verktyget för att skapa ny kunskap
+och sprida den bland alla intresserade.</p>
+
+<p>Vi är många som brinner för den här webbplatsen.  Vi lägger ned
+stor tid och möda på att skapa något verkligt bra.  [% jump('Jonas',
+'/topic/jonas_liljegren.html') %] har gått ned i tid till 15%
+på sitt ordinarie jobb för att kunna ägna den mesta tiden till att
+utveckla webbplatsen.</p>
+
+<p>Hur mycket är denna webbplats värd för dig?  Hur mycket du vill
+bidra med, och hur ofta du vill göra det, är helt frivilligt. Även
+gåvor på 1 krona hjälper till! (Förutsatt att du använder <a
+href="paynova.tt">Paynova</a>, för annars skulle det bli för mycket
+jobb för mig.)</p>

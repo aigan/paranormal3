@@ -1,0 +1,99 @@
+[% META otitle = 'Torget' %]
+
+[% PROCESS load_member.tt %]
+
+[% IF u.level > 1 and u.level < 5 %]
+   <ul>
+      [% IF u.level < 3 %]
+         <li>[% jump('Fortsätt med registrering','quest_level_02/') %]</li>
+      [% END %]
+      [% IF u.level > 2 and u.level < 5 %]
+         <li>[% jump('Uppdatera registrering','quest_level_02/') %]</li>
+      [% END %]
+      <li>[% jump('Byt lösenord', '/member/db/person/edit/passwd') %]</li>
+   </ul>
+[% END %]
+
+
+[% IF u.level > 4 %]
+
+<h1>Torget: [% u.title %] [% jump(u.nickname, '/member/db/person/view/', member=u.id) %], [% jump("nivå $u.level", '/topic/nivasystemet_for_paranormalse.html') %], mnr [% u.member %]</h1>
+
+[% END %]
+
+[% IF u.level==5 %]
+<h2>[% jump('Välkommen till nivå 5', '/member/db/quest_level_05/welcome') %]</h2>
+<p>[% jump('Börja här!', '/member/db/quest_level_05/welcome') %]</p>
+[% END %]
+
+<table><tr><td>
+
+[% IF u.level > 10 %]
+   <h3>Att kontrollera</h3>
+   <ul>
+   [% see = select_record('select count(member) as cnt from member where member_level = 3 and present_contact >= 10') %]
+   [% IF u.level < 41 %]
+      <li>[% jump("$see.cnt presentationer", '/member/db/person/find/pending_lvl5.tt') %]
+   [% ELSE %]
+      [% see_all = select_record('select count(member) as cnt from member where member_level = 3') %]
+      [% see_diff = see_all.cnt - see.cnt %]
+      <li>[% jump("$see_all.cnt presentationer, varav $see_diff anonyma", '/member/db/person/find/pending_lvl5.tt') %]
+   [% END %]
+   [% t_cnt = select_record('select count(t) as cnt from t where (t_status=2 or t_status=3) and t_entry is false') %]
+   <li>[% jump("$t_cnt.cnt ämnen", 'topic/list/unchecked') %]
+   [% e_cnt = select_record('select count(t) as cnt from t where (t_status=2 or t_status=3) and t_entry is true') %]
+   <li>[% jump("$e_cnt.cnt texter", 'entry/list/unchecked') %]
+   [% r_cnt = select_record('select count(rel) as cnt from rel where (rel_status=2 or rel_status=3) and rel_indirect is false') %]
+   <li>[% jump("$r_cnt.cnt relationer", 'topic/list/unchecked_rels') %]
+   [% a_cnt = select_record('select count(talias) as cnt from talias where talias_status=2 or talias_status=3') %]
+   <li>[% jump("$a_cnt.cnt alias", 'topic/list/unchecked_aliases') %]
+   </ul>
+[% END %]
+
+</td><td>
+
+<h3>Att göra</h3>
+<ul>
+  [% IF u.sys_uid %]
+     <li><a href="/member/mail/">E-post</a>
+  [% END %]
+  [% IF u.level > 1 %]
+     <li>[% jump('Definiera intressen', 'intrest/focus') %]
+     <li>[% jump('Gåvor', '/member/payment/') %]
+  [% END %]
+  <li>[% jump('Chatta', '/member/chat/login.tt') %]
+  <li>[% jump('Chat-admin', '/member/chat/admin/') %]
+  [% IF u.level > 10 %]
+     <li>[% jump('Skicka lösen', '/member/db/member_forgot_pwd') %]
+     <li>[% jump('RT', 'http://rt.paranormal.se/') %]
+     <li>[% jump('motd', 'motd') %]
+  [% END %]
+</ul>
+
+</td><td>
+
+<h3>Att läsa</h3>
+<ul>
+  <li>[% jump('Om Paranormal.se', '/topic/paranormalse.html') %]
+   [% IF u.level > 10 %]
+     <li>[% jump('TODO', '/topic/todo_for_paranormalse.html') %]
+     <li>[% jump('Dokumentation', '/member/db/doc/') %]
+  [% END %]
+  <li>[% jump('E-postlistor', '/cgi-bin/mailman/listinfo') %]
+  <li> [% jump('Statistik', '/member/db/stats/') %]
+  [% IF u.level==42 %]
+     <li>[% jump('Betalningshistorik', '/member/payment/history.tt') %]
+  [% END %]
+</ul>
+
+</td></tr></table>
+
+<br clear="all">
+
+
+[% IF q.param('route') %]
+<p align="right">Ah.. Du var mitt uppe i något. Då kan du välja
+
+[% go('Fortsätt', backtrack, 'nop', route=q.param('route') ) %]
+</p>
+[% END %]

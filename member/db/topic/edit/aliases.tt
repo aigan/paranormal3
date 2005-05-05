@@ -1,0 +1,119 @@
+[% META
+	otitle = 'Ändra alias'
+	next_action = 'topic_update'
+	level = 5
+%]
+[%
+      tid = q.param('tid');
+      DEFAULT tid = q.param('t');
+      ver = q.param('v');
+      t = topic(tid, ver);
+
+      PROCESS buttons.tt;
+
+	# Add this topic to a list of choices
+	CALL q.append('-name'=>'_extra_choices','-values'=>[tid]);
+	preserve_data('_talias__.*', 't_text','t_title', '_meta_talias', 'include_inactive', 'include_false', 'include_indirect', 'include_rev');
+%]
+
+<h1>Ändra alias för [% PROCESS tlink.tt %]</h1>
+[% PROCESS topic_edit_menu.tt %]
+
+<p>[% PROCESS typelist.tt rel = tid %] <em>[% t.text | html %]</em></p>
+
+[% langrecs = select_list('from rel, t where t=rev and rel_type=1 and rel=33859 and t_active is true and rel_active is true order by t_title') %]
+
+<table border>
+<tr>
+   <th>Behåll
+   [% '<th>S' IF u.level>10 %]
+   <th>Alias
+   <th>Autolänka
+   <th>Index
+   <th>Språk
+   [% '<th>Skapad av <th>Datum' IF u.level>10 %]
+[% FOREACH a = t.alias_list(tfilter) %]
+   <tr>
+      [%# NEXT UNLESS a.active or tfilter.include_inactive %]
+
+      [% IF a.active %]
+         <td>[% checkbox("_talias__${loop.count}_keep", 't', a.active) %]</td>
+      [% ELSE %]
+         <td>[% checkbox("_talias__${loop.count}_activate", 't', a.active) %]</td>
+      [% END %]
+      [% IF u.level>10 %]<td>[% a.status %]</td>[% END %]
+      <td>$a.name [% hidden("_talias__${loop.count}_talias", a.name) %]</td>
+      <td>[% checkbox("_talias__${loop.count}_talias_autolink", 1, a.autolink ) %]</td>
+      <td>[% checkbox("_talias__${loop.count}_talias_index", 1, a.index ) %]</td>
+      <td>
+      <select name="_talias__${loop.count}_talias_language">
+         <option value=""> ---
+         [% FOREACH rec = langrecs %]
+            <option value="[% rec.t %]"
+               [% 'selected' IF rec.t == a.language_id %]
+            >[% rec.t_title %]</option>
+         [% END %]
+      </select>
+      </td>
+      [% IF u.level>10 %]
+         <td>[% a.created_by.link %]</td>
+         <td>[% a.created %]</td>
+      [% END %]
+   </tr>
+[% END %]
+</table>
+
+[% IF q.param('_aliaslist') %]
+   <p>Ta bort de alias som inte passar på just detta ämnet.
+[% END %]
+
+<p>Kom ihåg att även ta med böjningar, förkortningar, alternativa
+stavningar och samma ord på vanligt förekommande språk.
+
+<p>Nya aliases, ett per rad:<br>
+<textarea cols="30" rows="3" name="_meta_talias">[% list2block('_aliaslist', 't_title') %]</textarea>
+
+<p>[% go('Uppdatera', 'aliases', 'topic_update4') %]
+   [% submit %]
+   [% go('Fortsätt utan ändringar', backtrack, 'nop') %]</p>
+
+<p>Avmarkera <em>behåll</em> för de alias som inte ska vara kopplade till detta ämnet.
+
+<p><em>Autolänk</em> anger att om detta alias förekommer i löpande
+text ska det vara en länk till ämnet.  Alias som har flera betydelser
+bör inte vara autolänkar. Ett alias som också är ett vanligt
+förekommande ord som inte finns i databasen ska inte
+autolänkas. Exempelvis ord som "får" som kan syfta på däggdjuret men
+skulle också kunna syfta på något annat.  Vanligt förekommande för-
+och efternamn ska inte autolänkas.
+
+<p><em>Index</em> ange om ordet ska stå med i ett alfabetiskt sorterat
+index över uppslagsord.  Olika böjningar på samma ord ska inte vara
+med i index eftersom de då skulle hamna alldeles intill varandra. Tag
+med ordet i singular eller den fullständiga titeln.  </p>
+
+<p>För <em>Personer</em> gäller att alla varianter av namnet finns med
+som alias, alla varianter som kan förekomma när perosnen omnämns.  Men
+om en person inte brukar omnämnas med ett av sina mellannamn ska inte
+detta finna sosm alias.
+
+<p>I indexet ska bara de fullständiga namnen finnas, dels på förnamn
+och dels på efternamn.  Autolänkas ska bara de versioner av namnen som
+är specifika nog för att urskilja sig från alla andra personer i
+uppslagsverket. Dvs aldrig några ensamma namn, såvida de inte är kända
+ensamstående namn så som buddha eller jesus.
+
+<p>Nedan står A för autolänk och I för index:
+
+<pre>
+För                  -  -
+För Efter            A  -
+För Mellan Efter     A  I
+För M Efter          A  -
+F M Efter            A  -
+Efter                -  -
+Efter, För           A  -
+Efter, För Mellan    A  I
+Efter, För M         A  -
+Efter, F M           A  -
+</pre>

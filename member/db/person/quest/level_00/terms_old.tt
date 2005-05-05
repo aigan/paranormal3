@@ -1,0 +1,28 @@
+[% META
+	title = 'Den paranormala sfären'
+%]
+
+<p>Allt du säger och gör på <code>paranormal.se</code> kan komma att
+lagras i våra arkiv.  Lämna inga uppgifter som du inte vill ska vara
+allmänt kända.  Vi förbehåller oss rätten att bestämma hur uppgifterna
+kommer att användas.</p>
+
+<p>För att bli medborgare i vår sfär måste du svara på ett antal
+frågor om dig själv och dina intressen. Du får när som helst välja att
+inte svara på en fråga.</p>
+
+<p>Se [% jump('Anonymitet', '../doc/privacy', target='info') %]</p>
+
+<p>Svaren används för att sätta dig i relation till de ämnen
+webbplatsen behandlar.  Du kommer att få speciellt anpassade nyheter.
+Genom kopplingen kan du enkelt hitta någon som kan svara på dina
+frågor eller som har ett gemensamt intresse.</p>
+
+<p>Du kommer också att få tillfälle att bidraga till webbplatsen genom
+diskussioner, chatt och kategorisering av texter.</p>
+
+<p>Ska vi börja?</p>
+
+[% hr %]
+
+<p>[% jump("Tillbaka", "terms.tt") %]

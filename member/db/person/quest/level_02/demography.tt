@@ -1,0 +1,38 @@
+[% META
+	title = 'Personuppgifter'
+	next_template = 'contact.tt'
+	next_action = 'member_update'
+	focus = 'bdate_ymd_year'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+<p align="right">Steg 8 av 10</p>
+
+<p>Dessa uppgifter kan vara av intresse för en person som eventuellt
+vill kontakta dig.</p>
+
+<p>(Uppgifterna är frivilliga)</p>
+
+<table>
+  <tr>
+    <td>Födelseår</td>
+    <td>[% input('bdate_ymd_year', m.bdate_ymd_year, size=4) %]</td>
+    <td>(ÅÅÅÅ)</td>
+  </tr>
+  <tr>
+    <td>Kön</td>
+    <td>
+      <input type="radio" name="gender" value=""[% ' checked' UNLESS m.gender %]>Okänt<br>
+      <input type="radio" name="gender" value="M"[% ' checked' IF m.gender=='M' %]>Man<br>
+      <input type="radio" name="gender" value="F"[% ' checked' IF m.gender=='F' %]>Kvinna<br>
+    </td>
+  </tr>
+  <tr>
+    <td>Postnummer</td>
+    <td>[% input('home_postal_code', m.home_postal_code, size=8) %]</td>
+    <td>(Används för att beräkna avstånd mellan två medlemmar)</td>
+  </tr>
+</table>
+
+ [% submit %]

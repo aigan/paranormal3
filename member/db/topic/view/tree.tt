@@ -1,0 +1,103 @@
+[% META
+	otitle = 'Ämnesträd'
+%]
+
+[%
+   tid =  q.param('tid');
+   t = topic(tid);
+   PROCESS buttons.tt;
+%]
+
+[% PROCESS edit_menu.tt %]
+
+<table border>
+<tr><td valign="top">
+
+[% FOREACH rel = select_list("from rel, t where rev=? and rel_type=? and rel=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title", tid, 2 ) %]
+[% IF loop.first %]Är en sorts:<br>[% END %]
+[% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
+[% jump(title, me, tid=rel.t) %] <br>
+
+[% END %]
+
+
+[% FOREACH rel = select_list("from rel, t where rev=? and rel_type=? and rel=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title", tid, 3 ) %]
+[% IF loop.first %]Är underämne till:<br>[% END %]
+[% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
+[% jump(title, me, tid=rel.t) %]<br>
+
+[% END %]
+
+[% FOREACH rel = select_list("from rel, t where rev=? and rel_type=? and rel=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title", tid, 21 ) %]
+[% IF loop.first %]Har influerats av:<br> [% END %]
+[% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
+[% jump(title, me, tid=rel.t) %]<br>
+
+[% END %]
+
+</td><td align="center" valign="top">
+
+  <h2>[% PROCESS tlink.tt %]</h2>
+
+         [% FOREACH is = select_list("from rel, t
+                                 where rel_active is true and t_active is true
+                                 and rev=? and rel_type=1 and rel=t and rel_indirect is false and rel_strength >= 30 ", tid ) %]
+            [% jump(is.t_title, me, tid=is.t) %]
+         [%
+            UNLESS loop.last;
+               GET ', ';
+            END;
+         END;
+         %]
+
+<p><strong>[% t.text | html %]</strong></p>
+
+  <hr>
+
+
+[% FOREACH rel = select_list("from rel, t where rev=? and rel_type=? and rel=t and rel_active is true and t_active is true and rel_strength >= 30 order by t_title", tid, 0 ) %]
+[% IF loop.first %]Är relaterad till:<br>[% END %]
+
+[% jump(rel.t_title, me, tid=rel.t) %] <br>
+
+[% END %]
+
+</td><td valign="top">
+
+[% FOREACH rel = select_list("from rel, t where rel=? and rel_type=? and rev=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title ", tid, 2 ) %]
+[% IF loop.first %]Kan vara:<br>[% END %]
+
+[% jump(rel.t_title, me, tid=rel.t) %]<br>
+
+[% END %]
+
+
+[% FOREACH rel = select_list("from rel, t where rel=? and rel_type=? and rev=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title ", tid, 3 ) %]
+[% IF loop.first %]Har underämne:<br>[% END %]
+[% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
+[% jump(title, me, tid=rel.t) %]<br>
+
+[% END %]
+
+[% FOREACH rel = select_list("from rel, t where rel=? and rel_type=? and rev=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title", tid, 21 ) %]
+[% IF loop.first %]Har influerat:<br> [% END %]
+[% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
+[% jump(title, me, tid=rel.t) %]<br>
+
+[% END %]
+
+
+</td></tr>
+
+<tr><td colspan="3" align="center"><table>
+<tr><td>
+
+[% FOREACH rel = select_list("from rel, t where rel=? and rel_type=? and rev=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title", tid, 1 ) %]
+[% IF loop.first %]Inkluderar:<br/>[% END %]
+
+[% jump(rel.t_title, me, tid=rel.t) %]<br>
+
+[% END %]
+</td></tr>
+</table></td></tr>
+</table>

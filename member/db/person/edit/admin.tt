@@ -1,0 +1,62 @@
+[% META
+	otitle = 'Inställningar - Innersta väsen'
+	next_action = 'member_update'
+	level = 41
+%]
+
+[% PROCESS load_member.tt %]
+
+<h1>Inställningar - Innersta väsen: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+[% MACRO row_slider(field) BLOCK;
+   DEFAULT number=7;
+%]
+<tr>
+  <td>$field</td>
+  <td>No[% slider( field=field
+                   current=(q.param(field) || m.$field)
+                   max=max
+                   min=min
+		   number=number
+                 ) 
+      %]Yes</td>
+</tr>
+[% END %]
+
+<table align="left" border=1>
+[% row_view("member") %]
+[% row_view('nickname') %]
+[% row_edit('member_topic') %]
+[% row_edit("member_level") %]
+[% row_edit("chat_level") %]
+[% row_view("created") %]
+[% row_view("updated") %]
+[% row_view("latest_in") %]
+[% row_view("latest_out") %]
+[% row_view("latest_host") %]
+[% row_edit("sys_uid") %]
+[% row_edit("statement") %]
+[% row_edit("geo_precision") %]
+[% row_edit("geo_x") %]
+[% row_edit("geo_y") %]
+[% row_view("payment_expire") %]
+[% row_view("payment_period_length") %]
+[% row_view("payment_period_cost") %]
+[% row_view("payment_level") %]
+[% row_view("payment_total") %]
+
+</table>
+
+[% textarea("member_comment_admin", m.member_comment_admin) %]<br>
+<em>Medlemmar med kommentarer raderas inte automagiskt vid inaktivitet</em>
+
+<p>[% go("Update member", me, 'member_update2') %]</p>
+
+<p>[% go("Vacuum member", me, 'member_vacuum') %]</p>
+
+
+<p align="right">[% jump('radera...','remove_confirm.tt', mid=mid) %]
+
+<br clear="all">

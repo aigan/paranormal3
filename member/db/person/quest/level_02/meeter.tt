@@ -1,0 +1,27 @@
+[% META
+	title = 'Chatta eller läsa'
+	next_template = 'newsmail.tt'
+	next_action = 'member_update'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+<p align="right">Steg 4 av 10</p>
+
+<p>Vad vill du göra på webbplatsen?</p>
+
+<p>Vill du främst få kontakter, diskutera och chatta?  Eller vill du i
+första hand läsa och lära på egen hand?</p>
+
+<p>Chatta
+[% slider(
+   field='_meta_meeter_bookmark'
+   number=7
+   min=10 max=90
+   current = 50
+)%] Läsa
+</p>
+
+<p>[% submit %]</p>
+
+

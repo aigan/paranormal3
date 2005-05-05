@@ -1,0 +1,34 @@
+[% META
+	title = 'E-postmängd'
+	next_template = 'topics.tt'
+	next_action = 'member_update'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+<p align="right">Steg 5 av 10</p>
+
+<p>Hur mycket e-post vill du ha?
+
+<p>Vi kommer att skicka ut anpassade nyhetsbrev, information etc.  Vi
+bedömmer hur intressant nyheten är just för dig.  Kanske du bara vill
+ha det mest intressanta eller kanske föredrar du att få mer e-post och
+solla själv?
+
+<p><input type="radio" name="newsmail" value="1"[% ' checked' IF m.newsmail == 1 %]>
+Ett par gånger om året
+
+<br><input type="radio" name="newsmail" value="2"[% ' checked' IF m.newsmail == 2 %]>
+Varje månad
+
+
+<br><input type="radio" name="newsmail" value="3"[% ' checked' IF m.newsmail == 3 or 
+                                                                ! m.newsmail %]>
+Varje vecka
+
+<br><input type="radio" name="newsmail" value="5"[% ' checked' IF m.newsmail == 5 %]>
+Varje dag
+
+<p>[% submit %]
+
+

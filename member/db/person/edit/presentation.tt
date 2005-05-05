@@ -1,0 +1,38 @@
+[% META
+	otitle = 'Inställningar - Presentation'
+	next_action = 'member_update'
+	focus = 'presentation'
+	level = 2
+%]
+
+[% PROCESS load_member.tt %]
+
+
+<h1>Inställningar - Presentation: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+
+<p>Skriv <strong>inte</strong>
+vad du heter, hur du ser ut, hur gammal du är, var du bor, etc. (De
+sakerna har du redan svarat på.) Använd <strong>inte</strong> HTML.
+Ha en tomrad mellan varje stycke.</p>
+
+<p>Du kan skriva om varför du är intresserad av det paranormala.  Vad
+är det du vill lära dig?  Vad söker du?  Skriv gärna också vad det är
+som definierar dig som människa. Exempelvis jobb, familj,
+fitidsintressen, etc.</p>
+
+<textarea name="presentation" class="big_input" wrap="soft" cols="55" rows="20">[% m.presentation|html %]</textarea>
+<br>
+
+<table width="95%">
+  <tr>
+    <td align="center">
+      [% go( "Snabbspara", 'presentation', 'member_update') %]
+    </td>
+    <td align="center">
+      [% submit('Klar!') %]
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,12 @@
+   [% IF t.parent %]
+      <p>(Den här texten hör till [% jump(t.parent.desig, '/member/db/topic/view/', tid=t.parent.id) %].
+      [%+ INCLUDE publish_status.tt t = t.parent %]
+      )
+   [% ELSIF t.previous %]
+      <p>(Den här texten är en fortsättning på
+          [% jump(t.previous.desig, me, tid=t.previous.id) %].
+      [% INCLUDE publish_status.tt t = t.parent %]
+      )
+   [% ELSE %]
+      <p>(Den här texten hör inte till något specifikt ämne)
+   [% END %]

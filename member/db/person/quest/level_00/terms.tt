@@ -1,0 +1,55 @@
+[% META
+	title = 'Villkor'
+	next_template = 'gate.tt'
+%]
+
+<p>Uppdaterad 2003-10-18 kl 07.  Detta är en [% jump("förtydling av
+tidigare villkor", "terms_old,tt") %].</p>
+
+<p>Allt du säger, skriver, gör och laddar upp på
+<code>paranormal.se</code> kan komma att lagras i våra arkiv.  Vi
+förbehåller oss rätten att bestämma hur uppgifterna kommer att
+användas.</p>
+
+<p>Se [% jump('Anonymitet', '/topic/anonymitet_pa_paranormalse.html', target='info') %]</p>
+
+<p>När du godkänner dessa villkor godkänner du att [% jump('Paranormal
+Sweden', "/topic/paranormal_sweden.html") %] erhåller upphovsrätt till
+allt mottaget material.  Du har förståss själv kvar din egen
+upphovsrätt för ditt material, men kan inte bestämma över vad vi gör
+med vår kopia.</p>
+
+<p>Om du matar in material på webbplatsen som du inte själv har
+upphovsrätt till; uppfyll minst ett av följande villkor:</p>
+
+<ul>
+
+<li>Se till att en licens finns som tillåter publicering</li>
+
+<li>Erhåll och bifoga särskilt publiceringstillstånd från upphovsman</li>
+
+<li>Skriv en egen text baserad på ursprungsmaterialet</li>
+
+</ul>
+
+<p>Upphovsman, författare, licens, tillåtelse (att publicera) och
+källor bör alltid bifogas materialet.  Detta är ett måste när
+materialet har en restriktiv licens och vår kopia inte kan räknas som
+citering.</p>
+
+<p>För webbplatsens framtida utveckling är det mycket viktigt att
+Paranormal Sweden själv har upphovsrätt för så mycket material som
+möjligt.  Material vi inte har upphovsrätt till eller där frågan om
+upphovsrätt eller licens är oklar, kommer vi ersätta vid första bästa
+tillfälle.</p>
+
+<p>Du har möjlighet att inte ge Paranormal Sweden upphovsrätt för ditt
+egna material, genom att enligt ovan behandla materialet som om det
+kom från en tredje part.  Men detta bör enbart göras i undantag.</p>
+
+<p>Ska vi börja?</p>
+
+[% hr %]
+[% title = q.escape('Varför inte?') %]
+<p>[% go('Vänd och fly i panik', "/member/mail.cgi?$title") %]
+[% submit('Godkänn villkoren') %]</p>

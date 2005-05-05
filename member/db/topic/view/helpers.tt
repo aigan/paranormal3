@@ -1,0 +1,114 @@
+[% META
+	otitle = 'Hjälpare'
+        level = 0
+	next_template = '../view/'
+%]
+
+[%
+   tid = q.param('tid');
+   DEFAULT tid = q.param('t');
+   t = topic(tid);
+%]
+
+[% PROCESS buttons.tt IF u.level %]
+
+
+<h1>Hjälpare inom [% PROCESS tlink.tt %]</h1>
+
+[% PROCESS static/part/interests interest_limit=150 %]
+
+[% IF u.level %]
+   [% PROCESS topic_edit_menu.tt %]
+   <p>
+   [ [% jump('Lista alla', '/member/db/person/find/type2_result.tt' interest=tid _helper=1) %]
+   ]</p>
+[% END %]
+
+[% hr %]
+
+<h2>[% jump('Hjälp-linjen', '/member/db/get_help.tt', tid=tid) %]</h2>
+
+<p>Är du drabbad av något paranormalt eller andligt fenomen? Vi har en hjälp-linje där du kan få hjälp med dina problem.  Skriv till [% jump('Hjälp-linjen', '/member/db/get_help.tt', tid=tid) %].
+
+<p>Är du på jakt efter kunskap eller information om något bör du istället fråga någon av de enskilda hjälparna listade här nedan. Dessa frågor är för många för att vi ska kunna ta hand om dem.</p>
+
+[% hr %]
+
+[% trobart = 1 IF t.has_rel(1, 10) %]
+[% upplevbart = 1 IF t.has_rel(1, 12) %]
+[% praktiserbart = 1 IF t.has_rel(1, 11) %]
+[% rows.count = 0 %]
+
+[% helplist = BLOCK %]
+
+<p>Detta är andra medlemmar som sagt sig vara intresserad av detta
+ämne och har lust att hjälpa.  Vi har ingen kontroll på att detta är
+bra personer att kontakta för vissa frågor, eller att de har de
+kunskaper de säger sig ha. -- Bedöm på egen hand, från fall till fall.
+Läs deras presentationer.
+
+[% IF u.level %]
+<p>Har du frågor kring hur du bidrar till detta ämnet bör du skriva
+till [% forward('redaktörerna för detta ämnet','editors') %].  Frågor
+om webbplatsen i allmänhet ska gå till <a
+href="/member/mail.cgi?helpers">red@paranormal.se</a>.
+[% ELSE %]
+<p>Om du [% jump("loggar in", "/user_login.tt", run='mark') %] har du möjlighet att hitta fler personer som vill hjälpa inom ett visst område.  Då kan du även göra göra speciella sökningar och hitta personer som bor i närheten av dig. Du kommer även kunna läsa medlemmarnas presentationer, med mera.
+[% END %]
+
+
+<p>
+H = Lust att hjälpa.
+[% 'T = Tro. ' IF trobart %]
+[% 'U = Upplevt. ' IF upplevbart %]
+K = Kunskap.
+[% 'P = Praktiserat. ' IF praktiserbart %]
+
+</p>
+
+<div class="entry">
+<table>
+<tr><th>Namn
+    <th>H
+[% '<th>T</th>' IF trobart %]
+[% '<th>U</th>' IF upplevbart %]
+    <th>K
+[% '<th>P</th>' IF praktiserbart %]
+    <th>Kommentarer
+
+[% FOREACH interest = interest_helper %]
+   [% im = getmember( interest.member ) %]
+   [% NEXT UNLESS u.level or ( interest.intrest_description and im.newsmail > 3 and im.general_helper > 30 ) %]
+   <tr>
+   [% IF u.level %]
+      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', member=interest.member) %]</td>
+   [% ELSE %]
+      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/send_email.tt', mid=interest.member, tid=tid) %]</td>
+   [% END %]
+
+      <td valign="top">[% (interest.helper||0) / 17 | replace(',','.') | format('%d') %]</td>
+      [% IF trobart %]<td valign="top">[% (interest.belief||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
+      [% IF upplevbart %]<td valign="top">[% (interest.experience||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
+      <td valign="top">[% (interest.knowledge||0) / 17 | replace(',','.') | format('%d') %]</td>
+      [% IF praktiserbart %]<td valign="top">[% (interest.practice||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
+      <td valign="top">[% interest.intrest_description %]</td>
+   </tr>
+   [% rows.count = rows.count + 1 %]
+[% END %]
+</table>
+</div>
+
+[% END %]
+
+[% IF rows.count %]
+   [% helplist %]
+[% ELSE %]
+
+<h2>Inga hjälpare</h2>
+
+<p>Inga medlemmar har skrivit upp sig som hjälpare för just det här ämnet.
+[% UNLESS u.level %]
+<p>Det kan hända att du hittar några ifall du loggar in.  En del listningar har bara begränsad visning.
+[% END %]
+[% END %]
+

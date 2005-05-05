@@ -1,0 +1,25 @@
+[% META
+	otitle = 'Editera gammal URL'
+	next_action = 'topic_update'
+	focus = 't_text'
+	next_template = '../view/'
+%]
+
+[%
+   tid = q.param('tid');
+   v = q.param('v');
+   t = topic(tid,v);
+   hidden('tid', tid);
+   hidden('v', v);
+   PROCESS buttons.tt;
+%]
+
+<h1>[% PROCESS tlink_ver.tt %]</h1>
+
+   [% PROCESS topic_edit_menu.tt %]
+
+<p>Gammal URL: [% input('t_oldfile', t.oldfile, size=50 maxlength=128) %]  <br />
+Exempel: <code>/psi/magi.html</code>
+
+<p>[% submit %]
+

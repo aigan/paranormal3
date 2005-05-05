@@ -1,0 +1,41 @@
+[% META
+	title = 'Flytta en text'
+	next_action = 'entry_move'
+	level = 12
+%]
+
+[%
+   t = topic(q.param('tid'));
+   talias = q.param('talias');
+   hidden('tid', t.id);
+   hidden('talias', talias);
+   PROCESS buttons.tt;
+   PROCESS edit_menu.tt;
+%]
+
+<p>Flytta <code>$t.id:$t.desig</code> [% PROCESS typelist.tt rel=t.id %] till:</p>
+
+[%
+   list = find_topic(talias);
+
+   IF list.size == 0;
+      THROW notfound, "Det finns inget ämne med alias $talias";
+   END;
+%]
+
+   <table>
+   [% FOREACH t2 = list %]
+      [% IF t2.id != t.id %]
+      <tr><td>[% radio('t2_id', t2.id, 0) %]</td>
+          <td>$t2.id</td>
+          <td>[% jump(t2.desig, '/member/db/topic/view/', tid=t2.id) %]</td>
+          <td>[% PROCESS typelist.tt rel=t2.id %]</td>
+      [% END %]
+   [% END %]
+   </table>
+
+[% IF u.level >= 14 %]
+<p>[% checkbox('keep_version',1) %] Flytta denna version (skapa ej ny version)</p>
+[% END %]
+
+<p>[% submit('Flytta') %]

@@ -1,0 +1,9 @@
+[% IF u.level > 40 %]
+<p>
+[ [% jump('Gåvor', '/member/payment/') +%]
+| [% jump('Mata in ny transaktion', '/member/db/person/order/create.tt', mid=m.id) +%]
+| [% jump('Se global historik', '/member/payment/history.tt') +%]
+| [% jump('Statistik', '/member/db/stats/payment/') +%]
+| [% jump('Merchant Services', 'https://www.paynova.com/merchant_services/') +%]
+]</p>
+[% END %]

@@ -68,17 +68,25 @@ sub send
 
     my $res = $e->SUPER::send( @args );
 
+    $e->handle_result;
+    return $res;
+}
+
+sub handle_result
+{
+    my( $e ) = @_;
+
     foreach my $email ( $e->good )
     {
+	warn "$email is good\n";
 	# TODO: Note success
     }
 
     foreach my $email ( $e->bad )
     {
+	warn "$email is bad\n";
 	# TODO: Note failure
     }
-
-    return $res;
 }
 
 1;

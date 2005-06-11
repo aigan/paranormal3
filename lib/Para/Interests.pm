@@ -42,40 +42,44 @@ sub new
     my( $this, $member ) = @_;
     my $class = ref($this) || $this;
 
-    my $props = {};
-    $props->{'member'} = $member;
-    $props->{'list'} = $Para::dbix->select_list('from intrest where intrest_member=? and intrest_defined >= 10 and intrest is not null order by intrest desc, intrest_defined desc',
-				   $member->id );
-    $props->{'init'} = 0;
-    $props->{'db'} = {};
+    my $ins = {};
+    $ins->{'member'} = $member;
+    $ins->{'list'} = undef;
+    $ins->{'init'} = 0;
+    $ins->{'db'} = {};
 
-    return bless $props, $class;
+    return bless $ins, $class;
+}
+
+sub init_list
+{
+    my( $ins ) = @_;
+    return if $ins->{'list'};
+    # Put the most interesting topic first in the list
+    $ins->{'list'} = $Para::dbix->select_list('from intrest where intrest_member=? and intrest is not null order by intrest desc',
+				   $ins->m->id );
+    return;
 }
 
 sub count
 {
+    my( $ins ) = @_;
+    $ins->init_list unless $ins->{'list'};
     return scalar @{ shift->{'list'} };
 }
 
 sub updated
 {
-    my( $intr ) = @_;
-    return Para::Time->get( $intr->member->{'intrest_updated'} );
+    my( $ins ) = @_;
+    return Para::Time->get( $ins->member->{'intrest_updated'} );
 }
 
-
-sub add
-{
-    my( $intr, $t ) = @_;
-
-    Para::Interest->touch( $t, $intr->member );
-}
 
 sub member { shift->{'member'} }
 
 sub summary
 {
-    my( $interests, $max, $cutof ) = @_;
+    my( $ins, $max, $cutof ) = @_;
 
     my $DEBUG = 0;
     warn "Creating a summary\n" if $DEBUG;
@@ -93,17 +97,17 @@ sub summary
 
     for($i=0; 1; $i++)
     {
-	my $intr = $interests->list_item( $i ) or last;
-	my $topic = $intr->topic;
+	my $in = $ins->list_item( $i ) or last;
+	my $topic = $in->topic;
 
-	last if $intr->general < TRUE_MIN;
+	last if $in->general < TRUE_MIN;
 	next unless $topic->active;
-	next if $intr->defined < $definedness_limit;
+	next if $in->defined < $definedness_limit;
 
 	warn "Consider ".$topic->desig."\n" if $DEBUG;
 
 
-	if( $intr->general < $cutof )
+	if( $in->general < $cutof )
 	{
 	    if( $sum_cnt < $min )
 	    {
@@ -117,7 +121,7 @@ sub summary
 
 	if( $sum_cnt < $max )
 	{
-	    $sum_idx->{ $topic->id } = $intr;
+	    $sum_idx->{ $topic->id } = $in;
 	    $sum_cnt = scalar keys %$sum_idx;
 	    warn "  added\n" if $DEBUG;
 	}
@@ -130,7 +134,7 @@ sub summary
 
 	    foreach my $ointr ( values %$sum_idx, values %$replaced )
 	    {
-		next if $ointr->equals( $intr );
+		next if $ointr->equals( $in );
 
 		if( $topic->has_rel([1,2,3,4], $ointr->topic) )
 		{
@@ -149,7 +153,7 @@ sub summary
 		    {
 			$replaced->{ $ointr->topic->id } = $ointr;
 			delete $sum_idx->{ $ointr->topic->id };
-			$sum_idx->{ $topic->id } = $intr;
+			$sum_idx->{ $topic->id } = $in;
 			$sum_cnt = scalar keys %$sum_idx;
 		    }
 		}
@@ -162,34 +166,71 @@ sub summary
 
 sub list_item
 {
-    my( $interests, $item ) = @_;
+    my( $ins, $item ) = @_;
 
-    my $rec = $interests->{'list'}[ $item ];
+    $ins->init_list unless $ins->{'list'};
+
+    my $rec = $ins->{'list'}[ $item ];
 #    warn "Returning interest no $item: ".Dumper($rec);
 
     return undef unless $rec;
-    my $intr = Para::Interest->new( $rec );
-    return $interests->{'db'}{ $intr->topic->id } = $intr;
+
+    return $ins->{'db'}{ $rec->{'intrest_topic'} } ||=
+	Para::Interest->new( $rec );
 }
 
-sub get_interest
+
+sub add
 {
-    my( $interests, $t ) = @_;
+    my( $ins, $t ) = @_;
+
+    # TODO: use $ins db
+    Para::Interest->touch( $t, $ins->member );
+}
+
+sub get
+{
+    my( $ins, $t ) = @_;
 
     unless( ref $t )
     {
 	$t = Para::Topic->find_one( $t );
     }
 
-    if( $interests->{'db'}{ $t->id } )
+    if( ref $t eq 'HASH' )
     {
-	return $interests->{'db'}{ $t->id };
+	# Called with t=record
+	return $ins->{'db'}{ $t->{'intrest_topic'} } ||=
+	    Para::Interest->new( $t );
     }
-    else
+
+    warn "  get interest $t->{id} (interests)\n";
+
+    
+    return $ins->{'db'}{ $t->id } ||=
+	Para::Interest->get( $ins->member, $t );
+}
+
+sub getset
+{
+    my( $ins, $t ) = @_;
+
+    unless( ref $t )
     {
-	my $intr = Para::Interest->get( $interests->{'member'}, $t );
-	return $interests->{'db'}{ $t->id } = $intr;
+	$t = Para::Topic->find_one( $t );
     }
+
+    if( ref $t eq 'HASH' )
+    {
+	# Called with t=record
+	return $ins->{'db'}{ $t->{'intrest_topic'} } ||=
+	    Para::Interest->new( $t );
+    }
+
+    warn "  getset interest $t->{id} (interests)\n";
+
+    return $ins->{'db'}{ $t->id } ||= 
+	Para::Interest->getset( $ins->member, $t );
 }
 
 1;

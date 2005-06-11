@@ -5,12 +5,12 @@
 [% IF u.level > 1 and u.level < 5 %]
    <ul>
       [% IF u.level < 3 %]
-         <li>[% jump('Fortsätt med registrering','quest_level_02/') %]</li>
+         <li>[% jump('Fortsätt med registrering','person/quest/level_02/') %]</li>
       [% END %]
       [% IF u.level > 2 and u.level < 5 %]
-         <li>[% jump('Uppdatera registrering','quest_level_02/') %]</li>
+         <li>[% jump('Uppdatera registrering','person/quest/level_02/') %]</li>
       [% END %]
-      <li>[% jump('Byt lösenord', '/member/db/person/edit/passwd') %]</li>
+      <li>[% jump('Byt lösenord', 'person/edit/passwd.tt') %]</li>
    </ul>
 [% END %]
 

@@ -1,6 +1,8 @@
+#  $Id$  -*-perl-*-
 package Para::Action::email_welcome;
 
 use strict;
+use Data::Dumper;
 
 use Para::Frame::Utils qw( throw );
 
@@ -23,9 +25,22 @@ sub handler
 	from => "devel\@paranormal.se",
     });
 
-    $e->send or throw('email', $e->error_msg);
+    my $fork = $req->create_fork;
+    if( $fork->in_child )
+    {
+	warn "-- SEND email\n";
+	$e->send or throw('email', $e->error_msg);
+	warn "-- RETURN\n";
+	$fork->return("E-post har nu skickats till $m->{'sys_email'} med ditt lösenord.\n");
+    }
 
-    return "E-post har nu skickats till $m->{'sys_email'} med ditt lösenord.\n";
+    return "";
+}
+
+sub sync
+{
+    my( $res ) = @_;
+    return "Email result synced with DB";
 }
 
 1;

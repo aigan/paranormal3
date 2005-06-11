@@ -64,7 +64,7 @@
 
 [% IF u.level >= 41 %]
       <tr><td>[% jump("Primär e-post", "../edit/email.tt", mid=mid) %]
-          <td><a href="mailto:$m.sys_email">$m.sys_email</a>
+          <td><a href="mailto:$m.sys_email.as_string">$m.sys_email.as_string</a>
       <tr><td>Mängd e-post         <td>$m.newsmail
       <tr><td>[% jump("Anonymitet", "../edit/privacy.tt", mid=mid) %]
           <td>$m.present_contact

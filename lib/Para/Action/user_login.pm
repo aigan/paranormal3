@@ -59,7 +59,7 @@ sub handler
 	$q->delete('username');
 	$q->delete('password');
 
-	Para::Frame->run_hook('user_login');
+	$req->run_hook('user_login');
 
 	return "$username loggar in";
     }

@@ -5,7 +5,7 @@
 	level = 2
 %]
 
-[% PROCESS load_member %]
+[% PROCESS load_member.tt %]
 <p align="right">Steg 3 av 10</p>
 
 <p>På villket sätt är du intresserad av området?</p>

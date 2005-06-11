@@ -1,3 +1,4 @@
+#  $Id$  -*-perl-*-
 package Para::Action::member_create;
 
 use strict;
@@ -73,7 +74,7 @@ sub handler
 	    $Para::dbh->rollback;
 
 	    warn "Kollar om nick $nick finns";
-	    my $rec = select_record("from member, nick where member=nick_member and uid=?", $nick);
+	    my $rec = $Para::dbix->select_record("from member, nick where member=nick_member and uid=?", $nick);
 	    if( $rec->{'member_level'} > 1 )
 	    {
 		throw('update', "Någon annan använder redan detta namn.  Välj ett annat\n");

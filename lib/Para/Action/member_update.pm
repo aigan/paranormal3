@@ -1,3 +1,4 @@
+#  $Id$  -*-perl-*-
 package Para::Action::member_update;
 
 use strict;
@@ -5,7 +6,6 @@ use Data::Dumper;
 
 use Para::Frame::Utils qw( throw );
 
-#use Para::Common qw( identify_user );
 use Para::Member;
 
 sub handler
@@ -14,6 +14,8 @@ sub handler
 
     my $q = $req->q;
     my $u = $req->s->u;
+
+    my $DEBUG = $Para::Frame::DEBUG;
 
 #    warn Dumper $q;
 
@@ -112,7 +114,7 @@ sub handler
     #
     if( $mid == $u->id )
     {
-	Para::Frame::User->identify_user();
+	$u = $Para::Frame::CFG->{'user_class'}->identify_user();
     }
 
 
@@ -149,6 +151,11 @@ sub handler
     if( $change->errors )
     {
 	throw('validation', $change->errmsg );
+    }
+
+    if( $DEBUG > 3 )
+    {
+	warn "User is: ".$u->desig."\n";
     }
 
     return "";

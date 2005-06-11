@@ -1,7 +1,7 @@
 [% META
 	title = 'Ämnen'
 	next_template = 'name.tt'
-	next_action = 'intrest_update_multi'
+	next_action = 'member_interest_update_multi'
 	level = 2
 %]
 <p align="right">Steg 6 av 10</p>
@@ -25,17 +25,17 @@ svar bör ligga mellan 1-3 och några mellan 4-6.</p>
 
   <p>[% t_text %]</p>
 
-  [% intrest = select_possible_record("from intrest where intrest_member=? and intrest_topic=?",
+  [% interest = select_possible_record("from intrest where intrest_member=? and intrest_topic=?",
 					m.member, t) %]
 
-  <p>Ointresserad [% slider( field="_meta_intrest_$t" current=intrest.intrest )%]
+  <p>Ointresserad [% slider( field="_meta_interest_$t" current=interest.intrest )%]
      Mycket intresserad
 
   [% hr %]
 
 [% END %]
 
-[% hidden('intrest_sanity', 1) %]
+[% hidden('interest_sanity', 1) %]
 
 <p>[% submit %]</p>
 

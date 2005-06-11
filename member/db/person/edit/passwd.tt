@@ -1,6 +1,6 @@
 [% META
 	otitle = 'Inställningar - Lösenord'
-	next_action = 'member_passwd_update'
+	next_action = 'member_update_passwd'
 	focus = 'passwd_old'
 	level = 2
 %]

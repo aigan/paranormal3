@@ -38,7 +38,7 @@ use Para::Member;
 use Para::Topic;
 use Para::Widget;
 use Para::Interest;
-use Para::Interest::Tree;
+use Para::Interests::Tree;
 use Para::Email;
 
 {
@@ -49,13 +49,13 @@ use Para::Email;
 
 	'user_class' => 'Para::Member',
 
-	# Should not be used
-#	'webroot' => '/var/www/test.paranormal.se',
-
 	# Path in  URL to website
 	'webhome' => '',
 
-	DEBUG     => 2,
+
+	port      => 7789,
+
+	DEBUG     => 1,
     };
     Para::Frame->configure( $cfg );
 
@@ -66,12 +66,21 @@ use Para::Email;
 	new({
 	    connect => ["dbi:Pg:dbname=psi1"],
 	});
+
+    # Copy dbh obj
     $Para::dbh = $Para::dbix->dbh;
+
+###### Not needed 
+#    Para::Frame->add_hook('on_fork', sub
+#			  {
+#			      warn "    dbh before: $Para::dbh\n";
+#			      $Para::dbh = $Para::dbix->dbh;
+#			      warn "    dbh after : $Para::dbh\n";
+#			  });
 
 
     my $global_params =
     {
-	'interest_next_step'=> \&Para::Widget::interest_next_step,
 	'select_persons'    => \&Para::Widget::select_persons,
 	'diff'              => \&Para::Widget::diff,
 
@@ -122,6 +131,6 @@ use Para::Email;
 
 END
 {
-    warn "Closing down creation\n";
+    warn "Closing down creation\n" unless $Para::Frame::FORK;
 }
 

@@ -128,6 +128,8 @@ sub interest_next_step
 {
     my( $tid, $mid, $attr ) = @_;
 
+    die "deprecated";
+
     $mid ||= $Para::Frame::U->id;
     confess unless $tid;
     my $q = $Para::Frame::REQ->q;
@@ -147,8 +149,8 @@ sub interest_next_step
 	# Create some intrest
 	$q->param('t', $tid);
 	$q->param('intrest_defined', 1);
-	require Para::Action::intrest_update;
-	Para::Action::intrest_update::handler();
+	require Para::Action::interest_update;
+	Para::Action::interest_update::handler();
 	$i = $Para::dbix->select_possible_record('from intrest where intrest_member=? and intrest_topic=?', $mid, $tid);
      }
 
@@ -195,19 +197,20 @@ sub interest_next_step
 
     if( $next_vault < 2 and $i_con < 10 )
     {
+	die "fixme";
 	$next->{'handler'} = $base.'/topic/connection/vault_'.$next_vault;
     }
     elsif( $defined < 30 or $redefine )
     {
-	$next->{'handler'} = $base.'/intrest/specify';
+	$next->{'handler'} = $base.'/person/interest/specify.tt';
     }
     elsif( $intrest > 50 and $defined < 90 )
     {
-	$next->{'handler'} = $base.'/intrest/specify_related';
+	$next->{'handler'} = $base.'/person/interest/specify_related.tt';
     }
     else
     {
-	$next->{'handler'} = $base.'/intrest/specify_list';
+	$next->{'handler'} = $base.'/person/inetrest/specify_list.tt';
     }
 
     $next->{'url'} = $next->{'handler'}."?tid=$tid";

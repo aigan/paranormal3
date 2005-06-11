@@ -1,9 +1,9 @@
 #  $Id$  -*-perl-*-
-package Para::Intrest::Tree;
+package Para::Interests::Tree;
 #=====================================================================
 #
 # DESCRIPTION
-#   Paranormal.se member interest tree
+#   Paranormal.se member interests tree
 #
 # AUTHOR
 #   Jonas Liljegren   <jonas@paranormal.se>
@@ -33,7 +33,7 @@ use base qw(Class::Accessor);
 
 # Create accessors
 #
-Para::Intrest::Tree->mk_accessors(qw(tree tree_idx topic_idx intrest_idx m));
+Para::Interests::Tree->mk_accessors(qw(tree tree_idx topic_idx intrest_idx m));
 
 
 sub new

@@ -53,6 +53,11 @@ use constant BATCH => 3;
 #
 # CONSTRUCTOR
 #
+sub get
+{
+    return shift->new(@_);
+}
+
 sub new
 {
     my( $this, $tid, $v, $nocache ) = @_;
@@ -64,7 +69,7 @@ sub new
 #    croak "undefined tid" unless $tid;
 
     $v ||= ""; # Suitable for key part
-    warn "looking for $tid-$v\n" if $DEBUG;
+    warn "  looking for $tid-$v\n" if $DEBUG;
 
     # This is maby already a topic
     return $tid if ref $tid eq 'Para::Topic';
@@ -928,7 +933,7 @@ sub has_rel
 {
     my( $t, $pred, $rel, $dir ) = @_;
 
-    my $DEBUG = 0;
+    my $DEBUG = 1;
     $dir ||= 'rel';
 
     $pred = [$pred] unless ref $pred eq 'ARRAY';
@@ -945,7 +950,7 @@ sub has_rel
 	{
 	    @rels = $t->new( $rel );
 	}
-	else
+	elsif( $rel )
 	{
 	    warn "    Looking for related topic $rel\n" if $DEBUG;
 	    my $rels_in = $t->find_urlpart( $rel );
@@ -979,6 +984,18 @@ sub has_rel
 		}
 	    }
 	}
+	else
+	{
+	    # FIXME: only looks att pred 0
+	    if( $dir eq 'rev' )
+	    {
+		return $t->rev({ type => $pred->[0] })->size;
+	    }
+	    else
+	    {
+		return $t->rel({ type => $pred->[0] })->size;
+	    }
+	}
     }
     else
     {
@@ -994,12 +1011,12 @@ sub has_rel
 	my $arcs;
 	if( $dir eq 'rev' )
 	{
-	    $arcs = $t->rev({topic => $rel_out })
-	    }
+	    $arcs = $t->rev({topic => $rel_out });
+	}
 	else
 	{
-	    $arcs = $t->rel({topic => $rel_out })
-	    }
+	    $arcs = $t->rel({topic => $rel_out });
+	}
 	
 	if( $arcs )
 	{

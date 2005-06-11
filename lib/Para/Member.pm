@@ -292,12 +292,14 @@ sub set_passwd
     trim(\$confirm);
     return if $m->{'passwd'} eq $new;
 
+    my $req = $Para::Frame::REQ;
     my $mid = $m->id;
+    my $q = $req->q;
+    my $u = $req->s->u;
 
-#    my $admin = ( $Para::Frame::U->id != $mid and  $Para::Frame::U->level >= 41 )? 1:0;
-    my $admin = $Para::Frame::U->level >= 41 ? 1:0;
+    my $admin = $u->level >= 41 ? 1:0;
 
-    if( not $admin and not $m->verify_password( $old ) )
+    if( not $admin and not $m->verify_password( passwd_crypt $old ) )
     {
 	return $m->change->fail("Det gamla lösenordet stämde inte\n");
     }
@@ -318,23 +320,20 @@ sub set_passwd
     my $st = "update passwd set passwd_updated=?, passwd_changedby=?, ".
 	"passwd_previous=?, passwd=? where passwd_member=?";
     my $sth = $Para::dbh->prepare_cached( $st );
-    $sth->execute( $now_str, $Para::Frame::U->id, $m->{'passwd'}, $new, $mid );
+    $sth->execute( $now_str, $u->id, $m->{'passwd'}, $new, $mid );
 
     $m->{'passwd_updated'} = $now;
-    $m->{'passwd_changedby'} = $Para::Frame::U->id;
+    $m->{'passwd_changedby'} = $u->id;
     $m->{'passwd_previous'} = $m->{'passwd'};
     $m->{'passwd'} = $new;
 
     $m->set_dbm_passwd;
 
-    if( $mid == $Para::Frame::U->id )
+    if( $mid == $u->id )
     {
 	# Update cookie for new password
 	#
-	$Para::cookie = $Para::query->cookie( -name  => 'passwd',
-					    -value => $Para::query->param('passwd'),
-					    -path  => '/',
-					    );
+	$req->cookies->add({'password' => passwd_crypt($new) });
     }
 
     return $m->change->success("Nytt lösenord lagrat");
@@ -344,7 +343,6 @@ sub set_passwd
 ##################################################
 
 sub id       { shift->{'member'} }
-sub member   { shift->{'member'} } # Compatible mode
 sub uid      { shift->{'member'} } # Used by Para::Frame::User
 
 
@@ -391,6 +389,7 @@ sub interests
 
     unless( $member->{'interests'} )
     {
+	# This will set upp all defined interests of the member
 	$member->{'interests'} = Para::Interests->new( $member );
     }
     return $member->{'interests'};
@@ -400,17 +399,7 @@ sub interest
 {
     my( $m, $t ) = @_;
 
-    warn "Getting the interest $t for $m\n";
-
-    # Use already loaded intrest, if found:
-    if( $m->{'interests'} )
-    {
-	return $m->{'interests'}->get_interest( $t );
-    }
-    else
-    {
-	return Para::Interest->get( $m, $t );
-    }
+    $m->interests->getset( $t );
 }
 
 sub title
@@ -420,24 +409,7 @@ sub title
     # publ has the same rules as other
     $verbose ||= 0;
 
-    unless( $Para::mtitle )
-    {
-	$Para::mtitle =
-	{
-	    -2 => ['zombie','zombie'],
-	    -1 => ['saknade','saknade'],
-	    0  => ['',''],
-	    1  => ['nykomling','nykomling'],
-	    11  => ['lärling','lärling'],
-	    40 => ['mäster','mäster'],
-	    41 => ['livbringare','livbringare'],
-	    42 => ['','skapare'],
-	};
-
-	for( 2..4 ){ $Para::mtitle->{$_} = ['novis','novis'] }
-	for( 5..10 ){ $Para::mtitle->{$_} = ['','medborgare'] }
-	for( 12..39 ){ $Para::mtitle->{$_} = ['gesäll','gesäll'] }
-    }
+    # $Para::mtitle defined in constants
 
     if( $m->present_interests >= 5 or $Para::Frame::U->level >= 41 or
 	$m->equals( $Para::Frame::U ) )
@@ -595,6 +567,11 @@ sub equals
     {
 	return 0;
     }
+}
+
+sub as_string
+{
+    shift->desig(@_);
 }
 
 sub desig
@@ -1024,8 +1001,9 @@ sub mailaliases
     {
 	#Start the list with the system email
 	my $sys_email = $m->sys_email;
-	push @$ma, $sys_email;
+	push @$ma, $sys_email if $sys_email;
 
+	# Could be empty if this is a new member
 	my $recs = $Para::dbix->select_list('from mailalias where mailalias_member=? order by mailalias', $m->id);
 	foreach my $rec ( @$recs )
 	{
@@ -1100,7 +1078,7 @@ sub add_mailalias
     }
 
     Para::Member::Email->add($m, $mailalias)
-	and return $m->change->success("Lade till $mailalias_in");
+	and return $m->change->success("Lade till ".$mailalias->as_string );
     return 0;
 }
 
@@ -1126,6 +1104,7 @@ sub set_home_online_msn
     return if $email eq ($m->{home_online_msn}||'');
     if( length $email )
     {
+	### TODO: FIXME
 	$email = $m->validate_email( $email ) or return undef;
     }
 
@@ -1161,8 +1140,8 @@ sub set_sys_email
 
     eval
     {
+	$m->add_mailalias($ea); # Must be done before setting sys_email
 	$m->store_db_field({ sys_email => $ea->as_string });
-	$m->add_mailalias($ea);
 	$m->update_mail_forward;
     };
     if( $@ )
@@ -1990,7 +1969,7 @@ sub store_db_field
 	join( ', ', map("$_=?", @keys)) .
 	" where member = ?";
     my $sth = $Para::dbh->prepare_cached( $st );
-    warn "Member_db_update: $st (@{$props}{@keys})\n";
+    warn "  Member_db_update: $st (@{$props}{@keys})\n";
 #    die Dumper [@{$props}{@keys}];
     $sth->execute( $now_str, @{$props}{@keys}, $m->id );
 
@@ -2000,8 +1979,6 @@ sub store_db_field
 	$m->{$field} = $props->{$field};
     }
     $m->{'member_updated'} = $now;
-
-##    $Para::dbh->commit;
 }
 
 sub changes_reset

@@ -53,6 +53,7 @@ use constant T_PRENUMERATION     => 422154;
 use constant T_PARANORMAL_SWEDEN => 144554;
 use constant T_PAYNOVA           => 422381;
 use constant T_PERSON            => 2140;
+use constant T_ENGLISH           => 396598;
 
 use constant DOCROOT     => '/var/www/paranormal.se';
 use constant DB_ALIAS    => '/var/local/paranormal.test/alias.db';
@@ -77,6 +78,27 @@ use constant M_VIP => 50;
                  TRUE_MIN TRUE_NORM T_LOST_ENTRY T_MEDIA T_PERSON DOCROOT
                  DB_ALIAS DB_PASSWD DB_ONLINE CACHED_FILE PUBLISH_LOCK
                  MONTH_LENGTH T_PRENUMERATION T_PARANORMAL_SWEDEN
-                 T_PAYNOVA C_KILL C_BAN C_NORMAL C_VOICE C_HALFOP C_OP C_OPER M_VIP );
+                 T_PAYNOVA T_ENGLISH C_KILL C_BAN C_NORMAL C_VOICE C_HALFOP C_OP C_OPER M_VIP );
 
 %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
+
+
+# Titles
+
+$Para::mtitle =
+{
+    -2 => ['zombie','zombie'],
+    -1 => ['saknade','saknade'],
+    0  => ['',''],
+    1  => ['nykomling','nykomling'],
+    11  => ['lärling','lärling'],
+    40 => ['mäster','mäster'],
+    41 => ['livbringare','livbringare'],
+    42 => ['','skapare'],
+};
+
+for( 2..4 ){ $Para::mtitle->{$_} = ['novis','novis'] }
+for( 5..10 ){ $Para::mtitle->{$_} = ['','medborgare'] }
+for( 12..39 ){ $Para::mtitle->{$_} = ['gesäll','gesäll'] }
+
+1;

@@ -83,22 +83,28 @@ use constant M_VIP => 50;
 %EXPORT_TAGS = ( 'all' => [@EXPORT_OK] );
 
 
-# Titles
-
-$Para::mtitle =
+ Titles:
 {
-    -2 => ['zombie','zombie'],
-    -1 => ['saknade','saknade'],
-    0  => ['',''],
-    1  => ['nykomling','nykomling'],
-    11  => ['lärling','lärling'],
-    40 => ['mäster','mäster'],
-    41 => ['livbringare','livbringare'],
-    42 => ['','skapare'],
-};
+    $Para::mtitle =
+    {
+	-2 => ['zombie','zombie'],
+	-1 => ['saknade','saknade'],
+	0  => ['',''],
+	1  => ['nykomling','nykomling'],
+	11  => ['lärling','lärling'],
+	40 => ['mäster','mäster'],
+	41 => ['livbringare','livbringare'],
+	42 => ['','skapare'],
+    };
 
-for( 2..4 ){ $Para::mtitle->{$_} = ['novis','novis'] }
-for( 5..10 ){ $Para::mtitle->{$_} = ['','medborgare'] }
-for( 12..39 ){ $Para::mtitle->{$_} = ['gesäll','gesäll'] }
+    for( 2..4 ){ $Para::mtitle->{$_} = ['novis','novis'] }
+    for( 5..10 ){ $Para::mtitle->{$_} = ['','medborgare'] }
+    for( 12..39 ){ $Para::mtitle->{$_} = ['gesäll','gesäll'] }
+}
+
+sub on_reload
+{
+    Para::Frame::Reload->modules_importing_from_us;
+}
 
 1;

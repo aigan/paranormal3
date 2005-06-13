@@ -48,6 +48,9 @@ use Para::Member::Email;
 
 use base qw( Para::Frame::User );
 use base qw( Exporter );
+
+our $DEBUG = undef;
+
 BEGIN
 {
     our @EXPORT_OK = qw( name2nick name2chat_nick trim_name );
@@ -64,6 +67,8 @@ BEGIN
 	'name_given'    => 'Gäst',
     };
     $Para::Member::CACHE->{0} = bless($rec, __PACKAGE__);
+
+    $DEBUG = $Para::Frame::DEBUG;
 }
 
 
@@ -149,7 +154,6 @@ sub get_by_nickname
 {
     my( $class, $identity, $censor, $no_cache ) = @_;
 
-    my $DEBUG = 1;
     trim( \$identity );
     $identity = lc( $identity );
     my $nick = name2nick( $identity );
@@ -475,8 +479,6 @@ sub geo_y()
 sub dist
 {
     my( $m, $obj, $publ ) = @_;
-
-    my $DEBUG = 0;
 
     unless( $m->present_contact >= 15 or ($publ and
 	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
@@ -1857,8 +1859,8 @@ sub dbm_alias
     my( $m, $nick ) = @_;
 
     $m->has_nick( $nick ) or
-      throw 'denied', sprintf "%s doesn't have the nick '%s'\n",
-	$m->_nickname, $nick;
+      throw( 'denied', sprintf "%s doesn't have the nick '%s'\n",
+	$m->_nickname, $nick );
 
     my $db = paraframe_dbm_open( DB_ALIAS );
     return $db->{ $nick };
@@ -1869,7 +1871,7 @@ sub set_dbm_alias
     my( $m, $nick, $address ) = @_;
 
     $address ||= $m->sys_uid || $m->sys_email;
-    $nick or throw 'incomplete', "nick param missing";
+    $nick or throw( 'incomplete', "nick param missing" );
 
     my $db = paraframe_dbm_open( DB_ALIAS );
     warn "Setting $nick forward to $address\n";
@@ -1880,7 +1882,7 @@ sub unset_dbm_alias
 {
     my( $m, $nick ) = @_;
 
-    $nick or throw 'incomplete', "nick param missing";
+    $nick or throw( 'incomplete', "nick param missing" );
 
     my $db = paraframe_dbm_open( DB_ALIAS );
     warn "Removing $nick forward\n";

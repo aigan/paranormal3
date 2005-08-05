@@ -25,6 +25,8 @@ Para::Email - Sending emails
 use strict;
 use vars qw( $VERSION );
 
+use Data::Dumper;
+
 BEGIN
 {
     $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
@@ -32,6 +34,8 @@ BEGIN
 }
 
 use Para::Frame::Reload;
+
+use Para::Frame::Utils qw( debug );
 
 use base 'Para::Frame::Email';
 
@@ -78,13 +82,13 @@ sub handle_result
 
     foreach my $email ( $e->good )
     {
-	warn "$email is good\n";
+	debug(0,"$email is good");
 	# TODO: Note success
     }
 
     foreach my $email ( $e->bad )
     {
-	warn "$email is bad\n";
+	debug(0,"$email is bad");
 	# TODO: Note failure
     }
 }

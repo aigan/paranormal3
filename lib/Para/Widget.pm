@@ -31,7 +31,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
-use Para::Frame::Utils qw( maxof );
+use Para::Frame::Utils qw( maxof debug );
 
 use Para::Constants qw( :all );
 use Para::Topic;
@@ -805,8 +805,7 @@ sub new_entry
 {
     my( $tid, $state ) = @_;
 
-    my $DEBUG = 0;
-    warn "New entry\n" if $DEBUG;
+    debug(1,"New entry");
     if( $state )
     {
 	$Para::state = $state;
@@ -855,7 +854,7 @@ sub new_entry
 #		sleep 5;
 #	    }
 
-	    warn "W0 $words[0] A $alias T $tid F $file" if $DEBUG > 1;
+	    debug(2,"W0 $words[0] A $alias T $tid F $file");
 	    unless( length($words[0]) and length($alias) )
 	    {
 		warn "STRANGE ALIAS: W0 $words[0] A $alias T $tid F $file";
@@ -889,7 +888,7 @@ sub new_entry
 #	    }
 	}
 	$sth->finish;
-	warn sprintf("$$: link_db init in %2.2f second\n", (time-$stime)) if $DEBUG;
+	debug(1,sprintf "link_db init in %2.2f second", (time-$stime));
     }
 }
 
@@ -901,7 +900,6 @@ sub insert_autolinks
     return "" unless $textref and length $$textref;
 
     my @links = ();
-    my $DEBUG = 0;
 
     # Escape formatting for »...«
     #
@@ -930,7 +928,7 @@ sub insert_autolinks
     #
     for( my $size=$#$Para::link_db; $size >= 0; $size -- )
     {
-	warn "***** Size $size\n" if $DEBUG;
+	debug(1,"***** Size $size");
 	$text =~ /(\s*)/gc;
 	my $newtext = $1 || "";
 	while( $text =~ /(\W*\w+)([^\s\w]*\s*)/gc ) #iterate failsafe
@@ -950,10 +948,10 @@ sub insert_autolinks
 	  {
 	      while(1)
 	      {
-		  $debug_ra_text .= "Analyze '$match' followed by '$middle'\n" if $DEBUG;
+		  $debug_ra_text .= "Analyze '$match' followed by '$middle'\n" if debug;
 		  if( my $try = $Para::link_db->[$size]{lc($match)} )
 		  {
-		      warn "$debug_ra_text  Checking $match\n" if $DEBUG;
+		      debug(1,"$debug_ra_text  Checking $match");
 		      my $pos = pos($text);
 		      #		warn " - perform matching on '$text'\n";
 		      if( $size and $text =~ /((?:\w+(?:\W+|$)){$size})/gc )
@@ -971,7 +969,7 @@ sub insert_autolinks
 			{
 			    while(1)
 			    {
-				warn "    looking for $looking\n" if $DEBUG;
+				debug(1,"  looking for $looking");
 				if( my $rec = $try->{lc($looking)} )
 				{
 				    if( $rec->{'tid'} and $Para::entry_links->{$rec->{'tid'}} ++ )
@@ -982,7 +980,7 @@ sub insert_autolinks
 				    }
 				    else
 				    {
-					warn "      Matched $looking!\n" if $DEBUG;
+					debug(1,"    Matched $looking!");
 					push @links, set_autolink( $rec, $looking );
 					$newtext .= "¤$#links¤$last";
 				    }
@@ -1020,7 +1018,7 @@ sub insert_autolinks
 			{
 			    while(1)
 			    {
-				warn "    looking for $match\n" if $DEBUG;
+				debug(1,"  looking for $match");
 				if( my $rec = $try->{lc($match)} )
 				{
 				    if( $rec->{'tid'} and $Para::entry_links->{$rec->{'tid'}} ++ )
@@ -1031,7 +1029,7 @@ sub insert_autolinks
 				    }
 				    else
 				    {
-					warn "      Matched $match!\n" if $DEBUG;
+					debug(1,"    Matched $match!");
 					push @links,  set_autolink( $rec, $match );
 					$newtext .= "¤$#links¤$middle";
 				    }
@@ -1082,7 +1080,7 @@ sub insert_autolinks
 	  }
 	}
 	$text = $newtext;
-	warn "text: '$text'\n" if $DEBUG;
+	    dwbug(1,"text: '$text'");
     }
 
 
@@ -1144,7 +1142,6 @@ sub insert_explicit_links
 
     my $newtext = "";
     my( $pos );
-    my $DEBUG = 0;
 
     while( $$textref =~ /\G(.*?)(?:"([^"]+)"|(\w+))?\[(.*?)\]/sgc ) #"iterate failsafe
     {
@@ -1158,7 +1155,7 @@ sub insert_explicit_links
 	my $targettopics = Para::Topic->find( $target );
 	my $namehtml = CGI::escapeHTML($name);
 
-	warn "Finding explicit linking with '$name' to '$target'\n" if $DEBUG;
+	debug(1,"Finding explicit linking with '$name' to '$target'");
 
 	my @topics;
 	my $url;
@@ -1166,10 +1163,10 @@ sub insert_explicit_links
 	# Is name matching an alias?
 	if( @$nametopics )
 	{
-	    warn "  Name matching an alias\n" if $DEBUG;
+	    debug(1,"Name matching an alias");
 	    if( @$targettopics )
 	    {
-		warn "    Targettopics exist\n" if $DEBUG;
+		debug(1,"  Targettopics exist");
 
 		# 1. Select the nt that is the same as tt
 		# 2. select the nt related to tt
@@ -1183,7 +1180,7 @@ sub insert_explicit_links
 			if( $nt->equals( $tt ) )
 			{
 			    push @topics, $nt;
-			    warn sprintf "      Specified topic added to primary: %s\n", $nt->desig if $DEBUG;
+			    debug(1,sprintf "    Specified topic added to primary: %s", $nt->desig);
 			}
 		    }
 		}
@@ -1197,7 +1194,7 @@ sub insert_explicit_links
 			    if( $nt->has_rel([0,1,2,3], $tt ) )
 			    {
 				push @topics, $nt;
-				warn sprintf "      Related topic added to primary: %s\n", $nt->desig if $DEBUG;
+				debug(1,sprintf "    Related topic added to primary: %s", $nt->desig);
 			    }
 			}
 		    }
@@ -1206,7 +1203,7 @@ sub insert_explicit_links
 		unless( @topics )
 		{
 		    push @topics, @$targettopics;
-		    warn "    Setting targettopics as primary\n" if $DEBUG;
+		    debug(1,"  Setting targettopics as primary");
 		}
 	    }
 	    else
@@ -1215,17 +1212,17 @@ sub insert_explicit_links
 		# 2. fail
 		if( $target =~ /^(http|\/)/ )
 		{
-		    warn "    Use URL: $target\n" if $DEBUG;
+		    debug(1,"  Use URL: $target");
 		    $url = $target;
 		}
 	    }
 	}
 	else
 	{
-	    warn "  Name doesn't match an alias\n" if $DEBUG;
+	    debug(1,"Name doesn't match an alias");
 	    if( @$targettopics )
 	    {
-		warn "    Targettopics exist\n" if $DEBUG;
+		debug(1,"  Targettopics exist");
 		# 1. select tt
 		push @topics, @$targettopics;
 	    }
@@ -1235,7 +1232,7 @@ sub insert_explicit_links
 		# 2. fail
 		if( $target =~ /^(http|\/)/ )
 		{
-		    warn "    Use URL: $target\n" if $DEBUG;
+		    debug(1,"  Use URL: $target");
 		    $url = $target;
 		}
 	    }
@@ -1243,7 +1240,7 @@ sub insert_explicit_links
 
 	if( $url )
 	{
-	    warn "Inserting link to $url with name $name\n" if $DEBUG;
+	    debug(1,"Inserting link to $url with name $name");
 	    push @$linkref, link_page($url, $name);
 	    $newtext .= "¤$#$linkref¤";
 	}
@@ -1253,7 +1250,7 @@ sub insert_explicit_links
 	    if( @$tref > 1 )
 	    {
 		my @tids = map "tid=".$_->id, @$tref;
-		warn "Inserting link to several files with name $name\n" if $DEBUG;
+		debug(1,"Inserting link to several files with name $name");
 		my $tids = join '&', @tids;
 		push @$linkref, "<a href=\"/search/alternatives.tt?run=topic_search_published&$tids\">$namehtml</a>";
 		$newtext .= "¤$#$linkref¤";
@@ -1266,7 +1263,7 @@ sub insert_explicit_links
 		    my $url = $t->media_url;
 		    if( $t->media_type =~ /^image/ )
 		    {
-			warn "Inserting image $url\n" if $DEBUG;
+			debug(1,"Inserting image $url");
 			if( $namehtml )
 			{
 			    push @$linkref, "<img alt=\"$namehtml\" src=\"$url\" class=\"inline_image\">";
@@ -1293,7 +1290,7 @@ sub insert_explicit_links
 			    push @$linkref, '['.link_page($url, $name).']';
 			}
 
-			warn "Inserting media link to $url with name $name\n" if $DEBUG;
+			debug(1,"Inserting media link to $url with name $name");
 			$newtext .= "¤$#$linkref¤";
 		    }
 		}
@@ -1310,7 +1307,7 @@ sub insert_explicit_links
 			$namehtml = CGI::escapeHTML($name);
 			push @$linkref, "[<a href=\"$file\">$namehtml</a>]";
 		    }
-		    warn "Inserting nonmedia link to $file with name $name\n" if $DEBUG;
+		    debug(1,"Inserting nonmedia link to $file with name $name");
 		    $newtext .= "¤$#$linkref¤";
 		}
 	    }
@@ -1323,7 +1320,7 @@ sub insert_explicit_links
 	}
 	else
 	{
-	    warn "No topics or URL found.  Leaving text" if $DEBUG;
+	    debug(1,"No topics or URL found.  Leaving text");
 	    my $targethtml =  CGI::escapeHTML($target);
 	    push @$linkref, "\"$namehtml\"[$targethtml]";
 	    $newtext .= "¤$#$linkref¤";
@@ -1366,11 +1363,7 @@ sub primary_choice
 	return $topics;
     }
 
-    my $DEBUG = 0;
-
-#    $DEBUG = 1 if $topics->[0]->title =~ /^magi/i;
-
-    if( $DEBUG )
+    if( debug )
     {
 	warn sprintf "Having a choice between %s\n",  join ' and ', map $_->desig, @$topics;
     }
@@ -1384,10 +1377,10 @@ sub primary_choice
 
     foreach my $t ( @$topics )
     {
-	warn sprintf "  Consider %d: %s\n", $t->id, $t->desig if $DEBUG;
+	debug(1,sprintf "Consider %d: %s", $t->id, $t->desig);
 	next if $t->media;
 	next if $t->has_rel(1, $media);
-	warn sprintf "    Including %s\n", $t->desig if $DEBUG;
+	debug(1,sprintf "  Including %s", $t->desig);
 	push @nt, $t;
     }
 
@@ -1395,9 +1388,9 @@ sub primary_choice
     {
 	foreach my $t ( @$topics )
 	{
-	    warn sprintf "  2nd consider %d: %s\n", $t->id, $t->desig if $DEBUG;
+	    debug(1,sprintf "2nd consider %d: %s", $t->id, $t->desig);
 	    next if $t->media;
-	    warn sprintf "    Including %s\n", $t->desig if $DEBUG;
+	    debug(1,sprintf "  Including %s", $t->desig);
 	    push @nt, $t;
 	}
     }

@@ -36,7 +36,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::DBIx qw( pgbool );
-use Para::Frame::Utils qw( deunicode trim throw minof );
+use Para::Frame::Utils qw( deunicode trim throw minof debug );
 use Para::Frame::Time;
 use Para::Frame::Widget;
 
@@ -63,13 +63,11 @@ sub new
     my( $this, $tid, $v, $nocache ) = @_;
     my $class = ref($this) || $this;
 
-    my $DEBUG = 1;
-
     return undef unless $tid;
 #    croak "undefined tid" unless $tid;
 
     $v ||= ""; # Suitable for key part
-    warn "  looking for $tid-$v\n" if $DEBUG;
+    debug(1,"looking for $tid-$v");
 
     # This is maby already a topic
     return $tid if ref $tid eq 'Para::Topic';
@@ -171,8 +169,6 @@ sub find
     my( $this, $name ) = @_;
     my $class = ref($this) || $this;
 
-    my $DEBUG = 0;
-
     if( UNIVERSAL::isa $name, 'Para::Topic' )
     {
 	return [$name];
@@ -187,7 +183,7 @@ sub find
                                              t_status desc, t_ver desc', $1 ) )
     {
 	$recs = [$rec];
-	warn "found '$name' as topic id\n" if $DEBUG;
+	debug(1,"found '$name' as topic id");
 	# done
     }
     elsif( $recs = $Para::dbix->select_list('from t, talias where t=talias_t and talias = lower(?)
@@ -195,8 +191,8 @@ sub find
                                 and talias_active is true', $name )
 	   and @$recs)
     {
-	warn "found '$name' as alias for active topic\n" if $DEBUG;
-	warn "  Topic id: $recs->[0]{t}\n" if $DEBUG;
+	debug(1,"found '$name' as alias for active topic");
+	debug(1,"  Topic id: $recs->[0]{t}");
 	#done
     }
     # include inactive topics
@@ -207,7 +203,7 @@ sub find
     {
 	my @ids = map $_->{'t'}, @$recs;
 
-	warn "found '$name' as alias for inactive topic\n" if $DEBUG;
+	debug(1,"found '$name' as alias for inactive topic");
 
 	if( my $recs2 = $Para::dbix->select_list('from t where lower(t_title)=lower(?)
                                  and t_active is true and t_entry is false', $name ) )
@@ -238,7 +234,7 @@ sub find
                                 and t_active is true and t_entry is false', $name )
 	   and @$recs)
     {
-	warn "found '$name' as topic title\n" if $DEBUG;
+	debug(1,"found '$name' as topic title");
 	#done
     }
 
@@ -274,7 +270,6 @@ sub vacuum_from_queue
 {
     my( $this, $limit ) = @_;
 
-    my $DEBUG = 0;
     $limit ||= 6;
     my( $cnt ) = 1;
     my $seen = {};
@@ -288,12 +283,8 @@ sub vacuum_from_queue
 
 	unless( $cnt % BATCH )
 	{
-	    warn "**** comitting at $cnt\n" if $DEBUG;
+	    debug(1,"**** comitting at $cnt");
 	    $Para::dbh->commit;
-	    sleep 2;
-	    my( $load ) = Sys::CpuLoad::load;
-	    warn "$$: System load at $load\n" if $DEBUG;
-	    last if $load > 2.3;
 	}
 
 	$cnt ++;
@@ -317,12 +308,8 @@ sub publish_from_queue
 
 	unless( $cnt % BATCH )
 	{
-	    warn "**** comitting at $cnt\n" if $Para::DEBUG;
+	    debug(1,"**** comitting at $cnt");
 	    $Para::dbh->commit;
-	    sleep 2;
-	    my( $load ) = Sys::CpuLoad::load;
-	    warn "$$: System load at $load\n" if $Para::DEBUG;
-	    last if $load > 3.3;
 	}
 	$cnt ++;
     }
@@ -933,7 +920,6 @@ sub has_rel
 {
     my( $t, $pred, $rel, $dir ) = @_;
 
-    my $DEBUG = 1;
     $dir ||= 'rel';
 
     $pred = [$pred] unless ref $pred eq 'ARRAY';
@@ -952,7 +938,7 @@ sub has_rel
 	}
 	elsif( $rel )
 	{
-	    warn "    Looking for related topic $rel\n" if $DEBUG;
+	    debug(1,"Looking for related topic $rel");
 	    my $rels_in = $t->find_urlpart( $rel );
 	    if( @$rels_in == 1 )
 	    {
@@ -964,7 +950,7 @@ sub has_rel
 		my $media = Para::Topic->new( T_MEDIA );
 		foreach my $rel2 ( sort { $a->{'t'} <=> $b->{'t'} } @$rels_in )
 		{
-		    warn "      Consider ".$rel2->sysdesig."\n" if $DEBUG;
+		    debug(1,"  Consider ".$rel2->sysdesig);
 		    next if $rel2->media;
 		    next if $rel2->has_rel(1, $media);
 		    push @rels, $rel2;
@@ -976,7 +962,7 @@ sub has_rel
 		return 0;
 	    }
 
-	    if( $DEBUG )
+	    if( debug )
 	    {
 		foreach my $rel2 ( @rels )
 		{
@@ -1004,7 +990,7 @@ sub has_rel
 
     return 0 unless @rels;
 
-    warn "    See if ".$t->desig." has $dir @$pred to any of the rels\n" if $DEBUG;
+    debug(1,"See if ".$t->desig." has $dir @$pred to any of the rels");
 
     foreach my $rel_out ( @rels )
     {
@@ -1257,15 +1243,13 @@ sub break_topic_loop
 {
     my( $t, $involved, $level ) = @_;
 
-    my $DEBUG = 0;
-
     # Is this the base of the recursive tree?
     my $base = $involved ? 0 : 1;
 
     # For debugging:
     $level ||= 0;
     $level ++;
-    warn sprintf "%d: Level %d - Check %s\n", $$, $level, $t->desig if $DEBUG;
+    debug(1,sprintf "%d: Level %d - Check %s", $$, $level, $t->desig);
 
 
     # Holds all involved topics
@@ -1295,7 +1279,7 @@ sub break_topic_loop
 	    {
 		# This means that There could be more than one cut to
 		# sever a topic loop, if it's big
-		warn sprintf "$$: Check work limit ($limit)\n" if $DEBUG;
+		debug(1,sprintf "Check work limit ($limit)");
 
 
 		# Only stop early if we have some (explicit) arcs
@@ -1308,13 +1292,13 @@ sub break_topic_loop
 		if( $cnt >= 5 )
 		{
 		    $incomplete = 1;
-		    warn "$$:    $cnt arcs found. Stopping early\n" if $DEBUG;
+		    debug(1,"$cnt arcs found. Stopping early");
 		    last;
 		}
 		else
 		{
 		    # Work a little longer
-		    warn "$$:   $cnt arcs found. Raise limit\n" if $DEBUG;
+		    debug(1,"$cnt arcs found. Raise limit");
 		    $limit += 2;
 		}
 	    }
@@ -1363,7 +1347,7 @@ sub break_topic_loop
 	if( $base )
 	{
 	    # We want to deactivate the newest arc and see if that helped
-	    warn "$$: Involved arcs rounded up\n" if $DEBUG;
+	    debug(1,"Involved arcs rounded up");
 
 	    my $arcs;
 	    foreach my $t2id ( keys %$involved )
@@ -1387,8 +1371,7 @@ sub break_topic_loop
 		# We only added explicit arcs. No check needed
 		# next unless $arc->explicit;
 
-		warn sprintf "$$:   Deactivating the arc %s in order to break loop" if $DEBUG,
-		  $arc->as_string;
+		debug(1, sprintf " Deactivating the arc %s in order to break loop", $arc->as_string);
 
 		$arc->deactivate( S_DENIED );
 		$removed ++;
@@ -1403,18 +1386,18 @@ sub break_topic_loop
 	    unless( $removed or $incomplete )
 	    {
 		# No (explicit) arcs found. Clean up
-		warn "$$:   No arcs to deactivate. All done here\n" if $DEBUG;
+		debug(1,"No arcs to deactivate. All done here");
 		$done = 1;
 	    }
 
-	    warn "$$:   Check involed topics\n" if $DEBUG;
+	    debug(1,"Check involed topics");
 
 	    # All seems fine now. Check arcs for involved topics
 	    #
 	    foreach my $t2id ( keys %$involved )
 	    {
 		my $t2 = Para::Topic->new( $t2id );
-		warn sprintf "$$:     Check %s\n", $t2->desig if $DEBUG;
+		debug(1,sprintf "  Check %s", $t2->desig);
 		my $rel_arc_list = $t2->rel->arcs;
 		my $rev_arc_list = $t2->rev->arcs;
 		foreach my $arc ( @$rel_arc_list, @$rev_arc_list )
@@ -2176,9 +2159,7 @@ sub vacuum
 {
     my( $t, $seen, $args ) = @_;
 
-    my $DEBUG = 0;
-
-    warn sprintf "Vacuum %d v%d\n", $t->id, $t->ver if $DEBUG;
+    debug(1,sprintf "Vacuum %d v%d", $t->id, $t->ver);
     $args ||= {}; # one_version
     $seen ||= {};
     return if $seen->{ $t->key };
@@ -2395,9 +2376,7 @@ sub generate_url
 {
     my( $t, $exception ) = @_;
 
-    my $DEBUG = 0;
-
-    warn sprintf "$$: Generating url for %s\n", $t->sysdesig if $DEBUG;
+    debug(1,sprintf "Generating url for %s", $t->sysdesig);
 
     # Supported old calling with tid
     $t = Para::Topic->new( $t ) unless ref $t eq 'Para::Topic';
@@ -2413,11 +2392,11 @@ sub generate_url
 	    my $entry_id = $t->id;
 	    my $url = "$page_url#$entry_id";
 
-	    warn "$entry_id  $url\n" if $DEBUG;
+	    debug(1,"$entry_id  $url");
 	    $t->file( $url );
 	    return [$entry_id];
 	}
-	warn "$$: *** entry $t->{t} has no topic\n" if $DEBUG;
+	debug(1,"*** entry $t->{t} has no topic");
 	return []; # Rouge entry
     }
 
@@ -2428,14 +2407,14 @@ sub generate_url
 	if( $m->present_contact_public < 5 )
 	{
 	    $t->file(''); # This will make filename undef
-	    warn sprintf "$$: %s is a anonumous user\n", $m->desig if $DEBUG;
+	    debug(1,sprintf "%s is a anonumous user", $m->desig);
 	    return [];
 	}
 
 	if( $m->level < 0 )
 	{
 	    $t->file(''); # This will make filename undef
-	    warn sprintf "$$: %s is an old user\n", $m->desig if $DEBUG;
+	    debug(1,sprintf "%s is an old user", $m->desig);
 	    return [];
 	}
     }
@@ -2447,7 +2426,7 @@ sub generate_url
     my $alts = {};
     foreach my $rec ( @{$Para::dbix->select_list("from t where t_active is true and t_urlpart = ? and t_entry is false", title2url( $t->title )) } )
     {
-	warn "$$:   Found topic $rec->{t} with this title\n" if $DEBUG;
+	debug(1,"Found topic $rec->{t} with this title");
 	my $prop = {};
 	foreach my $rel ( @{$Para::dbix->select_list("from rel where rev=? and rel_type<4 and rel_type>0 and rel_active is true and rel_status >= ? and rel_strength >= ?", $rec->{'t'}, S_NORMAL, TRUE_MIN)} )
 	{
@@ -2462,7 +2441,7 @@ sub generate_url
 
     my @altkeys = keys %$alts;
 
-    warn sprintf "$$:   Got %d altkeys\n", scalar(@altkeys) if $DEBUG;
+    debug(1,sprintf "  Got %d altkeys\n", scalar(@altkeys));
     return [$t->id] unless @altkeys;
 
 
@@ -2527,13 +2506,12 @@ sub generate_url
 		else
 		{
 		    $url = "/$alt_part/$alt_rec->{'t'}";
-		    warn "Can't find deliminating prop for $alt\n".Dumper($alts)
-		      if $DEBUG;
+		    debug(1,"Can't find deliminating prop for $alt\n".Dumper($alts));
 		}
 	    }
 
 	    $url = "/topic$url.html";
-	    warn "$$: $alt  $url\n" if $DEBUG;
+	    debug(1,"$alt  $url");
 
 	    Para::Topic->new( $alt )->file( $url );
 
@@ -2548,14 +2526,14 @@ sub generate_url
 	my $alt_rec = $Para::dbix->select_record("from t where t_active is true and t=?", $alt);
 	my $alt_part = title2url( $alt_rec->{'t_title'} );
 	$url = "/topic/$alt_part.html";
-	warn "$alt  $url\n" if $DEBUG;
+	debug(1,"$alt  $url");
 	Para::Topic->new( $alt )->file( $url );
 
 	push @handled, $alt;
     }
     else
     {
-	die "No altkeys for ".Dumper($t) if $DEBUG;
+	debug(1,"No altkeys for ".Dumper($t));
     }
 
     return(\@handled);
@@ -2580,7 +2558,7 @@ sub publish
 
     my $tid = $t->id;
 
-    warn "$$: Publish tid $tid\n" if $Para::DEBUG;
+    debug(1,"Publish tid $tid");
 
     if( $t->file ) # Will generate_url on demand
     {
@@ -2599,7 +2577,7 @@ sub publish
 	    foreach my $arc ( @{$t->arcs({pred=>[1,7], true=>1, active=>1})} )
 	    {
 		my $name = title2url( $arc->obj->title );
-		warn "Looking for $name template\n" if $Para::DEBUG > 1;
+		debug(2,"Looking for $name template");
 		if( -e $template_base . $name )
 		{
 		    $template = $name;
@@ -2608,7 +2586,7 @@ sub publish
 	}
 
 	$template ||= "default";
-	warn "  Using template $template\n" if $Para::DEBUG;
+	debug(1,"Using template $template");
 
 
 	# Is this a mass member topic?
@@ -2679,7 +2657,7 @@ sub publish
 
 		    $content{$letter} ||= [];
 		    push @{$content{$letter}}, [ $name, $mt ];
-		    warn "Inserting $mt to content of $letter\n" if $Para::DEBUG > 2;
+		    debug(3,"Inserting $mt to content of $letter");
 		}
 	    }
 
@@ -2700,7 +2678,7 @@ sub publish
 			my $part = $last.'-'.$letters->[$i-1];
 			push @$newletters, $part;
 			$content{$part} = $content{$last};
-			warn "Associate the content of $last to $part\n" if $Para::DEBUG > 1;
+			debug(2,"Associate the content of $last to $part");
 			$last = $letters->[$i];
 		    }
 
@@ -2714,7 +2692,7 @@ sub publish
 		my $part = $last.'-'.$letters->[$#$letters];
 		push @$newletters, $part;
 		$content{$part} = $content{$last};
-		warn "Associate the content of $last to $part\n" if $Para::DEBUG > 1;
+		debug(2,"Associate the content of $last to $part");
 
 		$letters = $newletters;
 		$params->{'multi_separator'} = ' | ';
@@ -2724,10 +2702,10 @@ sub publish
 	    $params->{'multi_content'} = [];
 	    foreach my $letter ( @$letters )
 	    {
-		warn "  Letter $letter\n" if $Para::DEBUG;
+		debug(1,"Letter $letter");
 		$params->{'multi_letter'} = $letter;
 		$content{$letter} ||=[];
-		warn"Content: @{$content{$letter}}" if $Para::DEBUG > 2;
+		debug(3,"Content: @{$content{$letter}}");
 		@{$params->{'multi_content'}} =
 		    sort {$a->[0] cmp $b->[0] } @{$content{$letter}};
 
@@ -2744,7 +2722,7 @@ sub publish
     }
     else
     {
-	warn "$$:   Topic $tid has no URL\n" if $Para::DEBUG;
+	debug(1,"  Topic $tid has no URL");
     }
 
     return $t->set_published;

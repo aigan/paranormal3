@@ -30,7 +30,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::DBIx;
-use Para::Frame::Utils qw( throw );
+use Para::Frame::Utils qw( throw debug );
 
 use Para::Interest;
 use Para::Constants qw( :all );
@@ -81,8 +81,7 @@ sub summary
 {
     my( $ins, $max, $cutof ) = @_;
 
-    my $DEBUG = 0;
-    warn "Creating a summary\n" if $DEBUG;
+    debug(1,"Creating a summary");
 
     $max   ||= 10;
     $cutof ||= 95;
@@ -104,7 +103,7 @@ sub summary
 	next unless $topic->active;
 	next if $in->defined < $definedness_limit;
 
-	warn "Consider ".$topic->desig."\n" if $DEBUG;
+	debug(1,"Consider ".$topic->desig);
 
 
 	if( $in->general < $cutof )
@@ -123,7 +122,7 @@ sub summary
 	{
 	    $sum_idx->{ $topic->id } = $in;
 	    $sum_cnt = scalar keys %$sum_idx;
-	    warn "  added\n" if $DEBUG;
+	    debug(1,"  added");
 	}
 
 	if( $sum_cnt > 1 )
@@ -132,13 +131,14 @@ sub summary
 
 	    # 1. is this or other sub or super?  Keep super
 
+	    debug(1);
 	    foreach my $ointr ( values %$sum_idx, values %$replaced )
 	    {
 		next if $ointr->equals( $in );
 
 		if( $topic->has_rel([1,2,3,4], $ointr->topic) )
 		{
-		    warn "  under ".$ointr->topic->desig."\n" if $DEBUG;
+		    debug(1,"under ".$ointr->topic->desig);
 
 		    delete $sum_idx->{ $topic->id };
 		    $sum_cnt = scalar keys %$sum_idx;
@@ -146,7 +146,7 @@ sub summary
 		}
 		elsif( $ointr->topic->has_rel([1,2,3,4], $topic) )
 		{
-		    warn "  over ".$ointr->topic->desig."\n" if $DEBUG;
+		    debug(1,"over ".$ointr->topic->desig);
 
 		    # Keep if REALY intrested or comment given
 		    unless( $ointr->general >= 98 or $ointr->comment )
@@ -158,6 +158,7 @@ sub summary
 		    }
 		}
 	    }
+	    debug(-1);
 	}
     }
 

@@ -26,7 +26,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( minof throw );
+use Para::Frame::Utils qw( minof throw debug );
 use Para::Frame::Time;
 
 use Para::Topic qw( title2url );
@@ -34,10 +34,7 @@ use Para::Constants qw( :all );
 use Para::History;
 
 use Carp;
-use vars qw( $DEBUG );
 use locale;
-
-$DEBUG = 0;
 
 sub new
 {
@@ -64,12 +61,12 @@ sub list
     my $extra = "";
     if( $args->{'include_inactive'} )
     {
-	warn "Include inactive aliases in list\n" if $DEBUG;
+	debug(1,"Include inactive aliases in list");
     }
     else
     {
 	$extra .= " and talias_active is true";
-	warn "Will not include inactive aliases in list\n" if $DEBUG;
+	debug(1,"Will not include inactive aliases in list");
     }
 
     my $list = $Para::dbix->select_list("from talias where talias_t=? $extra", $t->id);
@@ -89,11 +86,11 @@ sub add
 
     $alias_name = lc( $alias_name );
 
-    warn "Adding alias $alias_name\n" if $DEBUG;
+    debug(1,"Adding alias $alias_name");
 
     if( my $a = $class->get( $t, $alias_name ) )
     {
-	warn "  Already exists. Updating\n" if $DEBUG;
+	debug(1,"  Already exists. Updating");
 	return $a->update( $props );
     }
 
@@ -144,7 +141,7 @@ sub get
     my( $class, $t, $alias_name, $props ) = @_;
 
     confess $alias_name unless length $alias_name;
-    warn "get alias $alias_name\n" if $DEBUG;
+    debug(1,"get alias $alias_name");
 
     confess "invalid input: $t" unless ref $t;
     confess 'not implemented' if $props;
@@ -156,7 +153,7 @@ sub get
     }
     else
     {
-	warn "  not found\n" if $DEBUG;
+	debug(1,"  not found");
 	return undef;
     }
 }
@@ -239,7 +236,7 @@ sub update
 
     if( $props->{'status'} and $props->{'status'} > $m->status )
     {
-        throw 'denied', "Du kan inte ge aliaset en så hög status\n";
+        throw( 'denied', "Du kan inte ge aliaset en så hög status\n" );
     }
 
     # Convert language to tid / undef
@@ -256,9 +253,9 @@ sub update
 	$props->{'language'} = undef;
     }
 
-    warn sprintf("  updating alias %s\n", $a->desig) if $DEBUG;
+    debug(1,sprintf "  updating alias %s", $a->desig);
 
-    warn "  Got ".Dumper($props) if $DEBUG;
+    debug(1,"Got ".Dumper($props));
 
 
     # Check to see if anything changed
@@ -266,7 +263,7 @@ sub update
     my $changed = 0;
     if( defined $props->{'autolink'} and ($props->{'autolink'} xor $a->autolink) )
     {
-	if( $DEBUG )
+	if( debug )
 	{
 	    warn sprintf( "  Autolink changed; %d -> %d\n",
 			  $a->autolink, $props->{'autolink'} );
@@ -283,7 +280,7 @@ sub update
     }
     if( defined $props->{'index'} and ($props->{'index'} xor $a->index ) )
     {
-	if( $DEBUG )
+	if( debug )
 	{
 	    warn sprintf( "  Index changed: %d -> %d\n",
 			  $a->index, $props->{'index'} );
@@ -300,7 +297,7 @@ sub update
     }
     if( defined $props->{'language'} and (($props->{'language'}||0) != ($a->language_id||0)) )
     {
-	if( $DEBUG )
+	if( debug )
 	{
 	    warn sprintf( "  Language changed: %s -> %s\n",
 			  ( $a->language ? $a->language->desig : '<none>' ),
@@ -341,7 +338,7 @@ sub update
 	#
 	if( $status != $a->status )
 	{
-	    if( $DEBUG )
+	    if( debug )
 	    {
 		warn sprintf( "  Status changed: %d -> %d\n",
 			      $a->status, $status );
@@ -366,7 +363,7 @@ sub update
 	    {
 		$status = S_DENIED;
 		$changed ++;
-		warn "  Status changed to DENIED\n" if $DEBUG;
+		debug(1,"Status changed to DENIED");
 	    }
 	}
 	else
@@ -383,7 +380,7 @@ sub update
 				      vnew  => $status,
 				  });
 		$changed ++;
-		warn "  Alias deactivated\n" if $DEBUG;
+		debug(1,"Alias deactivated");
 	    }
 	}
     }
@@ -392,11 +389,11 @@ sub update
     #
     if( $changed )
     {
-	warn "  Changes detected. Store update\n" if $DEBUG;
+	debug(1,"Changes detected. Store update");
     }
     else
     {
-	warn "  No changes\n" if $DEBUG;
+	debug(1,"No changes");
 	return $a;
     }
 
@@ -406,14 +403,14 @@ sub update
     {
 	if( $props->{'quiet'} )
 	{
-	    warn "  Status to low. But be quiet about it\n" if $DEBUG;
+	    debug(1,"Status to low. But be quiet about it");
 	    return $a;
 	}
 	else
 	{
-	    throw 'denied',
+	    throw( 'denied',
 	      sprintf( "Du har för låg nivå för att ändra aliaset %s\n",
-		       $a->desig );
+		       $a->desig ) );
 	}
     }
 
@@ -448,7 +445,7 @@ sub update
     $sth->execute( $autolink, $index, $language, $status,
 		   $active, $changedby, $talias_t, $talias );
 
-    warn "  updated (S$status)!\n" if $DEBUG;
+    debug(1,"updated (S$status)!");
 
     $a->topic->mark_publish;
 

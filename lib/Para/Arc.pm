@@ -28,7 +28,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
-use Para::Frame::Utils qw( maxof minof throw );
+use Para::Frame::Utils qw( maxof minof throw debug );
 
 use Para::Topic;
 use Para::Arctype;
@@ -107,7 +107,6 @@ sub find
 
     my( $class, $pred, $subj, $obj_name, $props ) = @_;
     my( $obj, $literal, $all, $tid, $explain_string );
-    my $DEBUG = 0;
 
 #    warn "find props: ".Dumper($props) if $DEBUG;
 
@@ -238,7 +237,7 @@ sub find
     my $sql = "from rel where $extra order by rel_status desc, rel_type asc";
     my $recs = $Para::dbix->select_list($sql, @values);
 
-    if( $DEBUG )
+    if( debug )
     {
 	my $value_string = join ", ", @values;
 	$explain_string = "matching ($sql) with values ($value_string)";
@@ -246,7 +245,7 @@ sub find
 
     if( $all_versions )
     {
-	warn "Finding all arcs $explain_string\n" if $DEBUG;
+	debug(1,"Finding all arcs $explain_string");
 
 	my $list = [];
 	foreach my $rec ( @$recs )
@@ -256,7 +255,7 @@ sub find
 	return $list;
     }
 
-    warn "Finding the first arc $explain_string\n" if $DEBUG;
+    debug(1,"Finding the first arc $explain_string");
 
     return undef unless @$recs;
     return Para::Arc->new( $recs->[0] );
@@ -267,7 +266,6 @@ sub create
     my( $class, $pred, $subj, $obj_name, $props ) = @_;
 
     $props ||= {};
-    my $DEBUG = 0;
 
     my $true   = defined $props->{'true'} ? $props->{'true'} : 1;
     my $active = defined $props->{'active'} ? $props->{'active'} : 0;
@@ -306,7 +304,7 @@ sub create
 			      comment => $comment,
 			     });
 
-    if( $DEBUG )
+    if( debug )
     {
 	my $desc = "$$: Looking for arc that";
 
@@ -320,7 +318,7 @@ sub create
     if( @$arcs )
     {
 	my $arc = $arcs->[0];
-	warn sprintf "$$:   Found existing %s, activation %d\n", $arc->desig, $arc->active;
+	debug(0, sprintf( "Found existing %s, activation %d\n", $arc->desig, $arc->active),1);
 
 	# Cases:
 	# 1. Found active, want inactive
@@ -330,15 +328,15 @@ sub create
 
 	if( $arc->active and not $active )
 	{
-	    warn "$$:     Found active, want inactive\n" if $DEBUG;
+	    debug(1,"Found active, want inactive\n");
 	    unless( $u->status >= S_NORMAL )
 	    {
-		throw 'denied', "Du har för låg nivå";
+		throw( 'denied', "Du har för låg nivå" );
 	    }
 
 	    unless( $u->status >= $arc->status )
 	    {
-		throw 'denied', "You can't modify ".$arc->desig;
+		throw( 'denied', "You can't modify ".$arc->desig );
 	    }
 
 	    $arc->deactivate( $status );
@@ -346,44 +344,46 @@ sub create
 	elsif( $arc->active and $active and
 	       $status > $arc->status )
 	{
-	    warn "$$:     Found active, want active with higher status\n" if $DEBUG;
+	    debug(1,"Found active, want active with higher status");
 	    unless( $u->status >= $arc->status and
 		    $u->status >= $status )
 	    {
-		throw 'denied', "Du har för låg nivå";
+		throw( 'denied', "Du har för låg nivå" );
 	    }
 
-	    warn sprintf("Trying to activate arc %s\n", $arc->desig) if $DEBUG;
+	    debug(1,sprintf "Trying to activate arc %s", $arc->desig);
 	    $arc->activate( $status );
 	}
 	elsif( $arc->inactive and not $active and
 	       $arc->status != $status )
 	{
-	    warn "$$:     Found inactive, want inactive with other status\n" if $DEBUG;
+	    debug(1,"Found inactive, want inactive with other status");
 	    unless( $u->status >= S_NORMAL )
 	    {
-		throw 'denied', "Du har för låg nivå";
+		throw( 'denied', "Du har för låg nivå" );
 	    }
 
 	    $arc->deactivate( $status );
 	}
 	elsif( $arc->inactive and $active )
 	{
-	    warn "$$:     Found inactive, want active\n" if $DEBUG;
+	    debug(1,"Found inactive, want active");
 	    # No authorization required
 
 	    $arc->activate( $status );
 	}
 	else
 	{
-	    warn "$$:     No change to arc\n" if $DEBUG;
+	    debug(1,"No change to arc");
 	}
+
+	debug(-1);
 
 	return $arc;
     }
     else
     {
-	warn "  none found\n" if $DEBUG;
+	debug(1,"none found");
     }
 
     my( $obj, $literal, $rel );
@@ -671,8 +671,8 @@ sub replace
     my $m = $Para::u;
     if( $arc->status > $m->status )
     {
-	throw 'denied', sprintf "Arc %s has status %d",
-	  $arc->desig, $arc->status;
+	throw( 'denied', sprintf "Arc %s has status %d",
+	  $arc->desig, $arc->status );
     }
 
     my $arc2 = Para::Arc->create( $pred, $subj, $obj_name, $props );
@@ -692,15 +692,14 @@ sub activate
     $status ||= $m->new_status;
     my $now       = localtime;
     my $mid       = $Para::u->id;
-    my $DEBUG = 0;
 
     confess sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= S_PROPOSED;
 #    throw 'action', sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= S_PROPOSED;
 
     if( $arc->status > $m->status )
     {
-	throw 'denied', sprintf "Arc %s has status %d",
-	  $arc->desig, $arc->status;
+	throw( 'denied', sprintf "Arc %s has status %d",
+	  $arc->desig, $arc->status );
     }
 
     return if $arc->active and $arc->status == $status;
@@ -731,7 +730,7 @@ sub activate
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
 
-    warn "$$:   Updating arc status to $status\n" if $DEBUG;
+    debug(1,"Updating arc status to $status");
     $sth->execute( $status, $mid, $now->cdate, $arc->id );
 
     if( $status > $arc->status )
@@ -743,10 +742,10 @@ sub activate
 
     $arc->mark_publish;
     $arc->reset;
-    warn " -- Should we deactivate other versions?\n" if $DEBUG;
+    debug(1," -- Should we deactivate other versions?");
     if( $arc->true )
     {
-	warn " --   yes\n" if $DEBUG;
+	debug(1," --   yes");
 	$arc->reject_other_versions;
     }
     $arc->create_check;
@@ -767,8 +766,8 @@ sub reject_other_versions
 	## Check if we have authority to deactivate
 	if( $arcv->status > $Para::u->status )
 	{
-	    throw 'denied', sprintf "Arc %s has status %d",
-	      $arc->desig, $arc->status;
+	    throw( 'denied', sprintf "Arc %s has status %d",
+	      $arc->desig, $arc->status );
 	}
 
 #	warn " --     yes\n";
@@ -1408,7 +1407,6 @@ sub create_infere_rev
     my $subj = $arc->subj;
     my $obj  = $arc->obj;
     return 0 unless $obj;
-    my $DEBUG = 0;
 
     return 0 unless $arc->status >= S_NORMAL;
 
@@ -1416,7 +1414,7 @@ sub create_infere_rev
     {
 	next unless $arc2->status >= S_NORMAL;
 
-	warn sprintf("arc2 %s, activation %d\n ", $arc2->desig, $arc2->active) if $DEBUG;
+	debug(sprintf "arc2 %s, activation %d\n ", $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )
 	{
 	    warn "Found an arc with wrong status during inference. Vacuuming!\n";
@@ -1459,7 +1457,6 @@ sub create_infere_rel
     my $subj = $arc->subj;
     my $obj  = $arc->obj;
     return 0 unless $obj;
-    my $DEBUG = 0;
 
     return 0 unless $arc->status >= S_NORMAL;
 
@@ -1467,7 +1464,7 @@ sub create_infere_rel
     {
 	next unless $arc2->status >= S_NORMAL;
 
-	warn sprintf("$$: arc2 %d: %s, activation %d\n", $arc2->id, $arc2->desig, $arc2->active) if $DEBUG;
+	debug(1,sprintf "arc2 %d: %s, activation %d\n", $arc2->id, $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )
 	{
 	    warn "Found an arc with wrong status during inference. Vacuuming!\n";
@@ -1477,7 +1474,7 @@ sub create_infere_rel
 	my $arc3 = Para::Arc->find( $p3, $subj, $arc2->obj);
 	if( $arc3 )
 	{
-	    warn "  Found existing arc to make infered: ".$arc3->desig."\n" if $DEBUG;
+	    debug(1,"Found existing arc to make infered: ".$arc3->desig);
 	}
 	else
 	{

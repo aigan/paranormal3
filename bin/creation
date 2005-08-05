@@ -22,11 +22,17 @@ BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
     warn "Starting creation $VERSION\n";
+
+    our $PARAFRAME = "/var/www/test.paranormal.se/paraframe";
+    our $APPROOT   = "/var/www/test.paranormal.se";
+
 }
 
 
-use lib "/var/www/test.paranormal.se/paraframe/lib";
-use lib "/var/www/test.paranormal.se/lib";
+
+
+use lib "$PARAFRAME/lib";
+use lib "$APPROOT/lib";
 
 use Para::Frame;
 use Para::Frame::DBIx;
@@ -44,20 +50,28 @@ use Para::Email;
 {
     my $cfg =
     {
+	'paraframe' => $PARAFRAME,
+	'paraframe_group' => 'psi_cgi',
+
 	'appbase' => 'Para',
-	'approot' => '/var/www/test.paranormal.se',
+	'approot' => $APPROOT,
+
 
 	'user_class' => 'Para::Member',
 
 	# Path in  URL to website
 	'webhome' => '',
 
+	'logfile' => "$APPROOT/logs/creation.log",
 
-	port      => 7789,
-
-	DEBUG     => 1,
+	port      => 7788,
+	debug     => 0,
     };
     Para::Frame->configure( $cfg );
+
+    # Detatch and run in background
+    #
+    Para::Frame->daemonize;
 
 
     # Connect to database
@@ -70,13 +84,6 @@ use Para::Email;
     # Copy dbh obj
     $Para::dbh = $Para::dbix->dbh;
 
-###### Not needed 
-#    Para::Frame->add_hook('on_fork', sub
-#			  {
-#			      warn "    dbh before: $Para::dbh\n";
-#			      $Para::dbh = $Para::dbix->dbh;
-#			      warn "    dbh after : $Para::dbh\n";
-#			  });
 
 
     my $global_params =
@@ -93,7 +100,7 @@ use Para::Email;
 	'find_topic'        => sub{ Para::Topic->find( @_ ) },
 	'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
 
-	'touch_interest'    => sub{ Para::Interest->touch(@_) },
+#	'touch_interest'    => sub{ Para::Interest->touch(@_) },
 	'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
 
 	'getarc'            => sub{ Para::Arc->get( @_ ) },
@@ -123,6 +130,12 @@ use Para::Email;
 	'html_psi' => \&Para::Widget::html_psi,
 	'html_psi_nolinks' => sub{ Para::Widget::html_psi($_[0], 1) },
     });
+
+
+    # Just in case we temporarily switched to root and got an exception
+    Para::Frame->add_hook('on_error_detect',
+			  sub { Para::Member->revert_from_root() }
+			  );
 
     Para::Frame->startup();
 }

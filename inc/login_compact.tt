@@ -7,7 +7,7 @@
 <tr><td>Namn </td><td><input tabindex="1" name="username"></td>
 <td valign="top" rowspan="4" style="font-size: 80%; padding-left: 1em">[% jump('Skriv in dig','/member/db/person/quest/level_00/') %] om du är nykomling<br>
 Fortsätt med en [% jump('påbörjad registrering','/member/db/person/quest/level_01/list_new.tt') %]<br>
-<a href="/member/db/person/forgot_pwd.tt">Har du glömt lösenordet?</a><br>
+<a href="/member/db/person/find/password.tt">Har du glömt lösenordet?</a><br>
 <input type='checkbox' name="remember_login" value="1"> Kom ihåg inloggningen
 </td></tr>
 

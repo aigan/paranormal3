@@ -32,7 +32,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
-use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd );
+use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd debug );
 use Para::Frame::Email;
 
 use Para::Topic;
@@ -48,8 +48,6 @@ use Para::Member::Email;
 
 use base qw( Para::Frame::User );
 use base qw( Exporter );
-
-our $DEBUG = undef;
 
 BEGIN
 {
@@ -67,10 +65,30 @@ BEGIN
 	'name_given'    => 'Gäst',
     };
     $Para::Member::CACHE->{0} = bless($rec, __PACKAGE__);
-
-    $DEBUG = $Para::Frame::DEBUG;
 }
 
+sub skapelsen
+{
+    return $Para::Member::CACHE->{-1} ||= $_[0]->get_by_id(-1);
+}
+
+sub become_root
+{
+    debug(0,"Becoming root",1);
+    $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
+    return $_[0]->change_current_user( $_[0]->skapelsen );
+}
+
+sub revert_from_root
+{
+    if( my $ru = delete $Para::Frame::REQ->{'real_user'} )
+    {
+	debug(0,"Reverting from root",-1);
+	# Remove {'real_user'} slot after its use here
+	return $_[0]->change_current_user( $ru );
+    }
+    return $Para::Frame::U;
+}
 
 sub get
 {
@@ -95,6 +113,7 @@ sub get_by_id
 {
     my( $this, $mid, $rec, $no_cache ) = @_;
     my $class = ref($this) || $this;
+
     # $rec can be provided as a mean for optimization
 
     return undef unless defined $mid;
@@ -111,7 +130,26 @@ sub get_by_id
 
     return $Para::Member::CACHE->{0} if $mid == 0;
 
-    unless( $rec )
+    if( $rec )
+    {
+	## Merge with passwd record if not yet done
+	#
+	unless( $rec->{'passwd_member'} )
+	{
+	    my $st = "select * from passwd where passwd_member=?";
+	    my $sth = $Para::dbh->prepare_cached( $st );
+	    $sth->execute( $mid );
+	    my $pwrec = $sth->fetchrow_hashref
+		or die "failed to get $mid passwd";
+	    $sth->finish;
+
+	    foreach my $key ( keys %$pwrec )
+	    {
+		$rec->{$key} = $pwrec->{$key};
+	    }
+	}
+    }
+    else
     {
 	my $st = "select * from member LEFT JOIN passwd ON member=passwd_member where member=?";
 	my $sth = $Para::dbh->prepare_cached( $st );
@@ -158,7 +196,7 @@ sub get_by_nickname
     $identity = lc( $identity );
     my $nick = name2nick( $identity );
 
-    warn "  Get member $nick\n" if $DEBUG;
+    debug(1,"Get member $nick");
 
 #    # Bootstrap user
 #    $Para::Frame::U ||= $Para::Member::CACHE->{0};
@@ -343,6 +381,21 @@ sub set_passwd
     return $m->change->success("Nytt lösenord lagrat");
 }
 
+sub password
+{
+    my( $m ) = @_;
+    my $req = $Para::Frame::REQ;
+    my $u = $req->s->u;
+    my $admin = $u->level >= 41 ? 1:0;
+
+    unless( $admin )
+    {
+	throw('denied', "Lösenord är hemliga");
+    }
+
+    return $m->{'passwd'};
+}
+
 
 ##################################################
 
@@ -488,32 +541,32 @@ sub dist
     }
 
 
-    warn "in dist m $m->{'geo_x'} n $obj->{'geo_x'}" if $DEBUG;
+    debug(1,"in dist m $m->{'geo_x'} n $obj->{'geo_x'}");
     if( UNIVERSAL::isa( $obj, 'Para::Member') and
 	$m->{'geo_x'} and $obj->{'geo_x'})
     {
 	my $scale = 70.86666666666; # km
 
 	my $x = $m->{'geo_x'};
-	warn "x: $x\n" if $DEBUG;
+	debug(1,"x: $x");
 	my $xdp = $x - $obj->{'geo_x'};
-	warn "xdp: $xdp\n" if $DEBUG;
+	debug(1,"xdp: $xdp");
 	my $xd = $xdp * $scale;
-	warn "xd: $xd\n" if $DEBUG;
+	debug(1,"xd: $xd");
 
 	my $y = $m->{'geo_y'};
-	warn "y: $y\n" if $DEBUG;
+	debug(1,"y: $y");
 	my $ydp = $y - $obj->{'geo_y'};
-	warn "ydp: $ydp\n" if $DEBUG;
+	debug(1,"ydp: $ydp");
 	my $yd = $ydp * $scale;
-	warn "yd: $yd\n" if $DEBUG;
+	debug(1,"yd: $yd");
 
 
 	my $dist = sqrt($xd ** 2 + $yd ** 2);
 	$dist =~ tr/,/./;
-	warn "dist is $dist\n" if $DEBUG;
+	debug(1,"dist is $dist");
 	$dist = sprintf("%.1f", $dist);
-	warn "dist is $dist\n" if $DEBUG;
+	debug(1,"dist is $dist");
 	return $dist;
 
 

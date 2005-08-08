@@ -1,0 +1,4 @@
+[% UNLESS t.entry %]
+[% jump('Visa ditt intresse', m.interest(t).next_step(redefine=1).template, tid=tid class='link_button') %]
+[% jump('Navigera', "/member/db/topic/view/tree", tid=tid class='link_button') %]
+[% END %]

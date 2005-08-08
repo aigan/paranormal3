@@ -1,9 +1,0 @@
-[%
-DEFAULT keep = [ 'tid' 'v' ];
-IF t.entry;
-   PROCESS entry_edit_menu.tt;
-   PROCESS entry_belonging.tt;
-ELSE;
-   PROCESS topic_edit_menu.tt;
-END;
-%]

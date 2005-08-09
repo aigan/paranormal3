@@ -186,7 +186,7 @@ sub add
     my( $ins, $t ) = @_;
 
     # TODO: use $ins db
-    Para::Interest->touch( $t, $ins->member );
+    Para::Interest->touch( $ins->member, $t );
 }
 
 sub get
@@ -228,7 +228,7 @@ sub getset
 	    Para::Interest->new( $t );
     }
 
-    warn "  getset interest $t->{id} (interests)\n";
+    warn "  getset interest ".$t->id."(interests)\n";
 
     return $ins->{'db'}{ $t->id } ||= 
 	Para::Interest->getset( $ins->member, $t );

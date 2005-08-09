@@ -1,0 +1,11 @@
+Din presentation godkändes av [% u.title %] [%+ u.nickname %].
+
+[% IF q.param('comment') %]
+   [% u.nickname %] skriver:
+[%+ q.param('comment') | lf %]
+[% END %]
+
+
+Nästa steg är att berätta mer om dina intressen.  Gå hit:
+
+	http://[% host %]/member/db/person/quest/level_05/welcome.tt

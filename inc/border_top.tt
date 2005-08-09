@@ -5,10 +5,10 @@
   |  [% jump('Torget', '/member/db/') %]
   [% IF u.level >= 5 %]
      |  [% jump('Admin', '/member/db/topic/') %]
-     |  <a href="/member/db/person/edit/">Inställningar</a>
      |  <a href="/member/db/person/find/">Medlemmar</a>
      |  <input name="search" size="10">
   [% END %]
+ |  <a href="/member/db/person/edit/">Inställningar</a>
  |  [% jump('Logga ut', '/', run='user_logout', class="") %]
  ]
 </p>

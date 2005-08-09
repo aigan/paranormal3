@@ -1,11 +1,10 @@
 #  $Id$  -*-perl-*-
-package Para::Action::member_interest_update_multi;
+package Para::Action::interest_update_multi;
 
 use strict;
-
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw );
+use Para::Frame::Utils qw( throw maxof );
 
 use Para::Member;
 
@@ -60,6 +59,8 @@ sub handler
 
 	    warn "    Defining interest $tid\n";
 
+	    my $i = $m->interest($tid);
+
 	    my $rec =
 	    {
 		belief => $belief * $interest,
@@ -71,9 +72,9 @@ sub handler
 		meeter => $meeter * $interest,
 		bookmark => $bookmark * $interest,
 		interest => $q->param($field),
+		defined => maxof($i->defined, 10),
 	    };
-	    
-	    my $i = $m->interest($tid);
+
 	    $i->update($rec);
 	}
     }
@@ -94,7 +95,7 @@ sub handler
     if( $tid )
     {
 	warn "    Updating interest in $tid\n";
-	$m->interest($tid)->upate_by_query()
+	$m->interest($tid)->update_by_query()
     }
 
     return;

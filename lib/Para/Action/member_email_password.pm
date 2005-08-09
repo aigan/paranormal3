@@ -54,7 +54,6 @@ sub handler
     my $fork = $req->create_fork;
     if( $fork->in_child )
     {
-	my $rv;
 	# Become root in order to get access to passwords
 	Para::Member->become_root;
 	$e->send or throw('email', $e->error_msg);

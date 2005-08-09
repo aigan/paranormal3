@@ -44,7 +44,7 @@ use Para::Constants qw( :all );
 use Para::Arc;
 use Para::Payment;
 use Para::Email::Address;
-use Para::Member::Email;
+use Para::Member::Email::Address;
 
 use base qw( Para::Frame::User );
 use base qw( Exporter );
@@ -160,9 +160,7 @@ sub get_by_id
 
     if( $rec )
     {
-	my $m = $Para::Member::CACHE->{$mid} = bless($rec, $class);
-	$m->changes_reset; # FIXME
-	return $m;
+	return $Para::Member::CACHE->{$mid} = bless($rec, $class);
     }
     else
     {
@@ -196,7 +194,7 @@ sub get_by_nickname
     $identity = lc( $identity );
     my $nick = name2nick( $identity );
 
-    debug(1,"Get member $nick");
+    debug(3,"Get member $nick");
 
 #    # Bootstrap user
 #    $Para::Frame::U ||= $Para::Member::CACHE->{0};
@@ -314,6 +312,12 @@ sub verify_password
 
     $password_encrypted ||= '';
 
+    # Update login time
+    if( $m->offline )
+    {
+	$m->latest_in( time );
+    }
+
     if( $password_encrypted eq passwd_crypt($m->{'passwd'}) )
     {
 	return 1;
@@ -321,10 +325,50 @@ sub verify_password
     else
     {
 	my $expected = passwd_crypt($m->{'passwd'});
-	warn "  Expected $expected but got $password_encrypted\n";
+	debug(1,"Expected $expected but got $password_encrypted");
 	return 0;
     }
 }
+
+sub set
+{
+    my( $m, $field, @args ) = @_;
+
+    no strict qw( refs );
+    return &{"set_$field"}($m, @args);
+}
+
+sub set_field
+{
+    my( $m, $field, $value ) = @_;
+
+    return unless defined $value;
+    trim(\$value);
+    $m->{$field} ||= '';
+    return if $value eq $m->{$field};
+    $m->store_db_field({ $field => $value });
+    return $m->change->success("$field uppdaterad");
+}
+
+sub set_field_number
+{
+    my( $m, $field, $value ) = @_;
+
+    return unless defined $value;
+    trim(\$value);
+    return if $m->{$field} and $value eq $m->{$field};
+    if( length $value )
+    {
+	unless( $value =~ /^-?\d+$/ )
+	{
+	    return $m->change->fail("$field tillåter bara nummer");
+	}
+    }
+    $m->store_db_field({ $field => $value });
+    return $m->change->success("$field uppdaterad");
+}
+
+
 
 sub set_passwd
 {
@@ -346,7 +390,7 @@ sub set_passwd
 	return $m->change->fail("Det gamla lösenordet stämde inte\n");
     }
 
-    warn "Trying to change passwd to '$new'\n";
+    debug(1,"Trying to change passwd to '$new'");
     length($new) >= 4 or return $m->change->fail("Lösenordet är för kort. Använd åtminstonne 4 tecken\n");
     length($new) <= 12 or return $m->change->fail("Lösenordet är för långt. Använd som mest 12 tecken\n");
     $new =~ /^[\x21-\x7e]+$/ or return $m->change->fail("Lösenordet har ogiltiga tecken.\n".
@@ -403,7 +447,65 @@ sub id       { shift->{'member'} }
 sub uid      { shift->{'member'} } # Used by Para::Frame::User
 
 
-sub presentation   { shift->{'presentation'} } # Compatible mode?
+sub update_by_query
+{
+    my( $m ) = @_;
+
+    my $req = $Para::Frame::REQ;
+    my $q = $req->q;
+
+    foreach my $field ( qw( nickname home_online_msn home_online_uri
+			    sys_email bdate_ymd_year member_level
+			    gender name_given name_middle name_family
+			    home_postal_code home_tele_phone
+			    home_tele_mobile home_tele_fax
+			    present_contact present_contact_public
+
+			    ) )
+    {
+	if( defined $q->param($field) )
+	{
+	    $m->set($field, $q->param($field));
+	}
+    }
+
+    foreach my $field ( qw( name_prefix name_suffix home_postal_name
+			    home_postal_street home_postal_visiting
+			    home_tele_phone_comment
+			    home_tele_mobile_comment
+			    home_tele_fax_comment statement style
+			    home_online_email presentation
+			    member_comment_admin show_style
+
+			    ) )
+    {
+	if( defined $q->param($field) )
+	{
+	    $m->set_field($field, $q->param($field));
+	}
+    }
+
+    foreach my $field ( qw( home_online_icq home_online_aol
+				 sys_logging present_intrests
+				 present_activity present_gifts general_belief
+				 general_theory general_practice
+				 general_editor general_helper
+				 general_meeter general_bookmark
+				 general_discussion show_complexity
+				 show_detail show_edit show_level newsmail
+				 member_topic chat_level ) )
+
+    {
+	if( defined $q->param($field) )
+	{
+	    $m->set_field_number($field, $q->param($field));
+	}
+    }
+
+}
+
+
+sub presentation   { shift->{'presentation'} }
 
 sub sys_uid   { shift->{'sys_uid'} }
 sub set_sys_uid
@@ -456,7 +558,7 @@ sub interest
 {
     my( $m, $t ) = @_;
 
-    $m->interests->getset( $t );
+    return $m->interests->getset( $t );
 }
 
 sub title
@@ -541,60 +643,33 @@ sub dist
     }
 
 
-    debug(1,"in dist m $m->{'geo_x'} n $obj->{'geo_x'}");
+    debug(3,"in dist m $m->{'geo_x'} n $obj->{'geo_x'}");
     if( UNIVERSAL::isa( $obj, 'Para::Member') and
 	$m->{'geo_x'} and $obj->{'geo_x'})
     {
 	my $scale = 70.86666666666; # km
 
 	my $x = $m->{'geo_x'};
-	debug(1,"x: $x");
+	debug(3,"x: $x");
 	my $xdp = $x - $obj->{'geo_x'};
-	debug(1,"xdp: $xdp");
+	debug(3,"xdp: $xdp");
 	my $xd = $xdp * $scale;
-	debug(1,"xd: $xd");
+	debug(3,"xd: $xd");
 
 	my $y = $m->{'geo_y'};
-	debug(1,"y: $y");
+	debug(3,"y: $y");
 	my $ydp = $y - $obj->{'geo_y'};
-	debug(1,"ydp: $ydp");
+	debug(3,"ydp: $ydp");
 	my $yd = $ydp * $scale;
-	debug(1,"yd: $yd");
+	debug(3,"yd: $yd");
 
 
 	my $dist = sqrt($xd ** 2 + $yd ** 2);
 	$dist =~ tr/,/./;
-	debug(1,"dist is $dist");
+	debug(3,"dist is $dist");
 	$dist = sprintf("%.1f", $dist);
-	debug(1,"dist is $dist");
+	debug(3,"dist is $dist");
 	return $dist;
-
-
-
-# 	use Math::BigFloat;
-# 	my $scale = 70.86666666666; # km
-#
-# 	my $x = Math::BigFloat->new( $m->{'geo_x'} );
-# 	warn "x: $x\n" if $DEBUG;
-# 	my $xdp = $x->fsub( $obj->{'geo_x'} );
-# 	warn "xdp: $xdp\n" if $DEBUG;
-# 	my $xd = $xdp * $scale;
-# 	warn "xd: $xd\n" if $DEBUG;
-#
-# 	my $y = Math::BigFloat->new( $m->{'geo_y'} );
-# 	warn "y: $y\n" if $DEBUG;
-# 	my $ydp = $y->fsub( $obj->{'geo_y'} );
-# 	warn "ydp: $ydp\n" if $DEBUG;
-# 	my $yd = $ydp * $scale;
-# 	warn "yd: $yd\n" if $DEBUG;
-#
-#
-# 	my $dist = sqrt($xd ** 2 + $yd ** 2);
-# 	$dist =~ tr/,/./;
-# 	warn "dist is $dist\n" if $DEBUG;
-# 	$dist = Math::BigFloat->new($dist)->ffround(-3);
-# 	warn "dist is $dist\n" if $DEBUG;
-# 	return $dist;
     }
 
     return undef;
@@ -1033,10 +1108,10 @@ sub validate_nick
 
     my $topics = Para::Topic->find( $uid );
     my $person = Para::Topic->new( T_PERSON );
-    warn "  Look for existing topic\n";
+    debug(3,"Look for existing topic");
     foreach my $t ( @$topics )
     {
-	warn sprintf "  Are %s a person?\n", $t->desig;
+	debug(3,sprintf("  Are %s a person?", $t->desig));
 	if( $Para::Frame::U->level < 41 and  $t->has_rel( 1, $person ) )
 	{
 	    throw('validation', "Det finns en person i uppslagsverket med detta namn.\nOm detta verkligen är ditt namn, hör av dig till red\@paranormal.se\n");
@@ -1062,7 +1137,7 @@ sub mailaliases
 	my $recs = $Para::dbix->select_list('from mailalias where mailalias_member=? order by mailalias', $m->id);
 	foreach my $rec ( @$recs )
 	{
-	    my $email = Para::Member::Email->new( $m, $rec->{mailalias}, $rec );
+	    my $email = Para::Member::Email::Address->new( $m, $rec->{mailalias}, $rec );
 	    push @$ma, $email unless $email->equals($sys_email);
 	}
     }
@@ -1078,42 +1153,42 @@ sub set_mailaliases
     my $add = [];
     my $del = [];
 
-    warn "Update mailalias list\n";
+    debug(2,"Update mailalias list");
     foreach my $row ( @$alist )
     {
 	trim(\$row); next unless length($row);
 	my( $addro ) = Para::Email::Address->parse( $row ) or next;
-	my $addr = $addro->format;
+	my $addr = $addro->address;
 
 	$new->{$addr} ++;
-	warn "\t$addr\n";
+	debug(3,"  $addr");
     }
-    $new->{$m->sys_email->format} ++; # In case it's not present
+    $new->{$m->sys_email->address} ++; # In case it's not present
 
-    warn "Old aliases\n";
+    debug(3,"Old aliases");
     foreach my $old_alias ( $m->mailaliases )
     {
-	unless( delete $new->{$old_alias->as_string} )
+	unless( delete $new->{$old_alias->address} )
 	{
-	    warn "\t$old_alias\n";
-	    push @$del, $old_alias->as_string;
+	    debug(3,"  $old_alias");
+	    push @$del, $old_alias->address
 	}
     }
     @$add = keys %$new;
 
     # Del things
-    warn "Remove\n";
+    debug(3,"Remove");
     foreach my $thing ( @$del )
     {
-	warn "\t$thing\n";
+	debug(3,"  $thing");
 	$m->del_mailalias( $thing );
     }
 
-    warn "Add\n";
+    debug(3,"Add");
     # Add things
     foreach my $thing ( @$add )
     {
-	warn "\t$thing\n";
+	debug(3,"  $thing");
 	$m->add_mailalias( $thing );
     }
 
@@ -1132,7 +1207,7 @@ sub add_mailalias
 	return $email if $email->equals( $mailalias );
     }
 
-    Para::Member::Email->add($m, $mailalias)
+    Para::Member::Email::Address->add($m, $mailalias)
 	and return $m->change->success("Lade till ".$mailalias->as_string );
     return 0;
 }
@@ -1141,7 +1216,9 @@ sub del_mailalias
 {
     my( $m, $mailalias_in ) = @_;
 
-    my $mailalias = Para::Email::Address->parse( $mailalias_in );
+    my $mailalias = Para::Member::Email::Address->new( $m, $mailalias_in );
+
+#    warn "deleting mailalias ".Dumper $mailalias;
 
     # Check if alias in list
     return 0 unless grep {$_->equals($mailalias)} $m->mailaliases;
@@ -1172,7 +1249,7 @@ sub sys_email
     my( $m ) = @_;
 
     return undef unless $m->{'sys_email'};
-    return $m->{'sys_email_obj'} ||= Para::Member::Email->new( $m, $m->{'sys_email'} );
+    return $m->{'sys_email_obj'} ||= Para::Member::Email::Address->new( $m, $m->{'sys_email'} );
 }
 
 sub set_sys_email
@@ -1197,11 +1274,12 @@ sub set_sys_email
     {
 	$m->add_mailalias($ea); # Must be done before setting sys_email
 	$m->store_db_field({ sys_email => $ea->as_string });
+	undef $m->{'sys_email_obj'}; # Reset object
 	$m->update_mail_forward;
     };
     if( $@ )
     {
-	warn "Error: $@";
+	debug(0,"Error: $@");
 	if( $Para::dbh->errstr and $Para::dbh->errstr =~ /duplicate key/ )
 	{
 	    if( $Para::dbh->errstr =~ /member_sys_email_key/ )
@@ -1477,7 +1555,7 @@ sub phone
 {
     my( $m, $publ ) = @_;
 
-    warn "  Getting home_tele_phone\n";
+    debug(3,"Getting home_tele_phone");
 
     if( (not $publ and $m->present_contact >= 20) or ($publ and
         $m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
@@ -1507,7 +1585,7 @@ sub mobile
 {
     my( $m, $publ ) = @_;
 
-    warn "  Getting home_tele_mobile\n";
+    debug(3,"Getting home_tele_mobile");
 
     if( (not $publ and $m->present_contact >= 20) or ($publ and
         $m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
@@ -1691,7 +1769,7 @@ sub latest_in
 	$latest_in = time;
     }
 
-    return Para::Frame::Time->get( $latest_in );
+    return $m->{'latest_in'} = Para::Frame::Time->get( $latest_in );
 }
 
 sub latest_out
@@ -1707,19 +1785,36 @@ sub latest_out
 	$m->{'latest_out'} = $time->epoch;
     }
 
-    return Para::Frame::Time->get( $m->{'latest_out'} || $m->latest_in );
+    return $m->{'latest_out'} = Para::Frame::Time->get( $m->{'latest_out'} || $m->latest_in );
+}
+
+sub online
+{
+    if( $_[0]->latest_in >= $_[0]->latest_out )
+    {
+	return 1;
+    }
+    else
+    {
+	return 0;
+    }
+}
+
+sub offline
+{
+    return not $_[0]->online;
 }
 
 sub created
 {
     my( $m ) = @_;
-    return Para::Frame::Time->get( $m->{'member_created'} );
+    return $m->{'member_created'} = Para::Frame::Time->get( $m->{'member_created'} );
 }
 
 sub updated
 {
     my( $m ) = @_;
-    return Para::Frame::Time->get( $m->{'member_updated'} );
+    return $m->{'member_updated'} = Para::Frame::Time->get( $m->{'member_updated'} );
 }
 
 sub payment_expire
@@ -1796,7 +1891,7 @@ sub update_mail_forward
 
     ### NB! changes are made even if the action results in a rollback
 
-    warn sprintf "Update_mail_forward for %s\n", $m->nickname;
+    debug(3,sprintf("Update_mail_forward for %s", $m->nickname));
 
     my $mid = $m->id;
     my $address = $m->sys_email;
@@ -1927,7 +2022,7 @@ sub set_dbm_alias
     $nick or throw( 'incomplete', "nick param missing" );
 
     my $db = paraframe_dbm_open( DB_ALIAS );
-    warn "Setting $nick forward to $address\n";
+    debug(3,"Setting $nick forward to $address");
     return $db->{ $nick } = $address;
 }
 
@@ -1938,7 +2033,7 @@ sub unset_dbm_alias
     $nick or throw( 'incomplete', "nick param missing" );
 
     my $db = paraframe_dbm_open( DB_ALIAS );
-    warn "Removing $nick forward\n";
+    debug(3,"Removing $nick forward");
     return delete $db->{ $nick };
 }
 
@@ -2024,7 +2119,7 @@ sub store_db_field
 	join( ', ', map("$_=?", @keys)) .
 	" where member = ?";
     my $sth = $Para::dbh->prepare_cached( $st );
-    warn "  Member_db_update: $st (@{$props}{@keys})\n";
+    debug(3,"Member_db_update: $st (@{$props}{@keys})");
 #    die Dumper [@{$props}{@keys}];
     $sth->execute( $now_str, @{$props}{@keys}, $m->id );
 
@@ -2036,52 +2131,8 @@ sub store_db_field
     $m->{'member_updated'} = $now;
 }
 
-sub changes_reset
-{
-    my( $m ) = @_;
-
-    $m->{'changes'} = new Para::Change;
-}
-
-sub change { shift->{'changes'} }
-
-sub set
-{
-    my( $m, $field, @args ) = @_;
-
-    no strict qw( refs );
-    return &{"set_$field"}($m, @args);
-}
-
-sub set_field
-{
-    my( $m, $field, $value ) = @_;
-
-    return unless defined $value;
-    trim(\$value);
-    $m->{$field} ||= '';
-    return if $value eq $m->{$field};
-    $m->store_db_field({ $field => $value });
-    return $m->change->success("$field uppdaterad");
-}
-
-sub set_field_number
-{
-    my( $m, $field, $value ) = @_;
-
-    return unless defined $value;
-    trim(\$value);
-    return if $m->{$field} and $value eq $m->{$field};
-    if( length $value )
-    {
-	unless( $value =~ /^-?\d+$/ )
-	{
-	    return $m->change->fail("$field tillåter bara nummer");
-	}
-    }
-    $m->store_db_field({ $field => $value });
-    return $m->change->success("$field uppdaterad");
-}
+sub change { shift->{'changes'}  ||= new Para::Change }
+sub changes { shift->{'changes'} ||= new Para::Change }
 
 sub zip2city
 {
@@ -2092,7 +2143,7 @@ sub zip2city
 
     if( $zip and $zip =~ s/^S-// )
     {
-	warn "Fixing zip $zip\n";
+	debug(3,"Fixing zip $zip");
 
 	my $sth = $Para::dbh->prepare_cached(
 	      "select * from zip, city where zip_city=city and zip=?") or die;
@@ -2103,12 +2154,12 @@ sub zip2city
 	if( my $city_name = $rec->{'city_name'} )
 	{
 	    $city_name = undef if $zip eq '';
-	    warn "\tFound city $city_name\n";
+	    debug(3,"  Found city $city_name");
 	    $prop->{'home_postal_city'} = $city_name;
 	}
 	else
 	{
-	    warn "\tRemoving city\n";
+	    debug(3,"Removing city");
 	    $prop->{'home_postal_city'} = undef;
 	}
 
@@ -2116,7 +2167,7 @@ sub zip2city
 	{
 	    my $y = $rec->{'zip_y'} || $rec->{'city_y'};
 
-	    warn "\tGot koordinates $x:$y\n";
+	    debug(3,"  Got koordinates $x:$y");
 	    my $precision = $rec->{'zip_precision'} || $rec->{'city_precision'};
 
 	    $prop->{'geo_x'} = $x;
@@ -2125,7 +2176,7 @@ sub zip2city
 	}
 	else
 	{
-	    warn "\tRemoving koordinates\n";
+	    debug(3,"Removing koordinates");
 
 	    $prop->{'geo_x'} = undef;
 	    $prop->{'geo_y'} = undef;
@@ -2136,7 +2187,7 @@ sub zip2city
     }
     else
     {
-	warn "\tRemoving koordinates and city\n";
+	debug(3,"Removing koordinates and city");
 
 	$prop->{'home_postal_city'} = undef;
 	$prop->{'geo_x'} = undef;
@@ -2259,7 +2310,7 @@ sub reset_payment_stats
 {
     my( $m ) = @_;
 
-    warn "$$: Resetting payment stats\n";
+    debug(0,"Resetting payment stats");
 
     my $sth = $Para::dbh->prepare_cached("update member set
                member_payment_period_length=?,
@@ -2280,7 +2331,7 @@ sub reset_payment_stats
 
     foreach my $p ( $m->payments )
     {
-	warn sprintf "$$:   Readd payment %d\n", $p->id;
+	debug(0,sprintf("  Readd payment %d", $p->id));
 	$p->add_to_member_stats;
     }
 }
@@ -2319,7 +2370,7 @@ sub remove
     };
     if( $@ )
     {
-	warn sprintf("Error while e-mailing %s: %s\n", $m->nickname, $@);
+	debug(0,sprintf("Error while e-mailing %s: %s", $m->nickname, $@));
 	$@ = undef;
     }
 
@@ -2435,7 +2486,7 @@ sub by_name  ## LIST CONSTRUCTOR
 	}
 	else
 	{
-	    warn "Ingen medlem har medlemsnumret $identity\n";
+	    debug(0,"Ingen medlem har medlemsnumret $identity");
 #	    die ['notfound', "Ingen medlem har medlemsnumret $identity\n"];
 	    throw('notfound', "Ingen medlem har medlemsnumret eller ICQ $identity\n");
 	}
@@ -2461,7 +2512,7 @@ sub by_name  ## LIST CONSTRUCTOR
 		push @data, $name, $name, $name;
 	    }
 	    my $part = join " and ", @parts;
-	    warn "select * from member where $part (@data)\n";
+#	    warn "select * from member where $part (@data)\n";
 	    my $recs2 = $Para::dbix->select_list("from member where $part $censor_part", @data);
 	    foreach my $rec ( @$recs2 )
 	    {

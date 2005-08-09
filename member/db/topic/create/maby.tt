@@ -2,10 +2,8 @@
 	title = 'Nytt ämne'
 	next_template = 'check.tt'
 	level = 5
-	focus = 't_title'
+	focus = 'title'
 %]
-
-[% preserve_data('t_title','_aliases') %]
 
 [% IF q.param('_name') %]
    <p>Ämnet finns inte i databasen.  Här har du chansen att lägga till ämnet.
@@ -13,6 +11,8 @@
    <p>Vi vill bara ha ämnen som har någon relation till paranormala fenomen.
 
    <p>Genom att beskriva ämnet här bidrar du till att göra vårat uppslagsverk mer komplett.
+
+   [% hr %]
 
 [% END %]
 
@@ -25,13 +25,13 @@ undertitel.
 
 
 <p>Ämnets titel:<br>
-[% input('t_title', q.param('_name')) %]
+[% input('title', q.param('_name')) %]
 
 
 <p>Ange ett alias per rad:<br>
-<table cellpadding="10"><tr><td>
+<table cellpadding="10"><tr><td valign="top">
 
-[% textarea( '_aliases', '', rows=20, cols=20, align='left' ) %]
+[% textarea( '_aliases', '', rows=20, cols=20 ) %]
 
 </td><td valign="top">
 
@@ -58,5 +58,6 @@ namn.
 
 </td></tr></table>
 
-<p>[% submit('Skapa ämnet') %]
-[% go('Ångra', backtrack, 'nop') %]
+<p>Skapa ämnet?
+[%+ submit %]
+[%+ backstep %]

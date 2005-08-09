@@ -1,9 +1,9 @@
 #  $Id$  -*-perl-*-
-package Para::Member::Email;
+package Para::Member::Email::Address;
 #=====================================================================
 #
 # DESCRIPTION
-#   Paranormal.se Member Email class
+#   Paranormal.se Member Email Address class
 #
 # AUTHOR
 #   Jonas Liljegren   <jonas@paranormal.se>
@@ -40,7 +40,7 @@ sub new
 
     $m ||= $Para::Frame::U;
 
-    my $ea = $class->parse( $email_str );
+    my $ea = Para::Frame::Email::Address->parse( $email_str );
 
     if( $rec )
     {
@@ -91,6 +91,9 @@ sub add
 	}
 	die $@;
     }
+
+    push @{$m->{'mailaliases'}}, $this->new($m, $ea);
+
     $sth->rows and return 1;
     return 0;
 }
@@ -111,42 +114,18 @@ sub delete
               mailalias_member=? and mailalias=?";
     my $sth = $Para::dbh->prepare_cached( $st );
     $sth->execute($m->id, $e->as_string);
+
+    # Reset mailalias list
+    undef $m->{'mailaliases'};
+
     $sth->rows and return 1;
     return 0;
 }
 
-# sub as_string
-# {
-#     return $_[0]->{mailalias};
-# }
-
-# sub equals
-# {
-#     my( $e, $e2_in) = @_;
-# 
-#     my $e2_as_string;
-#     if( ref $e2_in )
-#     {
-# 	if( $e2_in->isa('Para::Frame::Email::Address') )
-# 	{
-# 	    $e2_as_string = $e2_in->as_string;
-# 	}
-# 	else
-# 	{
-# 	    die;
-# 	}
-#     }
-#     else
-#     {
-# 	$e2_as_string = $e2_in;
-#     }
-# 
-#     return $e2_as_string eq $e->as_string;
-# }
-
 sub member
 {
     my( $e ) = @_;
+#    warn "Getting mailalias member by: ".Dumper($e);
     return Para::Member->get( $e->{'mailalias_member'} )
 }
 

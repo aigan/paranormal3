@@ -17,6 +17,6 @@ anger i vår databas.  Skriv <strong>namnen</strong> på de ämnen du är intressera
 [% END %]
 
 <p>Ange ett intresse per rad<br>
-[% textarea( '_interests', '', rows=20, cols=20 ) %]
+[% textarea( '_interests', '', rows=20, cols=40 ) %]
 
 <p>[% submit %]

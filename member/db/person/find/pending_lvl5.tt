@@ -9,18 +9,23 @@
 
 <div class="entry">
 <table>
-<tr><th>Nr</th><th>Namn</th><th>Skapad</th>
+<tr><th>Nr</th><th>Nick</th><th>Skapad</th><th>Uppdaterad</th>
 [% IF u.level < 41 %]
    [% recs = select_list("from member where member_level=3 and present_contact >= 10") %]
 [% ELSE %]
    <th>AN</th>
    [% recs = select_list("from member where member_level=3") %]
 [% END %]
+<th>Inne?</th>
 </tr>
 [% FOREACH rec = recs %]
    [% m = getmember(rec.member, rec) %]
-   [% tr2 %]<td>$m.id</td><td>[% jump(m.nickname, "/member/db/person/edit/check_presentation.tt", mid=m.id) %]</td><td>[% m.created %]</td>
+   [% tr2 %]<td>$m.id</td><td>[% jump(m.nickname, "/member/db/person/edit/check_presentation.tt", mid=m.id) %]</td>
+<td>[% m.created %]</td>
+<td>[% m.updated %]</td>
+
    [% IF u.level > 40 %]<td>[% m.present_contact %]</d>[% END %]
+   <td>[% PROCESS seen_status.tt %]
 </tr>
 [% END %]
 </table>

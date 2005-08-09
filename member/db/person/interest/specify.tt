@@ -5,27 +5,19 @@
 %]
 
 [%
+   PROCESS load_member.tt;
    tid = q.param('tid');
-   DEFAULT tid = q.param('t');
-   CALL touch_interest(tid);
-   mid = q.param('mid') || u.id;
+   t   = topic(tid);
+   PROCESS buttons.tt;
+   PROCESS edit_menu.tt edit_arcs=1;
 
-   bt = select_record('from t where t=? order by t_active desc, t_ver desc', tid);
+   m = m.interest(t); # Default for draw_slider
 
-   m = select_record("from member, intrest, t
-                           where member=intrest_member 
-                           and t = intrest_topic
-                           and member=? and intrest_topic=?
-	 		   and t_ver=?",
- 		mid, tid, bt.t_ver );
-
-	t = topic(tid);
+	hidden('defined', 75);
 	hidden('tid', tid);
-	hidden('intrest_defined', 75);
-	hidden('mid', mid);
 %]
 
-<h1>Ditt intresse för [% PROCESS tlink.tt %]</h1>
+<h1>Ditt intresse för [% t.link %]</h1>
 
 <p>Överdriv inte i dina svar.  Bäst effekt får du om dina markeringar
 har en jämn fördelning så att det i medel hamnar nära mitten.  Markera
@@ -41,7 +33,7 @@ som <em>Nej</em> och ruta 3-10 tolkas som <em>Ja</em>.
 [% hr %]
 
 [% WRAPPER draw_slider
-	   field='intrest'
+	   field='interest'
 	   title='Intresse'
 	   number=11
 	   min_txt='Inte alls'
@@ -51,7 +43,7 @@ Hur intresserad är du av ämnet?
 [% END %]
 
 
-[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=10 and rel_active is true and rel_strength >= 30', m.t) %]
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=10 and rel_active is true and rel_strength >= 30', m.t.id) %]
 [% WRAPPER draw_slider 
            field='belief' 
 	   title='Tro'
@@ -80,7 +72,7 @@ det läran påstår är riktigt.
 [% END %]
 [% END %]
 
-[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=12 and rel_active is true and rel_strength >= 30', m.t) %]
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=12 and rel_active is true and rel_strength >= 30', m.t.id) %]
 [% WRAPPER draw_slider
 	   field='experience'
 	   title='Har du upplevt detta?'
@@ -123,7 +115,7 @@ intressen åt sidan för att studera detta ämne?
 [% END %]
 
 
-[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=11 and rel_active is true and rel_strength >= 30', m.t) %]
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=11 and rel_active is true and rel_strength >= 30', m.t.id) %]
 [% WRAPPER draw_slider
 	   field='skill'
 	   title='Praktisk skicklighet'
@@ -223,7 +215,7 @@ och rätta sådant som ser fel ut?
 [% END %]
 
 [% WRAPPER draw_textbox
-	   field='intrest_description'
+	   field='description'
 	   title='Hur / Varför ?'
 %]
 Något mer du vill säga om ditt intresse?
@@ -242,6 +234,4 @@ Du kan se den här texten som en rad i din meritförteckning.
 kontinuerligen att förändras för att motsvara det intresse du visar
 genom vad du gör på webbplatsen.
 
-[% next = interest_next_step(m.t, u.member, defined=50) %]
-
-<p>[% go('Fortsätt', next.handler, 'interest_update') %]
+<p>[% go('Fortsätt', m.next_step(defined=50).template, 'interest_update') %]

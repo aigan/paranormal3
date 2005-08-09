@@ -19,7 +19,7 @@ package Para::Topic;
 use strict;
 use base qw( Exporter );
 use Data::Dumper;
-use Carp;
+use Carp qw( cluck );
 use locale;
 use Date::Manip;
 use IO::LockedFile;
@@ -163,6 +163,54 @@ sub find_urlpart
 
     return \@topics;
 }
+
+=head2 find_by_alias
+
+  Para::Topic->find_by_alias( $name, $crits )
+
+crits:
+  active
+  status_min
+
+crits apply both to the alias and the topic
+
+=cut
+
+sub find_by_alias
+{
+    my( $this, $name, $crits ) = @_;
+    my $class = ref($this) || $this;
+
+    debug(3,"Finding topic by alias $name",1);
+
+    my $aliases = Para::Alias->find_by_name( $name, $crits );
+
+    my $crit_active = $crits->{'active'};
+    my $crit_status_min = $crits->{'status_min'} || 0;
+    
+
+    my @topics;
+    foreach my $a ( @$aliases )
+    {
+	my $t = $a->topic;
+
+	debug(4,"checking ".$t->desig);
+
+	if( $crit_active )
+	{
+	    next unless $t->active;
+	}
+
+	next unless $t->status >= $crit_status_min;
+
+	debug(4,"  passed");
+	push @topics, $t;
+    }
+
+    debug(-1);
+    return \@topics;
+}
+
 
 sub find
 {
@@ -1683,8 +1731,26 @@ sub image_size_xy
     return( $x, $y );
 }
 
+sub aliases
+{
+    my( $t, $crits ) = @_;
+
+    $crits and die "not implemented";
+
+    # Shared by all versions of topic
+    unless( $Para::Topic::ALIASES{$t->id} )
+    {
+	return Para::Alias->find_by_tid( $t->id );
+    }
+
+    return $Para::Topic::ALIASES{$t->id};
+}
+
+
 sub alias_list
 {
+    die "deprecated"; # Clean up!
+
     # topic, args = {include_inactive => 1}
     return Para::Alias->list(@_);
 }
@@ -1696,12 +1762,12 @@ sub add_alias
 
 sub has_alias
 {
-    return Para::Alias->get(@_);
+    return $_[0]->aliases->{$_[1]};
 }
 
 sub alias
 {
-    return Para::Alias->get(@_);
+    return $_[0]->aliases->{$_[1]};
 }
 
 sub maby_loopy

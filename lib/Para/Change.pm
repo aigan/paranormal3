@@ -25,19 +25,32 @@ BEGIN
 }
 
 use Para::Frame::Reload;
+use Para::Frame::Utils qw( throw );
 
 sub new
 {
     my( $class ) = @_;
-    my $self =
-    {
-	errors => 0,
-	errmsg => "",
-	changes => 0,
-	message => "\n",
-     };
 
-    return bless $self, $class;
+    my $change = bless {}, $class;
+
+    return $change->reset;
+}
+
+sub reset
+{
+    my( $change ) = @_;
+
+    foreach my $key ( keys %$change )
+    {
+	delete $change->{$key};
+    }
+
+    $change->{'errors'} = 0;
+    $change->{'errmsg'} = "";
+    $change->{'changes'} = 0;
+    $change->{'message'} = "\n";
+
+    return $change;
 }
 
 sub success
@@ -84,6 +97,25 @@ sub message
 sub errmsg
 {
     return $_[0]->{'errmsg'};
+}
+
+sub report
+{
+    my( $change, $errtype ) = @_;
+
+    $errtype ||= 'validation';
+
+    if( $change->changes )
+    {
+	$Para::Frame::REQ->result->message( $change->message );
+    }
+
+    if( $change->errors )
+    {
+	throw($errtype, $change->errmsg );
+    }
+
+    return $change->reset;
 }
 
 1;

@@ -29,7 +29,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( trim throw );
+use Para::Frame::Utils qw( trim throw uri );
 
 use Para::Arcs;
 use Para::Member;
@@ -60,12 +60,14 @@ sub get
 	$t = Para::Topic->find_one( $t );
     }
 
-    warn "  get interest $t->{id}\n";
+    warn "  get interest ".$t->id."\n";
 #    cluck Dumper[$this,$m,$t];
 
-    my $rec = $Para::dbix->select_possible_record('from intrest where intrest_member=? and intrest_topic=? and intrest_defined >= 10 and intrest is not null order by intrest desc, intrest_defined desc', $m->id, $t->id );
+    my $rec = $Para::dbix->select_possible_record('from intrest where intrest_member=? and intrest_topic=? order by intrest desc, intrest_defined desc', $m->id, $t->id );
 
     return undef unless $rec;
+
+    warn "    found\n";
 
     $rec->{'member'} = $m;
     $rec->{'topic'} = $t;
@@ -83,15 +85,89 @@ sub getset
 	$t = Para::Topic->find_one( $t );
     }
 
-    warn "  getset interest $t->{id}\n";
+    warn "  getset interest ".$t->id."\n";
 
     my $i = $this->get( $m, $t );
     unless( $i )
     {
-	$this->create( $t, $m, 1);
+	$this->create( $m, $t, 1);
 	$i = $this->get( $m, $t );
     }
+
+    $i or die "    Failed to create interest";
+
     return $i;
+}
+
+
+###################  Class static methods
+
+sub touch
+{
+    die "deprecated";
+
+    my( $this, $m, $t, $defined ) = @_;
+    my $class = ref($this) || $this;
+    $m ||= $Para::Frame::U;
+    $t or throw('incomplete', "t missing\n");
+    $defined ||= 1;
+
+    my $mid = ref $m ? $m->id : $m;
+    my $tid = ref $t ? $t->id : $t;
+
+    my $st_find = "select * from intrest where intrest_topic=? and intrest_member=?";
+    my $sth_find = $Para::dbh->prepare_cached( $st_find );
+    $sth_find->execute( $tid, $mid );
+    my $rec = {};
+    if( $sth_find->rows == 0)
+    {
+	Para::Interest->create( $t, $m, $defined );
+    }
+    $sth_find->finish;
+    return 1;
+}
+
+
+sub create
+{
+    my( $this, $m, $t, $defined ) = @_;
+    my $class = ref($this) || $this;
+    my $u = $Para::Frame::U;
+
+    $m ||= $u;
+    $t or throw('incomplete', "t missing\n");
+    $defined ||= 1;
+
+    my $mid = ref $m ? $m->id : $m;
+    my $tid = ref $t ? $t->id : $t;
+
+    if( $u->level < 40 and $u->id != $mid )
+    {
+	throw('denied', "Du har inte access för att ändra någon annans intressen.");
+    }
+
+
+    warn "  create interest ".$t->id."\n";
+
+    my $sth = $Para::dbh->prepare_cached("insert into intrest
+             ( intrest_member, intrest_topic, intrest_updated, intrest_defined )
+                                         values ( ?, ?, now(), ?)");
+    eval
+    {
+	$sth->execute( $mid, $tid, $defined );
+    };
+    if( $@ )
+    {
+	if( $Para::dbh->errstr =~ /duplicate key/ )
+	{
+	    throw('create', "This interest already exists\n");
+	}
+	die;
+    }
+
+    warn "    success\n";
+
+    return 1;
 }
 
 ######## Methods
@@ -138,10 +214,92 @@ sub comment
     return $_[0]->{'intrest_description'};
 }
 
+sub belief
+{
+    return $_[0]->{'belief'} || 0;
+}
+
+sub knowledge
+{
+    return $_[0]->{'knowledge'} || 0;
+}
+
+sub theory
+{
+    return $_[0]->{'theory'} || 0;
+}
+
+sub skill
+{
+    return $_[0]->{'skill'} || 0;
+}
+
+sub practice
+{
+    return $_[0]->{'practice'} || 0;
+}
+
+sub editor
+{
+    return $_[0]->{'editor'} || 0;
+}
+
+sub helper
+{
+    return $_[0]->{'helper'} || 0;
+}
+
+sub meeter
+{
+    return $_[0]->{'meeter'} || 0;
+}
+
+sub bookmark
+{
+    return $_[0]->{'bookmark'} || 0;
+}
+
+sub experience
+{
+    return $_[0]->{'experience'} || 0;
+}
+
+sub visit_latest
+{
+    return Para::Frame::Time->get($_[0]->{'visit_latest'});
+}
+
+sub visit_version
+{
+    return $_[0]->{'visit_version'} || undef;
+}
+
+sub updated
+{
+    return Para::Frame::Time->get($_[0]->{'intrest_updated'});
+}
+
+sub description
+{
+    return $_[0]->{'intrest_description'} || "";
+}
+
 sub defined
 {
     return $_[0]->{'intrest_defined'} || 0;
 }
+
+sub connected
+{
+    return $_[0]->{'intrest_connected'} || 0;
+}
+
+sub interest
+{
+    return $_[0]->{'intrest'} || 0;
+}
+
+###########
 
 sub equals
 {
@@ -178,7 +336,7 @@ sub update_by_query
 	$rec->{$key} = $q->param( $key );
     }
 
-    return $q->update( $rec );
+    return $i->update( $rec );
 }
 
 sub update
@@ -188,7 +346,7 @@ sub update
     my @fields = ();
     my @values = ();
 
-    $rec->{'defined'} || $rec->{'defined'} || 0;
+    $rec->{'defined'} || 0; # TODO: Allow lowering the value
     if( $rec->{'defined'} > $i->defined )
     {
 	warn "  Changing interest_defined to $rec->{'defined'}\n";
@@ -196,7 +354,7 @@ sub update
 	push @values, int $rec->{'defined'};
     }
 
-    $rec->{'connected'} || 0;
+    $rec->{'connected'} || 0;; # TODO: Allow lowering the value
     if( $rec->{'connected'} > $i->connected )
     {
 	warn "  Changing interest_connected to $rec->{'connected'}\n";
@@ -206,49 +364,49 @@ sub update
 
     if( $rec->{'belief'} )
     {
-	push @fields, 'intrest_belief';
+	push @fields, 'belief';
 	push @values, int $rec->{'belief'};
     }
 
     if( $rec->{'practice'} )
     {
-	push @fields, 'intrest_practice';
+	push @fields, 'practice';
 	push @values, int $rec->{'practice'};
     }
 
     if( $rec->{'theory'} )
     {
-	push @fields, 'intrest_theory';
+	push @fields, 'theory';
 	push @values, int $rec->{'theory'};
     }
 
     if( $rec->{'knowledge'} )
     {
-	push @fields, 'intrest_knowledge';
+	push @fields, 'knowledge';
 	push @values, int $rec->{'knowledge'};
     }
 
     if( $rec->{'editor'} )
     {
-	push @fields, 'intrest_editor';
+	push @fields, 'editor';
 	push @values, int $rec->{'editor'};
     }
 
     if( $rec->{'helper'} )
     {
-	push @fields, 'intrest_helper';
+	push @fields, 'helper';
 	push @values, int $rec->{'helper'};
     }
 
     if( $rec->{'meeter'} )
     {
-	push @fields, 'intrest_meeter';
+	push @fields, 'meeter';
 	push @values, int $rec->{'meeter'};
     }
 
     if( $rec->{'bookmark'} )
     {
-	push @fields, 'intrest_bookmark';
+	push @fields, 'bookmark';
 	push @values, int $rec->{'bookmark'};
     }
 
@@ -260,7 +418,7 @@ sub update
 
     if( $rec->{'description'} )
     {
-	push @fields, 'description';
+	push @fields, 'intrest_description';
 	push @values, $rec->{'description'};
     }
 
@@ -289,78 +447,40 @@ sub next_step
 {
     my( $in, $args ) = @_;
 
-    # TODO: rewrite
+    $args ||= {};
+
+    my $defined = $args->{'defined'} || 0;
+    my $redefine = $args->{'redefine'} || 0;
+
+    # 1. Define relations 1-10
+    # 2. Specify intrest
+    # 3. Define relations 11-20
+    # 4. Specify related intrests
+    # 5. Define relations 21-50
+
+    my $base = "/member/db/person/interest";
+
+    my $tmpl;
+    
+    if( $defined < 30 or $redefine )
+    {
+	$tmpl = $base.'/specify.tt';
+    }
+    elsif( $in->interest > 50 and $defined < 90 )
+    {
+	$tmpl = $base.'/specify_related.tt';
+    }
+    else
+    {
+	$tmpl = $base.'/specify_list.tt';
+    }
 
     my $next = {};
 
-    $next->{'handler'} = '/member/db/person/interest/specify.tt';
-    $next->{'url'} = $next->{'handler'}."?tid=".$in->t->id;
+    $next->{'template'} = $tmpl;
+    $next->{'url'} = uri( $tmpl, {tid => $in->t->id} );
 
     return $next;
-}
-
-###################  Class static methods
-
-sub touch
-{
-    my( $this, $t, $m, $defined ) = @_;
-    my $class = ref($this) || $this;
-    $m ||= $Para::Frame::U;
-    $t or throw('incomplete', "t missing\n");
-    $defined ||= 1;
-
-    my $mid = ref $m ? $m->id : $m;
-    my $tid = ref $t ? $t->id : $t;
-
-    my $st_find = "select * from intrest where intrest_topic=? and intrest_member=?";
-    my $sth_find = $Para::dbh->prepare_cached( $st_find );
-    $sth_find->execute( $tid, $mid );
-    my $rec = {};
-    if( $sth_find->rows == 0)
-    {
-	Para::Interest->create( $t, $m, $defined );
-    }
-    $sth_find->finish;
-    return 1;
-}
-
-
-sub create
-{
-    my( $this, $t, $m, $defined ) = @_;
-    my $class = ref($this) || $this;
-    my $u = $Para::Frame::U;
-
-    $m ||= $u;
-    $t or throw('incomplete', "t missing\n");
-    $defined ||= 1;
-
-    my $mid = ref $m ? $m->id : $m;
-    my $tid = ref $t ? $t->id : $t;
-
-    if( $u->level < 40 and $u->id != $mid )
-    {
-	throw('denied', "Du har inte access för att ändra någon annans intressen.");
-    }
-
-
-    my $sth = $Para::dbh->prepare_cached("insert into intrest
-             ( intrest_member, intrest_topic, intrest_updated, intrest_defined )
-                                         values ( ?, ?, now(), ?)");
-    eval
-    {
-	$sth->execute( $mid, $tid, $defined );
-    };
-    if( $@ )
-    {
-	if( $Para::dbh->errstr =~ /duplicate key/ )
-	{
-	    throw('create', "This interest already exists\n");
-	}
-	die;
-    }
-
-    return 1;
 }
 
 1;

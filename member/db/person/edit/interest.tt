@@ -95,7 +95,7 @@
 
 
 [% FOREACH irec IN irecs %]
-   [% i = m.interests %]
+   [% i = m.interests.get(irec) %]
    [% IF loop.first %]
       <div class="entry">
       <table>
@@ -113,7 +113,7 @@
    [% END %]
 
    [% tr2 %]
-      <td>[% forward(i.t.topic, i.next_step(redefine=1).handler, run='mark', tid=i.t) %]
+      <td>[% forward(i.t.title, i.next_step(redefine=1).handler, run='mark', tid=i.t.id) %]
       <td align="right">[% i.interest %]
       <td>[% i.defined %]
       [% IF ifilter.include_date %]

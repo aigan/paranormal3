@@ -4,7 +4,7 @@ package Para::Action::member_update;
 use strict;
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw );
+use Para::Frame::Utils qw( throw debug );
 
 use Para::Member;
 
@@ -14,8 +14,6 @@ sub handler
 
     my $q = $req->q;
     my $u = $req->s->u;
-
-    my $DEBUG = $Para::Frame::DEBUG;
 
 #    warn Dumper $q;
 
@@ -28,7 +26,7 @@ sub handler
 	throw('denied', "Du har inte access för att ändra någon annan.");
     }
 
-    $m->changes_reset;
+    $m->changes->reset;
 
     # Meta-fields
     #
@@ -51,58 +49,16 @@ sub handler
 
     ### _meta_mailalias
     #
-    if( my $val = $q->param('_meta_mailalias') )
+    my $_meta_mailalias = $q->param('_meta_mailalias');
+    if( defined $_meta_mailalias )
     {
-	$m->set_mailaliases([  split /\n/, $val ]);
+	$m->set_mailaliases([  split /\n/, $_meta_mailalias ]);
     }
 
-    foreach my $field ( qw( nickname home_online_msn home_online_uri
-			    sys_email bdate_ymd_year member_level
-			    gender name_given name_middle name_family
-			    home_postal_code home_tele_phone
-			    home_tele_mobile home_tele_fax
-			    present_contact present_contact_public
+    ### Do the big part of the job right here
+    #
+    $m->update_by_query;
 
-			    ) )
-    {
-	if( defined $q->param($field) )
-	{
-	    $m->set($field, $q->param($field));
-	}
-    }
-
-    foreach my $field ( qw( name_prefix name_suffix home_postal_name
-			    home_postal_street home_postal_visiting
-			    home_tele_phone_comment
-			    home_tele_mobile_comment
-			    home_tele_fax_comment statement style
-			    home_online_email presentation
-			    member_comment_admin show_style
-
-			    ) )
-    {
-	if( defined $q->param($field) )
-	{
-	    $m->set_field($field, $q->param($field));
-	}
-    }
-
-    foreach my $field ( qw( home_online_icq home_online_aol
-				 sys_logging present_intrests
-				 present_activity present_gifts general_belief
-				 general_theory general_practice
-				 general_editor general_helper
-				 general_meeter general_bookmark
-				 general_discussion show_complexity
-				 show_detail show_edit show_level newsmail
-				 member_topic chat_level ) )
-
-    {
-	if( defined $q->param($field) )
-	{
-	    $m->set_field_number($field, $q->param($field));
-	}
-    }
 
     $m->mark_publish;
 
@@ -122,7 +78,8 @@ sub handler
     {
 	if( length($q->param('presentation')) < 300 )
 	{
-	    throw('validation', "Du har skrivit för lite.  Skriv några rader till.\n".
+	    throw('validation', "Din presentation kommer att läsas igenom av en människa.\n".
+		  "Du har skrivit för lite.  Skriv några rader till.\n".
 		  "Om du vill kan då återkomma imorgon och fortsätta.\n".
 		  "Det du skrivit hittills kommer att finnas kvar imorgon.\n".
 		  "Presentation behövs för att bli medborgare, men du måste\n".
@@ -142,21 +99,9 @@ sub handler
 	$m->change->success("Välkommen till nivå 3");
     }
 
-    my $change = $m->change;
-    if( $change->changes )
-    {
-	$req->result->message( $change->message );
-    }
+    $m->change->report;
 
-    if( $change->errors )
-    {
-	throw('validation', $change->errmsg );
-    }
-
-    if( $DEBUG > 3 )
-    {
-	warn "User is: ".$u->desig."\n";
-    }
+    debug(4,"User is: ".$u->desig);
 
     return "";
 }

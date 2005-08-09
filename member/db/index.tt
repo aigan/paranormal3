@@ -2,28 +2,28 @@
 
 [% PROCESS load_member.tt %]
 
+<h1>Torget: [% u.title %] [%+ jump(u.nickname, '/member/db/person/view/', member=u.id) %], [% jump("nivå $u.level", '/topic/nivasystemet_for_paranormalse.html') %], mnr [% u.member %]</h1>
+
 [% IF u.level > 1 and u.level < 5 %]
+
+   <h3>Observera:</h3>
+
    <ul>
       [% IF u.level < 3 %]
          <li>[% jump('Fortsätt med registrering','person/quest/level_02/') %]</li>
       [% END %]
       [% IF u.level > 2 and u.level < 5 %]
+	 <li>[% jump('Se instruktioner för nivå 3', 'person/quest/level_03/welcome.tt') %]</li>
          <li>[% jump('Uppdatera registrering','person/quest/level_02/') %]</li>
       [% END %]
-      <li>[% jump('Byt lösenord', 'person/edit/passwd.tt') %]</li>
+      <li>[% jump('Byt lösenord', 'person/edit/passwd.tt') %] (om du vill)</li>
    </ul>
 [% END %]
 
 
-[% IF u.level > 4 %]
-
-<h1>Torget: [% u.title %] [% jump(u.nickname, '/member/db/person/view/', member=u.id) %], [% jump("nivå $u.level", '/topic/nivasystemet_for_paranormalse.html') %], mnr [% u.member %]</h1>
-
-[% END %]
-
 [% IF u.level==5 %]
-<h2>[% jump('Välkommen till nivå 5', '/member/db/quest_level_05/welcome') %]</h2>
-<p>[% jump('Börja här!', '/member/db/quest_level_05/welcome') %]</p>
+<h2>[% jump('Välkommen till nivå 5', '/member/db/person/quest/level_05/welcome.tt') %]</h2>
+<p>[% jump('Börja här!', '/member/db/person/quest/level_05/welcome.tt') %]</p>
 [% END %]
 
 <table><tr><td>
@@ -58,7 +58,7 @@
      <li><a href="/member/mail/">E-post</a>
   [% END %]
   [% IF u.level > 1 %]
-     <li>[% jump('Definiera intressen', 'intrest/focus') %]
+     <li>[% jump('Definiera intressen', 'person/interest/focus.tt') %]
      <li>[% jump('Gåvor', '/member/payment/') %]
   [% END %]
   <li>[% jump('Chatta', '/member/chat/login.tt') %]

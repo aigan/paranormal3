@@ -38,11 +38,11 @@
 
 </td></tr>
 <tr><td>
-   [% go('Godkänn','/member/db/person/find/pending_lvl5.tt','approve_lvl5') %]
+   [% go('Godkänn','/member/db/person/find/pending_lvl5.tt','member_presentation_approve') %]
 
 </td><td align="right">
 
-   [% go('Tillrättavisa','/member/db/person/find/pending_lvl5.tt','disapprove_lvl5') %]
+   [% go('Tillrättavisa','/member/db/person/find/pending_lvl5.tt','member_presentation_disapprove') %]
 </td></tr>
 </table>
 

@@ -8,4 +8,4 @@ Lösenord    : [% m.passwd %]
 
 Gå till denna sida för att logga in automatiskt:
 
-    http://paranormal.se/member/db?run=member_login&uid=[% m.nickname | uri %]&passwd=[% m.passwd | uri %]
+    http://[% host %]/member/db?run=member_login&uid=[% m.nickname | uri %]&passwd=[% m.passwd | uri %]

@@ -17,11 +17,12 @@ package Para::Widget;
 #=====================================================================
 
 use strict;
+use locale;
 use Carp;
 use Template 2;
-use locale;
 use POSIX qw(locale_h);
 use Data::Dumper;
+use Text::ParagraphDiff;
 
 BEGIN
 {
@@ -528,8 +529,6 @@ sub html_psi
     # text in $_[0]
     my $nolinks = $_[1];
 
-    use locale;
-    use POSIX qw(locale_h);
     setlocale(LC_ALL, "sv_SE");
 
 
@@ -812,7 +811,6 @@ sub new_entry
     }
 
 
-    use locale;
     setlocale(LC_ALL, "sv_SE");
     # Initialize with tid
     $Para::entry_links = {};
@@ -826,6 +824,8 @@ sub new_entry
     #
     unless( $Para::link_db )
     {
+	# TODO - FIXME - Run in FORK  (initialize before req)
+
 	my $stime = time; ### TIME
 
 	my $sth = $Para::dbh->prepare(
@@ -879,6 +879,7 @@ sub new_entry
 		{
 		 tid => $tid,
 		 file => $file,
+		 alias => $alias,
 		};
 	    }
 
@@ -895,7 +896,6 @@ sub new_entry
 sub insert_autolinks
 {
     my( $textref, $nolinks ) = @_;
-    use locale;
     setlocale(LC_ALL, "sv_SE");
     return "" unless $textref and length $$textref;
 
@@ -1080,7 +1080,7 @@ sub insert_autolinks
 	  }
 	}
 	$text = $newtext;
-	    dwbug(1,"text: '$text'");
+	    debug(1,"text: '$text'");
     }
 
 
@@ -1480,7 +1480,6 @@ sub diff
     $old ||= '';
     $new ||= '';
 
-    use Text::ParagraphDiff;
 
 #    return Text::ParagraphDiff::create_diff( \$old, \$new );
     warn "Old: $old\n";

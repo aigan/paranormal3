@@ -1,7 +1,7 @@
 [% META
 	title = 'Ämnen'
 	next_template = 'name.tt'
-	next_action = 'member_interest_update_multi'
+	next_action = 'interest_update_multi'
 	level = 2
 %]
 <p align="right">Steg 6 av 10</p>

@@ -1,16 +1,10 @@
 [% META
 	title = 'Denna runda är klar'
+	default_template = 'focus.tt'
 	level = 5
 %]
 
 <p>Det var allt för denna rundan. (Det här systemet är under
 utveckling.  Det är inte så mycket du kan göra ännu...)</p>
 
-<p>Du kan välja att [% jump('Definiera fler intressen', 'focus.tt') %]
-eller [% jump('ta dig till torget', '/member/db/') %].</p>
-
-[% IF q.param('route') %]
-<p>Ah.. Du var mitt uppe i något. Då kan du välja
-
-[% go('Fortsätt', backtrack, 'nop', route=q.param('route') ) %]
-[% END %]
+[% submit %]

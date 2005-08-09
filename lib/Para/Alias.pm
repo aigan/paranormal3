@@ -26,7 +26,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( minof throw debug );
+use Para::Frame::Utils qw( minof throw debug trim reset_hashref );
 use Para::Frame::Time;
 
 use Para::Topic qw( title2url );
@@ -36,10 +36,12 @@ use Para::History;
 use Carp;
 use locale;
 
-sub new
+sub _new
 {
-    # Get relation(s) matching the params
+    # Create object from record
     #
+    # OBS! Get the object from cache if existing, before using this
+
     my( $this, $rec ) = @_;
     my $class = ref($this) || $this;
 
@@ -51,113 +53,103 @@ sub new
     return bless( $rec, $class );
 }
 
-sub list
+=head2 find_by_name
+
+    $class->find_by_name( $name );
+
+crits:
+  active
+  status_min
+
+returns arrayref of aliases
+
+=cut
+
+sub find_by_name
 {
-    my( $class, $t, $args ) = @_;
+    my( $class, $name, $crits ) = @_;
 
-    return undef unless ref $t;
-    $args ||= {};
+    $name = trim lc $name;
 
-    my $extra = "";
-    if( $args->{'include_inactive'} )
+    debug(3,"Finding alias by name $name",1);
+
+    unless( $Para::Alias::CACHE{$name} )
     {
-	debug(1,"Include inactive aliases in list");
-    }
-    else
-    {
-	$extra .= " and talias_active is true";
-	debug(1,"Will not include inactive aliases in list");
+	my $list = $Para::dbix->select_list("select talias_t, talias
+                                from talias where talias=?", $name);
+	$Para::Alias::CACHE{$name} = [];
+	debug(4,"Initiating alias name cache");
+	foreach my $rec ( @$list )
+	{
+	    my $tid = $rec->{'talias_t'};
+
+	    my $a = $class->find_by_tid( $tid )->{$name};
+
+	    push @{$Para::Alias::CACHE{$name}}, $a;
+	}
     }
 
-    my $list = $Para::dbix->select_list("from talias where talias_t=? $extra", $t->id);
+    debug(-1);
 
-    my @aliases;
-    foreach my $rec ( @$list )
+    if( $crits )
     {
-	push @aliases, Para::Alias->new( $rec );
+	my @res = ();
+
+	my $crit_active = $crits->{'active'};
+	my $crit_status_min = $crits->{'status_min'} || 0;
+
+	foreach my $a ( @{$Para::Alias::CACHE{$name}} )
+	{
+	    debug(4,"  checking ".$a->desig);
+
+	    if( $crit_active )
+	    {
+		next unless $a->active;
+	    }
+
+	    next unless $a->status >= $crit_status_min;
+
+	    debug(4,"    passed");
+	    push @res, $a;
+	}
+	return \@res;
     }
-    return \@aliases;
+
+    return $Para::Alias::CACHE{$name};
 }
 
-sub add
+=head2 find_by_tid
+
+    $class->fins_by_tid( $tid );
+
+returns hashref with alias => object pairs
+
+=cut
+
+sub find_by_tid
 {
-    my( $this, $t, $alias_name, $props ) = @_;
-    my $class = ref($this) || $this;
+    my( $class, $tid ) = @_;
 
-    $alias_name = lc( $alias_name );
+    debug(3,"Finding alias by tid $tid");
 
-    debug(1,"Adding alias $alias_name");
-
-    if( my $a = $class->get( $t, $alias_name ) )
+    unless( $Para::Topic::ALIASES{$tid} )
     {
-	debug(1,"  Already exists. Updating");
-	return $a->update( $props );
+	debug(4,"  Initiating topic aliases cache");
+	$Para::Topic::ALIASES{$tid} = {};
+
+	my $list = $Para::dbix->select_list("from talias where talias_t=?", $tid);
+	foreach my $rec ( @$list )
+	{
+	    my $a = $class->_new( $rec );
+	    debug(5,"    Adding $a->{talias}");
+	    $Para::Topic::ALIASES{$tid}{ $a->name } = $a;
+	}
     }
 
-    my $m = $Para::u;
-    my $st_alias_add =
-      "insert into talias ( talias_t, talias, talias_urlpart,
-                            talias_createdby, talias_changedby,
-                            talias_status, talias_autolink,
-                            talias_index, talias_language,
-                            talias_active )
-              values ( ?, lower(?), ?, ?, ?, ?, ?, ?, ?, ? )";
-    my $sth_alias_add = $Para::dbh->prepare_cached( $st_alias_add );
-
-    my $talias_t         = $t->id or die;
-    my $talias           = $alias_name or die;
-    die "wrong indata" if ref $talias;
-    my $talias_urlpart   = title2url($talias);
-    my $talias_createdby = $m->id;
-    my $talias_changedby = $m->id;
-    my $talias_status    = minof( $m->new_status, $props->{'status'});
-    my $talias_autolink  = defined $props->{'autolink'} ? $props->{'autolink'} : 1;
-    my $talias_index     = defined $props->{'index'} ? $props->{'index'} : 1;
-    my $talias_language  = $props->{'language'} || undef;
-    $talias_language = $talias_language->id if ref $talias_language;
-    $talias_language = undef unless $talias_language;
-    my $talias_active = $talias_status >= S_PENDING ? 1 : 0;
-
-    $sth_alias_add->execute( $talias_t, $talias, $talias_urlpart,
-			     $talias_createdby, $talias_changedby,
-			     $talias_status, pgbool($talias_autolink),
-			     pgbool($talias_index), $talias_language,
-			     pgbool($talias_active) );
-
-    Para::History->add('talias', HA_CREATE,
-		      {
-			  topic => $t,
-			  skey  => $alias_name,
-		      });
-
-    $t->mark_publish;
-
-    # TODO: Skip this step
-    return $class->get( $t, $alias_name );
+    return $Para::Topic::ALIASES{$tid};
 }
 
-sub get
-{
-    my( $class, $t, $alias_name, $props ) = @_;
-
-    confess $alias_name unless length $alias_name;
-    debug(1,"get alias $alias_name");
-
-    confess "invalid input: $t" unless ref $t;
-    confess 'not implemented' if $props;
-    my $rec = $Para::dbix->select_possible_record("from talias where talias_t=? and talias=?",
-				     $t->id, $alias_name);
-    if( $rec )
-    {
-	return $class->new( $rec );
-    }
-    else
-    {
-	debug(1,"  not found");
-	return undef;
-    }
-}
-
+### Accessors
 
 sub name   { shift->{'talias'} }
 sub alias  { shift->{'talias'} }
@@ -207,6 +199,8 @@ sub updated
     return Para::Time->get( shift->{'talias_updated'} );
 }
 
+### Methods
+
 sub activate
 {
     my( $a ) = @_;
@@ -217,6 +211,70 @@ sub activate
 		status => $m->new_status,
 	       });
     return $a;
+}
+
+
+sub add
+{
+    my( $this, $t, $name, $props ) = @_;
+    my $class = ref($this) || $this;
+
+    $name = lc trim $name;
+
+    debug(1,"Adding alias $name");
+
+    if( my $a = $t->alias( $name ) )
+    {
+	debug(1,"  Already exists. Updating");
+	return $a->update( $props );
+    }
+
+    my $m = $Para::u;
+    my $st_alias_add =
+      "insert into talias ( talias_t, talias, talias_urlpart,
+                            talias_createdby, talias_changedby,
+                            talias_status, talias_autolink,
+                            talias_index, talias_language,
+                            talias_active )
+              values ( ?, lower(?), ?, ?, ?, ?, ?, ?, ?, ? )";
+    my $sth_alias_add = $Para::dbh->prepare_cached( $st_alias_add );
+
+    my $talias_t         = $t->id or die;
+    my $talias           = $name or die;
+    die "wrong indata" if ref $talias;
+    my $talias_urlpart   = title2url($talias);
+    my $talias_createdby = $m->id;
+    my $talias_changedby = $m->id;
+    my $talias_status    = minof( $m->new_status, $props->{'status'});
+    my $talias_autolink  = defined $props->{'autolink'} ? $props->{'autolink'} : 1;
+    my $talias_index     = defined $props->{'index'} ? $props->{'index'} : 1;
+    my $talias_language  = $props->{'language'} || undef;
+    $talias_language = $talias_language->id if ref $talias_language;
+    $talias_language = undef unless $talias_language;
+    my $talias_active = $talias_status >= S_PENDING ? 1 : 0;
+
+    $sth_alias_add->execute( $talias_t, $talias, $talias_urlpart,
+			     $talias_createdby, $talias_changedby,
+			     $talias_status, pgbool($talias_autolink),
+			     pgbool($talias_index), $talias_language,
+			     pgbool($talias_active) );
+
+    Para::History->add('talias', HA_CREATE,
+		      {
+			  topic => $t,
+			  skey  => $name,
+		      });
+
+    $t->mark_publish;
+
+
+    ### Sync
+    #
+    delete $Para::Alias::CACHE{$name};
+    delete $Para::Topic::ALIASES{$t->id};
+    $t->mark_publish;
+
+    return $t->alias( $name );
 }
 
 sub update
@@ -447,9 +505,11 @@ sub update
 
     debug(1,"updated (S$status)!");
 
+    ### Sync
+    #
+    $a->reset;
     $a->topic->mark_publish;
 
-    $a->reset;
     return $a;
 }
 
@@ -464,10 +524,8 @@ sub reset
 
     my $rec = $Para::dbix->select_record("from talias where talias_t=? and talias=?",
 			    $a->topic->id, $a->name);
-    foreach my $key ( keys %$rec )
-    {
-	$a->{$key} = $rec->{$key};
-    }
+
+    reset_hashref( $a, $rec );
 
     return $a;
 }

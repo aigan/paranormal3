@@ -1,6 +1,6 @@
-  [%- DEFAULT mid = q.param('mid') || q.param('member') || u.id || 0 %]
+  [%- DEFAULT mid = q.param('mid') || u.id || 0 %]
   [%- DEFAULT level = 0 %]
-  [%- m =  getmember( mid ) %]
+  [%- m = getmember( mid ) %]
   [%- IF m.level < -1 and u.level < 41;
          THROW denied "Det här är en zombie.\nEndast en livbringare kan uttyda något ur mörkret som råder här.";
       END;

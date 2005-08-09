@@ -65,13 +65,13 @@ use Para::Email;
 	'logfile' => "$APPROOT/logs/creation.log",
 
 	port      => 7788,
-	debug     => 0,
+	debug     => 1,
     };
     Para::Frame->configure( $cfg );
 
     # Detatch and run in background
     #
-    Para::Frame->daemonize;
+#    Para::Frame->daemonize;
 
 
     # Connect to database
@@ -85,6 +85,29 @@ use Para::Email;
     $Para::dbh = $Para::dbix->dbh;
 
 
+    # Define TT filters
+    #
+    Para::Frame->add_tt_filters('html', {
+	'html_psi' => \&Para::Widget::html_psi,
+	'html_psi_nolinks' => sub{ Para::Widget::html_psi($_[0], 1) },
+    });
+
+
+    # Attatch code to hooks
+    #
+
+    # Just in case we temporarily switched to root and got an exception
+    Para::Frame->add_hook('on_error_detect',
+			  sub { Para::Member->revert_from_root() }
+			  );
+
+    Para::Frame->add_hook('before_user_logout',
+			  sub
+			  {
+			      $_[0]->latest_out(time);
+			  });
+
+    
 
     my $global_params =
     {
@@ -123,19 +146,6 @@ use Para::Email;
 	'favicon'           => "/favicon.ico",
     };
     Para::Frame->add_global_tt_params( $global_params );
-
-    # Define TT filters
-    #
-    Para::Frame->add_tt_filters('html', {
-	'html_psi' => \&Para::Widget::html_psi,
-	'html_psi_nolinks' => sub{ Para::Widget::html_psi($_[0], 1) },
-    });
-
-
-    # Just in case we temporarily switched to root and got an exception
-    Para::Frame->add_hook('on_error_detect',
-			  sub { Para::Member->revert_from_root() }
-			  );
 
     Para::Frame->startup();
 }

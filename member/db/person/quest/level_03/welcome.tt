@@ -2,8 +2,36 @@
         level = 3
 %]
 
-<p>Då var det klart.  Vi skickar ett e-brev till dig när din ansökan kontrollerats.</p>
+<p>Då var det klart.  Vi skickar ett e-brev till dig när vi tittat på din presentation.</p>
+
+<p>Kontrollen är <strong>inte</strong> för att sortera bort vissa typer av människor. Vi vill bara se att du verkligen skrivit en presentation och inte fyllt textrutan med "bla bla bla bla".  Syftet med medlemskapet är som sagt att ge dig möjlighet att bidraga till uppslagsverket.  Så det minsta man kan begära är att du följer våra instruktioner här.
 
 <p>Under tiden är du välkommen att fortsätta titta runt på webbplatsen.</p>
 
-<p>Varför inte passa på att <a href="/member/chat/login.html">logga in på chatten</a>?
+<p>Ta en titt på menyraden ovan.</p>
+
+<div class="entry"><table>
+
+<tr><td>[% jump('Hem','/') %]</td><td>Här är webbplatsens ingångssida med länkar till uppslagsverket samt <em>dagens meddelande</em></td></tr>
+
+<tr><td>[% jump('Torget','/member/db/') %]</td><td>Detta är platsen du utgår ifrån när du jobbar med webbplatsen. Här hittar du information och saker att göra. Sidans innehåll anpassar sig till respektive medlem.</td></tr>
+
+<tr><td>[% jump('Inställingar','/member/db/person/edit/') %]</td><td>Här kommer du åt alla dina uppgifter. Du kan uppdatera lösenord, presentation och mycket mer. Det mesta i större detalj än vad du sett hittills. Du kommer att guidas igenom de inställningarna efter att vi tittat på din presentation.</td></tr>
+
+<tr><td>Logga ut</td><td>Nej. Det behövs inte. Såvida du inte vill lämna datorn för någon annan. (<em>Logga ut</em> gör att du behöver skriva in namn och lösenord igen när du vill göra något så som medlem här.)</td></tr>
+
+</table></div>
+
+<h2>Nu skulle du kunna...</h2>
+
+<ul>
+<li>passa på att <a href="/member/chat/login.html">logga in på chatten</a>?</li>
+
+<li>gå tillbaka och [% jump("uppdatera din presentation", "/member/db/person/quest/level_02/presentation.tt") %]?</li>
+
+<li>gå tillbaka och se på/ändra [% jump("övriga frågor du svarade på under din registrering", "/member/db/person/quest/level_02/") %].</li>
+</ul>
+
+<p>Men håll utkik efter vårat brev till dig. (Det är möjligt att brevet kan ha sorterats som <em>spam</em>.)
+
+<p>Siffran uppe till vänster är din medlemsnivå. Den kommer ändras så fort vi tittat på din presentation.</p>

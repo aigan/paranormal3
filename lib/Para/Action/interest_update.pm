@@ -1,5 +1,5 @@
 #  $Id$  -*-perl-*-
-package Para::Action::member_interest_update;
+package Para::Action::interest_update;
 
 use strict;
 
@@ -33,8 +33,6 @@ sub handler
     warn "  Will now update interest in $tid for $mid\n";
 
     my $i = Para::Interest->getset( $m, $t );
-
-    $q->param('interest_defined') ||= 10;
 
     if( $i->update_by_query )
     {

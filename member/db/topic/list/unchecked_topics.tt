@@ -1,0 +1,32 @@
+[% META title="Ämnen att kontrollera"
+        level = 11
+%]
+
+<p>
+[ [% jump('Ladda om sidan', me) %]
+]</p>
+
+
+
+<div class="entry">
+<table>
+   <tr><th>A</th><th>S</th><th>T</th><th>Ver</th><th>Ämne</th><th>Är</th><th colspan="2">Skapad av</th></tr>
+[% FOREACH select_list("from t LEFT JOIN member ON t_createdby=member WHERE (t_status=2 or t_status=3) and t_entry is false order by t_active desc, t_status, t_updated") %]
+   [% tr2 %]
+      [% t = topic(t) %]
+      <td>$t_active</td>
+      <td>$t_status</td>
+      <td>$t.id</td>
+      <td>$t_ver</td>
+      <td>[% jump(t.desig, '../edit/versions', tid=t.id v=t_ver) %]</td>
+      <td>[% PROCESS typelist.tt rel=t.id %]
+      <td>[% jump(nickname, '/member/db/person/view/', member=member) %]</td>
+      <td>[% t_created %]</td>
+   </tr>
+[% END %]
+</table>
+</div>
+
+<h2>Instruktioner</h2>
+
+<p>Se [% jump("hur väktare bedömmer ämnen och texter", "/topic/hur_vaktare_bedommer_amnen_och_texter.html" ) %]</p>

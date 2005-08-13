@@ -1,0 +1,19 @@
+         [% FOREACH arc = t.rel( type=reltype direct=1 ).arcs %]
+            [%- IF loop.first %]
+               [% prefix %]
+            [% ELSIF loop.last %] och
+            [% ELSE %],
+            [% END %]
+         
+            [% IF arc.type.literal %]
+               [% arc.value | html %]
+            [% ELSE %]
+               [% jump( arc.obj.title, arc.obj.file) %]
+            [%- END %]
+            [%- IF arc.comment %]
+               (<em>[% arc.comment %]</em>)
+            [% END %]
+            [%- IF loop.last %]
+               [% suffix %]
+            [% END %]
+         [%- END %]

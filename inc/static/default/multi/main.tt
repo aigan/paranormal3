@@ -1,0 +1,39 @@
+<div align="center" class="entry">
+[% IF multi_letter %]
+   <h2>&lt; [% uc(multi_letter) %] &gt;</h2>
+[% END %]
+
+[% IF multi_letters %]
+<p>Här listas alla [% multi_plural %]</p>
+<p>[
+[% IF multi_letter %]
+   [% jump('Hem', t.file) %]
+[% ELSE %]
+   Hem
+[% END %]
+[% multi_separator %]
+[% FOREACH letter = multi_letters %]
+   [% IF letter == multi_letter %]
+      [% uc(letter) %]
+   [% ELSE %]
+      <a href="[% multi_dir %]/[% letter %].html">[% uc(letter) %]</a>
+   [% END %]
+   [% multi_separator UNLESS loop.last %]
+[% END %]
+]</p>
+[% ELSE %]
+<p>För många för att räknas upp här</p>
+[% END %]
+
+<p>Sök bland [% multi_cnt %] [% multi_plural %]</p>
+<p>
+<form action="/search/alternatives.tt">
+<input type="hidden" name="run" value="topic_search_published">
+[% hidden("constraint", multi) %]
+[% hidden("constraint_target", tid) %]
+[% input('talias',"") %]
+[% submit('Sök') %]
+</form>
+</p>
+
+</div>

@@ -1,0 +1,28 @@
+  [% ### Relationer till ämnen ### %]
+[% FOREACH rt = rtlist %]
+  [% FOREACH rel = select_list("from rel, t, reltype where rev=?
+                              and rel=t and rel_type=reltype
+                              and rel_active is true and t_active is true
+                              and rel_indirect is false
+                              and rel_strength >= 30 and rel_type=?", entry.id, rt) %]
+     [%- IF loop.first %]
+        <span class="meta">
+        [% rel.rel_name %] 
+     [% ELSIF loop.last %] och
+     [% ELSE %],
+     [% END %]
+     [% IF present == 'short' %]
+        [% title = rel.t_title_short || rel.t_title %]
+        [% jump( title, rel.t_file) %]
+     [% ELSE %]
+        [% jump( rel.t_title, rel.t_file) %]
+     [% END %]
+     [% IF rel.rel_comment %]
+        (<em>[% rel.rel_comment %]</em>)
+     [% END %]
+     [% IF loop.last %]
+        <br />
+        </span>
+     [% END %]
+  [% END %]
+[% END %]

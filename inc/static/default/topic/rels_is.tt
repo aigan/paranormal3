@@ -1,0 +1,23 @@
+  [% ### Relationer 1,2 ### %]
+  [% FOREACH rel = select_list("from rel, t, reltype where rev=?
+                              and rel=t and rel_type=reltype
+                              and rel_active is true and t_active is true and rel_indirect is false
+                              and rel_strength >= 30 and rel_type in (1, 2)", entry.id) %]
+     [%- IF loop.first %]
+        <span class="meta">
+        [% rel.rel_name %] 
+     [% ELSIF loop.last %] och
+     [% ELSE %],
+     [% END %]
+
+     [% jump( rel.t_title, rel.t_file) %]
+     [% IF rel.rel_comment %]
+        (<em>[% rel.rel_comment %]</em>)
+     [% END %]
+     [% IF loop.last %]
+        <br />
+        </span>
+     [% END %]
+
+  [% END %]
+

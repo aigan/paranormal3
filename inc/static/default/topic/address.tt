@@ -1,0 +1,45 @@
+[% DEFAULT t = topic(tid) %]
+[% IF t.arc(26) or t.arc(27) %]
+<div class="address_block">
+[% street = t.arc(43).value %]
+[% IF street %]
+   Adress:
+   <div class="address">
+   [% matches = street.match('^(.+) (\d+)') %]
+   [% IF t.arc(25) AND t.arc(26) and matches.1 %]
+      <a href="[% url("http://kartor.eniro.se/query", stq=0, streetname= matches.0, streetnumber= matches.1, city= t.arc(26).value, what='map', asearch=1) %]" target="external">
+      [% street %]<br>
+      [% t.arc(25).value %] &nbsp; [% t.arc(26).value %]
+      </a>
+   [% ELSE %]
+      [% street %]<br>
+      [% t.arc(26).value %]
+   [% END %]
+   </div>
+   [% IF t.arc(24).value %]
+      Besöksadress:
+      <div class="address">
+      [%  t.arc(24).value %]
+      </div>
+   [% END %]
+[% ELSE %]
+   [% street = t.arc(24).value %]
+   Adress:<br>
+   <div class="address">
+   [% matches = street.match('^(.+) (\d+)') %]
+   [% IF t.arc(25) AND t.arc(26) and matches.1 %]
+      <a href="[% url("http://kartor.eniro.se/query", stq=0, streetname= matches.0, streetnumber= matches.1, city= t.arc(26).value, what='map', asearch=1) %]" target="external">
+      [% t.arc(24).value %]<br>
+      [% t.arc(25).value %] &nbsp; [% t.arc(26).value %]
+      </a>
+   [% ELSE %]
+      [% t.arc(24).value %]<br>
+      [% t.arc(25).value %] &nbsp; [% t.arc(26).value %]
+   [% END %]
+   </div>
+[% END %]
+[% IF t.arc(27) %]
+   Telefon: <div class="address">[% t.arc(27).value %]</div>
+[% END %]
+</div>
+[% END %]

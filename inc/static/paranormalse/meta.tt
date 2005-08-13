@@ -1,0 +1,113 @@
+[% PROCESS topic/button_update.tt %]
+
+[% jump('Detaljer','/member/db/person/view', mid=m.id, class='link_button' id='member_details') %]
+
+<table align="left">
+ 
+<tr><td valign="top">Medlem <td>[% m.id %], nivå [%m.level %],
+ämne [% entry.id %], v$entry.ver
+
+<tr><td>Kallar sig <td>[% m.nickname %]
+
+[% IF m.age(1) %]
+<tr><td>
+   [% IF m.gender == 'M' %]
+      Han är
+   [% ELSIF m.gender == 'F' %]
+      Hon är
+   [% ELSE %]
+      Ålder
+   [% END %]
+
+   <td>[% m.age %] år
+   [% IF m.home_postal_city(1) %]
+      och bor i [% jump( m.home_postal_city,
+                         'http://www.sna.se/bin/ort.cgi',
+                         LANG='SE', S='E',
+                         O=m.home_postal_city,
+                         target="external"
+                       ) %]
+   [% END %]
+[% ELSE %]
+   [% IF m.gender(1) %]
+      <tr><td>Kön <td>
+      [% IF m.gender == 'M' %]
+         Man
+      [% ELSIF m.gender == 'F' %]
+         Kvinna   
+      [% END %]
+   [% END %]
+
+   [% IF m.home_postal_city(1) %]
+      <tr><td>Bor i <td>
+      [% jump( m.home_postal_city,
+               'http://www.sna.se/bin/ort.cgi',
+               LANG='SE', S='E',
+               O=m.home_postal_city,
+	       target="external"
+             ) %]
+   [% END %]
+
+[% END %]
+
+<tr><td valign="bottom">Kontakt <td>
+[% contact = 0 %]
+[%- IF m.home_online_uri(1) -%]
+   [%- ', ' IF contact %]
+   [% jump('Hemsida', m.home_online_uri, target='external') %]
+   [%- contact = 1 -%]
+[%- END -%]
+[%- IF m.newsmail > 2 -%]
+   [%- ', ' IF contact %]
+   [% jump('E-post', '/member/db/person/view/send_email' member=m.id) -%]
+   [%- contact = 1 -%]
+[%- END -%]
+[%- IF m.home_online_icq(1) -%]
+   [%- ', ' IF contact %]
+   <a href="http://web.icq.com/wwp?Uin=$m.home_online_icq">
+   ICQ
+   <img src="http://web.icq.com/whitepages/online?icq=$m.home_online_icq&img=5" width="18" height="18" alt="" border="0">
+   </a>
+   [%- contact = 1 -%]
+[%- END -%]
+[%- IF m.home_online_msn(1) -%]
+   [%- ', ' IF contact %]
+   <a href="http://members.msn.com/$m.home_online_msn" target="_blank">
+   MSN
+   <img src="/images/icon/msn.gif" width="15" height="13" alt="" border="0">
+   </a>
+   [%- contact = 1 -%]
+[%- END -%]
+[% UNLESS contact %]
+   <em>Nej tack</em>
+[% END %]
+
+<tr><td>Uppdaterad <td>[% m.updated.ymd %]
+
+</table>
+
+[% IF m.present_gifts and m.payment_active and m.payment_total %]<br clear="right">
+   <a href="/topic/prenumeration_pa_paranormalse.html"><img alt="stödmedlem" src="/images/icon/coins-small.png" id="coins"></a>
+[% END %]
+
+<br clear="all">
+
+[% PROCESS topic/imported_info.tt %]
+[% PROCESS topic/rels_is.tt %]
+[% PROCESS topic/emails.tt %]
+[% PROCESS topic/ts.tt %]
+[% PROCESS topic/media.tt %]
+
+[% INCLUDE topic/rels_literal.tt
+           rtlist=[13, 17, 18, 27, 24, 25, 26]
+%]
+[% INCLUDE topic/rels_topic.tt
+           rtlist=[ 4, 6 ]
+%]
+[% INCLUDE topic/rels_topic.tt
+           rtlist=[ 7 ]
+	   present='short'
+%]
+[% INCLUDE topic/rels_topic.tt
+           rtlist=[ 34, 35, 8, 9, 11, 14, 16, 22, 23, 28, 29, 32, 33 ]
+%]

@@ -1,0 +1,22 @@
+[%
+	max   = 20;
+	cutof = 85;
+	interests = m.interests.summary( max, cutof );
+%]
+
+<div id="sidebar">
+
+<h2>Intressen</h2>
+[% FOREACH intr = interests %]
+   <span class="link">
+      [% INCLUDE tlink2 t=intr.topic %]<br>
+      [% IF intr.comment %]
+         - [% intr.comment | html %]<br>
+      [% END %]
+   </span>
+[% END %]
+
+[% INCLUDE present_rel_links type=12 %]
+[% PROCESS present_0_links %]
+
+</div>

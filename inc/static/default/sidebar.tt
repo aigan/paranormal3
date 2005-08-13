@@ -1,0 +1,52 @@
+<div id="sidebar">
+
+[% INCLUDE present_rel_links type=3 %]
+[% INCLUDE present_rel_links type=31 %]
+[% INCLUDE present_rel_links type=30 %]
+[% INCLUDE present_rel_links type=21 %]
+[% INCLUDE present_0_links %]
+[% INCLUDE present_rev_links type=38 %]
+[% INCLUDE present_rev_links type=11 %]
+[% INCLUDE present_rev_links type=3 %]
+[% INCLUDE present_rev_links type=31 %]
+[% INCLUDE present_rev_links type=30 %]
+[% INCLUDE present_rev_links type=32 present='short' %]
+[% INCLUDE present_rev_links type=21 %]
+[% INCLUDE present_rev_links type=2 %]
+[% INCLUDE present_rev_links type=4 %]
+[% INCLUDE present_rev_links type=6 %]
+[% INCLUDE present_rev_links type=9 %]
+[% INCLUDE present_rev_links type=14 %]
+[% INCLUDE present_rev_links type=16 %]
+[% INCLUDE present_rev_links type=29 %]
+[% INCLUDE present_rev_links type=7 UNLESS multi == 'rev_7' %]
+[% INCLUDE present_rev_links type=1 UNLESS multi == 'rev_1' %]
+[% INCLUDE present_rev_links type=8 %]
+[% INCLUDE present_rev_links type=22 %]
+[% INCLUDE present_rev_links type=23 %]
+[% INCLUDE present_rev_links type=28 %]
+[% INCLUDE present_rel_links type=12 %]
+[% INCLUDE present_rev_links type=12 %]
+[% INCLUDE present_rel_links type=10 %]
+[% INCLUDE present_rev_links type=10 present='plural' %]
+[% INCLUDE present_rev_links type=34 %]
+[% INCLUDE present_rev_links type=35 %]
+[% INCLUDE present_rel_links type=36 present='plural' %]
+[% INCLUDE present_rev_links type=36 present='plural' %]
+[% INCLUDE present_rev_links type=37 %]
+[% INCLUDE present_rev_links type=39 present='plural' %]
+[% INCLUDE present_rev_links type=40 present='plural' %]
+
+<h2>Personer</h2>
+
+   <span class="link">[% jump('Hjälpare', "/member/db/topic/view/helpers" tid=t.id) %]<br></span>
+   <span class="link">[% jump('Diskutanter', "/member/db/topic/view/discussors" tid=t.id) %]<br></span>
+   <span class="link">[% jump('Söker kontakt', "/member/db/topic/view/meeters" tid=t.id) %]<br></span>
+   <span class="link">[% jump('Redaktörer', "/member/db/topic/view/editors" tid=t.id) %]<br></span>
+
+
+[% PROCESS topic/list_websites.tt UNLESS multi == 'rev_ts' %]
+[% PROCESS topic/list_pdfs.tt UNLESS multi == 'rev_ts' %]
+[% PROCESS topic/ts_rev.tt UNLESS multi == 'rev_ts' %]
+
+</div>

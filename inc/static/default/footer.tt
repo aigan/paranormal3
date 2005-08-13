@@ -1,0 +1,20 @@
+    <form action="/search/alternatives.tt"><div id="search_field"><input type="hidden" name="run" value="topic_search_published">Sök <input size="10" name="talias"></div></form>
+
+<div id="footer">
+<p>Detta är en sida från webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.
+Materialet kommer från flera olika författare och medarbetare.  Du kan
+<a href="/member/db/quest_level_00/">vara en del av denna
+webbplats</a>.</p>
+
+<p><a href="/index.html">Hem</a> |
+<a href="/member/db/member_login">Logga in</a> |
+<a href="/topic/">Index</a> |
+<a href="/search/">Sök</a> |
+<a href="/member/payment/">Gåvor</a> |
+<a href="/member/db/get_help[% IF tid; "?tid=$tid"; END %]">Hjälp</a>
+</p>
+
+<p id="pi"><a href="[% IF tid; "/member/db/topic/view/?tid=$tid"; ELSE; "/admin/update/update.cgi$me"; END %]"><img
+alt="pi" src="/images/g/pi.gif"/></a></p>
+
+</div>

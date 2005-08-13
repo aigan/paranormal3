@@ -1,0 +1,1 @@
+[% jump('Visa ditt intresse','/member/db/intrest/specify', tid=entry.id, class='link_button' id='intrest_specify') %]

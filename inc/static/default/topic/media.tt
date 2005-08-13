@@ -1,0 +1,16 @@
+  [% ### Representerar sidan en online-media? ### %]
+  [% media_rec = select_possible_record("from media where media=?", entry.id) %]
+  [% IF media_rec.media == entry.id %]
+     <span class="meta">
+     [% IF media_rec.media_mimetype == 'text/html' %]
+        Representerar webbsidan [% jump(media_rec.media_url, media_rec.media_url, target='external') %]
+     [% ELSIF media_rec.media_mimetype.search('^image/') %]
+        Representerar bilden [% jump(media_rec.media_url, media_rec.media_url, target='external') %]
+     [% ELSIF media_rec.media_mimetype == 'email' %]
+        Representerar e-postadressen [% jump(media_rec.media_url, media_rec.media_url) %]
+     [% ELSE %]
+        Representerar det av typ [% media_rec.media_mimetype %] som har adressen [% jump(media_rec.media_url, media_rec.media_url, target='external') %]
+     [% END %]
+     </span>
+  [% END %]
+

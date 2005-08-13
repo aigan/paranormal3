@@ -1,0 +1,267 @@
+[% PROCESS components.tt %]
+[% PROCESS app_components.tt %]
+
+[% ill.recs = select_list("select t from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'image/%' order by ts_status desc, ontopic desc, completeness desc, delight desc, correctness desc, ts_score desc, t asc", tid) %]
+[% ill.count = 0 %]
+
+[% BLOCK illustration %]
+   [% IF ill.recs.${ill.count} %]
+      [% it = topic(ill.recs.${ill.count}.t) %]
+      [% IF it.image_size_x %]
+         [% width_str = " width='$it.image_size_x'" %]
+         [% hight_str = " hight='$it.image_size_y'" %]
+         [% width_str_css = " style='width: ${it.image_size_x}px'" %]
+      [% END %]
+      <div class="illustration" [% width_str_css %]>
+         <img alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url %]"><br>
+         <div class="details">[% it.text | html %]</div>
+         <div class="details">
+            [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
+            [% INCLUDE rel_list.tt t=it reltype=23 prefix="&copy; " suffix=" - " %]
+            <em>[% INCLUDE rel_list.tt t=it reltype=22 %]</em>
+            <em>([% jump('detaljer', '/member/db/topic/view', tid=it.id) %])</em>
+         </div>
+      </div>
+   [% END %]
+   [% ill.count = ill.count + 1 %]
+[% END %]
+[% BLOCK illustration_orig %]
+   [% IF ill.recs.${ill.count} %]
+      [% i = ill.recs.${ill.count} %]
+      [% it = topic(i.t) %]
+      <table id="illustration" width="5%">
+         <tr><td><img alt="[% i.t_title | html %]" src="[% i.media_url %]"></td></tr>
+         <tr><td class="details">[% i.t_text | html %]</td></tr>
+         <tr><td class="details">
+            [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
+            [% INCLUDE rel_list.tt t=it reltype=23 prefix="&copy; " suffix=" - " %]
+            <em>[% INCLUDE rel_list.tt t=it reltype=22 %]</em>
+            <em>([% jump('detaljer', '/member/db/topic/view', tid=it.id) %])</em>
+         </td></tr>
+      </table>
+   [% END %]
+   [% ill.count = ill.count + 1 %]
+[% END %]
+[% BLOCK metadata %]
+  <ul class="entry_meta">
+
+     <li>[% jump("Text $t.id", '/member/db/topic/edit/text', tid=t.id) %],
+
+  v$t.ver
+
+  [% IF t.first_ver.created_by.id > 0 %]
+     - Inmatad av [% t.first_ver.created_by.link %]
+  [% END %]
+
+  [%#### Typelist ####%]
+         [% FOREACH is = select_list("from rel, t
+                                 where rel_active is true and t_active is true
+                                 and rel_strength >= 30
+                                 and rev=? and (rel_type=1 or rel_type=2)
+                                 and rel=t and rel_indirect is false", t.id );
+            IF loop.first;
+               GET '<li>';
+            END;
+            jump(is.t_title, is.t_file);
+            UNLESS loop.last;
+               GET ', ';
+            END;
+         END;
+         %]
+
+
+  [%#### Behandlar ####%]
+  [% FOREACH ts = t.ts_list;
+    IF loop.first;
+       GET '<li>Behandlar ';
+    ELSIF loop.last;
+       GET ' och ';
+    ELSE;
+       GET ', ';
+    END;
+    jump(ts.topic.desig, ts.topic.file);
+    IF ts.comment;
+       GET ' (';
+       ts.comment | html;
+       GET ') ';
+    END;
+  END;
+  %]
+
+
+  [%#### Media ####%]
+  [% IF t.media %]
+     [% IF t.media_type == 'text/html' %]
+        <li>Representerar webbsidan [% jump(t.media_url, t.media_url, target='external') %]
+     [% ELSIF t.media_type.search('^image/') %]
+        <li>Representerar bilden [% jump(t.media_url, t.media_url, target='external') %]
+     [% ELSIF t.media_type == 'email' %]
+        <li>Representerar e-postadressen [% jump(t.media_url, t.media_url) %]
+     [% ELSE %]
+        <li>Representerar det av typ [% t.media_type %] som har adressen [% jump(t.media_url, t.media_url, target='external') %]
+     [% END %]
+     ([% forward('Ändra', '/member/db/topic/edit/media') %])</li>
+  [% END %]
+
+
+  [%### rel -- Relation till ämne ###%]
+  [% FOREACH rt = t.rel.types %]
+     [% NEXT IF rt.id < 3 %]
+     <li>[% rt.name('rel') %]
+     [% FOREACH arc = t.rel( type=rt.id direct=1 ).arcs %]
+        [%- IF loop.first %]
+        [% ELSIF loop.last %] och
+        [% ELSE %],
+        [% END %]
+
+        [% IF arc.type.literal %]
+           [% arc.value | html %]
+        [% ELSE %]
+           [%+ jump( arc.obj.desig, arc.obj.file) %]
+        [%- END %]
+        [%- IF arc.comment %]
+           (<em>[% arc.comment %]</em>)
+        [% END %]
+     [%- END %]
+     </li>
+  [% END %]
+
+
+  [%### rev -- Omvänd Relation till ämne ###%]
+  [% FOREACH rt = t.rev.types %]
+     [% NEXT IF rt.id < 3 %]
+     <li>[% rt.name('rev') %]
+     [% FOREACH arc = t.rev( type=rt.id direct=1 ).arcs %]
+        [%- IF loop.first %]
+        [% ELSIF loop.last %] och
+        [% ELSE %],
+        [% END %]
+
+        [% jump( arc.subj.desig, arc.subj.file) %]
+        [%- IF arc.comment %]
+           (<em>[% arc.comment %]</em>)
+        [% END %]
+     [%- END %]
+     </li>
+  [% END %]
+
+  </ul>
+[% END %]
+
+[% BLOCK subentry %]
+   [% DEFAULT level=2 %]
+   [% FOREACH se = e.entry_list %]
+      [% NEXT UNLESS se.active %]
+      <div class="subentry"><a id="[% se.id %]"></a>
+
+      [% IF se.title %]
+         <h[% level+1 %]>[% se.title | html %]</h[% level+1 %]>
+         [% INCLUDE metadata t=se %]
+         [% se.text | html_psi %]
+         [% INCLUDE subentry e=se level=level+1 %]
+      [% ELSE %]
+         <blockquote>
+            [% INCLUDE metadata t=se %]
+            [% se.text | html_psi %]
+            [% INCLUDE subentry e=se level=level+1 %]
+         </blockquote>
+      [% END %]
+      </div>
+   [% END %]
+
+   [% IF e.next %]
+      [% ne = e.next %]
+      [% IF ne.active %]
+         [% IF ne.title %]
+            <h$level>[% ne.title | html %]</h$level>
+         [% END %]
+         [% INCLUDE metadata t=ne %]
+         [% ne.text | html_psi %]
+      [% END %]
+      [% INCLUDE subentry e=ne level=level %]
+   [% ELSE %]
+   [% END %]
+[% END %]
+
+[% BLOCK new_illustration %]
+   [% IF ill.recs.${ill.count} %]
+      [% i = ill.recs.${ill.count} %]
+      [% it = topic(i.t) %]
+      <div class="illustration">
+          <div class="test">
+         <img alt="[% i.t_title | html %]" src="[% i.media_url %]">
+         <div class="details">[% i.t_text | html %]</div>
+         <div class="details">
+            [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
+            [% INCLUDE rel_list.tt t=it reltype=23 prefix="&copy; " suffix=" - " %]
+            <em>[% INCLUDE rel_list.tt t=it reltype=22 %]</em>
+            <em>([% jump('detaljer', '/member/db/topic/view', tid=it.id) %])</em>
+         </div>
+          </div>
+      </div>
+   [% END %]
+   [% ill.count = ill.count + 1 %]
+[% END %]
+[% BLOCK present_0_links %]
+   [% pres = t.rel(type=0).presentation %]
+   [% FOREACH group = pres.groups %]
+      [% IF loop.first %]<h2>[% pres.title %]</h2>[% END %]
+      [% IF group.title %]<h3>[% group.title | html %]</h3>[% END %]
+      [% FOREACH entry = group.content %]
+         <span class="link">
+            [% IF entry.topic.media_url %]
+               [% jump(entry.topic.title, entry.topic.file) %]<br>
+            [% ELSE %]
+               [% jump(entry.topic.title, entry.topic.file) %]<br>
+            [% END %]
+            [% IF entry.arc.comment %]
+               &nbsp;[% entry.arc.comment %]<br>
+            [% END %]
+         </span>
+      [% END %]
+   [% END %]
+[% END %]
+
+[% BLOCK present_rel_links %]
+   [% DEFAULT present = 'short' %]
+   [% pres = t.rel(type=type, direct=1).presentation %]
+   [% FOREACH group = pres.groups %]
+      [% IF loop.first %]<h2>[% pres.title %]</h2>[% END %]
+      [% IF group.title %]<h3>[% group.title | html %]</h3>[% END %]
+      [% FOREACH entry = group.content %]
+         <span class="link">
+            [% name = entry.topic.$present || entry.topic.desig %]
+            [% IF entry.topic.media_url %]
+               [% jump(name, entry.topic.file) %]<br>
+            [% ELSE %]
+               [% jump(name, entry.topic.file) %]<br>
+            [% END %]
+            [% IF entry.arc.comment %]
+               &nbsp;[% entry.arc.comment %]<br>
+            [% END %]
+         </span>
+      [% END %]
+   [% END %]
+[% END %]
+
+[% BLOCK present_rev_links %]
+   [% DEFAULT present = 'plural' %]
+   [% pres = t.rev(type=type, direct=1).presentation %]
+   [% FOREACH group = pres.groups %]
+      [% IF loop.first %]<h2>[% pres.title %]</h2>[% END %]
+      [% IF group.title %]<h3>[% group.title | html %]</h3>[% END %]
+      [% FOREACH entry = group.content %]
+         <span class="link">
+            [% name = entry.topic.$present || entry.topic.desig %]
+            [% IF entry.topic.media_url %]
+               [% jump(name, entry.topic.file) %]<br>
+            [% ELSE %]
+               [% jump(name, entry.topic.file) %]<br>
+            [% END %]
+            [% IF entry.arc.comment %]
+               &nbsp;[% entry.arc.comment %]<br>
+            [% END %]
+         </span>
+      [% END %]
+   [% END %]
+[% END %]

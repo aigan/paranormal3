@@ -1,0 +1,27 @@
+[% PROCESS topic/button_update.tt %]
+[% PROCESS topic/button_interest.tt %]
+
+<span class="meta">
+   Ämne [% entry.id %], v$entry.ver
+   - Status: [% PROCESS topic_status.tt t_status=entry.status %].
+   <br />
+</span>
+
+[% PROCESS topic/first_editor.tt %]
+[% PROCESS topic/imported_info.tt %]
+
+[% PROCESS topic/rels_is.tt %]
+
+[% PROCESS topic/emails.tt %]
+[% PROCESS topic/ts.tt %]
+[% PROCESS topic/media.tt %]
+
+[% INCLUDE topic/rels_literal.tt
+           rtlist=[13, 17, 18, 19, 20]
+%]
+[% INCLUDE topic/rels_topic.tt
+           rtlist=[ 4, 6, 7, 34, 35, 8, 9, 11, 14, 37, 16, 22, 23, 28, 29, 32, 33, 38, 39, 40 ]
+%]
+<br clear="all">
+
+[% INCLUDE topic/address.tt %]

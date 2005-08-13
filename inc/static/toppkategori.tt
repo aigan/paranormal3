@@ -1,0 +1,65 @@
+[% PROCESS doctype.tt %]
+<html>
+<head>
+   [% PROCESS head_meta.tt %]
+   <title>
+      [% t.desig | html %]
+   </title>
+</head>
+<body>
+   [% PROCESS body_top.tt %]
+   <h1>
+      [% t.desig | html %] [% INCLUDE typelist rel=tid %]
+   </h1>
+   [% PROCESS setup.tt %]
+
+   <div id="main">
+      <div id="topic_header">
+         [% jump('Visa ditt intresse',
+                 '/member/db/intrest/specify',
+                 tid=t.id, class='link_button'
+                 id='intrest_specify') %]
+
+         [% IF t.text %]
+            <p id="description">[% t.text | html %]</p>
+         [% END %]
+      </div>
+
+      <div class="entry">
+         [% PROCESS illustration %]
+         <table style="margin: 0">
+            [% arcs = t.rev(type=3, direct=1).arcs %]
+            [% USE table( arcs, cols=2, pad=0, overlap=0) %]
+            [% FOREACH row = table.rows %]
+            <tr>
+               [% FOREACH arc = row %]
+               <td valign="top">
+                  [% CALL new_entry(arc.subj.id) %]
+                  [% jump(arc.subj.title, arc.subj.file) %]
+                  [% arc.comment %]
+                  <small>[% arc.subj.text | html_psi %]</small>
+               </td>
+               [% END %]
+            </tr>
+            [% END %]
+         </table>
+      </div>
+
+      <div class="entry">
+         <p class="top_category_persons">
+            <big><strong>Medlemmar:</strong></big>
+            [% view = '/member/db/topic/view' %]
+            [% jump('Hjälpare', "$view/helpers" tid=t.id) %]
+            [% jump('Diskutanter', "$view/discussors" tid=t.id) %]
+            [% jump('Söker kontakt', "$view/meeters" tid=t.id) %]
+            [% jump('Redaktörer', "$view/editors" tid=t.id) %]
+         </p>
+      </div>
+
+      <br clear="all">
+   </div>
+
+   [% PROCESS footer.tt %]
+</body>
+</html>
+

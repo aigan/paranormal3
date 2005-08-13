@@ -1,0 +1,26 @@
+  [% ### Detta ämne behandlar ###
+
+    FOREACH tsr = select_list("from ts, t where ts_topic=t and ts_entry=?
+                               and t_active is true and ts_active is true", entry.id);
+    IF loop.first;
+       GET '<span class="meta">Behandlar ';
+    END;
+    IF loop.first;
+    ELSIF loop.last;
+       GET ' och ';
+    ELSE;
+       GET ', ';
+    END;
+    ts = topic(tsr.t);
+    jump(ts.plural, ts.file);
+    IF tsr.ts_comment;
+       GET ' (';
+       tsr.ts_comment | html;
+       GET ') ';
+    END;
+    IF loop.last;
+       GET '<br /></span>';
+    END;
+  END;
+  %]
+

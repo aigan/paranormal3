@@ -1,0 +1,18 @@
+[% FOREACH e = t.entry_list %]
+   [% NEXT UNLESS e.active %]
+   <div class="entry">
+   <a id="[% e.t %]" href="[% e.file %]" class="topic_status">[% INCLUDE topic_status.tt t=e%]</a>
+
+   [% CALL new_entry(tid) %]
+   [% IF e.title %]
+      <h2>[% e.title | html %]</h2>
+   [% END %]
+
+   [% INCLUDE metadata t=e %]
+
+   [% PROCESS illustration %]
+   [% e.text | html_psi %]
+   [% INCLUDE subentry e=e %]
+   <br clear="all">
+   </div>
+[% END %]

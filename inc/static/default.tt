@@ -1,0 +1,58 @@
+[% PROCESS doctype.tt %]
+<html>
+<head>
+   [% PROCESS head_meta.tt %]
+   <title>[% t.title | html %]</title>
+</head>
+<body>
+   [% PROCESS body_top.tt %]
+   <h1>
+      [% t.title | html %]
+      [% IF t.arc('slut') %]
+      <span class="living_years">
+      (
+         [% t.arc('start').value %]
+         -
+         [% t.arc('slut').value %]
+      )
+      </span>
+      [% END %]
+      [% INCLUDE typelist.tt %]
+   </h1>
+   [% FOREACH arc = t.rel(type=15).arcs %]
+      <h2>[% arc.value | html %]</h2>
+   [% END %]
+
+   [% PROCESS setup.tt %]
+
+   <div id="main">
+      <div id="topic_header">
+         [% INCLUDE meta.tt entry=t %]
+
+         [% IF t.text %]
+            <p id="description">[% t.text | html %]</p>
+         [% END %]
+
+         [% PROCESS alias_list.tt %]
+      </div>
+
+      [% IF t.is_image %]
+         <div  class="spacy_image">
+            <img alt="[% t.desig | html %]" 
+                 src="[% t.media_url | html %]">
+         </div>
+      [% END %]
+
+      [% IF multi %]
+         [% PROCESS multi/main.tt %]
+      [% END %]
+
+      [% PROCESS entry_list.tt %]
+
+   </div>
+
+   [% PROCESS sidebar.tt %]
+   [% PROCESS footer.tt %]
+</body>
+</html>
+

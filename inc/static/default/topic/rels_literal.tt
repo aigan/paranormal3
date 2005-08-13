@@ -1,0 +1,17 @@
+  [% ### Relationer till text ### %]
+
+[% FOREACH rt = rtlist %]
+  [% FOREACH rel = select_list("from rel, reltype where rev=?
+                              and rel_type=reltype and rel is null
+                              and rel_active is true
+                              and rel_strength >= 30 and rel_type=?",
+                              entry.id, rt) %]
+     <span class="meta">
+     [% rel.rel_name %] [% rel.rel_value %]
+     [% IF rel.rel_comment %]
+        (<em>[% rel.rel_comment %]</em>)
+     [% END %]
+     <br />
+     </span>
+  [% END %]
+[% END %]

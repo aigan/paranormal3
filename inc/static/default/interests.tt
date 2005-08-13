@@ -1,0 +1,31 @@
+[%
+interest_editor = select_list("from intrest, member
+              where intrest_member = member and intrest_topic=?
+              and editor>=30 and intrest_defined>=50 and member_level > 0 and present_intrests >= 20
+              order by member_level*(editor+knowledge) desc,
+              member limit ?", tid, interest_limit, []);
+
+interest_helper = select_list("from intrest, member
+              where intrest_member = member and intrest_topic=?
+              and helper>=30 and intrest_defined>=50 and newsmail > 2
+              and member_level > 0 and present_intrests >= 20
+              order by (helper*2)+general_helper+coalesce(skill*3,0)+coalesce(experience*2,0)+knowledge+(newsmail*20)
+              desc, practice desc limit ?", tid, interest_limit, []);
+
+interest_meeter = select_list("from intrest, member
+              where intrest_member = member and intrest_topic=?
+              and meeter>=40 and intrest_defined>=50 and newsmail > 2
+              and member_level > 0 and present_intrests >= 20
+              order by ((meeter*2)+general_discussion+coalesce(belief,0)
+              - helper -general_meeter)*newsmail desc, meeter desc limit ?",
+		tid, interest_limit, []);
+
+interest_discussion = select_list("from intrest, member
+              where intrest_member = member and intrest_topic=?
+              and theory>=50 and intrest_defined>=50 and newsmail > 2
+              and member_level > 0 and present_intrests >= 20
+              order by (general_discussion
+              - helper - meeter + theory*2
+              - general_theory*3)*newsmail desc
+              limit ?", tid, interest_limit, []);
+%]

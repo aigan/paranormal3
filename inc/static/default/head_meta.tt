@@ -1,0 +1,17 @@
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="Content-Language" content="se" >
+    <meta name="description" content="[% t.text | html %]" >
+    <meta name="keywords" content="
+[%- FOREACH kw = select_list("from talias where talias_t=? and talias_active is true", tid);
+    ', ' UNLESS loop.first;
+    kw.talias;
+END;
+%]" >
+    <meta name="editor" content="Skapelsen" >
+    <link rel="Top" href="/index.html" >
+    <link rel="Contents" href="/index.html" >
+    <link rel="Index" href="/topic/" >
+    <link rel="Help" href="/topic/paranormalse.html" >
+    <link rel="Search" href="/search/" >
+    <link rel="Stylesheet" href="/css/default.css" type="text/css" >
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" >

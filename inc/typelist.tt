@@ -1,0 +1,12 @@
+[%
+   DEFAULT t=topic(tid);
+   FOREACH type IN t.type_list;
+      GET '<span class="typelist">' IF loop.first;
+      GET type.desig;
+      IF loop.last;
+         GET '</span>';
+      ELSE;
+         GET ', ';
+      END;
+   END;
+%]

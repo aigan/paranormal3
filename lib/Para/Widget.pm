@@ -508,19 +508,13 @@ sub select_persons
     }
 
 
-
-
     my $where_string = join " and ", @where_part;
-
-    ## select_list funkar inte utan raden nedan. Varför?!?
-    $pagesize == 1 and warn "Weired bug\n";
-    $offset == 1 and warn "Weired bug\n";
 
     my $part_select = join ", ", '*', @select;
     my $sql = 'select '.$part_select.' from member where '.$where_string.
 	" order by $order limit ? offset ?";
-    warn "$sql; @where_data $pagesize ".($offset-1)."\n";
-    my $persons = $Para::dbix->select_list($sql, @where_data, $pagesize, [], $offset-1, []);
+    my(@data) = ($sql, @where_data, int($pagesize), int($offset-1));
+    my $persons = $Para::dbix->select_list(@data);
     return $persons;
 }
 

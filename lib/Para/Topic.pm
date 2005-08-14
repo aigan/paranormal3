@@ -76,10 +76,11 @@ sub _new
 #    croak "undefined tid" unless $tid;
 
     $v ||= ""; # Suitable for key part
-    debug(1, "looking for $tid-$v");
 
     # This is maby already a topic
     return $tid if ref $tid eq 'Para::Topic';
+
+    debug(1, "looking for $tid-$v");
 
     my $rec;
     unless( $nocache )
@@ -113,7 +114,7 @@ sub _new
 	{
 	    $Para::Topic::CACHE->{"$tid-"} = $t;
 	}
-#	warn "Initialized $t-$v\n" if $DEBUG > 1;
+	warn "Initialized $tid-$v\n";
 	return $t;
     }
     else
@@ -2710,7 +2711,7 @@ sub publish
 	my $template;
 	if( $t->member and $t->member->id > 0 )
 	{
-	    $template='paranormalse.';
+	    $template='paranormalse';
 	}
 	unless( $template )
 	{

@@ -76,7 +76,7 @@
 [% INCLUDE present_rev_links type=36 present='plural' %]
 
 
-[% PROCESS topic/list_websites.yy %]
+[% PROCESS topic/list_websites.tt %]
 [% PROCESS topic/list_pdfs.tt %]
 [% PROCESS topic/ts_rev.tt %]
       </div>

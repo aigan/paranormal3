@@ -30,4 +30,5 @@
 <p>[% textarea('body','' ) %]
 
 [% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
-<p>[% submit('Skicka brevet') %]
+
+<p>[% step('Skicka brevet') %]

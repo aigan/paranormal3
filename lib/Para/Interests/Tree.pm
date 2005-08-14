@@ -63,7 +63,7 @@ sub new
     foreach my $intrest ( @$intrest_list )
     {
 	my $tid = $intrest->{'intrest_topic'};
-	my $topic = Para::Topic->new( $tid );
+	my $topic = Para::Topic->get_by_id( $tid );
 	$self->{intrest_idx}{ $tid } = $intrest;
 	my $node =
 	{
@@ -188,7 +188,7 @@ sub is_parent
     #
     # Is candidated (ctid) a parent of tid?
 
-    my $topic = Para::Topic->new($tid) or return undef;
+    my $topic = Para::Topic->get_by_id($tid) or return undef;
 
     my $rel = $topic->rel({topic=>$ctid});
     if( $rel and ( $rel->type(2) or $rel->type(3) ) )
@@ -221,7 +221,7 @@ sub is_child
     #
     # Is candidated (ctid) a child of tid?
 
-    my $ctopic = Para::Topic->new($ctid) or return undef;
+    my $ctopic = Para::Topic->get_by_id($ctid) or return undef;
 
     my $node = $self->{tree_idx}{$tid};
 

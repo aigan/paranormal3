@@ -4,7 +4,7 @@ package Para::Action::interest_update_multi;
 use strict;
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw maxof );
+use Para::Frame::Utils qw( throw maxof inflect );
 
 use Para::Member;
 
@@ -98,7 +98,15 @@ sub handler
 	$m->interest($tid)->update_by_query()
     }
 
-    return;
+    return( inflect( $interest_count,
+		     "Inga nya intressen, men ",
+		     "Ett nytt intresse och ",
+		     "%d nya intressen och ").
+	    inflect( $disinterest_count,
+		     "inga o-intressen",
+		     "ett o-intresse",
+		     "%d o-intressen")
+	    );
 }
 
 1;

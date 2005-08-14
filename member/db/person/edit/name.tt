@@ -53,4 +53,4 @@ efternamnet.  Hitta inte på något namn.  Vi vill veta ditt riktiga
 <p>Namn: [% input('nickname',m.nickname) %]
 
 
-<p> [% submit %]
+<p> [% step %]

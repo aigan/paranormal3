@@ -24,7 +24,7 @@
 
      <p>[% t.text | html %]</p>
       
-     <p>Ointresserad [% slider( field="_meta_intrest_$tid" current=intr.interest )%]
+     <p>Ointresserad [% slider( field="_meta_interest_$tid" current=intr.interest )%]
    	Mycket intresserad
    
      [% hr %]
@@ -40,4 +40,4 @@
 
 [% END %]
 
-[% submit %]
+[% step %]

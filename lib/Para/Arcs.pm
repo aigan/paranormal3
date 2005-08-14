@@ -266,7 +266,7 @@ sub topics
 	my @t;
 	foreach my $arc ( @{$arcs->{'content'}} )
 	{
-	    push @t, Para::Topic->new( $arc->{$dir} );
+	    push @t, Para::Topic->get_by_id( $arc->{$dir} );
 	}
 	$arcs->{'topics'} = \@t;
     }
@@ -539,7 +539,7 @@ sub presentation
 		{
 		    if( debug )
 		    {
-			my $t = Para::Topic->new($tid);
+			my $t = Para::Topic->get_by_id($tid);
 			my $title = $t->desig;
 			warn "\t$title has no other belongings\n";
 			foreach my $relt ( values %{$placements{$tid}} )
@@ -612,7 +612,7 @@ sub presentation
 	my @best_other = sort { $points{ $b } <=> $points{ $a } } keys %points;
 	foreach my $group_id ( @best_other )
 	{
-	    my $gname = Para::Topic->new( $group_id )->desig;
+	    my $gname = Para::Topic->get_by_id( $group_id )->desig;
 	    debug(1,"group $gname has $points{ $group_id } points");
 	    if( $points{ $group_id } > NORMSIZE*2 )
 	    {
@@ -677,7 +677,7 @@ sub presentation
 		{
 		    if( debug )
 		    {
-			my $title = Para::Topic->new($tid)->desig;
+			my $title = Para::Topic->get_by_id($tid)->desig;
 			warn "\t$title has no other place\n";
 		    }
 		    next CHECK;
@@ -710,7 +710,7 @@ sub presentation
 	my $group_cnt;
 	foreach my $super_id ( keys %groups )
 	{
-	    my $super = Para::Topic->new( $super_id );
+	    my $super = Para::Topic->get_by_id( $super_id );
 	    my $group = {};
 	    $group->{title} = $super->title unless $no_headers;
 	    my @sorted = sort( {$a->{'topic'}->desig cmp $b->{'topic'}->desig}

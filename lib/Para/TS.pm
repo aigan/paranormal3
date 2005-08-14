@@ -80,12 +80,12 @@ sub rev_list
 
 sub topic
 {
-    Para::Topic->new( shift->{'ts_topic'} );
+    Para::Topic->get_by_id( shift->{'ts_topic'} );
 }
 
 sub entry
 {
-    Para::Topic->new( shift->{'ts_entry'} );
+    Para::Topic->get_by_id( shift->{'ts_entry'} );
 }
 
 sub comment { shift->{'ts_comment'} };

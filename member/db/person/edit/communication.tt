@@ -34,4 +34,4 @@ MSN-adress
 [% END %]
 
 
-<p> [% submit %]
+<p>[% step %]

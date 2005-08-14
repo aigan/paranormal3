@@ -1,6 +1,6 @@
 [% META
 	otitle = 'Editera relation'
-	next_template = 'rel.t'
+	default_template = 'rel.tt'
 	next_action = 'rel_update'
 %]
 
@@ -68,8 +68,10 @@
       </ol>
 [% END %]
 
-[% IF u.level > 11 %]<p align="right">[% go('Radera', 'meta', 'rel_delete') %]</p>[% END %]
-
+<p>[% IF u.level > 11 %]<p align="right">[% go('Radera', 'meta', 'rel_delete') %]</p>[% END %]
+[%+ backstep %]
+[%+ regret %]
+</p>
 
 <h2>Information</h2>
 
@@ -83,41 +85,6 @@ kommer du återgå till denna tidigare version.</p>
 
 <p>Vi kompletterar formuläret med fler funktioner senare...</p>
 
-<h3>Från Psi::Relations</h3>
-<pre>
-#
-# - rel with status below 2 should always be inactive
-# - strength below 30 is conciderd false
-#
-# For a relation, you could:
-#  - deactivate  (only when replaced with a new versin)
-#  - activate    (go back to an older version from a new)
-#  - make true   (increase strength)
-#  - make false  (decrease strength)
-#  - accept      (increase status)
-#  - decline     (decrease status)
-#  - remove      (never for explicit rels)
-
-# accepting a new version of a relation activates the new relation and
-# deactivates all the old versions (with the same reltype, rev, rel
-# and rel_value).  The old active versions gets a status of 1.  The
-# new version status must be equal or higher than the highest status
-# of the old versions.  The maximum status given to a relation is
-# determined by the level of the member accepting the relation.
-
-# declining a new version of a relation, not yet activated, sets it's
-# status to 0 and changes nothing else.
-
-# declining a new active version of a relation, sets it's status to 0,
-# deactivates it and activates the latest version of the relation with
-# the highest status.
-
-# Making a relation true/fales is the same as finding or creating a
-# true/false relation and accepting it
-
-# Removing a relation is done if it was infered from other relations
-# and not yet existing.  A relation to be removed must be implicit.
-</pre>
 
 
 [% BLOCK status %]

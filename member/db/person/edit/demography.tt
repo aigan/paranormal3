@@ -32,4 +32,4 @@ Används för att beräkna ålder.
   [% END %]
   [% hr %]
 
-<p>[% submit %]
+<p>[% step %]

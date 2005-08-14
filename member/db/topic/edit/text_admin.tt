@@ -2,7 +2,7 @@
 	otitle = 'Editera text'
 	next_action = 'topic_update'
 	focus = 't_text'
-	next_template = 'outline'
+	default_template = 'outline.tt'
 	level = 11
 %]
 
@@ -37,5 +37,5 @@
    <p>Kommentar <span class="important">för redaktörer</span> om varför vissa relationer ska eller inte ska användas, etc:<br />
    [% textarea('t_comment_admin', t.admin_comment, cols=70 rows=12) %]
 
-<p>[% submit %]
+<p>[% step %]
 

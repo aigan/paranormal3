@@ -153,3 +153,5 @@
    <h1>Jag hittar ingen <code>[% nick %]</code></h1>
    <p>Sök igen: [% input('nick') %] [% submit('Sök') %]</p>
 [% END %]
+
+[% step %]

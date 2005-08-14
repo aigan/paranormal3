@@ -18,9 +18,9 @@
       <td>$t_status</td>
       <td>$t.id</td>
       <td>$t_ver</td>
-      <td>[% jump(t.desig, '../edit/versions', tid=t.id v=t_ver) %]</td>
+      <td>[% jump(t.desig, '../edit/versions.tt', tid=t.id v=t_ver, run='mark') %]</td>
       <td>[% PROCESS typelist.tt rel=t.id %]
-      <td>[% jump(nickname, '/member/db/person/view/', member=member) %]</td>
+      <td>[% jump(nickname, '/member/db/person/view/', mid=member) %]</td>
       <td>[% t_created %]</td>
    </tr>
 [% END %]

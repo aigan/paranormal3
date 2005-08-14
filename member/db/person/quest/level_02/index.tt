@@ -16,3 +16,5 @@
   <li><a href="contact.tt">Kontaktinformation</a></li>
   <li><a href="presentation.tt">Presentation</a></li>
 </ol>
+
+<p>[% step %]

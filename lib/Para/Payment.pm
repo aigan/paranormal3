@@ -61,7 +61,7 @@ sub id        { $_[0]->{'payment_id'} }
 sub member    { Para::Member->get( $_[0]->{'payment_member'} ) }
 sub company
 {
-    return  $_[0]->{'payment_company'} ? Para::Topic->new( $_[0]->{'payment_company'} ) : undef;
+    return  $_[0]->{'payment_company'} ? Para::Topic->get_by_id( $_[0]->{'payment_company'} ) : undef;
 }
 sub date      { Para::Time->get($_[0]->{'payment_date'} ) }
 
@@ -71,12 +71,12 @@ sub payment_date      { Para::Time->get($_[0]->{'payment_date'} ) }
 sub log_date      { Para::Time->get($_[0]->{'payment_log_date'} ) }
 
 
-sub product   { Para::Topic->new($_[0]->{'payment_product'} ) }
+sub product   { Para::Topic->get_by_id($_[0]->{'payment_product'} ) }
 sub price     { $_[0]->{'payment_price'} }
 sub vat       { $_[0]->{'payment_vat'} }
 sub quantity  { $_[0]->{'payment_quantity'} }
-sub method    { Para::Topic->new($_[0]->{'payment_method'} ) }
-sub receiver  { Para::Topic->new($_[0]->{'payment_receiver'} ) }
+sub method    { Para::Topic->get_by_id($_[0]->{'payment_method'} ) }
+sub receiver  { Para::Topic->get_by_id($_[0]->{'payment_receiver'} ) }
 sub vernr     { $_[0]->{'payment_receiver_vernr'} }
 sub reference { $_[0]->{'payment_reference'} }
 sub comment   { $_[0]->{'payment_comment'} }

@@ -157,4 +157,4 @@ träffar
 </td></tr>
 </table>
 
-<p>[% submit('Sök') %]
+<p>[% step('Sök') %]

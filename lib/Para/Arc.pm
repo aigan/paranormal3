@@ -27,13 +27,13 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Time;
+use Para::Frame::Time qw( date );
 use Para::Frame::Utils qw( maxof minof throw debug );
+use Para::Frame::DBIx qw( pgbool );
 
 use Para::Topic;
 use Para::Arctype;
 use Para::Utils qw( cache_update );
-use Para::Frame::DBIx;
 use Para::Constants qw( :all );
 
 # This will make "if($arc)" false if the arc is 'removed'
@@ -65,9 +65,10 @@ sub new
 	# Clear out data from arc
 	#
 	foreach my $prop (qw( rev rel rel_type rel_status rel_value
-			  rel_comment rel_updated rel_changedby
-			  rel_strength rel_active rel_createdby
-			  rel_created rel_indirect rel_implicit ))
+			      rel_comment rel_updated updated rel_changedby
+			      rel_strength rel_active rel_createdby
+			      rel_created created rel_indirect rel_implicit
+			      ))
 	{
 	    delete $arc->{$prop};
 	}
@@ -270,19 +271,19 @@ sub create
     my $true   = defined $props->{'true'} ? $props->{'true'} : 1;
     my $active = defined $props->{'active'} ? $props->{'active'} : 0;
     my $status = defined $props->{'status'} ? $props->{'status'} :
-      $active ? $Para::u->new_status : 0;
-    my $by = defined $props->{'by'} ? $props->{'by'} : $Para::u;
+      $active ? $Para::Frame::U->new_status : 0;
+    my $by = defined $props->{'by'} ? $props->{'by'} : $Para::Frame::U;
     my $strength = defined $props->{'strength'} ? $props->{'strength'} : $true ? TRUE_NORM : 0;
     my $comment = defined $props->{'comment'} ? $props->{'comment'} : undef;
     my $implicit = defined $props->{'implicit'} ? $props->{'implicit'} : 0;
     my $indirect = defined $props->{'indirect'} ? $props->{'indirect'} : 0;
     my $changed = $props->{'changed'};
     my $now = localtime;
-    my $u = $Para::u;
+    my $u = $Para::Frame::U;
 
     $true = ( $strength >= TRUE_MIN ? 1 : 0 );
     $pred = Para::Arctype->new($pred) unless ref $pred;
-    $subj = Para::Topic->new($subj) unless ref $subj;
+    $subj = Para::Topic->get_by_id($subj) unless ref $subj;
     $by   = Para::Member->get($by) unless ref $by;
 
     # Let's see if a similar arc already exists
@@ -417,7 +418,7 @@ sub create
 
     my $rid = $Para::dbix->get_nextval('t_seq');
     $sth->execute( $rid, $subj->id, $rel, $pred->id,
-		   $Para::u->new_status, $by->id, $by->id,
+		   $Para::Frame::U->new_status, $by->id, $by->id,
 		   $strength, pgbool($active), $literal,
 		   $comment, pgbool($implicit), pgbool($indirect) );
 
@@ -457,7 +458,7 @@ sub node
 {
     my( $arc, $dir ) = @_;
     $dir or confess "deprecated: dir missing";
-    return Para::Topic->new( $arc->{$dir} );
+    return Para::Topic->get_by_id( $arc->{$dir} );
 }
 
 sub name
@@ -484,12 +485,12 @@ sub pred { shift->type(@_) }
 sub relt
 {
     return undef unless $_[0]->{'rel'};
-    return Para::Topic->new( $_[0]->{'rel'} );
+    return Para::Topic->get_by_id( $_[0]->{'rel'} );
 }
 sub obj { shift->relt(@_) }
 
-sub revt {Para::Topic->new( $_[0]->{'rev'} ) }
-sub subj {Para::Topic->new( $_[0]->{'rev'} ) }
+sub revt {Para::Topic->get_by_id( $_[0]->{'rev'} ) }
+sub subj {Para::Topic->get_by_id( $_[0]->{'rev'} ) }
 
 
 
@@ -520,8 +521,14 @@ sub comment
 sub status  { shift->{'rel_status'} }
 sub active  { shift->{'rel_active'} }
 sub inactive  { not shift->{'rel_active'} }
-sub created { shift->{'rel_created'} }
-sub updated { shift->{'rel_updated'} }
+sub created
+{
+    return $_[0]->{'created'} ||= date( $_[0]->{'rel_created'} );
+}
+sub updated
+{
+    return $_[0]->{'updated'} ||= date( $_[0]->{'rel_updated'} );
+}
 sub strength { shift->{'rel_strength'} }
 
 sub true { shift->strength >= TRUE_MIN ? 1 : 0 }
@@ -587,7 +594,7 @@ sub set_implicit
 #      $$, $desc_str, $arc->desig;
 
     my $arc_id    = $arc->id;
-    my $mid       = $Para::u->id;
+    my $mid       = $Para::Frame::U->id;
     my $now       = localtime;
 
     my $sth = $Para::dbh->prepare_cached("update rel set rel_implicit=?, ".
@@ -595,7 +602,7 @@ sub set_implicit
 				   "where rel_topic=?");
     $sth->execute(pgbool($val), $now->cdate, $mid, $arc_id);
 
-    $arc->{'rel_updated'} = $now;
+    $arc->{'rel_updated'} = $arc->{'updated'} = $now;
     $arc->{'rel_changedby'} = $mid;
     $arc->{'rel_implicit'} = $val;
 
@@ -635,7 +642,7 @@ sub set_indirect
 #      $$, $desc_str, $arc->desig;
 
     my $arc_id    = $arc->id;
-    my $mid       = $Para::u->id;
+    my $mid       = $Para::Frame::U->id;
     my $now       = localtime;
 
     my $sth = $Para::dbh->prepare_cached("update rel set rel_indirect=?, ".
@@ -643,7 +650,7 @@ sub set_indirect
 				   "where rel_topic=?");
     $sth->execute(pgbool($val), $now->cdate, $mid, $arc_id);
 
-    $arc->{'rel_updated'} = $now;
+    $arc->{'rel_updated'} = $arc->{'updated'} = $now;
     $arc->{'rel_changedby'} = $mid;
     $arc->{'rel_indirect'} = $val;
 
@@ -666,9 +673,9 @@ sub replace
     my( $arc, $pred, $subj, $obj_name, $props ) = @_;
 
     $pred = Para::Arctype->new($pred) unless ref $pred;
-    $subj = Para::Topic->new($subj) unless ref $subj;
+    $subj = Para::Topic->get_by_id($subj) unless ref $subj;
 
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
     if( $arc->status > $m->status )
     {
 	throw( 'denied', sprintf "Arc %s has status %d",
@@ -688,10 +695,10 @@ sub activate
 {
     my( $arc, $status ) = @_;
 
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
     $status ||= $m->new_status;
     my $now       = localtime;
-    my $mid       = $Para::u->id;
+    my $mid       = $Para::Frame::U->id;
 
     confess sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= S_PROPOSED;
 #    throw 'action', sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= S_PROPOSED;
@@ -737,7 +744,7 @@ sub activate
     {
 	my $chart = ($status == S_FINAL ? 'thing_finalised' : 'thing_accepted');
 	$arc->created_by->score_change($chart, 1);
-	$Para::u->score_change('accepted_thing', 1);
+	$Para::Frame::U->score_change('accepted_thing', 1);
     }
 
     $arc->mark_publish;
@@ -764,7 +771,7 @@ sub reject_other_versions
 	next if $arcv->status <= S_REPLACED and $arcv->inactive;
 
 	## Check if we have authority to deactivate
-	if( $arcv->status > $Para::u->status )
+	if( $arcv->status > $Para::Frame::U->status )
 	{
 	    throw( 'denied', sprintf "Arc %s has status %d",
 	      $arc->desig, $arc->status );
@@ -785,7 +792,7 @@ sub deactivate
 
     $status ||= S_DENIED;
     my $now       = localtime;
-    my $mid       = $Para::u->id;
+    my $mid       = $Para::Frame::U->id;
 
     die "Wrong status" if $status >= S_PENDING;
 
@@ -825,7 +832,7 @@ sub deactivate
     if( $status < $arc->status )
     {
 	$arc->created_by->score_change('thing_rejected', 1);
-	$Para::u->score_change('rejected_thing', 1);
+	$Para::Frame::U->score_change('rejected_thing', 1);
     }
 
     $arc->mark_publish;

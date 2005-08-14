@@ -1,28 +1,31 @@
 [% MACRO row_edit(field) BLOCK %]
+   [% DEFAULT object = m %]
    <tr><td>$field </td><td><input name="$field" value="[% 
-      ( q.param(field) || m.$field )| html 
+      ( q.param(field) || object.$field )| html 
    %]"></td></tr>
 [% END %]
 [% MACRO row_view(field) BLOCK %]
-   <tr><td>$field </td><td>[% m.$field | html %]
+   [% DEFAULT object = m %]
+   <tr><td>$field </td><td>[% object.$field | html %]
    </td></tr>
 [% END %]
 [% BLOCK draw_string %]
   [% DEFAULT size=30
 	maxlength=size*2
-	record = 'm';
+        object = m;
   %]
   <h3>[% title || field %]</h3>
   <p>$content
   <p><input size="$size" name="$field" maxlength="$maxlength" value="[% 
-     ( q.param(field) || $record.$field ) | html %]">
+     ( q.param(field) || object.$field ) | html %]">
   [% hr %]
 [% END %]
 [% BLOCK draw_textbox %]
+   [% DEFAULT object = m %]
   <h3>[% title || field %]</h3>
   <p>$content
   <textarea wrap="virtual" cols="60" rows="4"
-         name="$field">[% ( q.param(field) || m.$field ) | html %]</textarea>
+         name="$field">[% ( q.param(field) || object.$field ) | html %]</textarea>
   [% hr %]
 [% END %]
 [% BLOCK draw_valuelist %]
@@ -45,8 +48,9 @@
 [% BLOCK draw_slider;
    DEFAULT min_txt = 'min'
 	   max_txt = 'max'
-           title = field;
-   current = m.${field};
+           title   = field
+           object  = m;
+   DEFAULT current = object.${field};
 %]
   <h3>[% title %]</h3>
   <p>$content
@@ -58,19 +62,21 @@
   [% hr %]
 [% END %]
 [% BLOCK draw_boolean %]
+   [% DEFAULT object = m %]
   <h3>[% title || field %]</h3>
   <p>$content
   <p><input type="radio" name="$field" value="t"
-     [% 'checked' IF  ( q.param(field) || m.$field ) %]> Ja
+     [% 'checked' IF  ( q.param(field) || object.$field ) %]> Ja
   <p><input type="radio" name="$field" value="f"
-     [% 'checked' UNLESS  ( q.param(field) || m.$field ) %]> Nej
+     [% 'checked' UNLESS  ( q.param(field) || object.$field ) %]> Nej
   [% hr %]
 [% END %]
 [% BLOCK draw_alt %]
+   [% DEFAULT object = m %]
   <h3>[% title || field %]</h3>
   <p>$content
   <p>
-  [% value = FILTER format('%.2d'); q.param(field) || m.$field || current; END %]
+  [% value = FILTER format('%.2d'); q.param(field) || object.$field || current; END %]
   [% checked = 0; #Set mark in nearest place %]
   [% IF min; min; '<br>'; END; %]
   [% FOREACH key = values.keys.sort %]

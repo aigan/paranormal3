@@ -28,6 +28,6 @@ tror på och vad du inte tror på.</p>
 )%] Allt, benhårt
 </p>
 
-<p>[% submit %]</p>
+<p>[% step %]
 
 

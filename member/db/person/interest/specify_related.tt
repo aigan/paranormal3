@@ -10,30 +10,36 @@
    hidden('tid', tid);
    hidden('defined', 90);
    t=topic(tid);
+   i=m.interest(t);
 %]
 
-<h1>[% t.link %]</h1>
+<h1>[% m.mlink('Dina') %] intressen relaterade till [% t.link %]</h1>
 
-[% list = select_list("select t from t, rel where rev=? and rel=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and rel_indirect is false and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1) order by t", tid, m.member) %]
+[%
+   list = select_list("select distinct t from t, rel where rev=? and rel=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and rel_indirect is false and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1) order by t", tid, m.member);
 
-[% revlist = select_list("select t from t, rel where rel=? and rev=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and rel_indirect is false and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1) and t not in (select t from t, rel where rev=? and rel=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1)) order by t", tid, m.member, tid, m.member) %]
+   revlist = select_list("select distinct t from t, rel where rel=? and rev=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and rel_indirect is false and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1) and t not in (select t from t, rel where rev=? and rel=t and rel_type != 1 and rel_type < 5 and t_active is true and rel_active is true and t not in (select intrest_topic from intrest where intrest_member=? and intrest_defined > 1)) order by t", tid, m.member, tid, m.member);
+
+  seen = {}; # Do not repeat seen topics
+%]
 
 [% IF list.size or revlist.size %]
    <p>Är du möjligen intresserad av något av dessa relaterade ämnen?
    [% hr %]
 
-   [% FOREACH rec = list %]
+   [% FOREACH rec IN list %]
      [% t = topic(rec.t) %]
-     <h3>[% t.link %]</h3>
+     <h3>[% t.link %] [%+ PROCESS typelist.tt %]</h3>
      <p>[% t.text | html %]</p>
      <p>Ointresserad [% slider( field="_meta_interest_$t.id" )%]
    	Mycket intresserad
      [% hr %]
-   
+     [% seen.${t.id} = 1 %]   
    [% END %]
-   [% FOREACH rec = revlist %]
+   [% FOREACH rec IN revlist %]
+     [% NEXT IF seen.${rec.t} %]
      [% t = topic(rec.t) %]
-     <h3>[% t.link %]</h3>
+     <h3>[% t.link %] [%+ PROCESS typelist.tt %]</h3>
      <p>[% t.text | html %]</p>
      <p>Ointresserad [% slider( field="_meta_interest_$t.id" )%]
    	Mycket intresserad
@@ -48,4 +54,4 @@
 
 [% END %]
 
-[% go('Fortsätt', m.interest(t).next_step(defined=90).template, 'interest_update_multi') %]
+[% step('Fortsätt', i.next_step(defined=90).template, 'interest_update_multi') %]

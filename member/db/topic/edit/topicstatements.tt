@@ -1,6 +1,6 @@
 [% META
 	otitle = 'Editera ämnesuttalanden'
-	next_template = 'topicstatements'
+	default_template = 'topicstatements.tt'
 	next_action = 'ts_update'
 %]
 
@@ -40,7 +40,7 @@ END;
 <p>Fler ämnen, ett per rad:<br>
 <textarea cols="30" rows="5" name="_meta_talias">[% list2block('_meta_talias') %]</textarea>
 
-<p>[% submit('Ändra') %]
+<p>[% step('Ändra') %]
 
 <p>Det här ska vara en lista om vad detta objekt behandlar.  Objektet
 måste vara media, så som en bok, tidskrift, diskussioninlägg eller

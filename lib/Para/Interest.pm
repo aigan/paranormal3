@@ -37,7 +37,16 @@ use Para::Topic;
 
 ######## Constructor
 
-sub new
+=head2 _new
+
+  Para::Interest->_new( $rec )
+
+Create object. The caller must take care of the cache and use the
+cahce before calling this!
+
+=cut
+
+sub _new
 {
     my( $this, $rec ) = @_;
     my $class = ref($this) || $this;
@@ -52,49 +61,60 @@ sub new
 
 sub get
 {
-    my( $this, $m, $t ) = @_;
+    my( $this, $m, $t, $rec ) = @_;
 
-    $m = Para::Member->get( $m );
-    unless( ref $t )
+    unless( ref $m )
     {
-	$t = Para::Topic->find_one( $t );
+	$m = Para::Member->get( $m );
     }
 
-    warn "  get interest ".$t->id."\n";
-#    cluck Dumper[$this,$m,$t];
+    unless( ref $t )
+    {
+	$t = Para::Topic->get_by_id( $t );
+    }
 
-    my $rec = $Para::dbix->select_possible_record('from intrest where intrest_member=? and intrest_topic=? order by intrest desc, intrest_defined desc', $m->id, $t->id );
+    my $ins_db = $m->interests->{'db'};
+    my $tid = $t->id;
 
-    return undef unless $rec;
+    unless($ins_db->{$tid})
+    {
+	warn "  get interest $tid\n";
 
-    warn "    found\n";
+	$rec ||= $Para::dbix->select_possible_record('from intrest where intrest_member=? and intrest_topic=? order by intrest desc, intrest_defined desc', $m->id, $tid );
 
-    $rec->{'member'} = $m;
-    $rec->{'topic'} = $t;
+	return undef unless $rec;
+	warn "    found\n";
 
-    return $this->new( $rec );    
+	$rec->{'member'} = $m;
+	$rec->{'topic'} = $t;
+
+	$ins_db->{$tid} = $this->_new( $rec );
+    }
+
+    return $ins_db->{$tid};
 }
 
 sub getset
 {
     my( $this, $m, $t ) = @_;
 
-    $m = Para::Member->get( $m );
+    unless( ref $m )
+    {
+	$m = Para::Member->get( $m );
+    }
+
     unless( ref $t )
     {
-	$t = Para::Topic->find_one( $t );
+	$t = Para::Topic->get_by_id( $t );
     }
 
-    warn "  getset interest ".$t->id."\n";
+#    warn "  getset interest ".$t->id."\n";
 
     my $i = $this->get( $m, $t );
-    unless( $i )
-    {
-	$this->create( $m, $t, 1);
-	$i = $this->get( $m, $t );
-    }
 
-    $i or die "    Failed to create interest";
+    $i ||= $this->create( $m, $t, 1);
+
+    $i or die "Failed to create interest".$t->id;
 
     return $i;
 }
@@ -167,7 +187,14 @@ sub create
 
     warn "    success\n";
 
-    return 1;
+
+    my $i = $this->get( $m, $t );
+
+    # Reset cache
+    #
+    $m->interests->add_to_list($i);
+
+    return $i;
 }
 
 ######## Methods
@@ -183,7 +210,7 @@ sub t
 
     unless( $i->{'topic'} )
     {
-	$i->{'topic'} = Para::Topic->new( $i->{'intrest_topic'} );
+	$i->{'topic'} = Para::Topic->get_by_id( $i->{'intrest_topic'} );
     }
     return $i->{'topic'};
 }
@@ -318,6 +345,14 @@ sub equals
 
 sub desig
 {
+    my( $intr ) = @_;
+
+    return( sprintf "%s intresse för %s ligger på %d%%",
+	    $intr->member->desig,
+	    $intr->topic->desig,
+	    $intr->interest,
+	    );
+
     die "not implemented";
 }
 
@@ -345,6 +380,8 @@ sub update
 
     my @fields = ();
     my @values = ();
+
+    my $m = $i->member;
 
     $rec->{'defined'} || 0; # TODO: Allow lowering the value
     if( $rec->{'defined'} > $i->defined )
@@ -427,10 +464,10 @@ sub update
 
     # Update timestamp
     push @fields, 'intrest_updated';
-    push @values, scalar(localtime);
+    push @values, scalar localtime;
 
     my $tid = $i->topic->id;
-    my $mid = $i->member->id;
+    my $mid = $m->id;
 
     my $statement = "update intrest set ".
 	join( ', ', map("$_=?", @fields)) .
@@ -438,7 +475,18 @@ sub update
     my $sth = $Para::dbh->prepare_cached( $statement );
     $sth->execute( @values, $tid, $mid ) or die;
 
-    $i->member->score_change( 'intrest_stated', 1 );
+    ### Change thic object
+    #
+    for( my $pos=0; $pos<= $#fields; $pos++ )
+    {
+	$i->{$fields[$pos]} = $values[$pos];
+    }
+
+    $m->score_change( 'intrest_stated', 1 );
+
+    # Update cache
+    #
+    $m->interests->change_in_list( $i );
 
     return 1;
 }

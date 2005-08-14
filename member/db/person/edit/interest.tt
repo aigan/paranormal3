@@ -12,7 +12,7 @@
 <p>
 [ [% jump('Lägg till fler intressen', '/member/db/person/interest/enter_list.tt', run='mark', mid=m.id) %]
 ]
-[% m.interests.count %] intressen
+[%+ m.interests.count %] intressen
 </p>
 
 [% 
@@ -113,7 +113,7 @@
    [% END %]
 
    [% tr2 %]
-      <td>[% forward(i.t.title, i.next_step(redefine=1).handler, run='mark', tid=i.t.id) %]
+      <td>[% jump(i.t.title, i.next_step(redefine=1).template , run='mark', tid=i.t.id, mid=m.id) %]
       <td align="right">[% i.interest %]
       <td>[% i.defined %]
       [% IF ifilter.include_date %]
@@ -149,6 +149,8 @@ $this_from - $this_to
    | [% forward("$next_from - $next_to", me, offset = next_from) %]
 [% END %]
 </p>
+
+<p>[% step %]
 
 [% hr %]
 

@@ -45,6 +45,7 @@
 <p>Meddelande:<br>[% textarea('message',p.message, rows=5) %]
 <p>Kommentar:<br>[% textarea('comment',p.comment, rows=5) %]
 <p>
-[% submit %]
+
+[% step %]
 
 <br clear="all">

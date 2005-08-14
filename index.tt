@@ -27,7 +27,7 @@
 [% ELSE %]
   <br/>
 
-  <form method="post" action="/">
+  <form method="post" action="[% site.login_page %]">
     [% hidden('previous', previous) %]
     [% hidden('run', 'user_login') %]
     <center>

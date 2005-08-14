@@ -1,7 +1,7 @@
 [% META
 	otitle = 'Disposition'
         level = 5
-	next_template = 'outline.tt'
+	default_template = 'outline.tt'
 	next_action  = 'outline_update'
 %]
 [%
@@ -29,6 +29,8 @@
 <input type="submit" name="do_split" value="Dela upp">
 <input type="submit" name="do_merge" value="Slå samman">
 -->
+[%+ backstep %]
+[%+ regret %]
 </p>
 
 <table border="0" width="100%">

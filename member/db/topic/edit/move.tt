@@ -14,4 +14,4 @@
 
 <p>Flytta <code>$t.id:$t.desig</code> till [% input('talias') %]
 
-[% submit('Sök') %]
+[% step('Sök') %]

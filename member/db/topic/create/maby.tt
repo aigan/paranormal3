@@ -58,6 +58,4 @@ namn.
 
 </td></tr></table>
 
-<p>Skapa ämnet?
-[%+ submit %]
-[%+ backstep %]
+<p>[% step('Skapa') %]

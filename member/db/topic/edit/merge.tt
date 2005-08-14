@@ -18,4 +18,4 @@
 
 <p>Slå samman <code>$tid: $t.title</code> med [% input('t1_alias') %]
 
-[% submit('Sök') %]
+[% step('Sök') %]

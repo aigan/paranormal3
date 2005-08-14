@@ -1,0 +1,42 @@
+[% META title="Texter att kontrollera"
+        level = 11
+%]
+
+<p>
+[ [% jump('Ladda om sidan', me) %]
+]</p>
+
+
+
+<div class="entry">
+<table>
+   <tr><th>A</th><th>S</th><th>T</th><th>v</th><th>Titel</th><th>Ämne</th><th colspan="2">Skapad av</th></tr>
+[% FOREACH rec = select_list("from t, member where t_changedby=member and (t_status=2 or t_status=3) and t_entry is true order by t_active desc, t_status, t_updated") %]
+   [% t = topic(rec.t, rec.t_ver) %]
+   [% tr2 %]
+      <td>$t.active</td>
+      <td>$t.status</td>
+      <td>[% jump(t.id, '/member/db/topic/view/', tid=t.id) %]</td>
+      <td>$t.ver</td>
+
+      [% title = t.title %]
+      [% DEFAULT title = 'Odöpt text' %]
+      <td>[% jump(title, '/member/db/topic/edit/versions.tt', tid=t.id v=t.ver run='mark') %]</td>
+      <td>[% jump(t.topic.desig, '/member/db/topic/view/', tid=t.topic.id) %]
+      <td>[% t.created_by.link %]</td>
+      <td>[% t.created.ymd %]</td>
+   </tr>
+[% END %]
+</table>
+</div>
+
+<h2>Instruktioner</h2>
+
+<p>Se [% jump("hur väktare bedömer ämnen och texter", "/hur_vaktare_bedomer_amnen_och_texter.html" ) %]</p>
+
+<p>Denna funktion är preliminär.</p>
+
+<p>När systemet är mer utvecklat kommer redaktörerna på gesällnivå för respektive ämne få i uppdrag att kontrollera ändrade och nya texter.  Men tills vidare vill vi bara se att texterna är vettiga.</p>
+
+<p>Se det här som en grovsollning.</p>
+

@@ -4,7 +4,7 @@ package Para::Action::interest_find_new;
 use strict;
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw uri debug trim );
+use Para::Frame::Utils qw( throw uri debug trim inflect );
 
 use Para::Member;
 use Para::Topic;
@@ -39,7 +39,7 @@ sub handler
 
     # Get from session
     #
-    my $news = $req->s->{'new_interests'} || {};
+    my $news = $req->s->{'new_interests'} ||= {};
 
     # Add rom query
     #
@@ -49,6 +49,11 @@ sub handler
 	next unless length $name;
 	$news->{$name} ++;
     }
+
+    $req->result->message(inflect scalar( keys %$news),
+			  "Inga fler nya intressen att undersöka",
+			  "Tittar igenom ett nytt intresse",
+			  "Tittar igenom %d nya intressen" );
 
     foreach my $line ( keys %$news )
     {
@@ -94,6 +99,8 @@ sub handler
 				       mid => $mid,
 				   });
 
+	$req->result->message(inflect scalar(@news), "1 intresse är okänt", "%d intressen är okända" );
+
 	my $alias = pop @news;
 	$q->param('_name', ucfirst $alias);
 	delete $news->{$alias};
@@ -105,7 +112,7 @@ sub handler
 	delete $req->s->{'new_interests'};
     }
 
-    return "Intressen noterade\n";
+    return "";
 }
 
 1;

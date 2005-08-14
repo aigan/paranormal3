@@ -27,6 +27,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( minof throw debug trim reset_hashref );
+use Para::Frame::DBIx qw( pgbool );
 use Para::Frame::Time;
 
 use Para::Topic qw( title2url );
@@ -56,6 +57,7 @@ sub _new
 =head2 find_by_name
 
     $class->find_by_name( $name );
+    $class->find_by_name( $name, \%crits );
 
 crits:
   active
@@ -163,7 +165,7 @@ sub language
 {
     my( $a ) = @_;
     return undef unless $a->{'talias_language'};
-    return Para::Topic->new( $a->{'talias_language'} );
+    return Para::Topic->get_by_id( $a->{'talias_language'} );
 }
 
 sub language_id
@@ -176,8 +178,19 @@ sub language_id
 sub topic
 {
     my( $a ) = @_;
-    return Para::Topic->new( $a->{'talias_t'} );
+    return Para::Topic->get_by_id( $a->{'talias_t'} );
 }
+
+sub t
+{
+    return Para::Topic->get_by_id( $_[0]->{'talias_t'} );
+}
+
+sub tid
+{
+    return $_[0]->{'talias_t'};
+}
+
 
 sub created_by
 {
@@ -205,7 +218,7 @@ sub activate
 {
     my( $a ) = @_;
 
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
 
     $a->update({
 		status => $m->new_status,
@@ -229,7 +242,7 @@ sub add
 	return $a->update( $props );
     }
 
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
     my $st_alias_add =
       "insert into talias ( talias_t, talias, talias_urlpart,
                             talias_createdby, talias_changedby,
@@ -281,7 +294,7 @@ sub update
 {
     my( $a, $props ) = @_;
 
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
 
     # The props hash:
     #
@@ -360,7 +373,7 @@ sub update
 	    warn sprintf( "  Language changed: %s -> %s\n",
 			  ( $a->language ? $a->language->desig : '<none>' ),
 			  ( $props->{'language'} ?
-			    Para::Topic->new( $props->{'language'} )->desig :
+			    Para::Topic->get_by_id( $props->{'language'} )->desig :
 			    '<none>' ),
 			);
 	}

@@ -57,3 +57,5 @@ $this_from - $this_to
    | [% forward("$next_from - $next_to", 'list.tt' offset = next_from) %]
 [% END %]
 </p>
+
+[% step %]

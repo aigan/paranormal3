@@ -77,7 +77,7 @@ dig för de som vill ha någon att e-posta till.
 
 [% END %]
 
-[% submit %]
+[% step %]
 
 <hr>
 

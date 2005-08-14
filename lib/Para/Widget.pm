@@ -140,7 +140,7 @@ sub interest_next_step
     my $next = {};
 
     my $m = Para::Member->get( $mid );
-    my $t = Para::Topic->new( $tid );
+    my $t = Para::Topic->get_by_id( $tid );
 
     my $i = $Para::dbix->select_possible_record('from intrest where intrest_member=? and intrest_topic=?', $mid, $tid);
     my $status = $m->new_status;
@@ -1373,7 +1373,7 @@ sub primary_choice
     # 1. include non-media
     # 2. include non-url-media
 
-    my $media = Para::Topic->new( T_MEDIA );
+    my $media = Para::Topic->get_by_id( T_MEDIA );
 
     foreach my $t ( @$topics )
     {

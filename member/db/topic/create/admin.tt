@@ -10,4 +10,4 @@
 
 <p>[% input("t_title", q.param('t_title'), size=50) %]
 
-[% submit('Skapa') %]
+[% step('Skapa') %]

@@ -40,7 +40,7 @@
 
 [% IF found %]
 
-<p>[% submit('Slå samman') %]
+<p>[% step('Slå samman') %]
 
 [% ELSE;
       THROW notfound, "Det finns inget ämne med alias $talias";

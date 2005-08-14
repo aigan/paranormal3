@@ -29,6 +29,6 @@ Varje vecka
 <br><input type="radio" name="newsmail" value="5"[% ' checked' IF m.newsmail == 5 %]>
 Varje dag
 
-<p>[% submit %]
+<p>[% step %]
 
 

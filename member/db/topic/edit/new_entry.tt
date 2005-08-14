@@ -28,4 +28,4 @@
 
 <p>[% textarea('t_text', t_text, rows=20) %]
 
-<p>[% submit %]
+<p>[% step %]

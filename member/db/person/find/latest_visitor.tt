@@ -24,3 +24,5 @@
 [% END %]
 </table>
 </div>
+
+[% step %]

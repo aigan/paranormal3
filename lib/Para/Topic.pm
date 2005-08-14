@@ -19,13 +19,14 @@ package Para::Topic;
 use strict;
 use base qw( Exporter );
 use Data::Dumper;
-use Carp qw( cluck );
+use Carp qw( cluck croak );
 use locale;
 use Date::Manip;
 use IO::LockedFile;
 use Template::Context;
 use Sys::CpuLoad;
 use Image::Size;
+use Clone qw( clone );
 
 BEGIN
 {
@@ -58,7 +59,15 @@ sub get
     return shift->new(@_);
 }
 
-sub new
+sub get_by_id  # Use this primarely
+{
+    my( $class, $tid, $v ) = @_;
+    $v ||= "";
+    return $Para::Topic::CACHE->{"$tid-$v"} ||
+	$class->_new( $tid, $v );
+}
+
+sub _new
 {
     my( $this, $tid, $v, $nocache ) = @_;
     my $class = ref($this) || $this;
@@ -67,7 +76,7 @@ sub new
 #    croak "undefined tid" unless $tid;
 
     $v ||= ""; # Suitable for key part
-    debug(1,"looking for $tid-$v");
+    debug(1, "looking for $tid-$v");
 
     # This is maby already a topic
     return $tid if ref $tid eq 'Para::Topic';
@@ -120,7 +129,7 @@ sub create
 
     trim( \$title );
     length( $title ) or throw('incomplete', "Titel saknas");
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
 
     if( $m->level < 5 )
     {
@@ -142,7 +151,7 @@ sub create
     $sth->execute( $tid, $title, title2url($title), $m->id, $m->id,
 		   $m->new_status );
 
-    my $t = Para::Topic->new( $tid );
+    my $t = Para::Topic->get_by_id( $tid );
     $t->generate_url;
 
     $m->score_change('topic_submitted', 1);
@@ -159,7 +168,7 @@ sub find_urlpart
 
     trim( \$name );
     my $recs = $Para::dbix->select_list('from t, talias where t=talias_t and talias_urlpart = lower(?) and t_active is true and t_entry is false and talias_active is true', $name );
-    my @topics = map Para::Topic->new( $_->{'t'} ), @$recs;
+    my @topics = map Para::Topic->get_by_id( $_->{'t'} ), @$recs;
 
     return \@topics;
 }
@@ -239,8 +248,14 @@ sub find
                                 and talias_active is true', $name )
 	   and @$recs)
     {
-	debug(1,"found '$name' as alias for active topic");
-	debug(1,"  Topic id: $recs->[0]{t}");
+	if(debug)
+	{
+	    debug(1,"found '$name' as alias for active topic");
+	    foreach my $rec (@$recs)
+	    {
+		debug(2,"  Topic id: $rec->{t} v$rec->{t_ver}");
+	    }
+	}
 	#done
     }
     # include inactive topics
@@ -249,7 +264,7 @@ sub find
                                 and t_ver=(select max(t_ver) from t where t=main.t)', $name )
 	   and @$recs)
     {
-	my @ids = map $_->{'t'}, @$recs;
+	my @res = @$recs;
 
 	debug(1,"found '$name' as alias for inactive topic");
 
@@ -262,18 +277,18 @@ sub find
 #		warn "    Look at $rec->{'t'}\n";
 	    ADD:
 		{
-		    foreach( @ids )
+		    foreach( @res )
 		    {
 #			warn "      Compare with $_\n";
-			last ADD if $_ == $rec->{'t'};
+			last ADD if $_->{'t'} == $rec->{'t'};
 		    }
 #		    warn "    Add $rec->{'t'}\n";
-		    push @ids, $rec->{'t'};
+		    push @res, $rec;
 		}
 	    }
 	}
 
-	my @topics = map Para::Topic->new( $_ ), @ids;
+	my @topics = map Para::Topic->get_by_id( $_->{'t'}, $_->{'t_ver'} ), @res;
 #	warn "  return\n";
 	return \@topics;
     }
@@ -286,7 +301,7 @@ sub find
 	#done
     }
 
-    my @topics = map Para::Topic->new( $_->{'t'} ), @$recs;
+    my @topics = map Para::Topic->get_by_id( $_->{'t'}, $_->{'t_ver'} ), @$recs;
 
     return \@topics;
 }
@@ -297,17 +312,20 @@ sub find_one
     my( $this, $name ) = @_;
     my $class = ref($this) || $this;
 
+    croak "No name given" unless $name;
     my $topics = Para::Topic->find( $name );
+
 
     if( $topics->[1] )
     {
-	$Para::result->{'info'}{'alternatives'}{'list'} = $topics;
-	$Para::result->{'info'}{'alternatives'}{'name'} = $name;
+	my $res = $Para::Frame::REQ->result;
+	$res->{'info'}{'alternatives'}{'list'} = $topics;
+	$res->{'info'}{'alternatives'}{'name'} = $name;
 	throw('alternatives', "Välj ett av dessa alternativ för ämnet '$name'");
     }
     unless( $topics->[0] )
     {
-	$Para::result->{'info'}{'create_confirm'} = $name;
+	$Para::Frame::REQ->result->{'info'}{'create_confirm'} = $name;
 	throw('notfound', "Ämnet '$name' finns inte");
     }
 
@@ -326,7 +344,7 @@ sub vacuum_from_queue
     my $vts = $Para::dbix->select_list('select t from t where t_active is true and t_entry is false and t_entry_imported < ? limit ?', $minr->{'min'}+1, $limit, []);
     foreach my $rec ( @$vts )
     {
-	my $t = Para::Topic->new( $rec->{'t'} );
+	my $t = Para::Topic->get_by_id( $rec->{'t'} );
 	$t->vacuum($seen);
 
 	unless( $cnt % BATCH )
@@ -351,7 +369,7 @@ sub publish_from_queue
     foreach my $rec ( @$topics )
     {
 	my $tid = $rec->{'t'};
-	my $t = Para::Topic->new( $tid );
+	my $t = Para::Topic->get_by_id( $tid );
 	$t->publish;
 
 	unless( $cnt % BATCH )
@@ -518,7 +536,7 @@ sub parent
 
 #    warn "  Parent of ".$t->id."($t) is ".($t->{'t_entry_parent'}||'null')."\n"; ## DEBUG
 
-    if( my $p = $t->new( $t->{'t_entry_parent'} ) )
+    if( my $p = $t->get_by_id( $t->{'t_entry_parent'} ) )
     {
 	$p->break_entry_loop;
 	return $p;
@@ -533,7 +551,7 @@ sub next
     # Find next entry in chain
     #
     $filter ||= {};
-    if( my $n = Para::Topic->new( $t->{'t_entry_next'} ) )
+    if( my $n = Para::Topic->get_by_id( $t->{'t_entry_next'} ) )
     {
 	$n->break_entry_loop;
 
@@ -561,7 +579,7 @@ sub previous
 	    return $t->{'previous'} = undef;
 	}
 
-	my $previous = $t->new( $recs->[0]{'t'}, $recs->[0]{'t_ver'} );
+	my $previous = $t->get_by_id( $recs->[0]{'t'}, $recs->[0]{'t_ver'} );
 
 	# First try sorting out the official connection
 	if( @$recs > 1 )
@@ -570,7 +588,7 @@ sub previous
 	    my $proposed = [];
 	    foreach my $rec ( @$recs )
 	    {
-		my $v = $t->new( $rec->{'t'}, $rec->{'t_ver'} );
+		my $v = $t->get_by_id( $rec->{'t'}, $rec->{'t_ver'} );
 		if( $v->active )
 		{
 		    push @$active, $v;
@@ -982,7 +1000,7 @@ sub has_rel
     {
 	if( $rel =~ /^\d+$/ )
 	{
-	    @rels = $t->new( $rel );
+	    @rels = $t->get_by_id( $rel );
 	}
 	elsif( $rel )
 	{
@@ -995,7 +1013,7 @@ sub has_rel
 	    elsif( @$rels_in > 1 )
 	    {
 		# Exclude media, order by oldes
-		my $media = Para::Topic->new( T_MEDIA );
+		my $media = Para::Topic->get_by_id( T_MEDIA );
 		foreach my $rel2 ( sort { $a->{'t'} <=> $b->{'t'} } @$rels_in )
 		{
 		    debug(1,"  Consider ".$rel2->sysdesig);
@@ -1072,7 +1090,7 @@ sub set_parent
     ###   FIX: Work on your own session version
     my $st = "update t set t_entry_parent=?, t_updated=now(), t_changedby=? where t=? and t_ver=?";
     my $sth = $Para::dbh->prepare_cached( $st );
-    my $mid = $Para::u->id;
+    my $mid = $Para::Frame::U->id;
 
     my $tid = $t->id;
     my $ver = $t->ver;
@@ -1109,7 +1127,7 @@ sub set_next
     ###   FIX: Work on your own session version
     my $st = "update t set t_entry_next=?, t_updated=now(), t_changedby=? where t=? and t_ver=?";
     my $sth = $Para::dbh->prepare_cached( $st );
-    my $mid = $Para::u->id;
+    my $mid = $Para::Frame::U->id;
 
     my $tid = $t->id;
     my $ver = $t->ver;
@@ -1117,7 +1135,7 @@ sub set_next
 
     # Don't care about loops in old_next since we now is changing that
     # That's why we get the obj ouerself
-    if( my $old_next = Para::Topic->new( shift->{'t_entry_next'} ) )
+    if( my $old_next = Para::Topic->get_by_id( shift->{'t_entry_next'} ) )
     {
 #	warn "B\n";
 	$old_next->{'previous'} = undef;
@@ -1176,13 +1194,13 @@ sub break_previous
     # Sorted such that the first rec should keep t_entry_next
 
     my $rec = shift @$recs;
-    my $pt = Para::Topic->new( $rec->{'t'} );
+    my $pt = Para::Topic->get_by_id( $rec->{'t'} );
     warn sprintf "Break multipple previus for topic %d\n", $t->id;
     warn sprintf "  Keeping topic %d v%d\n", $pt->id, $pt->ver;
 
     foreach my $rec ( @$recs )
     {
-	my $pt = Para::Topic->new( $rec->{'t'} );
+	my $pt = Para::Topic->get_by_id( $rec->{'t'} );
 	warn sprintf "  Decouple next from %d v%d\n", $pt->id, $pt->ver;
 	$pt->set_next( undef );
 	$cnt++;
@@ -1444,7 +1462,7 @@ sub break_topic_loop
 	    #
 	    foreach my $t2id ( keys %$involved )
 	    {
-		my $t2 = Para::Topic->new( $t2id );
+		my $t2 = Para::Topic->get_by_id( $t2id );
 		debug(1,sprintf "  Check %s", $t2->desig);
 		my $rel_arc_list = $t2->rel->arcs;
 		my $rev_arc_list = $t2->rev->arcs;
@@ -1476,13 +1494,13 @@ sub create_new_version
 {
     my( $t, $rec ) = @_; # Returns the new version
 
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
     my $mid = $m->id;
 
     my $m_status = $m->status;
 
     # We should replace the active/current version. not necessary this version
-    my $current_t = $t->new($t->id);
+    my $current_t = $t->get_by_id($t->id);
     my $old_status = $current_t->status || S_PROPOSED;
 
     # Wanted result
@@ -1603,7 +1621,7 @@ sub set_status
 
     die "no status given" unless defined $status;
 
-    $m ||= $Para::u;
+    $m ||= $Para::Frame::U;
     $m = Para::Member->get($m) unless ref $m;
 
     my $new_active = $status < S_PENDING ? 0 : 1;
@@ -1647,8 +1665,19 @@ sub status  { shift->{'t_status'} }
 sub oldfile { shift->{'t_oldfile'} }
 sub entry   { shift->{'t_entry'} }
 sub active  { shift->{'t_active'} }
-sub created { Para::Frame::Time->get( shift->{'t_created'} ) }
-sub updated { Para::Frame::Time->get( shift->{'t_updated'} ) }
+sub created
+{
+    return $_[0]->{'created'} ||=
+	Para::Frame::Time->get( $_[0]->{'t_created'} );
+}
+
+sub updated
+{
+    return $_[0]->{'updated'} ||=
+	Para::Frame::Time->get( $_[0]->{'t_updated'} );
+}
+
+
 sub admin_comment { shift->{'t_comment_admin'} }
 
 sub title   { shift->{'t_title'} }
@@ -1731,16 +1760,50 @@ sub image_size_xy
     return( $x, $y );
 }
 
+=head2 aliases
+
+  $t->aliases()
+
+  $t->aliases(\%crits)
+
+crits:
+  active
+  status_min
+
+returns hashref of name=>alias pairs
+
+=cut
+
 sub aliases
 {
     my( $t, $crits ) = @_;
-
-    $crits and die "not implemented";
 
     # Shared by all versions of topic
     unless( $Para::Topic::ALIASES{$t->id} )
     {
 	return Para::Alias->find_by_tid( $t->id );
+    }
+
+    if( $crits )
+    {
+	my %res = ();
+
+	my $crit_active = $crits->{'active'};
+	my $crit_status_min = $crits->{'status_min'} || 0;
+
+	foreach my $a ( values %{ $Para::Topic::ALIASES{$t->id} } )
+	{
+	    if( $crit_active )
+	    {
+		next unless $a->active;
+	    }
+
+	    next unless $a->status >= $crit_status_min;
+
+	    debug(4,"    passed");
+	    $res{$a->name} = $a;
+	}
+	return \%res;
     }
 
     return $Para::Topic::ALIASES{$t->id};
@@ -1799,7 +1862,7 @@ sub entry_list
     my @entries;
     foreach my $rec ( @$list )
     {
-	if( my $c = Para::Topic->new( $rec->{'t'} ) )
+	if( my $c = Para::Topic->get_by_id( $rec->{'t'} ) )
 	{
 	    $c->break_entry_loop;
 	    push @entries, $c;
@@ -1872,7 +1935,7 @@ sub replace
 
     if( my $r_id = $t->{'t_replace'} )
     {
-	return $t->new( $r_id );
+	return $t->get_by_id( $r_id );
     }
     return undef;
 }
@@ -1888,7 +1951,7 @@ sub replaced_by
 
 	if( $recs->[0] )
 	{
-	    $t->{'replaced_by'} = $t->new( $recs->[0]->{'t'} );
+	    $t->{'replaced_by'} = $t->get_by_id( $recs->[0]->{'t'} );
 	}
     }
 
@@ -1903,21 +1966,21 @@ sub previous_ver
     my $ver = $t->ver - 1;
 
     return undef unless $ver > 0;
-    return $t->new( $t->id, $ver );
+    return $t->get_by_id( $t->id, $ver );
 }
 
 sub first_ver
 {
     my( $t ) = @_;
 
-    return $t->new( $t->id, 1 );
+    return $t->get_by_id( $t->id, 1 );
 }
 
 sub next_ver
 {
     my( $t ) = @_;
 
-    return $t->new( $t->id, ($t->ver + 1) );
+    return $t->get_by_id( $t->id, ($t->ver + 1) );
 }
 
 sub last_ver
@@ -1936,7 +1999,7 @@ sub active_ver
 {
     my( $t ) = @_;
 
-    my $av = $t->new( $t->id );
+    my $av = $t->get_by_id( $t->id );
     if( $av->active )
     {
 	return $av;
@@ -1950,7 +2013,7 @@ sub versions
 
     my $versions = [];
 
-    for(my $v=1; my $ver = $t->new($t->id, $v, $nocache); $v++)
+    for(my $v=1; my $ver = $t->get_by_id($t->id, $v, $nocache); $v++)
     {
 	push @$versions, $ver;
     }
@@ -1997,7 +2060,7 @@ sub title2aliases
     trim(\$val);
     return unless length $val;
 
-    my $m = $Para::u;
+    my $m = $Para::Frame::U;
 
     $t->add_alias( $val,
 		 {
@@ -2012,7 +2075,7 @@ sub delete_cascade
 
     # Authorization
     #
-    if( $Para::u->level < 40 )
+    if( $Para::Frame::U->level < 40 )
     {
 	throw('denied', "Reserverat för mästare...");
     }
@@ -2182,9 +2245,12 @@ sub save
 {
     my( $t ) = @_;
 
+    my $tid = $t->id;
+    my $v   = $t->ver;
+
     my( @fields, @values );
 
-    my $saved = $t->new( $t->id, $t->ver, 1); # Nocache
+    my $saved = $t->_new( $tid, $v, 1); # Nocache
 
     my @fields_to_check = qw( t_pop t_size t_title
 			      t_title_short t_title_short_plural
@@ -2208,17 +2274,24 @@ sub save
     {
 	# Update changedby. Timestamp set in the statement
 	push @fields, 't_changedby';
-	push @values, $Para::u->id;
+	push @values, $Para::Frame::U->id;
 
 	# Update topic
 	my $statement = "update t set ". join( ', ', map("$_=?", @fields)) .
 	    ", t_updated=now() where t=? and t_ver=?";
 	my $sth = $Para::dbh->prepare_cached( $statement );
 #	warn "Running $statement\n";
-	$sth->execute( @values, $t->id, $t->ver );
+	$sth->execute( @values, $tid, $v );
+
+	$t->{'updated'} = now();
+	$t->{'t_updated'} = $t->{'updated'}->cdate;
 
 	$t->mark_publish;
     }
+
+    delete $Para::Topic::UNSAVED{"$tid-$v"};
+
+    return scalar @fields; # The number of changes
 }
 
 sub vacuum
@@ -2370,7 +2443,7 @@ sub vacuum
 	if( $active_ver )
 	{
 	    # Active version should have the right status
-	    my $t_a = Para::Topic->new( $t->id, $active_ver );
+	    my $t_a = Para::Topic->get_by_id( $t->id, $active_ver );
 	    if( $t_a->status < S_PROPOSED )
 	    {
 		$t_a->set_status( S_PROPOSED, -1 );
@@ -2391,7 +2464,7 @@ sub vacuum
 
     # Vacuum aliases
     #
-    foreach my $a (@{ $t->alias_list({include_inactive => 1}) })
+    foreach my $a (values %{ $t->aliases } )
     {
 	$a->vacuum;
     }
@@ -2445,7 +2518,7 @@ sub generate_url
     debug(1,sprintf "Generating url for %s", $t->sysdesig);
 
     # Supported old calling with tid
-    $t = Para::Topic->new( $t ) unless ref $t eq 'Para::Topic';
+    $t = Para::Topic->get_by_id( $t ) unless ref $t eq 'Para::Topic';
 
     $exception ||= {};
     my @handled = ();
@@ -2579,7 +2652,7 @@ sub generate_url
 	    $url = "/topic$url.html";
 	    debug(1,"$alt  $url");
 
-	    Para::Topic->new( $alt )->file( $url );
+	    Para::Topic->get_by_id( $alt )->file( $url );
 
 	    push @handled, $alt;
 	}
@@ -2593,7 +2666,7 @@ sub generate_url
 	my $alt_part = title2url( $alt_rec->{'t_title'} );
 	$url = "/topic/$alt_part.html";
 	debug(1,"$alt  $url");
-	Para::Topic->new( $alt )->file( $url );
+	Para::Topic->get_by_id( $alt )->file( $url );
 
 	push @handled, $alt;
     }
@@ -2618,7 +2691,7 @@ sub publish
 
     use File::Path;
 
-    $t = Para::Topic->new( $t ) unless ref $t eq 'Para::Topic';
+    $t = Para::Topic->get_by_id( $t ) unless ref $t eq 'Para::Topic';
     $t = $t->topic if $t->entry;
     return undef unless $t;
 
@@ -2628,15 +2701,16 @@ sub publish
 
     if( $t->file ) # Will generate_url on demand
     {
-   	my $params = Para::Common::construct_params();
+   	my $params = $t->publish_params;
 	$params->{'tid'} = $tid;
 	$params->{'t'} = $t;
 
-	my $template_base = DOCROOT."/cgi/tt_lib/static/";
+	my $docroot = $Para::Frame::CFG->{'approot'};
+	my $template_base = $docroot."/inc/static/";
 	my $template;
 	if( $t->member and $t->member->id > 0 )
 	{
-	    $template='paranormalse';
+	    $template='paranormalse.';
 	}
 	unless( $template )
 	{
@@ -2644,7 +2718,7 @@ sub publish
 	    {
 		my $name = title2url( $arc->obj->title );
 		debug(2,"Looking for $name template");
-		if( -e $template_base . $name )
+		if( -e $template_base . $name . ".tt" )
 		{
 		    $template = $name;
 		}
@@ -2806,40 +2880,83 @@ sub write_page
     my($t, $template, $params, $file) = @_;
 
     $file ||= $t->{'t_file'};
-    $params ||= Para::Common::construct_params();
+    $params ||= $t->publish_params;
 
     local $Para::state = 'static';
-    local $Para::u = Para::Member->get( 46 ); # John Doe
+
+    # Become unpriviliged user
+    $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
+    my $john_doe = Para::Member->get( 46 );
+    $Para::Frame::U->change_current_user( $john_doe );
+
+    my $approot = $Para::Frame::CFG->{'approot'};
+    my $pfroot  = $Para::Frame::CFG->{'paraframe'};
+
+    my @incpath = "$approot/inc/static/$template";
+    unless( $template eq 'default' )
+    {
+	push @incpath, "$approot/inc/static/default";
+    }
+    push @incpath, "$approot/inc", "$pfroot/inc";
 
     my $th = Template::Context->new
 	(
-	 INTERPOLATE => 1,
-	 INCLUDE_PATH => [ '/var/www/paranormal.se',
-			   '/var/www/paranormal.se/cgi/tt_lib'],
-	 COMPILE_DIR =>  '/var/local/paranormal/ttc/psidb1',
-	 COMPILE_EXT => '.ttc',
-	 PRE_CHOMP => 0,
-	 POST_CHOMP => 0,
-	 TRIM => 1,
-	 EVAL_PERL => 1,
-	 FILTERS =>
+	 INTERPOLATE  => 1,
+	 INCLUDE_PATH => \@incpath,
+	 COMPILE_DIR  =>  '/var/local/paranormal/ttc/psidb2',
+	 COMPILE_EXT  => '.ttc',
+	 PRE_CHOMP    => 0,
+	 POST_CHOMP   => 0,
+	 TRIM         => 1,
+	 EVAL_PERL    => 0,
+	 FILTERS      =>
 	 {
 	     'uri' => sub { CGI::escape($_[0]) },
 	     'html_psi' => \&Para::Widget::html_psi,
 	 }
 	 );
 
-    my $page = $th->process("static/$template", $params);
- 
-    my $sysfile = sysfile( $file );
+    my $template_file = "static/$template.tt";
 
-    my $dir = $sysfile; $dir =~ s/\/[^\/]+$//g;
-    mkpath( $dir );
+    eval
+    {
+	my $page = $th->process($template_file, $params);
+ 
+	my $sysfile = sysfile( $file );
+
+	my $dir = $sysfile; $dir =~ s/\/[^\/]+$//g;
+	mkpath( $dir );
 
 #    warn "--> Publishing to $sysfile using $template\n";
-    open PAGE, ">$sysfile" or die $!;
-    print PAGE $page;
-    close PAGE;
+	open PAGE, ">$sysfile"
+	    or die "Kunde inte skriva till $sysfile: $!";
+	print PAGE $page;
+	close PAGE;
+    };
+    if( $@ )
+    {
+	my $req = $Para::Frame::REQ;
+	$req->result->message("Fel uppstod när vi försökte skapa\n$file\nmed hjälp av $template_file");
+    }
+
+
+    # Return to original user
+    $Para::Frame::U->revert_from_temporary_identity;
+
+    die $@ if $@; # Forward exception
+
+    return 1;
+}
+
+sub publish_params
+{
+    my( $t, $extra ) = @_;
+
+    my $params = clone($Para::Frame::PARAMS);
+
+    $params->{'site'} = $Para::Frame::CFG->{'site'};
+    $params->{'home'} = $Para::Frame::CFG->{'site'}{'webhome'};
+    return $params;
 }
 
 sub remove_page
@@ -2898,7 +3015,7 @@ sub type_list
                             and rel_strength >= 30
                             and t not in ($exclude)", $rel );
 #    warn "returnted @$list";
-    return [ map Pri::Topic->new( $_->{t} ), @$list ];
+    return [ map Para::Topic->get_by_id( $_->{t} ), @$list ];
 }
 
 sub type_list_string
@@ -2939,8 +3056,9 @@ sub sysfile
 {
     my( $file ) = @_;
 
-    my $topicdir = DOCROOT."/topic/";
-    my $sysfile = DOCROOT.$file;
+    my $docroot = $Para::Frame::CFG->{'approot'};
+    my $topicdir = $docroot."/topic/";
+    my $sysfile = $docroot.$file;
 
     $sysfile =~ s!^($topicdir)(([^/\.][^/\.]).+)!$1$3/$2!o;
 

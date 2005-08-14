@@ -68,7 +68,4 @@ editeringsläge för att ändra en uppgift.
 [% END %]
 
 	
-
-
-
-[% submit %]
+[% step %]

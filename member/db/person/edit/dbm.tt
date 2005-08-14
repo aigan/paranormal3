@@ -51,3 +51,4 @@
 [% ELSE %]
 <p>[% go('Skapa brevlåda', '/member/db/', 'member_create_sysuid') %]
 [% END %]
+[% step %]

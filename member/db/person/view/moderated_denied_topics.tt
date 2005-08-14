@@ -51,3 +51,5 @@
 </div>
 
 [% PROCESS pagify_footer.tt %]
+
+[% step %]

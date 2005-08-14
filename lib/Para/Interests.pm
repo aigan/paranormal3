@@ -18,7 +18,7 @@ package Para::Interests;
 
 use strict;
 use Data::Dumper;
-use Carp;
+use Carp qw( carp confess );
 use locale;
 use Date::Manip;
 
@@ -44,7 +44,7 @@ sub new
 
     my $ins = {};
     $ins->{'member'} = $member;
-    $ins->{'list'} = undef;
+    $ins->{'list'} = undef; # list of all interest records
     $ins->{'init'} = 0;
     $ins->{'db'} = {};
 
@@ -61,6 +61,26 @@ sub init_list
     return;
 }
 
+sub add_to_list
+{
+    my( $ins, $i ) = @_;
+
+    return undef unless $ins->{'list'}; # No active list
+
+    undef $ins->{'list'};
+    return undef; # Don't try anyway...
+}
+
+sub change_in_list
+{
+    my( $ins, $i ) = @_;
+
+    return undef unless $ins->{'list'}; # No active list
+
+    undef $ins->{'list'};
+    return undef; # Don't try anyway...
+}
+
 sub count
 {
     my( $ins ) = @_;
@@ -75,7 +95,8 @@ sub updated
 }
 
 
-sub member { shift->{'member'} }
+sub member { $_[0]->{'member'} }
+sub m      { $_[0]->{'member'} }
 
 sub summary
 {
@@ -176,8 +197,10 @@ sub list_item
 
     return undef unless $rec;
 
+    my $t = Para::Topic->get_by_id( $rec->{'intrest_topic'} );
+
     return $ins->{'db'}{ $rec->{'intrest_topic'} } ||=
-	Para::Interest->new( $rec );
+	Para::Interest->_new( $rec );
 }
 
 
@@ -185,9 +208,15 @@ sub add
 {
     my( $ins, $t ) = @_;
 
-    # TODO: use $ins db
-    Para::Interest->touch( $ins->member, $t );
+    return Para::Interest->getset( $ins->m, $t );
 }
+
+=head2 get
+
+  $ins->get( $topic )  # Called with name, id or obj
+  $ins->get( $rec )    # Use an interest db record
+
+=cut
 
 sub get
 {
@@ -195,30 +224,30 @@ sub get
 
     unless( ref $t )
     {
-	$t = Para::Topic->find_one( $t );
+	$t = Para::Topic->get_by_id( $t );
     }
 
     if( ref $t eq 'HASH' )
     {
 	# Called with t=record
 	return $ins->{'db'}{ $t->{'intrest_topic'} } ||=
-	    Para::Interest->new( $t );
+	    Para::Interest->_new( $t );
     }
 
     warn "  get interest $t->{id} (interests)\n";
 
-    
-    return $ins->{'db'}{ $t->id } ||=
-	Para::Interest->get( $ins->member, $t );
+    # Get will set the cache
+    return Para::Interest->get( $ins->member, $t );
 }
 
 sub getset
 {
     my( $ins, $t ) = @_;
 
+    $t or confess "No topic given";
     unless( ref $t )
     {
-	$t = Para::Topic->find_one( $t );
+	$t = Para::Topic->get_by_id( $t );
     }
 
     if( ref $t eq 'HASH' )
@@ -228,10 +257,9 @@ sub getset
 	    Para::Interest->new( $t );
     }
 
-    warn "  getset interest ".$t->id."(interests)\n";
+#    warn "  getset interest ".$t->id."(interests)\n";
 
-    return $ins->{'db'}{ $t->id } ||= 
-	Para::Interest->getset( $ins->member, $t );
+    return Para::Interest->getset( $ins->member, $t );
 }
 
 1;

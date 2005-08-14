@@ -37,6 +37,6 @@ svar bör ligga mellan 1-3 och några mellan 4-6.</p>
 
 [% hidden('interest_sanity', 1) %]
 
-<p>[% submit %]</p>
+<p>[% step %]</p>
 
 

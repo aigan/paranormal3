@@ -44,6 +44,6 @@ för det ämne du är intresserad av.
 [% hidden('plan_after', "/member/db/person/edit/general_interest.tt");
    hidden('plan_after', uri('/member/db/person/interest/enter_list.tt',
 		     	 run='member_presentation_topics') );
-   go('Börja', '/member/db/person/edit/email.tt');
+   step('Börja', '/member/db/person/edit/email.tt');
 %]
 

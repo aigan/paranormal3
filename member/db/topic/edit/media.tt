@@ -1,7 +1,7 @@
 [% META
 	otitle = 'Editera URL för media'
-	next_handler = 'media'
-	next_template = 'media_update'
+	next_action = 'media_update'
+	default_template = 'media.tt'
 %]
 
 [%
@@ -34,7 +34,7 @@
 </table>
 
 
-<p>[% submit('Ändra') %]
+<p>[% step('Ändra') %]
 
 [% hr %]
 

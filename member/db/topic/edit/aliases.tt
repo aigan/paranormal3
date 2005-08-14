@@ -23,7 +23,8 @@
 
 [% langrecs = select_list('from rel, t where t=rev and rel_type=1 and rel=33859 and t_active is true and rel_active is true order by t_title') %]
 
-<table border>
+<div class="entry">
+<table>
 <tr>
    <th>Behåll
    [% '<th>S' IF u.level>10 %]
@@ -32,10 +33,9 @@
    <th>Index
    <th>Språk
    [% '<th>Skapad av <th>Datum' IF u.level>10 %]
-[% FOREACH a = t.alias_list(tfilter) %]
+[% FOREACH a IN t.aliases.values %]
+   [% NEXT IF !a.active AND !tfilter.include_inactive %]
    <tr>
-      [%# NEXT UNLESS a.active or tfilter.include_inactive %]
-
       [% IF a.active %]
          <td>[% checkbox("_talias__${loop.count}_keep", 't', a.active) %]</td>
       [% ELSE %]
@@ -62,6 +62,7 @@
    </tr>
 [% END %]
 </table>
+</div>
 
 [% IF q.param('_aliaslist') %]
    <p>Ta bort de alias som inte passar på just detta ämnet.
@@ -73,9 +74,7 @@ stavningar och samma ord på vanligt förekommande språk.
 <p>Nya aliases, ett per rad:<br>
 <textarea cols="30" rows="3" name="_meta_talias">[% list2block('_aliaslist', 't_title') %]</textarea>
 
-<p>[% go('Uppdatera', 'aliases', 'topic_update4') %]
-   [% submit %]
-   [% go('Fortsätt utan ändringar', backtrack, 'nop') %]</p>
+<p>[% step('Uppdatera') %]
 
 <p>Avmarkera <em>behåll</em> för de alias som inte ska vara kopplade till detta ämnet.
 

@@ -5,6 +5,7 @@
 
 [% PROCESS load_member.tt %]
 
+<div class="entry">
 <table border>
 <tr><th>Str <th>Name <th>Con <th>Status <th>MyCon <th>MyDef
 [% FOREACH select_list('from intrest where intrest_member=? and intrest>10
@@ -20,3 +21,6 @@
 
 [% END %]
 </table>
+</div>
+
+<p>[% step %]

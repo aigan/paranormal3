@@ -44,7 +44,7 @@ sub add
     my $id = $Para::dbix->get_nextval('history_seq');
     my $status = $args->{status} || HS_CREATED;
     my $created = localtime;
-    my $createdby = $args->{createdby} || $Para::u;
+    my $createdby = $args->{createdby} || $Para::Frame::U;
     my $secret = $args->{secret} || 0;
     my $partof = $args->{partof};
     $partof ||= $Para::query->param('history_partof') if $ENV{MOD_PERL};

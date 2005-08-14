@@ -20,3 +20,5 @@
 [% IF u.level >= 41 %]
    <p>[% jump("Skapa ny medlem", "/member/db/person/create/") %]</p>
 [% END %]
+
+[% step %]

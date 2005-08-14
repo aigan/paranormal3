@@ -2,7 +2,7 @@
 	otitle = 'Redigera text'
 	next_action = 'topic_update'
 	focus = 't_text'
-	next_template = 'text'
+	default_template = 'text.tt'
 	level = 5
 %]
 
@@ -15,6 +15,11 @@
    hidden('v', t.ver);
    PROCESS buttons.tt;
 %]
+
+[% IF u.complexity < 10 %]
+<p>Textens syfte är att med så få ord som möjligt förklara vad ämnet
+är för den som inte har hört namnet tidigare.
+[% END %]
 
 
 [% IF t.entry %]
@@ -30,16 +35,19 @@
 
 <p>Texthantering
 [ [% jump('Lägg till en ny text', 'new_entry.tt' parent=tid run='mark' ) %]
-   [% IF u.level > 10 %]
+   [% IF u.level > 10 +%]
 |      [% jump('Ändra redaktörskommentar', 'text_admin.tt' tid=tid ) %]
    [% END %]
 ]</p>
 
+[% IF u.complexity > 5 %]
 <p>Status: $t_status - [% PROCESS topic_status.tt %]
 [% IF t.active; '  <strong><em>aktiv</em></strong>';
    ELSE;        '  <em>ej aktiv</em>';
    END;
 %]
+[% END %]
+
 [% UNLESS t.active %]
 - <strong>
 <blink>Denna version gäller inte</blink>
@@ -49,6 +57,7 @@
 </strong>
 [% ELSE %]
 
+[% IF u.complexity >= 10 %]
 <table>
 [% IF t.entry %]
    <tr><td>Rubrik <td>[% input('t_title', t.title, size=50 maxlength=128) %]
@@ -60,6 +69,7 @@
       som rubrik för listor av instanser. (ex lista på <em>böcker</em>)
 [% END %]
 </table>
+[% END %]
 
 [% IF t.entry %]
    Texten:
@@ -69,8 +79,10 @@
 <br>
 [% textarea('t_text', t.text, cols=70 rows=rows class="big_input") %]
 
-<p>[% submit %]<br>
+<p>[% step('Uppdatera') %]<br>
+[% IF u.complexity > 10 %]
 »...«<br>| ...<br>"..."[link]
+[% END %]
 </p>
 
 [% END %]
@@ -81,5 +93,3 @@
    <p>Kortbeskrivningen ska vara kort. Vill du skriva något om detta ämnet; [% jump('Lägg till en ny text', 'new_entry.tt' parent=tid run='mark' ) %]</p>
 [% END %]
 <p>Se [% jump("instruktion för att formatera texten", "/topic/instruktion_for_att_formatera_text_i_paranormalse.html", target='published') %]</p>
-
-

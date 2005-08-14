@@ -32,7 +32,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
-use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd debug );
+use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd debug uri );
 use Para::Frame::Email;
 
 use Para::Topic;
@@ -77,6 +77,11 @@ sub become_root
     debug(0,"Becoming root",1);
     $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
     return $_[0]->change_current_user( $_[0]->skapelsen );
+}
+
+sub revert_from_temporary_identity
+{
+    return $_[0]->revert_from_root;
 }
 
 sub revert_from_root
@@ -504,6 +509,19 @@ sub update_by_query
 
 }
 
+sub show_complexity
+{
+    return $_[0]->{'show_complexity'};
+}
+sub complexity
+{
+    return $_[0]->{'show_complexity'};
+}
+
+sub show_level
+{
+    return $_[0]->{'show_level'};
+}
 
 sub presentation   { shift->{'presentation'} }
 
@@ -537,7 +555,7 @@ sub topic
     my $tid =  shift->{'member_topic'};
     return undef unless $tid;
 
-    return Para::Topic->new( $tid );
+    return Para::Topic->get_by_id( $tid );
 }
 
 
@@ -585,7 +603,7 @@ sub file
 
     if( my $tid = $m->{'member_topic'} )
     {
-	return Para::Topic->new( $tid )->file;
+	return Para::Topic->get_by_id( $tid )->file;
     }
 
     return undef;
@@ -617,6 +635,22 @@ sub tlink  # Link to page with title. No link to adminpage
     {
 	return $m->title .' '. $m->{'nickname'};
     }
+}
+
+sub mlink # Link to admin page. Relative $u
+{
+    my( $m, $called ) = @_;
+
+    $called ||= 'Ditt';
+
+    my $page = uri("/member/db/person/view/",
+		   { mid => $m->id } );
+    unless( $m->equals($Para::Frame::U) )
+    {
+	$called = $m->{'nickname'};
+    }
+    
+    return &Para::Frame::Widget::jump( $called, $page );
 }
 
 sub geo_x
@@ -1107,7 +1141,7 @@ sub validate_nick
     }
 
     my $topics = Para::Topic->find( $uid );
-    my $person = Para::Topic->new( T_PERSON );
+    my $person = Para::Topic->get_by_id( T_PERSON );
     debug(3,"Look for existing topic");
     foreach my $t ( @$topics )
     {

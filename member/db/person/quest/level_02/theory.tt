@@ -26,6 +26,4 @@ Söker du en intuitiv förståelse av fenomenen? (Praktik)</p>
 )%] Praktiker
 </p>
 
-<p>[% submit %]</p>
-
-
+<p>[% step %]</p>

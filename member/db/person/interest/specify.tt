@@ -9,15 +9,20 @@
    tid = q.param('tid');
    t   = topic(tid);
    PROCESS buttons.tt;
-   PROCESS edit_menu.tt edit_arcs=1;
+#   PROCESS edit_menu.tt edit_arcs=1;
 
-   m = m.interest(t); # Default for draw_slider
+   i = m.interest(t);
+   UNLESS i;
+     THROW validation "$m.desig är inte intresserad av $t.desig";
+   END;
 
-	hidden('defined', 75);
-	hidden('tid', tid);
+   hidden('defined', 75);
+   hidden('tid', tid);
 %]
 
-<h1>Ditt intresse för [% t.link %]</h1>
+
+
+<h1>[% m.mlink %] intresse för [% t.link %][% PROCESS typelist.tt %]</h1>
 
 <p>Överdriv inte i dina svar.  Bäst effekt får du om dina markeringar
 har en jämn fördelning så att det i medel hamnar nära mitten.  Markera
@@ -33,6 +38,7 @@ som <em>Nej</em> och ruta 3-10 tolkas som <em>Ja</em>.
 [% hr %]
 
 [% WRAPPER draw_slider
+           object=i
 	   field='interest'
 	   title='Intresse'
 	   number=11
@@ -43,8 +49,9 @@ Hur intresserad är du av ämnet?
 [% END %]
 
 
-[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=10 and rel_active is true and rel_strength >= 30', m.t.id) %]
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=10 and rel_active is true and rel_strength >= 30', i.t.id) %]
 [% WRAPPER draw_slider 
+	   object=i
            field='belief' 
 	   title='Tro'
            number=11
@@ -72,8 +79,9 @@ det läran påstår är riktigt.
 [% END %]
 [% END %]
 
-[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=12 and rel_active is true and rel_strength >= 30', m.t.id) %]
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=12 and rel_active is true and rel_strength >= 30', i.t.id) %]
 [% WRAPPER draw_slider
+           object=i
 	   field='experience'
 	   title='Har du upplevt detta?'
 	   number=11
@@ -87,6 +95,7 @@ Har du upplevt detta nån gång? Hur mycket har upplevelsen påverkat dig?
 [% END %]
 
 [% WRAPPER draw_slider
+           object=i
 	   field='knowledge'
 	   number=11
 	   title='Kunskap'
@@ -102,6 +111,7 @@ analysera ämnet?
 
 
 [% WRAPPER draw_slider
+           object=i
            field='theory'
            title='Vilja att lära teori'
            number=11
@@ -115,8 +125,9 @@ intressen åt sidan för att studera detta ämne?
 [% END %]
 
 
-[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=11 and rel_active is true and rel_strength >= 30', m.t.id) %]
+[% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=11 and rel_active is true and rel_strength >= 30', i.t.id) %]
 [% WRAPPER draw_slider
+           object=i
 	   field='skill'
 	   title='Praktisk skicklighet'
 	   number=11
@@ -132,6 +143,7 @@ bästa i världen får du lov att markera näst högsta alternativet...
 
 [% END %]
 [% WRAPPER draw_slider
+           object=i
 	   field='practice'
 	   title='Vilja att lära sig det praktiska'
 	   number=11
@@ -145,6 +157,7 @@ bästa i världen får du lov att markera näst högsta alternativet...
 [% END %]
 
 [% WRAPPER draw_slider
+           object=i
 	   field='helper'
 	   title='Hjälpare'
 	   number=11
@@ -166,6 +179,7 @@ betalt för din hjälp måste du hålla dig på vänster del; ruta 0-4.
 [% END %]
 
 [% WRAPPER draw_slider
+           object=i
 	   field='meeter'
 	   title='Vill träffa andra med detta intresset'
 	   number=11
@@ -186,6 +200,7 @@ bor i närheten?
 
 
 [% WRAPPER draw_slider
+           object=i
 	   field='bookmark'
 	   title='Bokmärka det här ämnet'
 	   number=11
@@ -199,6 +214,7 @@ finns mer att läsa eller när vi upptäckt en ny bok eller webbsida.
 
 
 [% WRAPPER draw_slider
+           object=i
 	   field='editor'
 	   title='Redaktör'
 	   number=11
@@ -215,6 +231,7 @@ och rätta sådant som ser fel ut?
 [% END %]
 
 [% WRAPPER draw_textbox
+           object = i
 	   field='description'
 	   title='Hur / Varför ?'
 %]
@@ -234,4 +251,4 @@ Du kan se den här texten som en rad i din meritförteckning.
 kontinuerligen att förändras för att motsvara det intresse du visar
 genom vad du gör på webbplatsen.
 
-<p>[% go('Fortsätt', m.next_step(defined=50).template, 'interest_update') %]
+<p>[% step('Fortsätt', i.next_step(defined=50).template, 'interest_update') %]

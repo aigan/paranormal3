@@ -34,7 +34,7 @@
 
 <p>[% INCLUDE typelist.tt %]
 
-[% IF u.level >= 11 %]
+[% IF debug %]
 <div class="entry">
 <table>
 <tr><td>tid <td>[% tid %]
@@ -43,7 +43,6 @@
 <tr><td>i_connected <td>[% intr.connected %]
 <tr><td>t_connected <td>[% t.connected %]
 <tr><td>t_c_status <td>[% t.status %]
-<tr><td>template <td>[% next_template %]
 </table>
 </div>
 [% END %]
@@ -58,7 +57,7 @@ gjort hittills kommer att finnas kvar.
 
 <p>Frågor kan ställas i kanalen #devel på [% jump('chatten', '/member/chat/login.tt', target='chat') %].
 
-<p>[% go('Påbörja resan', intr.next_step.template) %]
+<p>[% step('Påbörja resan', intr.next_step.template) %]
 
 [% ELSE %]
 

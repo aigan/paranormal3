@@ -1,29 +1,29 @@
 [% META
 	title = 'Skapa ämne - Kontroll av alias'
+	next_template = '../edit/text.tt'
+	next_action = 'topic_create'
 	level = 5
 %]
 [%
-	t_title = q.param('t_title');
-	preserve_data('t_title');
-	hidden('plan');
+        preserve_data;
 	found = 0;     #Hittat ett redan kopplat ämne
 %]
 
-<h2>[% t_title | html %]</h2>
+<h2>[% title | html %]</h2>
 
 <p>Här undersöker vi om någon av dessa alias redan existerar i
 databasen.  Om så är fallet kanske du vill använda det existerande
 ämnet istället för att skapa ett nytt.
 
-[% title_list = select_list('from talias, t where talias_t=t and talias=lower(?) and talias_active is true and t_active is true',t_title) %]
-[% IF title_list.size %]
-   <p>Titeln [% t_title | html %] är redan knuten till annat ämne:
+[% title_aliases = alias_list(title, active=1) %]
+[% IF title_aliases.size %]
+   <p>Titeln [% title | html %] är redan knuten till annat ämne:
       <ul>
-      [% FOREACH title_list %]
-         <li>$talias_t [% jump(t_title, '/member/db/topic/view/', tid=talias_t, target='info') %]
-             [% INCLUDE typelist rel=talias_t %]
-             <em>[% t_text | html %]</em>
-	     [% plan('/member/db/topic/edit/aliases.tt', tid=talias_t) %]
+      [% FOREACH a IN title_aliases %]
+         <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, target='info') %]
+             [% INCLUDE typelist.tt t=a.topic %]
+             <em>[% a.t.text | html %]</em>
+	     [% CALL u.interest(a.t) %]
       [% END %]
       </ul>
       [% found = 1 %]
@@ -32,27 +32,25 @@ databasen.  Om så är fallet kanske du vill använda det existerande
 
 [% END %]
 
-   <p>Om du vill gå vidare och skapa ämnet <code>[% t_title | html
+   <p>Om du vill gå vidare och skapa ämnet <code>[% title | html
    %]</code> ska du markera de alias du vill använda.  Ett alias bör
    enbart knytas till det ämne som passar bäst.  Ibland passar ett
    alias dock lika bra till två helt skilda ämnen.</p>
 
-   [% hidden('t_title', t_title) %]
-
-
-<table border>
+<div class="entry">
+<table>
 [% FOREACH row = rowlist('_aliases') %]
-   [% alias_list = select_list('from t, talias where t=talias_t and talias=lower(?) and talias_active is true and t_active is true',row) %]
-   [% IF alias_list.size %]
+   [% aliases = alias_list(row, active=1) %]
+   [% IF aliases.size %]
       [% found = 1 %]
       <tr><td>[% checkbox('_aliaslist',row,'f') %]
       <td>[% row | html %] <td>finns redan, kopplad till ämnet:
       <ul>
-      [% FOREACH alias_list %]
-         <li>[% jump(t_title, '/member/db/topic/view/', tid=t, target='info') %]
-             [% INCLUDE typelist rel=t %]
-             <em>[% t_text | html %]</em>
-             [% plan('/member/db/topic/edit/aliases.tt', tid=t) %]
+      [% FOREACH a IN aliases %]
+         <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, target='info') %]
+             [% INCLUDE typelist.tt t=a.topic %]
+             <em>[% a.t.text | html %]</em>
+	     [% CALL u.interest(a.t) %]
       [% END %]
       </ul>
    [% ELSE %]
@@ -61,17 +59,10 @@ databasen.  Om så är fallet kanske du vill använda det existerande
    [% END %]
 [% END %]
 </table>
+</div>
 
-<p>
-
-   [%# plan_after('/member/db/topic/view/', tid=tid) %]
-   [% go('Skapa ämnet', '../edit/description.tt', 'topic_create',
-	route=q.param('route')
-	) %]
-
+<p>[% step('Skapa ämnet') %]</p>
 
 [% IF found %]
-   [% go('Använd ämne som redan finns', backtrack, 'nop', route=q.param('route')) %]
+   <p>De alternativa ämnena ovan har bokmärkats åt dig</p>
 [% END %]
-
-   [% submit('Ångra') %]

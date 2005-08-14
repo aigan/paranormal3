@@ -121,4 +121,4 @@ diskussioner via webbforum och mail.  Inte chatt.
 [% END %]
 
 
-<p>[% submit %]
+<p>[% step %]

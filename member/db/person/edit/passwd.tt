@@ -19,4 +19,4 @@
 <tr><td>Skriv om det nya lösenordet </td><td><input type="password" name="passwd_confirm"></td></tr>
 </table>
 
-<p>[% submit('Uppdatera') %]</p>
+<p>[% step %]

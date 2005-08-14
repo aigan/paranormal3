@@ -26,13 +26,5 @@ fitidsintressen, etc.</p>
 <textarea name="presentation" class="big_input" wrap="soft" cols="55" rows="20">[% m.presentation|html %]</textarea>
 <br>
 
-<table width="95%">
-  <tr>
-    <td align="center">
-      [% go( "Snabbspara", 'presentation', 'member_update') %]
-    </td>
-    <td align="center">
-      [% submit('Klar!') %]
-    </td>
-  </tr>
-</table>
+<p>[% go( "Snabbspara", 'presentation', 'member_update') %]
+   [%+ step %]

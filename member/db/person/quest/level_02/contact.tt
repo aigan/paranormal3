@@ -30,4 +30,4 @@ adressen.</p>
   </tr>
 </table>
 
- [% submit %]
+<p>[% step %]

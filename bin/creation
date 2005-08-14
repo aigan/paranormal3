@@ -56,22 +56,25 @@ use Para::Email;
 	'appbase' => 'Para',
 	'approot' => $APPROOT,
 
-
 	'user_class' => 'Para::Member',
-
-	# Path in  URL to website
-	'webhome' => '',
-
 	'logfile' => "$APPROOT/logs/creation.log",
 
 	port      => 7788,
 	debug     => 1,
+
+	'site'    =>
+	{
+	    # Path in  URL to website
+	    'webhome' => '',
+	    'last_step' => "/member/db/",
+	}
+
     };
     Para::Frame->configure( $cfg );
 
     # Detatch and run in background
     #
-#    Para::Frame->daemonize;
+    Para::Frame->daemonize unless @ARGV;
 
 
     # Connect to database
@@ -81,7 +84,8 @@ use Para::Email;
 	    connect => ["dbi:Pg:dbname=psi1"],
 	});
 
-    # Copy dbh obj
+    # Copy dbh obj (TODO: FIXME)
+    #
     $Para::dbh = $Para::dbix->dbh;
 
 
@@ -107,7 +111,16 @@ use Para::Email;
 			      $_[0]->latest_out(time);
 			  });
 
-    
+Para::Frame->add_hook('on_fork', sub 	 
+{ 	 
+#    warn "    dbh before: $Para::dbh\n"; 
+
+    # We depend on this hook running *AFTER* the hook registred in
+    # DBIx that reconnects to PostgreSQL
+
+    $Para::dbh = $Para::dbix->dbh; 	 
+#    warn "    dbh after : $Para::dbh\n"; 	 
+});
 
     my $global_params =
     {
@@ -119,7 +132,7 @@ use Para::Email;
 	'getmember_by_nick' => sub{ Para::Member->get_by_nickname( @_ ) },
 	'count_online'      => sub{ Para::Member->count_currently_online },
 
-	'topic'             => sub{ Para::Topic->new( @_ ) },
+	'topic'             => sub{ Para::Topic->get_by_id( @_ ) },
 	'find_topic'        => sub{ Para::Topic->find( @_ ) },
 	'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
 
@@ -129,6 +142,8 @@ use Para::Email;
 	'getarc'            => sub{ Para::Arc->get( @_ ) },
 	'getreltype'        => sub{ Para::Arctype->new( @_ ) },
 	'get_arctype_list'  => sub{ Para::Arctype->list( @_ ) },
+
+        'alias_list'        => sub{ Para::Alias->find_by_name( @_ ) },
 
 	'getpayment'        => sub{ Para::Payment->new( @_ ) },
 

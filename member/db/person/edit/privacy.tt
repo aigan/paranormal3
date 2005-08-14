@@ -136,8 +136,4 @@ gåvorna anonymt så är det också okej.
 
 [% END %]
 
-	
-
-
-
-[% submit %]
+[% step %]

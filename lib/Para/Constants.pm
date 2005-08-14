@@ -55,11 +55,9 @@ use constant T_PAYNOVA           => 422381;
 use constant T_PERSON            => 2140;
 use constant T_ENGLISH           => 396598;
 
-use constant DOCROOT     => '/var/www/paranormal.se';
 use constant DB_ALIAS    => '/var/local/paranormal.test/alias.db';
 use constant DB_PASSWD   => '/var/local/paranormal.test/passwd.db';
 use constant DB_ONLINE   => '/var/local/paranormal.test/online.db';
-use constant CACHED_FILE => DOCROOT.'/cgi/tt_lib/var/';
 use constant PUBLISH_LOCK => '/tmp/Psi_publish_lock';
 
 use constant HA_CREATE   => 1;
@@ -75,8 +73,8 @@ use constant M_VIP => 50;
 
 @EXPORT_OK = qw( HA_CREATE HA_UPDATE HA_DELETE HS_CREATED S_DENIED
                  S_REPLACED S_PROPOSED S_PENDING S_NORMAL S_FINAL
-                 TRUE_MIN TRUE_NORM T_LOST_ENTRY T_MEDIA T_PERSON DOCROOT
-                 DB_ALIAS DB_PASSWD DB_ONLINE CACHED_FILE PUBLISH_LOCK
+                 TRUE_MIN TRUE_NORM T_LOST_ENTRY T_MEDIA T_PERSON
+                 DB_ALIAS DB_PASSWD DB_ONLINE PUBLISH_LOCK
                  MONTH_LENGTH T_PRENUMERATION T_PARANORMAL_SWEDEN
                  T_PAYNOVA T_ENGLISH C_KILL C_BAN C_NORMAL C_VOICE C_HALFOP C_OP C_OPER M_VIP );
 

@@ -52,11 +52,11 @@
 [% textarea("member_comment_admin", m.member_comment_admin) %]<br>
 <em>Medlemmar med kommentarer raderas inte automagiskt vid inaktivitet</em>
 
-<p>[% go("Update member", me, 'member_update2') %]</p>
+<p>
+ [% go("Uppdatera", me, 'member_update') %]
+ [%+ go("Städa", me, 'member_vacuum') %]
+ [%+ step %]
 
-<p>[% go("Vacuum member", me, 'member_vacuum') %]</p>
-
-
-<p align="right">[% jump('radera...','remove_confirm.tt', mid=mid) %]
+<p align="right">[% jump('radera...','remove_confirm.tt', mid=mid, run='mark') %]
 
 <br clear="all">

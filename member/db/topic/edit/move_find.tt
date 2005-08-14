@@ -38,4 +38,4 @@
 <p>[% checkbox('keep_version',1) %] Flytta denna version (skapa ej ny version)</p>
 [% END %]
 
-<p>[% submit('Flytta') %]
+<p>[% step('Flytta') %]

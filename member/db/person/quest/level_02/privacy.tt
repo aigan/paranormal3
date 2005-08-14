@@ -54,4 +54,4 @@ Hur mycket av dina intressen vill du avslöja?
 
 [% END %]
 
-[% submit %]
+[% step %]

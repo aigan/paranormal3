@@ -31,7 +31,7 @@
       <td>[% talias_status %]</td>
       <td>[% jump(talias, '/member/db/topic/view/', talias=talias, target='info') %]</td>
       <td>$acnt.cnt</td>
-      <td>[% jump('Skapa', '/member/db/topic/create_maby', route=me, _name=talias, target='_blank') %]</td>
+      <td>[% jump('Skapa', '/member/db/topic/create_maby', _name=talias, target='_blank') %]</td>
       <td>[% checkbox("_talias__${loop.count}_talias_autolink", 't', talias_autolink) %]</td>
       <td>[% checkbox("_talias__${loop.count}_talias_index", 't', talias_index) %]</td>
 

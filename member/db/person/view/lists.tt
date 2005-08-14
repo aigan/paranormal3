@@ -68,3 +68,5 @@
 <li>[% jump("$dr.cnt relationer (sanna) avslagna av $m.nickname (ej egna)", '', mid=m.id) %]</li>
 
 </ul>
+
+[% step %]

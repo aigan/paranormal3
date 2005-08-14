@@ -21,4 +21,4 @@
 <p>reltype_description<br>
 <textarea wrap="virtual" cols="60" rows="4" name="reltype_description">[% reltype.reltype_description || q.param('reltype_description') | html %]</textarea>
 
-<p>[% submit %]
+<p>[% step %]

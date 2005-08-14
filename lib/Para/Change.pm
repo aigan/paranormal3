@@ -115,7 +115,8 @@ sub report
 	throw($errtype, $change->errmsg );
     }
 
-    return $change->reset;
+    $change->reset;
+    return "";
 }
 
 1;

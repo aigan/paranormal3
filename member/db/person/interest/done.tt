@@ -7,4 +7,4 @@
 <p>Det var allt för denna rundan. (Det här systemet är under
 utveckling.  Det är inte så mycket du kan göra ännu...)</p>
 
-[% submit %]
+[% step %]

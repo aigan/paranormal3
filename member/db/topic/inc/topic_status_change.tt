@@ -1,4 +1,6 @@
-<p>Ändra status för version $t_ver<br>
+[% DEFAULT t = topic(tid) %]
+[% DEFAULT t_status = t.status %]
+<p>Ändra status för version $t.ver<br>
 [%
 IF u.level > 11;
    radio('t_status', '', 1); 'Ingen ändring<br>';

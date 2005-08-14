@@ -41,6 +41,7 @@ sub new
     $m ||= $Para::Frame::U;
 
     my $ea = Para::Frame::Email::Address->parse( $email_str );
+    $ea->name($m->nickname); # Set the address name
 
     if( $rec )
     {

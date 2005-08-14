@@ -5,7 +5,7 @@
 [ [%+ jump('Översikt', '/member/db/person/view/', mid=m.id) +%]
 [% IF m.topic %]
    | [%+ jump('Ämne', '/member/db/topic/view/', tid=m.topic.id ) +%]
-[% END %]
+[% END +%]
 | [%+ jump('Intressen', '/member/db/person/view/interest.tt', mid=m.id) +%]
 | [%+ jump('Aktiviteter', '/member/db/person/view/lists.tt', mid=m.id) +%]
 [% IF u.level > 40 %]

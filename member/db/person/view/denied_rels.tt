@@ -45,3 +45,5 @@ order by $order $direction offset ? limit ?", m.id, m.id, part_offset, [], pages
 </div>
 
 [% PROCESS pagify_footer.tt %]
+
+[% step %]

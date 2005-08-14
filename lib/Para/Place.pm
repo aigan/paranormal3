@@ -137,7 +137,7 @@ sub by_name  ## LIST CONSTRUCTOR
 
     if( $identity eq 'här' )
     {
-	$identity = $Para::u->home_postal_code;
+	$identity = $Para::Frame::U->home_postal_code;
     }
 
     if( $identity =~ m/^(s-)?[\d\s]+$/i ) # Zip code

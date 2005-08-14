@@ -32,4 +32,4 @@ veta vem som är vem.  Vi vill därför att du här anger ditt
 sökbara för allmänheten.  Du kommer senare ha möjlighet att ändra och
 komplettera uppgifterna.)</p>
 
- [% submit %]
+ [% step %]

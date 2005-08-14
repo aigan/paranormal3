@@ -1,13 +1,13 @@
 [% META
 	otitle = 'Editera metadata'
-	next_template = 'meta.tt'
+	default_template = 'meta.tt'
 	next_action = 'topic_update'
 %]
 
 
 [% IF result.info.alternatives;
    alts = result.info.alternatives;
-   PROCESS topic_list.tt talias=alts.talias list=alts.list replace=alts.replace run=alts.run;
+   PROCESS topic_list.tt list=alts.list replace=alts.replace run=alts.run;
    RETURN;
 END;
 %]
@@ -88,7 +88,7 @@ END;
       [% END %]
  
       <td>[% jump("$arc.obj.id $arc.obj.title", 'meta' tid=arc.obj.id) %]</td>
-      <td>[% arc.updated_by.link %] [% arc.updated %]</td>
+      <td>[% arc.updated_by.link %] [%+ arc.updated %]</td>
    </tr>
 [% END %]
 
@@ -322,10 +322,5 @@ fält och ett av aliasen till det relaterade ämnet i höger fält.</p>
 
 <p>Klicka på rubriker "Relation" för att se relationstyperna.</p>
 
-<table width="95%">
-<tr><td>[% submit('Ändra') %]
-
-</td><td>[% go('Radera', '/member/db/topic/', 'topic_delete') %]
-
-</td></tr>
-</table>
+<p>[% step('Ändra') %]
+   [%+ go('Radera', '/member/db/topic/', 'topic_delete') %]

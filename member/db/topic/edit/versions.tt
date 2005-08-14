@@ -150,8 +150,7 @@ Vers. uppd. av [% t.updated_by.link %] [%+ t.updated %]
 </td><td valign="top">
 
 [% PROCESS topic_status_change.tt %]
-<p>[% go('Uppdatera', me, 'topic_update') %]
-   [% submit %]
+<p>[% step %]
 </p>
 
 </td></tr></table>

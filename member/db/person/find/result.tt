@@ -56,11 +56,11 @@
 
 <p>
 [% IF offset > pagesize %]
-   [% go("$prev_from - $prev_to", 'type2_result', 'nop' offset = prev_from) %] | 
+   [% go("$prev_from - $prev_to", 'result.tt', 'nop' offset = prev_from) %] | 
 [% END %]
 $this_from - $this_to
 [% IF subpart.shown == pagesize %]
-   | [% go("$next_from - $next_to", 'type2_result', 'nop' offset = next_from) %]
+   | [% go("$next_from - $next_to", 'result.tt', 'nop' offset = next_from) %]
 [% END %]
 </p>
 
@@ -78,7 +78,7 @@ $this_from - $this_to
 <p>Skickar medan du vänta. Är det många kanske du ska skicka till 20 åt gången eller liknande...
 
 
-<p>[% go('Skicka brevet','type2_result','email_type2_list') %]
+<p>[% go('Skicka brevet','result.tt','email_combined_list') %]
 
 [% END %]
 
@@ -92,7 +92,7 @@ $this_from - $this_to
 
 [% IF result.info.alternatives;
    alts = result.info.alternatives;
-   PROCESS topic_list3 talias=alts.talias list=alts.list replace=alts.replace run=alts.run;
+   PROCESS topic_list.tt list=alts.list replace=alts.replace run=alts.run;
    RETURN;
 END;
 %]

@@ -34,7 +34,7 @@ use Para::Frame::Reload;
 use base qw( Exporter );
 BEGIN
 {
-    our @EXPORT_OK = qw( cache_update );
+    our @EXPORT_OK = qw( cache_update trim_text );
 
 }
 
@@ -42,6 +42,15 @@ sub cache_update
 {
     ### TODO: Fix real caching
     $Psi::Cache::Changed = time;
+}
+
+sub trim_text
+{
+    my $ref = shift;
+    return unless defined $ref;
+    $$ref =~ s/\r\n/\n/g;      # Convert to unix LF
+    $$ref =~ s/^([ \t]*\n)+//; # Do not trim spacec on first row with text
+    $$ref =~ s/\s+$/\n/;       # Leave last whitespace
 }
 
 1;

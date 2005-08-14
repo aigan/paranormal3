@@ -35,4 +35,4 @@ vill kontakta dig.</p>
   </tr>
 </table>
 
- [% submit %]
+<p>[% step %]

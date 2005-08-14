@@ -5,14 +5,16 @@
 %]
 
 [%
+   tid = q.param('tid');
    talias = q.param('talias');
    DEFAULT talias = q.param('search');
-   IF talias;
+   IF talias and !tid;
       TRY;
          t = find_one_topic( talias );
       CATCH alternatives;
          alts = result.info.alternatives;
-         PROCESS topic_list.tt list=alts.list replace='talias' run='nop' view=me;
+	 preserve_data;
+         PROCESS topic_list.tt list=alts.list;
          RETURN;
       CATCH notfound;
          PROCESS new.tt;
@@ -22,13 +24,13 @@
       CALL q.delete('talias');
       CALL q.param('tid',t.id);
    ELSE;
-      tid = q.param('tid');
-      DEFAULT tid = q.param('t');
       DEFAULT tid = 1;
       ver = q.param('v');
       t = topic(tid, ver);
    END;
 
+   hidden('tid', tid);
+   hidden('v', ver);
    PROCESS buttons.tt;
    warn("Topic: $t.id v$t.ver $t.desig");
 %]
@@ -72,10 +74,10 @@
          [% forward('Ändra redaktionskommentar', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]
       </div>
    [% ELSE %]
-      <p>[% forward('Lägg till kommentar för redaktörer', '../edit/text_admin.tt', tid=tid previous=me run='mark') IF u.level > 10 %]</p>
+      <p>[% forward('Lägg till kommentar för redaktörer', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]</p>
    [% END %]
    
-   <p>[% jump('Lägg till ny text', '../edit/new_entry.tt' parent=tid previous=me run='mark')  %]</p>
+   <p>[% jump('Lägg till ny text', '../edit/new_entry.tt' parent=tid run='mark')  %]</p>
 
 [% END # t_entry %]
 
@@ -136,14 +138,14 @@
    [% FOREACH se = e.entry_list(tfilter) %]
       [% IF se.title %]
          <h[% level+1 %]>[% se.title | html %]</h[% level+1 %]>
-         [% INCLUDE entry_edit_menu2 t=se %]
-         [% INCLUDE metadata2 t=se %]
+         [% INCLUDE entry_edit_menu.tt t=se %]
+         [% INCLUDE metadata.tt t=se %]
          [% se.text | html_psi_nolinks %]
          [% INCLUDE subentry e=se level=level+1 %]
       [% ELSE %]
          <blockquote>
-            [% INCLUDE entry_edit_menu2 t=se %]
-            [% INCLUDE metadata2 t=se %]
+            [% INCLUDE entry_edit_menu.tt t=se %]
+            [% INCLUDE metadata.tt t=se %]
             [% se.text | html_psi_nolinks %]
             [% INCLUDE subentry e=se level=level+1 %]
          </blockquote>
@@ -155,8 +157,8 @@
       [% IF ne.title %]
          <h$level>[% ne.title | html %]</h$level>
       [% END %]
-      [% INCLUDE entry_edit_menu2 t=ne %]
-      [% INCLUDE metadata2 t=ne %]
+      [% INCLUDE entry_edit_menu.tt t=ne %]
+      [% INCLUDE metadata.tt t=ne %]
       [% ne.text | html_psi_nolinks %]
       [% INCLUDE subentry e=ne level=level %]
   [% END %]

@@ -6,12 +6,12 @@
 
 <p>
 [ [% jump('Läs', "$base/view/", tid=tid, v=v) +%]
-| [% jump('Metadata', "$base/edit/meta.tt", tid=tid route=uri, v=v) +%]
-| [% jump('Versioner', "$base/edit/versions.tt", tid=tid route=uri, v=v) +%]
-| [% jump('Skriv', "$base/edit/text.tt", tid=tid route=uri, v=v) +%]
+| [% jump('Metadata', "$base/edit/meta.tt", tid=tid, v=v) +%]
+| [% jump('Versioner', "$base/edit/versions.tt", tid=tid, v=v) +%]
+| [% jump('Skriv', "$base/edit/text.tt", tid=tid, v=v) +%]
 | [% jump('TS', "$base/edit/topicstatements.tt", tid=tid, v=v) +%]
 [% IF u.level > 10 %]
-| [% jump('Flytta', "$base/edit/move.tt", tid=tid route=uri, v=v) +%]
+| [% jump('Flytta', "$base/edit/move.tt", tid=tid, v=v) +%]
 | [% jump('Disposition', "$base/edit/outline.tt", tid=tid, v=v) +%]
 [% END %]
 | [% jump('Bokmärka', me, tid=tid, v=v) +%]

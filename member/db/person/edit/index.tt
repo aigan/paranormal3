@@ -30,13 +30,21 @@ Spenderat [% elapsed_time(m.total_time_online) %] online
 	<li>[% jump('Namn och alias', 'name.tt', run='mark', mid=m.id) %]
 	<li>[% jump('Lösenord', 'passwd.tt', run='mark', mid=m.id) %]
 	<li>[% jump('Anonymitet', 'privacy.tt', run='mark', mid=m.id) %]
+[% IF u.complexity >= 5 %]
 	<li>[% jump('Intressetyper', 'general_interest.tt', run='mark', mid=m.id) %]
 	<li>[% jump('Intressen', 'interest.tt', run='mark', mid=m.id) %]
+[% END %]
 	<li>[% jump('E-post', 'email.tt', run='mark', mid=m.id) %]
+
+[% IF u.complexity >= 10 %]
 	<li>[% jump('Kommunikation', 'communication.tt', run='mark', mid=m.id) %]
-	<li>[% jump('Sidutseende', 'skin.tt', run='mark', mid=m.id) %]
 	<li>[% jump('Adressuppgifter', 'address.tt', run='mark', mid=m.id) %]
 	<li>[% jump('Personuppgifter', 'demography.tt', run='mark', mid=m.id) %]
+[% END %]
+[% IF u.complexity >= 15 %]
+	<li>[% jump('Sidutseende', 'skin.tt', run='mark', mid=m.id) %]
+[% END %]
+
 	<li>[% jump('Presentation', 'presentation.tt', run='mark', mid=m.id) %]
 [% IF u.level > 40 %] 
 	<li>[% jump('Innersta väsen', 'admin.tt', run='mark', mid=m.id) %]
@@ -54,8 +62,8 @@ Spenderat [% elapsed_time(m.total_time_online) %] online
    }
 %]
 
-Anger hur många konfigurationsalternativ som visas. (Under utveckling)
+Anger hur hur mycket av webbplatsens funktioner som visas.
 
 [% END %]
 
-[% submit('Spara') %]
+[% step %]

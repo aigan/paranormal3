@@ -36,6 +36,8 @@ sub handler
 	    template => 'custom.tt',
 	    from => $from,
 	});
+
+	$fork->yield;
     }
 
     return "Skickar breveven i fork...";

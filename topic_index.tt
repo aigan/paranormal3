@@ -1,0 +1,65 @@
+[% META otitle="Index"
+   css="/css/default.css"
+%]
+[%
+   subpart = {};
+   offset = q.param('offset');
+   DEFAULT offset=1;
+   part_offset = offset - 1;
+
+   part = q.param('part');
+   IF part;
+      sel = "like '$part%'";
+   ELSE;
+      sel = "< 'a'";
+   END;
+%]
+
+[% IF part %]
+<h2>- [% part | upper %] -</h2>
+[% ELSE %]
+<h1 align="center">Index</h1>
+[% END %]
+
+<p align="center">Allt som börjar på [% alfanum_bar('/topic/', 'part') %]
+[% IF part %]
+<br>Sök på <code><big><strong>[% part | upper %]</strong></big></code> följt av [% alfanum_bar('/topic/', 'part', part) %]
+[% END %]
+</p>
+
+<table cellpadding="10" width="100%">
+[% FOREACH rec IN select_list("select talias, t from t, talias where t=talias_t and talias $sel and talias_index is true and t_active is true and talias_active is true and not exists (select media from media where media=t) order by talias, talias_t limit 5 offset $part_offset") %]
+    [% tr2 %]
+      <td valign="top">
+[% t = topic(rec.t) %]
+[% jump(rec.talias, t.file) %]
+</td>
+      <td class="plain">[% PROCESS typelist.tt %]</td>
+      <td valign="top">$t.text</td>
+   </tr>
+   [% subpart.shown = loop.size %]
+[% END %]
+</table>
+
+[%
+   DEFAULT subpart.shown = 0;
+
+   prev_from = offset - 5;
+   prev_to = offset - 1;
+   this_to = offset + subpart.shown - 1;
+   this_from = this_to ? offset : 0;
+   next_from = offset + 5;
+   next_to = offset + 9;
+%]
+
+<p align="center">
+[% IF offset > 5 %]
+   [% forward("$prev_from - $prev_to", '/topic/' offset = prev_from) %] | 
+[% END %]
+$this_from - $this_to
+[% IF subpart.shown == 5 %]
+   | [% forward("$next_from - $next_to", '/topic/' offset = next_from) %]
+[% END %]
+</p>
+
+[% PROCESS static/default/footer.tt %]

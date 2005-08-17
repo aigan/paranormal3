@@ -3,9 +3,7 @@
         next_handler='/search/alternatives.tt'
 	next_action = "topic_search_published"
 %]
-    <a href="/welcome.en.html"><img align="right" src= 
-				    "/images/icon/us-flag.jpg" 
-				    alt="Till den engelska delen" border="0" /></a> 
+    <div align="right"><a href="/welcome.en.html">Get this page in english</a></div>
     <br clear="right" />
     <center>
         <p>

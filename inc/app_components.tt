@@ -86,3 +86,31 @@
   [% IF max; max; '<br>'; END; %]
   [% hr %]
 [% END %]
+[% BLOCK draw_distinct_alt %]
+   [% DEFAULT object = m %]
+  <h3>[% title || field %]</h3>
+  <p>$content
+  <p>
+  [% value = q.param(field) || object.$field || current %]
+  [% FOREACH key = values.keys.sort %]
+     <input type="radio" name="$field" value="$key"
+     [% IF key == value %]checked[% END %]> [% values.$key %]<br>
+  [% END %]
+  [% hr %]
+[% END %]
+[% BLOCK instruction %]
+   [% DEFAULT formcount=0 %]
+   [% formcount = formcount + 1 %]
+   [% display='none' %]
+   [% label_display='block' %]
+   [% IF u.complexity < 10 %]
+      [% display='block' %]
+      [% label_display='none' %]
+   [% END %]
+   [% DEFAULT label = "Instruktion" %]
+<a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');" id="fid_[% formcount %]_label" style="display:[% label_display %]">Visa [% label %]...</a>
+<div id="fid_$formcount" style="display:$display">
+<a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');">Dölj [% label %]...</a>
+$content
+</div>
+[% END %]

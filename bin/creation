@@ -29,8 +29,6 @@ BEGIN
 }
 
 
-
-
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
 
@@ -39,6 +37,7 @@ use Para::Frame::DBIx;
 use Para::Frame::Time;
 use Para::Frame::Email;
 use Para::Frame::Email::Address;
+use Para::Frame::Utils;
 
 use Para::Member;
 use Para::Topic;
@@ -81,12 +80,9 @@ use Para::Email;
     #
     $Para::dbix = Para::Frame::DBIx ->
 	new({
-	    connect => ["dbi:Pg:dbname=psi1"],
+	    connect => ["dbi:Pg:dbname=psi1;port=5433"],
+	    bind_dbh => \ $Para::dbh,
 	});
-
-    # Copy dbh obj (TODO: FIXME)
-    #
-    $Para::dbh = $Para::dbix->dbh;
 
 
     # Define TT filters
@@ -110,55 +106,54 @@ use Para::Email;
 			  {
 			      $_[0]->latest_out(time);
 			  });
-
-Para::Frame->add_hook('on_fork', sub 	 
-{ 	 
-#    warn "    dbh before: $Para::dbh\n"; 
-
-    # We depend on this hook running *AFTER* the hook registred in
-    # DBIx that reconnects to PostgreSQL
-
-    $Para::dbh = $Para::dbix->dbh; 	 
-#    warn "    dbh after : $Para::dbh\n"; 	 
-});
-
     my $global_params =
     {
-	'select_persons'    => \&Para::Widget::select_persons,
-	'diff'              => \&Para::Widget::diff,
+     'select_persons'    => \&Para::Widget::select_persons,
+     'diff'              => \&Para::Widget::diff,
 
-	'select_persons_by_name' => sub{ Para::Member->by_name( @_ ) },
-	'getmember'         => sub{ Para::Member->get_by_id( @_ ) },
-	'getmember_by_nick' => sub{ Para::Member->get_by_nickname( @_ ) },
-	'count_online'      => sub{ Para::Member->count_currently_online },
+     'select_persons_by_name' => sub{ Para::Member->by_name( @_ ) },
+     'getmember'         => sub{ Para::Member->get_by_id( @_ ) },
+     'getmember_by_nick' => sub{ Para::Member->get_by_nickname( @_ ) },
+     'count_online'      => sub{ Para::Member->count_currently_online },
 
-	'topic'             => sub{ Para::Topic->get_by_id( @_ ) },
-	'find_topic'        => sub{ Para::Topic->find( @_ ) },
-	'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
+     'topic'             => sub{ Para::Topic->get_by_id( @_ ) },
+     'find_topic'        => sub{ Para::Topic->find( @_ ) },
+     'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
 
 #	'touch_interest'    => sub{ Para::Interest->touch(@_) },
-	'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
+     'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
 
-	'getarc'            => sub{ Para::Arc->get( @_ ) },
-	'getreltype'        => sub{ Para::Arctype->new( @_ ) },
-	'get_arctype_list'  => sub{ Para::Arctype->list( @_ ) },
+     'getarc'            => sub{ Para::Arc->get( @_ ) },
+     'getreltype'        => sub{ Para::Arctype->new( @_ ) },
+     'get_arctype_list'  => sub{ Para::Arctype->list( @_ ) },
 
-        'alias_list'        => sub{ Para::Alias->find_by_name( @_ ) },
+     'alias_list'        => sub{ Para::Alias->find_by_name( @_ ) },
 
-	'getpayment'        => sub{ Para::Payment->new( @_ ) },
+     'getpayment'        => sub{ Para::Payment->new( @_ ) },
 
-	'age'               => sub{ localtime->year - $_[0]->{'bdate_ymd_year'} },
-	'year'              => sub{ localtime->year },
-	'now'               => sub{ scalar localtime },
-	'date'              => sub{ Para::Frame::Time->get(@_) },
+     'age'               => sub{ localtime->year - $_[0]->{'bdate_ymd_year'} },
+     'year'              => sub{ localtime->year },
+     'now'               => sub{ scalar localtime },
+     'date'              => sub{ Para::Frame::Time->get(@_) },
 #	'elapsed_time'      => \&elapsed_time,
 
-	'delay'             => sub{ sleep(@_) },
-	'uc'                => sub{ "\U$_[0]" },
-	'lc'                => sub{ "\L$_[0]" },
+     'delay'             => sub{ sleep(@_) },
+     'uc'                => sub{ "\U$_[0]" },
+     'lc'                => sub{ "\L$_[0]" },
 
-	'css'               => "/meta/meta.css",
-	'favicon'           => "/favicon.ico",
+     'timediff'          => \&Para::Frame::Utils::timediff,
+     'css'               =>
+     {
+      persistent => [ "/css/default.css" ],
+      alternate =>
+      {
+       light => [ "/css/light.css" ],
+       blue => [ "/css/blue.css" ],
+      },
+      default => 'blue',
+     },
+     'favicon'           => "/favicon.ico",
+     'body_class'        => "meta",
     };
     Para::Frame->add_global_tt_params( $global_params );
 

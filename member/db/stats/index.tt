@@ -12,7 +12,8 @@
 <li>[% ord.cnt %] medborgare
 
 [% aka = select_record('select count(member)-1 as cnt from member where member_level > 10 and member > 0') %]
-<li>[% jump("$aka.cnt väktare", '/member/db/person/find/advanced_result.tt' _min_member=1, _min_member_level=11) %]
+
+<li>[% jump("$aka.cnt väktare", '/member/db/person/find/result.tt', _level_min=11) %]
 
 [% pre1 = select_record('select count(member) as cnt from member where member > 0') %]
 <li>[% pre1.cnt %] medlemmar

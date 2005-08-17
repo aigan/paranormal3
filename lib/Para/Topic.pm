@@ -144,7 +144,7 @@ sub create
     }
 
     my $tid = $Para::dbix->get_nextval( "t_seq" );
-    my $sth = $Para::dbh->prepare_cached("insert into t
+    my $sth = $Para::dbh->prepare("insert into t
                           ( t, t_title, t_urlpart, t_created,
                             t_updated, t_createdby,
                             t_changedby, t_status, t_active )
@@ -495,17 +495,19 @@ sub top_entry
 
     unless( $t->{top_entry} )
     {
+#	warn "geting top entry for $t->{'t'}\n";
 	if( $t->{t_entry} )
 	{
-#	    warn "Are there a previous entry to $t->{'t'}?\n";
 	    if( my $previous = $t->previous )
 	    {
+#		warn "  previous entry for $t->{'t'} found\n"; # DEBUG
 		if( my $top = $previous->top_entry )
 		{
 		    return $t->{top_entry} = $top;
 		}
 		else
 		{
+#		    warn "    returning $t->{top_entry}{t}\n";
 		    return $t->{top_entry} = $previous;
 		}
 	    }
@@ -513,6 +515,7 @@ sub top_entry
 	    my $parent = $t->parent;
 	    if( $parent and $parent->{'t_entry'} )
 	    {
+#		warn "  Are there a parent entry to $t->{'t'}?\n"; # DEBUG
 		my $grandparent = $parent->parent;
 		if( $grandparent and $grandparent->{'t_entry'} )
 		{
@@ -671,7 +674,7 @@ sub file
 	#
 	$t->remove_page;
 
-	my $sth_update = $Para::dbh->prepare_cached("update t set t_file=? where t=? and t_active is true");
+	my $sth_update = $Para::dbh->prepare("update t set t_file=? where t=? and t_active is true");
 	$sth_update->execute($file, $t->{'t'});
 
 	$t->{'t_file'} = $file;
@@ -1090,7 +1093,7 @@ sub set_parent
 
     ###   FIX: Work on your own session version
     my $st = "update t set t_entry_parent=?, t_updated=now(), t_changedby=? where t=? and t_ver=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     my $mid = $Para::Frame::U->id;
 
     my $tid = $t->id;
@@ -1127,7 +1130,7 @@ sub set_next
 
     ###   FIX: Work on your own session version
     my $st = "update t set t_entry_next=?, t_updated=now(), t_changedby=? where t=? and t_ver=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     my $mid = $Para::Frame::U->id;
 
     my $tid = $t->id;
@@ -1529,7 +1532,7 @@ sub create_new_version
 
     $rec ||= {};
 
-    my $sth = $Para::dbh->prepare_cached(" insert into t ( t, t_pop,
+    my $sth = $Para::dbh->prepare(" insert into t ( t, t_pop,
              t_size, t_created, t_createdby, t_updated, t_changedby,
              t_status, t_title, t_title_short, t_title_short_plural,
              t_text, t_comment_admin, t_file, t_oldfile, t_urlpart,
@@ -1633,7 +1636,7 @@ sub set_status
 	my $st = "update t set t_status=?,
                  t_active='f', t_updated=now(), t_changedby=?
                  where t=? and t_active is true";
-	my $sth = $Para::dbh->prepare_cached( $st );
+	my $sth = $Para::dbh->prepare( $st );
 	$sth->execute(S_REPLACED, $m->id, $t->id);
 
 	$m->score_change('accepted_thing');
@@ -1649,7 +1652,7 @@ sub set_status
     my $st = "update t set t_status=?,
               t_active=?, t_updated=now(), t_changedby=?
               where t=? and t_ver=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     $sth->execute($status, pgbool($new_active), $m->id, $t->id, $t->ver);
 
     warn sprintf "Status for %d v%d changed to %d\n", $t->id, $t->ver, $status;
@@ -2098,7 +2101,7 @@ sub delete_cascade
   {
       my $st = "update t set t_status=?,
                  t_active='f' where t=? and t_active is true";
-      my $sth = $Para::dbh->prepare_cached( $st );
+      my $sth = $Para::dbh->prepare( $st );
       $sth->execute( S_DENIED, $tid);
   }
 
@@ -2106,14 +2109,14 @@ sub delete_cascade
   {
       my $st = "update talias set talias_status=?,
                  talias_active='f' where talias_t=?";
-      my $sth = $Para::dbh->prepare_cached( $st );
+      my $sth = $Para::dbh->prepare( $st );
       $sth->execute( S_DENIED, $tid );
   }
 
     ### Intrest
   {
       my $st = "delete from intrest where intrest_topic=?";
-      my $sth = $Para::dbh->prepare_cached( $st );
+      my $sth = $Para::dbh->prepare( $st );
       $sth->execute( $tid );
   }
 
@@ -2135,12 +2138,12 @@ sub delete_cascade
 
       my $st1 = "update rel set rel_status=?,
                  rel_active='f' where rev=?";
-      my $sth1 = $Para::dbh->prepare_cached( $st1 );
+      my $sth1 = $Para::dbh->prepare( $st1 );
       $sth1->execute( S_DENIED, $tid );
 
       my $st2 = "update rel set rel_status=?,
                  rel_active='f' where rel=?";
-      my $sth2 = $Para::dbh->prepare_cached( $st2 );
+      my $sth2 = $Para::dbh->prepare( $st2 );
       $sth2->execute( S_DENIED, $tid );
   }
 
@@ -2167,12 +2170,12 @@ sub delete_cascade
   {
       my $st1 = "update ts set ts_status=?,
                  ts_active='f' where ts_entry=? and ts_active is true";
-      my $sth1 = $Para::dbh->prepare_cached( $st1 );
+      my $sth1 = $Para::dbh->prepare( $st1 );
       $sth1->execute( S_DENIED, $tid );
 
       my $st2 = "update ts set ts_status=?,
                  ts_active='f' where ts_topic=? and ts_active is true";
-      my $sth2 = $Para::dbh->prepare_cached( $st2 );
+      my $sth2 = $Para::dbh->prepare( $st2 );
       $sth2->execute( S_DENIED, $tid );
   }
 
@@ -2222,7 +2225,7 @@ sub mark_unpublished
 	# This way is maby a litle faster...
 	$t->mark_publish;
 
-#	my $sth = $Para::dbh->prepare_cached("update t set t_published='f' where t=? and t_ver=?");
+#	my $sth = $Para::dbh->prepare("update t set t_published='f' where t=? and t_ver=?");
 #	$sth->execute($t->id, $t->ver);
     }
 
@@ -2280,7 +2283,7 @@ sub save
 	# Update topic
 	my $statement = "update t set ". join( ', ', map("$_=?", @fields)) .
 	    ", t_updated=now() where t=? and t_ver=?";
-	my $sth = $Para::dbh->prepare_cached( $statement );
+	my $sth = $Para::dbh->prepare( $statement );
 #	warn "Running $statement\n";
 	$sth->execute( @values, $tid, $v );
 
@@ -2320,7 +2323,7 @@ sub vacuum
 	#
 	my $st = "update t set t_entry_imported=t_entry_imported+1 where t=? and t_ver=?";
 #	warn sprintf "Execute $st (%d, %d)\n", $t->id, $t->ver;
-	my $sth = $Para::dbh->prepare_cached( $st );
+	my $sth = $Para::dbh->prepare( $st );
 	$sth->execute( $t->id, $t->ver );
     }
 
@@ -2979,7 +2982,7 @@ sub set_published
 {
     my( $t, $sth ) = @_;
 
-    my $sth ||= $Para::dbh->prepare_cached("update t set t_published='t' where t=?");
+    my $sth ||= $Para::dbh->prepare("update t set t_published='t' where t=?");
 
     # Och publicera nu alla aktiva barn
     #

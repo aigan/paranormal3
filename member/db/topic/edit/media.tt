@@ -11,7 +11,7 @@
    PROCESS buttons.tt;
 %]
 
-<h1>URL för media [% PROCESS tlink.tt %]</h1>
+<h1>[% PROCESS tlink.tt %]: URL för media</h1>
 
 [% PROCESS edit_menu.tt %]
 

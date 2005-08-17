@@ -1,13 +1,21 @@
 [% META
-	title = 'Ny text'
+	otitle = 'Ny text'
 	next_action = 'entry_create'
 	focus = 't_text'
 	level = 5
 %]
 [%
-	parent = q.param('parent');
-	hidden('parent');
+	tid = q.param('tid');
+	hidden('tid', tid);
+        t = topic(tid);
+        PROCESS buttons.tt;
 %]
+
+<h1>[% PROCESS tlink.tt %]: Ny text</h1>
+
+[% PROCESS edit_menu.tt %]
+
+[% WRAPPER instruction %]
    <p>
      Observera att texter bör skrivas på speciellt sätt.  En text
      skall behandla precis EN sak, delas upp i lagom stora delar.
@@ -19,13 +27,9 @@
    <p>
      Se <a href="/topic/riktlinjer_for_skrivande_av_texter_till_paranormalse.html">Riktlinjer för skrivande av texter</a>.
    </p>
-[% IF parent;
-   parent_rec = select_record('from t where t=?',parent);
-%]
-   <p>Angående <code>[% parent_rec.t_title | html %]</code>
 [% END %]
-
 
 <p>[% textarea('t_text', t_text, rows=20) %]
 
 <p>[% step %]
+

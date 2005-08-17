@@ -35,9 +35,11 @@ sub handler
 	    m => $m,
 	    template => 'custom.tt',
 	    from => $from,
+	    return_message => "Skickade till ".$m->desig,
 	});
 
-	$fork->yield;
+#	$fork->yield;
+#	return "Misslyckades skicka till ".$m->desig if $fork->failed;
     }
 
     return "Skickar breveven i fork...";

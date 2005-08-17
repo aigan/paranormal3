@@ -87,7 +87,7 @@ sub set_completed
 {
     my( $p, $reference ) = @_;
 
-    my $sth = $Para::dbh->prepare_cached("update payment set payment_completed=true, payment_reference=?, payment_date=?, payment_log_date=now() where payment_id=?");
+    my $sth = $Para::dbh->prepare("update payment set payment_completed=true, payment_reference=?, payment_date=?, payment_log_date=now() where payment_id=?");
 
     my $payment_date = $p->payment_date ? $p->payment_date->cdate : Para::Time->get(time)->cdate;
     $sth->execute( $reference, $payment_date, $p->id );
@@ -133,7 +133,7 @@ sub add_to_member_stats
 
 	# Add to member data
 	#
-	my $sth = $Para::dbh->prepare_cached("update member set
+	my $sth = $Para::dbh->prepare("update member set
                member_payment_period_length=?,
                member_payment_period_expire=?,
                member_payment_period_cost=?,

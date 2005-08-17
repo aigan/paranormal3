@@ -17,7 +17,7 @@ END;
    PROCESS buttons.tt;
 %]
 
-<h1>Uttalanden om [% PROCESS tlink.tt %]</h1>
+<h1>[% PROCESS tlink.tt %]: Uttalanden om</h1>
 
 [% PROCESS edit_menu.tt %]
 

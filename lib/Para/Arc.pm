@@ -408,7 +408,7 @@ sub create
 	$obj->mark_publish;
     }
 
-    my $sth = $Para::dbh->prepare_cached(
+    my $sth = $Para::dbh->prepare(
 	  "insert into rel (rel_topic, rev, rel, rel_type, rel_status,
                             rel_updated, rel_changedby,
                             rel_created, rel_createdby, rel_strength,
@@ -597,7 +597,7 @@ sub set_implicit
     my $mid       = $Para::Frame::U->id;
     my $now       = localtime;
 
-    my $sth = $Para::dbh->prepare_cached("update rel set rel_implicit=?, ".
+    my $sth = $Para::dbh->prepare("update rel set rel_implicit=?, ".
 				   "rel_updated=?, rel_changedby=? ".
 				   "where rel_topic=?");
     $sth->execute(pgbool($val), $now->cdate, $mid, $arc_id);
@@ -645,7 +645,7 @@ sub set_indirect
     my $mid       = $Para::Frame::U->id;
     my $now       = localtime;
 
-    my $sth = $Para::dbh->prepare_cached("update rel set rel_indirect=?, ".
+    my $sth = $Para::dbh->prepare("update rel set rel_indirect=?, ".
 				   "rel_updated=?, rel_changedby=? ".
 				   "where rel_topic=?");
     $sth->execute(pgbool($val), $now->cdate, $mid, $arc_id);
@@ -724,7 +724,7 @@ sub activate
     if( $rarc ) # Reverse relation
     {
 	warn sprintf "$$:   activating reverse %s\n", $rarc->desig; ### DEBUG
-	my $sth = $Para::dbh->prepare_cached(
+	my $sth = $Para::dbh->prepare(
 	  "update rel set rel_active=true, rel_status=?,
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
@@ -732,7 +732,7 @@ sub activate
 	$sth->execute( $status, $mid, $now->cdate, $rarc->id );
     }
 
-    my $sth = $Para::dbh->prepare_cached(
+    my $sth = $Para::dbh->prepare(
 	  "update rel set rel_active=true, rel_status=?,
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
@@ -814,7 +814,7 @@ sub deactivate
     if( $rarc ) # Reverse relation
     {
 	warn sprintf "$$:   deactivating reverse %s\n", $rarc->desig; ### DEBUG
-	my $sth = $Para::dbh->prepare_cached(
+	my $sth = $Para::dbh->prepare(
 	  "update rel set rel_active=false, rel_status=?,
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
@@ -822,7 +822,7 @@ sub deactivate
 	$sth->execute( $status, $mid, $now->cdate, $rarc->id );
     }
 
-    my $sth = $Para::dbh->prepare_cached(
+    my $sth = $Para::dbh->prepare(
 	  "update rel set rel_active=false, rel_status=?,
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
@@ -984,7 +984,7 @@ sub remove
     warn sprintf "%d: Removed arc %s\n",
       $$, $arc->desig;
 
-    my $sth = $Para::dbh->prepare_cached("delete from rel where rel_topic=?");
+    my $sth = $Para::dbh->prepare("delete from rel where rel_topic=?");
     $sth->execute($arc_id);
     $arc->{disregard} ++;
 

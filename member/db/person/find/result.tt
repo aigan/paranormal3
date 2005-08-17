@@ -23,7 +23,7 @@
 
 <div class="entry">
 <table>
-<tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th>
+<tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th><th>Senast inne</th>
 </tr>
 
 [% FOREACH select_persons() %]
@@ -36,6 +36,7 @@
        <td>[% m.name %]</td>
        <td>[% IF dist.length; dist / 1000 | replace(',','.') | format('%d km'); END %]</td>
        <td>[% m.home_postal_city %]</td>
+       <td>[% m.latest_in %]</td>
    </tr>
    [% subpart.shown = loop.size %]
 [% END %]
@@ -84,10 +85,10 @@ $this_from - $this_to
 
 
 [% CATCH; CLEAR %]
-   [% warn("error:") %]
+   [% warn("-----------\nerror during process of template:") %]
    [% warn(error) %]
 
-   [% result.exception(error) %]
+   [% CALL result.exception(error) %]
    [% FOREACH part = result.parts; box(part); END %]
 
 [% IF result.info.alternatives;

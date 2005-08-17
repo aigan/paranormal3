@@ -20,7 +20,7 @@
    PROCESS buttons.tt;
 %]
 
-<h1>Editera relation [% arc.id %]</h1>
+<h1>[% arc.id %]: Editera relation</h1>
 
 [% PROCESS edit_menu.tt %]
 

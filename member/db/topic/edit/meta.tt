@@ -25,7 +25,7 @@ END;
    keep = [ 'tid' 'v' 'include_indirect' 'include_false' 'include_inactive' 'include_rev' ];
 %]
 
-<h1>Metadata [% INCLUDE tlink.tt %]</h1>
+<h1>[% INCLUDE tlink.tt %]: Metadata</h1>
 
 [% PROCESS edit_menu.tt edit_arcs=1 %]
 

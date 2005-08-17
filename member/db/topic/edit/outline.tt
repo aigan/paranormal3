@@ -16,7 +16,7 @@
    template.seen.init = 1;
 %]
 
-<h1>Disposition för [% PROCESS tlink.tt %]</h1>
+<h1>[% PROCESS tlink_ver.tt %]: Disposition</h1>
 
 [% PROCESS edit_menu.tt %]
 

@@ -16,7 +16,7 @@
 	preserve_data('_talias__.*', 't_text','t_title', '_meta_talias', 'include_inactive', 'include_false', 'include_indirect', 'include_rev');
 %]
 
-<h1>Ändra alias för [% PROCESS tlink.tt %]</h1>
+<h1>[% PROCESS tlink.tt %]: Ändra alias</h1>
 [% PROCESS topic_edit_menu.tt %]
 
 <p>[% PROCESS typelist.tt rel = tid %] <em>[% t.text | html %]</em></p>

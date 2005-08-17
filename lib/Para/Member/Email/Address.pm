@@ -74,7 +74,7 @@ sub add
     my $st = "insert into mailalias
               ( mailalias_member, mailalias, mailalias_created )
               values ( ?, ?, now() )";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     eval
     {
 	$sth->execute($m->id, $ea->address);
@@ -113,7 +113,7 @@ sub delete
 
     my $st = "delete from mailalias where
               mailalias_member=? and mailalias=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     $sth->execute($m->id, $e->as_string);
 
     # Reset mailalias list

@@ -46,7 +46,7 @@ sub handler
 	my $remote = $ENV{'REMOTE_HOST'} || $ENV{'REMOTE_ADDR'};
 	if( my $host_pattern = '*@'.$remote )
 	{
-	    my $sth_host = $Para::dbh->prepare_cached("insert into memberhost
+	    my $sth_host = $Para::dbh->prepare("insert into memberhost
                ( memberhost_member, memberhost_pattern, memberhost_status, memberhost_updated )
                values ( ?, ?, 1, now() )");
 	    $sth_host->execute($m->id, $host_pattern);

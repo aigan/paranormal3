@@ -106,7 +106,7 @@ sub select_person_advanced
     warn "  Advanced: $st\n";
     warn "  Values: ".join(',',@values)."\n";
 
-    my $sth = $Para::dbh->prepare_cached( $st ) or die $st;
+    my $sth = $Para::dbh->prepare( $st ) or die $st;
     $sth->execute( @values ) or die $st;
     my $ref =  $sth->fetchall_arrayref({});
     $sth->finish;

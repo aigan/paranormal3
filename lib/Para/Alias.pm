@@ -250,7 +250,7 @@ sub add
                             talias_index, talias_language,
                             talias_active )
               values ( ?, lower(?), ?, ?, ?, ?, ?, ?, ?, ? )";
-    my $sth_alias_add = $Para::dbh->prepare_cached( $st_alias_add );
+    my $sth_alias_add = $Para::dbh->prepare( $st_alias_add );
 
     my $talias_t         = $t->id or die;
     my $talias           = $name or die;
@@ -511,7 +511,7 @@ sub update
                                 talias_changedby=?,
                                 talias_updated=now()
                             where talias_t=? and talias=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
 
     $sth->execute( $autolink, $index, $language, $status,
 		   $active, $changedby, $talias_t, $talias );

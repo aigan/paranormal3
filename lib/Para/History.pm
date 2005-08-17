@@ -60,7 +60,7 @@ sub add
     my $comment = $args->{comment};
  
 
-    my $sth = $Para::dbh->prepare_cached("insert into history (
+    my $sth = $Para::dbh->prepare("insert into history (
                           history_id, history_status, history_created,
                           history_createdby, history_secret,
                           history_partof, history_topic,

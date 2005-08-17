@@ -1,7 +1,8 @@
 [% META
 	title='Logga in på chatten'
-	next_handler = "/member/chat/cgiirc/irc.cgi"
+	next_template = "/member/chat/cgiirc/irc.cgi"
 	onsubmit = "setjs()"
+	form_enctype = "application/x-www-form-urlencoded"
 %]
 <script language="JavaScript"><!--
 function setjs() {
@@ -89,16 +90,16 @@ Mest aktivitet är det vid arbetsdagens slut samt senare på
 
 	  <h3>Välj ingångskanal:</h3>
 
-	  <input name="Channel" type="radio" value="#Torget,#Hjälp" checked="1"/> [% jump('#Hjälp', "/topic/hjalp.html") %] - Få hjälp med hur man hanterar chatten<br/>
-	  <input name="Channel" type="radio" value="#Hjälp,#Torget"/> [% jump('#Torget', "/topic/torget.html") %] - Huvudkanalen där du hittar alla på chatten<br/>
-	  <input name="Channel" type="radio" value="#Hjälp,#30+"/> [% jump('#30+', "/topic/torget.html") %] - Allmänt om det paranormala och andliga, för de över 30 jordår<br/>
-	  <input name="Channel" type="radio" value="#Torget,#devel"/> [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, få hjälp med att skapa texter och ämnen<br/>
-	  <input name="Channel" type="radio" value="#Torget,#Vetenskap"/> [% jump('#Vetenskap', "/topic/paranormalse/vetenskap.html") %] - Paranormala fenomen ur ett vetenskapligt (västerländskt) perspektiv<br/>
-	  <input name="Channel" type="radio" value="#Torget,#Drömmar"/> [% jump('#Drömmar', "/topic/paranormalse/drommar.html") %] - Drömmar och astralprojektion<br/>
-          <input name="Channel" type="radio" value="#Torget,#Magi"/> [% jump('#Magi', "/topic/paranormalse/magi.html") %] - För gediget och seriöst magiskt arbete<br/>
-	  <input name="Channel" type="radio" value="#Torget,#Hälsa"/> [% jump('#Hälsa', "/topic/paranormalse/halsa.html") %] - Alternativmedicin, helande, kost, yoga,  motion etc<br/>
-	  <input name="Channel" type="radio" value="#Torget,#Guide"/> [% jump('#Guide', "/topic/paranormalse/guide.html") %] - För de som söker, vill ha hjälp, vägledning, stöd, bekräftelse. Också för hjälparna inom [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %]<br/>
-	  <input name="Channel" type="radio" value="#Torget,#TV"/> [% jump('#TV', "/topic/tv.html") %] - Film, TV, musik och böcker <br/>
+	  [% jump('#Torget', "/topic/torget.html") %] - Huvudkanalen där du hittar alla på chatten. Hit kommer alla.<br/>
+	  #misc - En kanal där ordet står fritt. Prata om vad ni vill. Anarki. Hit kommer alla.<br/>
+Välj dessutom en nedan:<br/>
+	  <input name="Channel" type="radio" value="#Torget,#misc,#Hjälp" checked="1"/> [% jump('#Hjälp', "/topic/hjalp.html") %] - Få hjälp med hur man hanterar chatten<br/>
+	  <input name="Channel" type="radio" value="#Torget,#misc,#devel"/> [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, få hjälp med att skapa texter och ämnen<br/>
+	  <input name="Channel" type="radio" value="#Torget,#misc,#Vetenskap"/> [% jump('#Vetenskap', "/topic/paranormalse/vetenskap.html") %] - Paranormala fenomen ur ett vetenskapligt (västerländskt) perspektiv<br/>
+          <input name="Channel" type="radio" value="#Torget,#misc,#Magi"/> [% jump('#Magi', "/topic/paranormalse/magi.html") %] - För gediget och seriöst magiskt arbete<br/>
+	  <input name="Channel" type="radio" value="#Torget,#misc,#Guide"/> [% jump('#Guide', "/topic/paranormalse/guide.html") %] - För de som söker, vill ha hjälp, vägledning, stöd, bekräftelse. Också för hjälparna inom [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %]<br/>
+
+	  <input name="Channel" type="radio" value="#Torget,#misc,#healing"/> [% jump('#healing', "/topic/healing.html") %] - Kom in och låt dig bli omsvept av helande ljus<br/>
 
 	  <p>Du kan gå in på fler kanaler när du är på chatten genom att säga: <strong>/join #kanalnamn</strong>. Använd <strong>/list</strong> för att se vad som finns.<br/>
 <br>

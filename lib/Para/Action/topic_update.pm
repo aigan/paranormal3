@@ -68,13 +68,14 @@ sub handler
     }
 
     ## Go to the parent of the text!
-    if( my $top = $t->top_entry )
+    if( my $top = $t->topic )
     {
 	$tid = $top->id;
 	$ver = undef;
     }
 
     $q->param('tid', $tid);
+#    $q->param('step_replace_params', 'tid'); #use new tid
 
     $changes->success("De nya uppgifterna har sparats");
     $changes->report;
@@ -450,6 +451,10 @@ sub check_status
     }
 
     $t->set_status( $new_status );
+
+#    if( $t->status <= S_REPLACED )
+#    {
+#    }
 
     push @Para::clear_fields, 't_status';
 }

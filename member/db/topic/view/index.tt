@@ -77,7 +77,7 @@
       <p>[% forward('Lägg till kommentar för redaktörer', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]</p>
    [% END %]
    
-   <p>[% jump('Lägg till ny text', '../edit/new_entry.tt' parent=tid run='mark')  %]</p>
+   <p>[% jump('Lägg till ny text', '../edit/new_entry.tt' tid=tid run='mark')  %]</p>
 
 [% END # t_entry %]
 

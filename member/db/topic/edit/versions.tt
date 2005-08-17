@@ -1,6 +1,7 @@
 [% META
 	otitle = 'Versioner'
 	next_action = 'topic_update'
+	default_template = '/member/db/topic/view/'
 %]
 
 [%
@@ -67,7 +68,7 @@
         }
         </script>
 
-<h1>[% PROCESS tlink_ver.tt %]</h1>
+<h1>[% PROCESS tlink_ver.tt %]: Versionsdata</h1>
 
 [% PROCESS edit_menu.tt %]
 

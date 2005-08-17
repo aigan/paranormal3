@@ -91,7 +91,7 @@ sub handler
 	my $statement = "update member set
                          member_level=?, member_updated=now()
                          where member=? and member_level=2";
-	my $sth = $Para::dbh->prepare_cached( $statement );
+	my $sth = $Para::dbh->prepare( $statement );
 	$sth->execute( 3, $m->id );
 	$m->{'member_level'} = 3;
 	$Para::dbh->commit;

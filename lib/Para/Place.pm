@@ -57,7 +57,7 @@ sub new
     unless( $rec )
     {
 	my $st = "select * from $type where $type=?";
-	my $sth = $Para::dbh->prepare_cached( $st );
+	my $sth = $Para::dbh->prepare( $st );
 	$sth->execute( $id );
 	$rec =  $sth->fetchrow_hashref;
 	$sth->finish;

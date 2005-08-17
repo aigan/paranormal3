@@ -14,9 +14,9 @@
    PROCESS buttons.tt;
 %]
 
-<h1>[% PROCESS tlink_ver.tt %]</h1>
+<h1>[% PROCESS tlink_ver.tt %]: Importerad från...</h1>
 
-   [% PROCESS topic_edit_menu.tt %]
+[% PROCESS topic_edit_menu.tt %]
 
 <p>Gammal URL: [% input('t_oldfile', t.oldfile, size=50 maxlength=128) %]  <br />
 Exempel: <code>/psi/magi.html</code>

@@ -1,0 +1,621 @@
+/* Learned and inspired from http://www.meyerweb.com/eric/css/ */
+
+html
+{
+	margin: 0;
+	padding: 0;
+}
+
+body
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+body.meta
+{
+	MARGIN-LEFT: 5%;
+	MARGIN-RIGHT: 5%;
+}
+
+h1
+{
+	padding: 0.5em 0.5em 0.0em 0.0em;
+	margin: 0.5em 7em 0.0em 0.5em;
+}
+
+.slogan
+{
+	font-style: italic;
+	margin: -0.5em 16em 2.0em 4em;
+	font-size: 80%;
+}
+
+/* acronyms are not styled per default in Internet Explorer */
+abbr, acronym
+{
+        border-bottom: 1px dotted;
+        cursor: help;
+}
+
+
+.search_result h1
+{
+	margin-bottom: 0.5em;
+}
+
+div#section_icon
+{
+	float: left;
+	margin: 0.5em 0.0em 0.0em 0.5em;
+}
+div#section_icon a img { border: 0 }
+
+div#search_field
+{
+	position: absolute;
+	top: 0;
+	right: 1%;
+}
+
+body div#main
+{
+	margin: 0 14.4em 0 10%;
+	padding: 0.0em 0.0em 1em 0em;
+	border: 1px solid;
+	clear: left;
+}
+
+#illustration
+{
+	clear: left;
+	float: left;
+}
+
+#illustration .details
+{
+	font-size: 60%;
+}
+
+.illustration
+{
+	clear: left;
+	float: left;
+	margin-right: 1em;
+	paddin: 0;
+	width: min-intrinsic;
+}
+
+.illustration .details
+{
+	font-size: 60%;
+}
+
+.test
+{
+	border: thin solid red;
+}
+
+.entry, #member_data
+{
+	border-top: 2px groove;
+}
+
+.entry
+{
+	padding: 1em;
+}
+
+.subentry
+{
+}
+
+.entry th
+{
+  border: 1px solid;
+  padding: 0 0.3em 0 0.2em;
+  text-align: left;
+}
+
+.entry tr:first-child th
+{
+  border: 0;
+  border-bottom: 2px solid;
+  text-align: center;
+}
+
+.entry th.colheader, .entry tr:first-child th.colheader
+{
+  border: 1px solid;
+  padding: 0 0.3em 0 0.2em;
+  text-align: left;
+  border-right: 2px solid;
+}
+
+.entry td
+{
+  border: 1px solid;
+  padding: 0 0.3em 0 0.2em;
+  vertical-align: top;
+}
+
+.entry table
+{
+  border-collapse: collapse;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 0;
+  border-bottom: 1px solid;
+}
+
+#illustration td
+{
+  border: 0;
+}
+
+div#topic_header table
+{
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.5em;
+}
+
+div#topic_header tr, div#topic_header td
+{
+  border-bottom: 1px solid ;
+  padding-right: 0.5em;
+}
+
+div#topic_header
+{
+	padding: 0.5em 0.5em 0.5em 0.5em;
+	border-bottom: 1px solid;
+	font-size: 80%;
+}
+
+#topic_header code
+{
+	font-size: 2.0em;
+}
+
+a { text-decoration: none }
+
+a.link_button
+{
+	padding: 0.2em 0.5em 0.1em 0.4em;
+	border: 0.2em outset;
+	margin: 0 0.1em;
+	FLOAT: right;
+}
+
+a.link_button:visited
+{
+}
+
+a.link_button:active
+{
+	BORDER-STYLE: inset;
+}
+
+a.link_button:hover
+{
+}
+
+a#topic_change
+{
+	float: right;
+}
+
+a#intrest_specify
+{
+	float: right;
+}
+
+a#member_details
+{
+	float: right;
+}
+
+#coins
+{
+	float: right;
+	border: 0;
+}
+
+p#description
+{
+	font-weight: bold;
+	padding: 0;
+	margin-left: 2em;
+}
+
+p#alias
+{
+	font-size: 80%;
+	padding: 0;
+	margin: 0;
+}
+
+p#alias em
+{
+	font-style: normal;
+}
+
+h2
+{
+	text-align: center;
+	margin: 0.5em 9em 0.5em 0;
+	padding: 0;
+}
+
+h2.contained
+{
+	text-align: center;
+	font-size: 120%;
+	margin: 0.0em 16em 0.0em 0;
+	padding: 0.0em 0 0.5em 0;
+}
+
+.attatched
+{
+	text-align: center;
+	margin: -0.3em 0.0em 0.0em 0.0em;
+	padding: 0.0em 0 0.0em 0;
+}
+
+.entry h2, #member_data h2
+{
+	margin: 0.0em 0 0.0em 0;
+	padding: 0;
+}
+
+h3
+{
+	margin: 0.5em 0.2em 0.5em 0.8em;
+	padding: 0;
+}
+
+h4
+{
+	margin: 0.5em 0.2em 0.5em 1.2em;
+	padding: 0;
+}
+
+p
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+pre
+{
+	padding: 0 1.0em 0 1.0em;
+}
+
+
+div#sidebar
+{
+	position: absolute;
+	width: 15em;
+	padding: 0 0.5em;
+	text-align: left;
+	top: 4em;
+	right: 1%;
+	overflow: hidden;
+
+	font-size: 80%;
+	border: 3px solid;
+}
+
+div#sidebar h2
+{
+	font-size: 1.2em;
+	text-align: left;
+	margin: 0.5em 0 0 0;
+}
+
+div#sidebar h3
+{
+	font-size: 1em;
+	text-align: left;
+	margin: 0.3em 0 0 0.5em;
+}
+
+div#member_data .link
+{
+	display: block;
+	font-size: 80%;
+	padding: 0.0em 1.0em;
+}
+
+div#member_data .link br
+{
+	display: none !important;
+}
+
+div#sidebar .link
+{
+	display: block;
+	border-bottom: 1px solid;
+}
+
+div#sidebar br
+{
+	display: none !important;
+}
+
+div#footer
+{
+	font-size: 80%;
+	margin-top: 5em;
+	padding: 0.5em 1em 0.5em;
+	border: 1px solid;
+	border-width: 1px 0;
+	text-align: center;	
+	clear: both;
+}
+
+div#footer p
+{
+	margin-right: 16em;
+}
+
+#admin_menu
+{
+	font-size: 80%;
+	margin-top: 0.0em;
+	padding: 0.0em 0.0em;
+	border: 1px solid;
+	border-width: 0 0 1px;
+}
+
+p#pi
+{
+	text-align: right;
+}
+
+p#pi img
+{
+	border: 0;
+}
+
+td.plain
+{
+	vertical-align: top;
+}
+
+.plain .typelist
+{
+	white-space: normal;
+	font-size: 100%;
+}
+.plain .typelist:before { content: "" }
+.plain .typelist:after  { content: "" }
+
+.typelist
+{
+	font-size: 80%;
+	vertical-align: text-top;
+}
+.typelist:before { content: "(" }
+.typelist:after  { content: ")" }
+h1 .typelist     { font-size: 50% }
+
+.living_years
+{
+	font-size: 80%;
+	white-space: nowrap;
+}
+
+.meta
+{
+	display: block;
+	border-bottom: 1px solid ;
+}
+
+.entry_meta
+{
+	font-size: 80%;
+	padding-left: 1em;
+}
+
+img
+{
+	margin 0;
+}
+
+div#topic_header img
+{
+	margin: 0em;
+}
+
+img.inline_image 
+{
+	margin: 0em;
+	float: right;
+	clear: right;
+}
+
+.search_result img
+{
+	margin: 0em;
+}
+
+.spacy_image
+{
+	padding: 0em;
+	margin-top: 1em;
+	text-align: center;
+}
+
+.spacy_image table
+{
+	border: 0em;
+	padding: 0em;
+	margin: 0em;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.spacy_image img, .spacy_image td
+{
+	border: 0em;
+	padding: 0em;
+	margin: 0em;
+}
+
+.spacy_image td.details
+{
+	font-size: 60%;
+	text-align: left;
+}
+
+dl
+{
+	margin-left: 1em;
+}
+
+.topic_status
+{
+	float: right;
+	font-size:   small;
+      	font-style: italic;
+	margin-right: 1em;
+}
+
+
+.top_category_persons
+{
+	text-align: center;
+}
+
+.top_category_persons a
+{
+	padding:  0 0 0 1em;
+}
+
+
+
+hr
+{
+	margin-top: 1.0em;
+	margin-bottom: 1.0em;
+	width: auto;
+}
+
+hr.subdivider
+{
+	width: 15%;
+        clear: both;
+}
+
+.address_block
+{
+	float: right;
+	border: 1px solid;
+	font-style: italic;
+	font-size: 80%;
+	padding: 0.5em;
+	padding-top: 0.2em;
+}
+
+.address
+{
+	text-align: left;
+	font-style: normal;
+}
+
+.important
+{
+	BORDER: thick solid;
+	PADDING: 1em;
+}
+
+.important A
+{
+}
+
+.important A:visited
+{
+}
+
+
+.big
+{
+	FONT-SIZE: 200%
+}
+
+.small
+{
+	FONT-SIZE: 80%
+}
+
+.indent
+{
+	MARGIN-LEFT: 1.2em
+}
+
+.diff
+{
+	BORDER: 0.3em groove;
+	PADDING: 1em;
+}
+
+DIV.clearing
+{
+	CLEAR: both
+}
+
+TEXTAREA.big_input
+{
+	WIDTH: 100%;
+}
+
+
+TR.even
+{
+	BACKGROUND: #eeeeee
+}
+
+TR.odd
+{
+	BACKGROUND: #dddddd
+}
+
+.selected
+{
+	BORDER: 0.1em groove;
+	PADDING: 0.1em;
+	MARGIN: 0px 0.1em;
+	TEXT-DECORATION: underline
+}
+
+.same_place
+{
+	PADDING: 0.1em;
+	MARGIN: 0px 0.1em;
+}
+
+
+.notice
+{
+	font-size: 80%;
+	border: thin solid;
+	padding: 0.5em;
+}
+
+.notice p
+{
+	padding-bottom: 0.5em;
+	margin: 0.0em;
+	text-align: left;
+}
+
+.notice h2
+{
+	padding: 0.0em;
+	margin: 0.0em;
+	letter-spacing: 0.5em;
+	font-size: 1.3em;
+}

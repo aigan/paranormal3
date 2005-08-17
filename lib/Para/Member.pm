@@ -142,7 +142,7 @@ sub get_by_id
 	unless( $rec->{'passwd_member'} )
 	{
 	    my $st = "select * from passwd where passwd_member=?";
-	    my $sth = $Para::dbh->prepare_cached( $st );
+	    my $sth = $Para::dbh->prepare( $st );
 	    $sth->execute( $mid );
 	    my $pwrec = $sth->fetchrow_hashref
 		or die "failed to get $mid passwd";
@@ -157,7 +157,7 @@ sub get_by_id
     else
     {
 	my $st = "select * from member LEFT JOIN passwd ON member=passwd_member where member=?";
-	my $sth = $Para::dbh->prepare_cached( $st );
+	my $sth = $Para::dbh->prepare( $st );
 	$sth->execute( $mid );
 	$rec =  $sth->fetchrow_hashref;
 	$sth->finish;
@@ -182,7 +182,7 @@ sub get_by_tid
     return undef unless defined $tid;
 
     my $st = "select * from member LEFT JOIN passwd ON member=passwd_member where member_topic=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     $sth->execute( $tid );
     my $rec =  $sth->fetchrow_hashref;
     $sth->finish;
@@ -233,7 +233,7 @@ sub get_by_nickname
     if( $nick =~ m/^\d+$/ )
     {
 	my $st = "select * from member LEFT JOIN passwd ON member=passwd_member where member=? $censor_part";
-	my $sth = $Para::dbh->prepare_cached( $st );
+	my $sth = $Para::dbh->prepare( $st );
 	$sth->execute( $nick );
 	my $rec =  $sth->fetchrow_hashref;
 	$sth->finish;
@@ -246,7 +246,7 @@ sub get_by_nickname
     else
     {
 	my $st = "select * from nick JOIN member ON nick_member=member LEFT JOIN passwd ON member=passwd_member where uid=? $censor_part";
-	my $sth = $Para::dbh->prepare_cached( $st );
+	my $sth = $Para::dbh->prepare( $st );
 #	warn "  Executing $st ($nick)\n" if $DEBUG;
 	$sth->execute( $nick );
 	my $rec =  $sth->fetchrow_hashref;
@@ -276,23 +276,23 @@ sub create
 
     my $mid = $Para::dbix->get_nextval( "member_seq" );
 
-    my $sth_nick = $Para::dbh->prepare_cached("insert into nick
+    my $sth_nick = $Para::dbh->prepare("insert into nick
                                    ( uid, nick_member, nick_created )
                                    values ( ?, ?, now())");
 
     $sth_nick->execute( $uid, $mid );
 
-    my $sth_member = $Para::dbh->prepare_cached("insert into member
+    my $sth_member = $Para::dbh->prepare("insert into member
                ( member, nickname, chat_nick, member_level, member_created, member_updated, present_contact, present_intrests, present_activity, sys_logging, geo_precision )
                values ( ?, ?, ?, 1, now(), now(), 15, 30, 10, 30, 0 )");
     $sth_member->execute($mid, $nick, $chat_nick);
 	
-    my $sth_score = $Para::dbh->prepare_cached("insert into score
+    my $sth_score = $Para::dbh->prepare("insert into score
                ( score_member ) values ( ? )");
     $sth_score->execute($mid);
 	
     my $passwd = make_passwd();
-    my $sth_passwd = $Para::dbh->prepare_cached("insert into passwd
+    my $sth_passwd = $Para::dbh->prepare("insert into passwd
                ( passwd_member, passwd, passwd_updated, passwd_changedby )
                values ( ?, ?, now(), -1 )");
     $sth_passwd->execute($mid, $passwd);
@@ -410,7 +410,7 @@ sub set_passwd
     my $now_str = localtime($now)->date;
     my $st = "update passwd set passwd_updated=?, passwd_changedby=?, ".
 	"passwd_previous=?, passwd=? where passwd_member=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     $sth->execute( $now_str, $u->id, $m->{'passwd'}, $new, $mid );
 
     $m->{'passwd_updated'} = $now;
@@ -523,6 +523,16 @@ sub show_level
     return $_[0]->{'show_level'};
 }
 
+sub show_style
+{
+    return $_[0]->{'show_style'};
+}
+
+sub style
+{
+    return $_[0]->{'show_style'};
+}
+
 sub presentation   { shift->{'presentation'} }
 
 sub sys_uid   { shift->{'sys_uid'} }
@@ -539,7 +549,7 @@ sub set_sys_uid
 
 
     my $st = "update member set sys_uid=? where member=?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     $sth->execute( $sys_uid, $m->id );
     $m->{'sys_uid'} = $sys_uid;
 }
@@ -1074,7 +1084,7 @@ sub add_nick
     my $st = "insert into nick
               ( uid, nick_member, nick_created )
               values ( ?, ?, now() )";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     $sth->execute($uid, $m->id);
 
     $m->{'nicks'} = undef;
@@ -1792,7 +1802,7 @@ sub latest_in
     {
 	$time = Para::Frame::Time->get( $time );
 	my $st = "update member set latest_in=? where member=?";
-	my $sth = $Para::dbh->prepare_cached($st);
+	my $sth = $Para::dbh->prepare($st);
 	$sth->execute( $time->cdate, $m->id );
 	$m->{'latest_in'} = $time->epoch;
     }
@@ -1814,7 +1824,7 @@ sub latest_out
     {
 	$time = Para::Frame::Time->get( $time );
 	my $st = "update member set latest_out=? where member=?";
-	my $sth = $Para::dbh->prepare_cached($st);
+	my $sth = $Para::dbh->prepare($st);
 	$sth->execute( $time->cdate, $m->id );
 	$m->{'latest_out'} = $time->epoch;
     }
@@ -2152,7 +2162,7 @@ sub store_db_field
     my $st = "update member set member_updated=?, ".
 	join( ', ', map("$_=?", @keys)) .
 	" where member = ?";
-    my $sth = $Para::dbh->prepare_cached( $st );
+    my $sth = $Para::dbh->prepare( $st );
     debug(3,"Member_db_update: $st (@{$props}{@keys})");
 #    die Dumper [@{$props}{@keys}];
     $sth->execute( $now_str, @{$props}{@keys}, $m->id );
@@ -2179,7 +2189,7 @@ sub zip2city
     {
 	debug(3,"Fixing zip $zip");
 
-	my $sth = $Para::dbh->prepare_cached(
+	my $sth = $Para::dbh->prepare(
 	      "select * from zip, city where zip_city=city and zip=?") or die;
 	$sth->execute($zip) or die;
 	my $rec = $sth->fetchrow_hashref;
@@ -2255,7 +2265,7 @@ sub score_change
     my $value = $m->score($field) + $delta;
 
     my $statement = "update score set $field=? where score_member=?";
-    my $sth = $Para::dbh->prepare_cached( $statement );
+    my $sth = $Para::dbh->prepare( $statement );
     $sth->execute( $value, $mid );
     $m->{'score'}{$field} = $value;
 }
@@ -2346,7 +2356,7 @@ sub reset_payment_stats
 
     debug(0,"Resetting payment stats");
 
-    my $sth = $Para::dbh->prepare_cached("update member set
+    my $sth = $Para::dbh->prepare("update member set
                member_payment_period_length=?,
                member_payment_period_expire=?,
                member_payment_period_cost=0,

@@ -1,6 +1,7 @@
 [% META
 	title = 'Flytta en text'
 	next_action = 'entry_move'
+	default_template = '../view/'
 	level = 12
 %]
 

@@ -13,6 +13,15 @@
 <p>Här kommer du kunna välja sidutseende, så som färger, textstorlek,
 bakgrundsbilder och till viss mån layout.</p>
 
+[% WRAPPER draw_distinct_alt title="Färgtema" field='show_style'
+   values =
+   {
+	'blue' => "Blå"
+	'light' => "Ljus"
+   }
+%]
+Färg och utseende på webbplatsen. Dvs "skin", via css. Övriga stilar är åtkomliga så som "Alternate styles" via din webbläsare.
+[% END %]
 
 [% WRAPPER draw_alt title='Visa teknik-nivå' field='show_level'
    values = 
@@ -33,6 +42,21 @@ dem.
 [% END %]
 
 	
+
+[% WRAPPER draw_alt title='Komplexitet' field='show_complexity'
+   values = 
+   {
+	'00' => '0. Minimalt'
+	'05' => '5. Visa det grundläggande'
+	'10' => '10. Normalläge'
+        '30' => '30. Visa allt'
+   }
+%]
+
+Anger hur hur mycket av webbplatsens funktioner som visas.
+
+[% END %]
+
 [% WRAPPER draw_alt title='Visa detaljer' field='show_detail'
    values = 
    {

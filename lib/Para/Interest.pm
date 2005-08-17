@@ -136,7 +136,7 @@ sub touch
     my $tid = ref $t ? $t->id : $t;
 
     my $st_find = "select * from intrest where intrest_topic=? and intrest_member=?";
-    my $sth_find = $Para::dbh->prepare_cached( $st_find );
+    my $sth_find = $Para::dbh->prepare( $st_find );
     $sth_find->execute( $tid, $mid );
     my $rec = {};
     if( $sth_find->rows == 0)
@@ -169,7 +169,7 @@ sub create
 
     warn "  create interest ".$t->id."\n";
 
-    my $sth = $Para::dbh->prepare_cached("insert into intrest
+    my $sth = $Para::dbh->prepare("insert into intrest
              ( intrest_member, intrest_topic, intrest_updated, intrest_defined )
                                          values ( ?, ?, now(), ?)");
     eval
@@ -472,7 +472,7 @@ sub update
     my $statement = "update intrest set ".
 	join( ', ', map("$_=?", @fields)) .
 	"where intrest_topic=? and intrest_member=?";
-    my $sth = $Para::dbh->prepare_cached( $statement );
+    my $sth = $Para::dbh->prepare( $statement );
     $sth->execute( @values, $tid, $mid ) or die;
 
     ### Change thic object

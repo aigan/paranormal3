@@ -1,0 +1,226 @@
+  /******************/
+ /* color settings */
+/******************/
+body 
+{ 
+    color: black; 
+    background-color: #FFFFF8; 
+}
+
+
+/* Default link */
+
+a
+{
+	background: transparent none;
+}
+
+a:link
+{
+	color: #00f;
+}
+
+a:visited
+{
+	color: #800080;
+}
+
+a:active
+{
+	background: #FFD700;
+}
+
+a:hover
+{
+	color: #F00;
+}
+
+div#topic_header
+{
+	background-color: #FFFFE0;
+}
+
+a.link_button
+{
+	color: black;
+	background: #84D084;
+	border-color: brown;
+	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#84D084,endColorStr=#427042);
+}
+
+a.link_button:link
+{
+	color: black;
+}
+
+a.link_button:visited
+{
+}
+
+a.link_button:active
+{
+	color: #B50;
+	background: #80F080;
+}
+
+a.link_button:hover
+{
+	background: #80F080;
+	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#80F080,endColorStr=#60A060);}
+
+div#sidebar .link
+{
+	border-color: #CCC;
+}
+
+div#sidebar
+{
+	background-color: #E0E0E0;
+}
+
+div#footer
+{
+	border-color: #404040;
+	background: #E0E0E0;
+}
+
+#admin_menu
+{
+	border-color: #404040;
+	background: #E0E0E0;
+}
+
+hr
+{
+	background-color: #E0E0E0;
+}
+
+
+.meta
+{
+	border-color: #E0E0E0;
+}
+
+div#topic_header tr, div#topic_header td
+{
+	border-bottom: #E0E0E0;
+}
+
+tr.even
+{
+    background: #E0E0E0;
+}
+tr.odd
+{
+    background: #D0D0D0;
+}
+
+.entry th
+{
+  border-color: black;
+}
+
+.entry tr:first-child th
+{
+  border-bottom-color: black;
+}
+
+.entry th.colheader, .entry tr:first-child th.colheader
+{
+  border-color: black;
+  border-right-color: black;
+}
+
+.entry td
+{
+  border-color: black;
+}
+
+.address_block
+{
+	background: #E0E0E0;
+	border-color: #404040;
+}
+
+
+/* Old stuff */
+
+td
+{
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+      p.section a { font-weight: bold }      
+      .subdued { color:       #008897 }
+      .indent { margin-left: 1.2em }
+      .footer { font-size:   small }
+      spacer { padding:     2em }
+      
+      p.msg
+      {
+      font-style: italic;
+      font-size: small;
+      color: #D7D3D0;
+      align: center;
+      }
+      
+
+q { color: green }
+
+dfn { font-style: italic }
+
+div.section { margin-top: 2.0em; margin-bottom: 2.0em }
+
+.abstract 
+{ 
+    margin-left: 5%; 
+    margin-right: 10%; 
+    font-style: bold;
+    text-align: justify;
+    text-indent: 0;
+}
+
+.menu
+{
+    font-size: large;
+}
+
+.comment { color: #003000 }
+
+
+ul.ball { list-style: url(/images/bullets/bulletc.gif) square }  
+
+input
+{
+        color: #00656F;
+        background: #FFFFFF;    
+}
+
+strong.highlight
+{
+	background: yellow;
+}
+
+/* acronyms are not styled per default in Internet Explorer */
+abbr, acronym
+{
+        border-bottom: black;
+}
+
+.important
+{
+	BORDER-COLOR: black;
+	COLOR: black;
+	BACKGROUND-COLOR: #ffff00
+}
+
+.important A
+{
+	COLOR: #0000ff
+}
+
+.important A:visited
+{
+	COLOR: #0000ff
+}
+

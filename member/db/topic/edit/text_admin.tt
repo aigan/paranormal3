@@ -18,12 +18,12 @@
 
 
 [% IF t.entry %]
-   <h1>Text [% PROCESS tlink_ver.tt %]</h1>
+   <h1>[% PROCESS tlink_ver.tt %]: Text</h1>
    [% PROCESS entry_edit_menu.tt %]
    [% rows = 25 %]
    [% PROCESS entry_belonging.tt %]
 [% ELSE %]
-   <h1>Ämne [% PROCESS tlink_ver.tt %]</h1>
+   <h1>[% PROCESS tlink_ver.tt %]: Ämne</h1>
    [% PROCESS topic_edit_menu.tt %]
    [% rows = 2 %]
 [% END %]

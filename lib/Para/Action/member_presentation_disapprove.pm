@@ -59,7 +59,7 @@ sub handler
 #    return "Aborted" if $fork->failed;
 #    $req->result->message(sprintf "E-post har skickats till %s.", $m->desig);
 
-    $m->level( 2 ); # Update member level
+    $m->level( 2, Para::Member->skapelsen ); # Update member level
 
     $m->changes->report;
 

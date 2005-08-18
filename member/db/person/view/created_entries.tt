@@ -24,7 +24,7 @@
 </tr>
 
 [% FOREACH rec = select_list("from t where t_createdby=? and t_ver=1 and t_entry is true 
-order by $order $direction offset ? limit ?", m.member, part_offset, [], pagesize, []) %]
+order by $order $direction offset ? limit ?", m.member, part_offset, pagesize) %]
    [% t = topic(rec.t, rec.t_ver) %]
 
    [%tr2%]

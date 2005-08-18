@@ -28,7 +28,7 @@
 </tr>
 
 [% FOREACH rec = select_list("from rel where rel_changedby=? and rel_createdby<>?  and (rel_active is true and rel_strength >= 30)
-                        order by $order $direction offset ? limit ?", m.member, m.member, part_offset, [], pagesize, []) %]
+                        order by $order $direction offset ? limit ?", m.member, m.member, part_offset, pagesize) %]
    [% arc = getarc(rec.rel_topic) %]
 
    [%tr2%]

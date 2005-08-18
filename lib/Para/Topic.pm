@@ -342,7 +342,7 @@ sub vacuum_from_queue
     my $seen = {};
 
     my $minr = $Para::dbix->select_record("select min(t_entry_imported) as min from t where t_active is true and t_entry is false");
-    my $vts = $Para::dbix->select_list('select t from t where t_active is true and t_entry is false and t_entry_imported < ? limit ?', $minr->{'min'}+1, $limit, []);
+    my $vts = $Para::dbix->select_list('select t from t where t_active is true and t_entry is false and t_entry_imported < ? limit ?', $minr->{'min'}+1, $limit);
     foreach my $rec ( @$vts )
     {
 	my $t = Para::Topic->get_by_id( $rec->{'t'} );
@@ -366,7 +366,7 @@ sub publish_from_queue
     $limit ||= 40;
     my( $cnt ) = 1;
 
-    my $topics =  $Para::dbix->select_list("select t from t where t_published is false and t_active is true and t_entry is false order by t_updated limit ?", $limit, []);
+    my $topics =  $Para::dbix->select_list("select t from t where t_published is false and t_active is true and t_entry is false order by t_updated limit ?", $limit);
     foreach my $rec ( @$topics )
     {
 	my $tid = $rec->{'t'};

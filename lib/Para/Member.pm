@@ -88,7 +88,7 @@ sub revert_from_root
 {
     if( my $ru = delete $Para::Frame::REQ->{'real_user'} )
     {
-	debug(0,"Reverting from root",-1);
+	debug(0,"Reverting from temporary identity",-1);
 	# Remove {'real_user'} slot after its use here
 	return $_[0]->change_current_user( $ru );
     }

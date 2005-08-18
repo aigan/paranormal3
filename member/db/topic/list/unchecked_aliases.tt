@@ -17,7 +17,7 @@
 <div class="entry">
 <table>
    <tr><th>Ja</th><th>?</th><th>Nej</th><th>S</th><th>alias</th><th>Antal</th><th>Skapa</th><th>autolink</th><th>index</th><th>Språk</th><th>Ämne</th><th>Är</th><th>Av</th></tr>
-[% FOREACH select_list("select t, t_title, talias, talias_status, talias_autolink, talias_index, talias_language, talias_createdby from t, talias where t=talias_t and (talias_status=2 or talias_status=3) and t_active is true order by t_title, talias limit 15 offset ?", part_offset, [] ) %]
+[% FOREACH select_list("select t, t_title, talias, talias_status, talias_autolink, talias_index, talias_language, talias_createdby from t, talias where t=talias_t and (talias_status=2 or talias_status=3) and t_active is true order by t_title, talias limit 15 offset ?", part_offset ) %]
 [% acnt = select_record("select count(talias_t) as cnt from talias, t where talias=? and talias_t=t and t_active is true and talias_active is true",talias) %]
 
    [% tr2 %]

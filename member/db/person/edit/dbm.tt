@@ -9,7 +9,8 @@
 
 [% PROCESS person_view_menu.tt %]
 
-<table align="left" border>
+<div class="entry">
+<table align="left">
 <tr><th colspan="2">E-post
 <tr><td>mid <td>[% m.id %]
 <tr><td>nickname <td>[% m.nickname %]
@@ -38,12 +39,13 @@
 
 </table>
 
-<table border>
+<table>
 <tr><th colspan="2">Alias
 [% FOREACH nick = m.nicks %]
 <tr><td>[% nick %] <td>[% m.dbm_alias(nick) %]
 [% END %]
 </table>
+</div>
 
 <br clear="all">
 [% IF m.mailbox.exist %]

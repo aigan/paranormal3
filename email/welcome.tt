@@ -6,6 +6,6 @@ Användarnamn: [% m.nickname +%]
 Lösenord    : [% m.passwd %]
 
 
-Gå till denna sida för att logga in automatiskt:
+Du kan gå till denna sida för att logga in automatiskt:
 
-    http://[% host %]/member/db?run=member_login&uid=[% m.nickname | uri %]&passwd=[% m.passwd | uri %]
+    http://[% host %]/?run=user_login&username=[% m.nickname | uri %]&password=[% m.passwd | uri %]

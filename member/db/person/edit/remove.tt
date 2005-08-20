@@ -1,0 +1,36 @@
+[% META
+	otitle = 'Inställningar'
+	next_template = '-me'
+	level = 2
+%]
+
+
+[% PROCESS load_member.tt %]
+
+<h1>Avsluta medlemskap: [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
+
+
+<p class="important">Läs <a href="/topic/att_avsluta_sitt_medlemskap_i_paranormalse.html">om att avsluta sitt medlemskap i Paranormal.se</a>.</p>
+
+[% reason = q.param('reason') %]
+[% IF reason == '137658' %]
+<p>Okej. Om du är säker så..:
+<p>[% step('Radera medlemskap', "/", "member_delete") %]
+
+[% ELSIF reason %]
+
+<p>Läs ovan text igen...
+
+<p>Ange id för texten från sidan ovan som beskriver din anledning.<br>
+[% input('reason') %]
+<p>[% step %]
+
+[% ELSE %]
+
+<p>Ange id för texten från sidan ovan som beskriver din anledning.<br>
+[% input('reason') %]
+<p>[% step %]
+
+[% END %]

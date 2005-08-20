@@ -16,10 +16,10 @@
 
 [% PROCESS topic_edit_menu.tt %]
 
-[% PROCESS static/part/interests interest_limit=150 %]
+[% PROCESS static/default/interests.tt interest_limit=150 %]
 
 <p>
-[ [% jump('Lista alla', '/member/db/person/find/type2_result.tt' interest=tid _editor=1) +%]
+[ [% jump('Lista alla', '/member/db/person/find/result.tt' interest=tid _editor=1) +%]
 ]</p>
 
 <p>Frågor om hur du bidrar med material till detta ämne bör gå till en
@@ -31,7 +31,7 @@ väktare.  Dvs någon med minst nivå 11.
 <table>
 <tr><th>Namn <th>Nivå <th>R <th>K <th>Kommentar
 [% FOREACH interest = interest_editor %]
-   <tr>
+   [% tr2 %]
       <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', member=interest.member) %]</td>
       <td valign="top" align="right">[% interest.member_level %]</td>
       <td valign="top">[% (interest.editor||0) / 17 | replace(',','.') | format('%d') %]</td>

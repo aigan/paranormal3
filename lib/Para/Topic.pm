@@ -56,6 +56,7 @@ use constant BATCH => 3;
 #
 sub get
 {
+    croak "get deprecated";
     return shift->new(@_);
 }
 
@@ -1681,6 +1682,17 @@ sub updated
 	Para::Frame::Time->get( $_[0]->{'t_updated'} );
 }
 
+sub set_updated
+{
+    my( $t, $time ) = @_;
+
+    $time ||= now();
+
+    $t->{'updated'} = $time;
+    $t->{'t_updated'} = $t->{'updated'}->cdate;
+    $t->mark_unsaved;
+}
+
 
 sub admin_comment { shift->{'t_comment_admin'} }
 
@@ -1726,7 +1738,40 @@ sub ts_revlist
 
 sub media_url { shift->{'media_url'} }
 sub media_type { shift->{'media_mimetype'} }
-sub media { shift->{'media'} } # boolean
+sub media { shift->{'media'} } # boolean (use $t->is_url_media instead)
+
+sub media_remove
+{
+    my( $t ) = @_;
+
+    return undef unless $t->{'media'};
+
+    my $sth = $Para::dbh->prepare("delete from media where media=?");
+    $sth->execute( $t->id ) or die;
+    $t->changed_all_versions;
+    return 1;
+}
+
+sub media_set
+{
+    my( $t, $url, $mime ) = @_;
+
+    croak "not implemented setting without mime" unless $mime;
+
+    if( $t->{'media'} )
+    {
+	my $sth = $Para::dbh->prepare("update media set media_url=?, media_mimetype=? where media=?");
+	$sth->execute( $url, $mime, $t->id ) or die;
+    }
+    else
+    {
+	my $sth = $Para::dbh->prepare("insert into media (media, media_mimetype, media_url) values (?,?,?)");
+	$sth->execute( $t->id, $mime, $url ) or die;
+    }
+
+    $t->changed_all_versions;
+    return 1;
+}
 
 sub class { shift->{'t_class'} } # boolean
 
@@ -2028,7 +2073,9 @@ sub is_url_media
 {
     my( $t ) = @_;
 
-    if( $Para::dbix->select_possible_record('from media where media = ?', $t->id) )
+    # Assume that $t was initialized with media
+
+    if( $t->{'media'} )
     {
 	return 1;
     }
@@ -2193,7 +2240,8 @@ sub mark_publish
 	return $t->mark_publish_now;
     }
 
-    my $tid = $Para::query->param('tid');
+    my $q = $Para::Frame::REQ->q;
+    my $tid = $q->param('tid');
     if( $tid and $tid == $t->id )
     {
 	$t->mark_publish_now;
@@ -2222,11 +2270,7 @@ sub mark_unpublished
 
     unless( $t->entry )
     {
-	# This way is maby a litle faster...
 	$t->mark_publish;
-
-#	my $sth = $Para::dbh->prepare("update t set t_published='f' where t=? and t_ver=?");
-#	$sth->execute($t->id, $t->ver);
     }
 
     if( my $top = $t->topic )
@@ -2262,12 +2306,15 @@ sub save
 			      t_urlpart t_class t_entry t_entry_parent
 			      t_entry_next t_entry_imported
 			      t_connected t_connected_status
-			      t_replace);
+			      t_replace t_updated t_changedby);
+
+    my %fields_added;
 
     foreach my $key ( @fields_to_check )
     {
 	if( ($t->{ $key }||'') ne ($saved->{ $key }||'') )
 	{
+	    $fields_added{ $key };
 	    push @fields, $key;
 	    push @values, $t->{ $key };
 	    warn "$$: field $key differ\n";
@@ -2276,19 +2323,29 @@ sub save
 
     if( @fields )
     {
-	# Update changedby. Timestamp set in the statement
-	push @fields, 't_changedby';
-	push @values, $Para::Frame::U->id;
+	# Update changedby and timestamp
+	unless( $fields_added{ 't_changedby' } )
+	{
+	    push @fields, 't_changedby';
+	    $t->{'t_changedby'}  = $Para::Frame::U->id;
+	    push @values, $t->{'t_changedby'};
+	}
+	unless( $fields_added{ 't_updated' } )
+	{
+	    push @fields, 't_updated';
+	    $t->{'updated'} = now();
+	    $t->{'t_updated'} = $t->{'updated'}->cdate;
+	    push @values, $t->{'t_updated'};
+	    
+	}
+	
 
 	# Update topic
 	my $statement = "update t set ". join( ', ', map("$_=?", @fields)) .
-	    ", t_updated=now() where t=? and t_ver=?";
+	    " where t=? and t_ver=?";
 	my $sth = $Para::dbh->prepare( $statement );
 #	warn "Running $statement\n";
 	$sth->execute( @values, $tid, $v );
-
-	$t->{'updated'} = now();
-	$t->{'t_updated'} = $t->{'updated'}->cdate;
 
 	$t->mark_publish;
     }

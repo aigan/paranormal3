@@ -17,7 +17,7 @@
       )
       </span>
       [% END %]
-      [% INCLUDE typelist2 rel=tid %]
+      [% INCLUDE typelist.tt %]
    </h1>
 
    [% PROCESS setup.tt %]

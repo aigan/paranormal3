@@ -40,7 +40,7 @@ use Para::Change;
 use Para::Interests;
 use Para::Interest;
 use Para::Constants qw( :all );
-#use Para::Mailbox;
+use Para::Mailbox;
 use Para::Arc;
 use Para::Payment;
 use Para::Email::Address;
@@ -307,7 +307,11 @@ sub verify_user
     my( $this, $username, $password ) = @_;
 
     my $m = $this->get_by_nickname( $username );
-    $m or throw('validation', "Medlemmen $username existerar inte");
+    unless( $m )
+    {
+	debug(0,"Medlemmen $username existerar inte");
+	return $this->identify_user('guest');
+    }
     return $m->verify_password( $password );
 }
 
@@ -332,6 +336,22 @@ sub verify_password
 	my $expected = passwd_crypt($m->{'passwd'});
 	debug(1,"Expected $expected but got $password_encrypted");
 	return 0;
+    }
+}
+
+sub on_login
+{
+    my( $u ) = @_;
+
+    # Promote user if this is the first login
+    #
+    if( $u->level == 1 )
+    {
+	my $sys = Para::Member->get(-1);
+	$u->level( 2, $sys );
+	my $req = $Para::Frame::REQ;
+	$req->set_template("/member/db/person/quest/level_02/welcome.tt");
+	$u->changes->report;
     }
 }
 
@@ -547,11 +567,20 @@ sub set_sys_uid
 	return $m->change->fail("Namnet '$nick' liknar inte något av dina alias\n");
     }
 
+    $m->set_field( 'sys_uid' => $sys_uid );
+    $m->update_mail_forward;
+    $m->set_dbm_passwd;
+    $m->mailbox->create;
+    return $m->{'sys_uid'};
+}
 
-    my $st = "update member set sys_uid=? where member=?";
-    my $sth = $Para::dbh->prepare( $st );
-    $sth->execute( $sys_uid, $m->id );
-    $m->{'sys_uid'} = $sys_uid;
+sub unset_sys_uid
+{
+    my( $m ) = @_;
+
+    $m->{'sys_uid'} = undef;
+    $m->store_db_field({ 'sys_uid' => undef });
+    return 1;
 }
 
 sub present_contact   { shift->{'present_contact'} }
@@ -1207,7 +1236,9 @@ sub set_mailaliases
 	$new->{$addr} ++;
 	debug(3,"  $addr");
     }
-    $new->{$m->sys_email->address} ++; # In case it's not present
+
+    # In case it's not present
+    $new->{$m->sys_email} ++ if $m->sys_email;
 
     debug(3,"Old aliases");
     foreach my $old_alias ( $m->mailaliases )
@@ -2081,6 +2112,29 @@ sub unset_dbm_alias
     return delete $db->{ $nick };
 }
 
+sub set_dbm_passwd
+{
+    my( $m ) = @_;
+
+    my $passwd = $m->{'passwd'};
+    my $sys_uid = $m->sys_uid;
+    return unless $sys_uid;
+
+    my $db = paraframe_dbm_open( DB_PASSWD );
+
+    return $db->{ $sys_uid } = $passwd;
+}
+
+sub unset_dbm_passwd
+{
+    my( $m ) = @_;
+
+    my $sys_uid = $m->sys_uid;
+    my $db = paraframe_dbm_open( DB_PASSWD );
+
+    return delete $db->{ $sys_uid } ? 1 : 0;
+}
+
 sub dbm_passwd_check
 {
     my( $m ) = @_;
@@ -2242,19 +2296,6 @@ sub zip2city
     $m->store_db_field($prop);
 }
 
-sub set_dbm_passwd
-{
-    my( $m ) = @_;
-
-    my $passwd = $m->{'passwd'};
-    my $sys_uid = $m->sys_uid;
-    return unless $sys_uid;
-
-    my $db = paraframe_dbm_open( DB_PASSWD );
-
-    return $db->{ $sys_uid } = $passwd;
-}
-
 sub score_change
 {
     my( $m, $field, $delta ) = @_;
@@ -2386,8 +2427,9 @@ sub remove
     my( $m, $reason ) = @_;
 
     my $mid = $m->id;
+    my $u = $Para::Frame::U;
 
-    if( $Para::Frame::U->level < 41 )
+    if( $m->id != $u->id and $u->level < 41 )
     {
 	throw('denied', "Du har inte access för att ta bort någon");
     }
@@ -2402,22 +2444,19 @@ sub remove
 	throw('denied', "Den här medlemen är kopplad till bokföringen");
     }
 
-    eval
+    # Remove from nickname cache
+    foreach my $nick (@{ $m->nicks })
     {
-	# Don't bother about failed email
-	my $e = Para::Frame::Email->new;
-	$e->send_email({
-	    subject => "Medlemskap raderat",
-	    m => $m,
-	    template => 'member_remove.tt',
-	});
-    };
-    if( $@ )
-    {
-	debug(0,sprintf("Error while e-mailing %s: %s", $m->nickname, $@));
-	$@ = undef;
+	delete $Para::Member::CACHE->{$nick};
     }
 
+
+    if( my $t = $m->topic )
+    {
+	$t->delete_cascade;
+    }
+
+    $m->mailbox->remove;
 
     $Para::dbh->do("delete from nick where nick_member = ?", undef, $mid);
     $Para::dbh->do("delete from passwd where passwd_member = ?", undef, $mid);
@@ -2440,18 +2479,25 @@ sub remove
     $Para::dbh->do("update ipfilter set ipfilter_changedby=-2 where ipfilter_changedby = ?", undef, $mid);
     $Para::dbh->do("update ipfilter set ipfilter_createdby=-2 where ipfilter_createdby = ?", undef, $mid);
 
-    if( my $t = $m->topic )
-    {
-	$t->delete_cascade;
-    }
 
-    $Para::dbh->commit;
+    # Don't bother about failed email
+    Para::Email->send_in_fork({
+	    subject => "Medlemskap raderat",
+	    m => $m,
+	    template => 'member_remove.tt',
+	});
+
+
+    # Remove from mid cache
+    #
+    delete $Para::Member::CACHE->{$mid};
+
 
     # Sync with u
     #
-    if( $mid == $Para::Frame::U->id )
+    if( $mid == $u->id )
     {
-	$Para::Frame::U->authenticate_user();
+	$u->logout;
     }
 
     return 1;

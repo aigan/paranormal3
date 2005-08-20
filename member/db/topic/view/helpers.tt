@@ -15,12 +15,12 @@
 
 <h1>Hjälpare inom [% PROCESS tlink.tt %]</h1>
 
-[% PROCESS static/part/interests interest_limit=150 %]
+[% PROCESS static/default/interests.tt interest_limit=150 %]
 
 [% IF u.level %]
    [% PROCESS topic_edit_menu.tt %]
    <p>
-   [ [% jump('Lista alla', '/member/db/person/find/type2_result.tt' interest=tid _helper=1) %]
+   [ [% jump('Lista alla', '/member/db/person/find/result.tt' interest=tid _helper=1) %]
    ]</p>
 [% END %]
 
@@ -79,7 +79,7 @@ K = Kunskap.
 [% FOREACH interest = interest_helper %]
    [% im = getmember( interest.member ) %]
    [% NEXT UNLESS u.level or ( interest.intrest_description and im.newsmail > 3 and im.general_helper > 30 ) %]
-   <tr>
+   [% tr2 %]
    [% IF u.level %]
       <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', member=interest.member) %]</td>
    [% ELSE %]

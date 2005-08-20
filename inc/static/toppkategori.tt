@@ -9,7 +9,7 @@
 <body>
    [% PROCESS body_top.tt %]
    <h1>
-      [% t.desig | html %] [% INCLUDE typelist rel=tid %]
+      [% t.desig | html %] [% INCLUDE typelist.tt %]
    </h1>
    [% PROCESS setup.tt %]
 

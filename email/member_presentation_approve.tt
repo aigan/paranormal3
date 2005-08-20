@@ -8,4 +8,4 @@ Din presentation godkändes av [% u.title %] [%+ u.nickname %].
 
 Nästa steg är att berätta mer om dina intressen.  Gå hit:
 
-	http://[% host %]/member/db/person/quest/level_05/welcome.tt
+	http://paranormal.se/member/db/person/quest/level_05/welcome.tt

@@ -106,6 +106,14 @@ use Para::Email;
 			  {
 			      $_[0]->latest_out(time);
 			  });
+
+    Para::Frame->add_hook('user_login',
+			  sub
+			  {
+			      $_[0]->on_login;
+			  });
+
+
     my $global_params =
     {
      'select_persons'    => \&Para::Widget::select_persons,

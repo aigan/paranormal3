@@ -15,10 +15,10 @@
 
 [% PROCESS topic_edit_menu.tt %]
 
-[% PROCESS static/part/interests interest_limit=150 %]
+[% PROCESS static/default/interests.tt interest_limit=150 %]
 
 <p>
-[ [% jump('Lista alla', '/member/db/person/find/type2_result.tt' interest=tid _meeter=1) +%]
+[ [% jump('Lista alla', '/member/db/person/find/result.tt' interest=tid _meeter=1) +%]
 ]</p>
 
 [% trobart = 1 IF t.has_rel(1, 10) %]
@@ -43,7 +43,7 @@ I = Intresse.
     <th>Kommentarer
 
 [% FOREACH interest = interest_meeter %]
-   <tr>
+   [% tr2 %]
       <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', member=interest.member) %]</td>
       <td valign="top">[% (interest.intrest||0) / 17 | replace(',','.') | format('%d') %]</td>
       [% IF trobart %]<td valign="top">[% (interest.belief||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]

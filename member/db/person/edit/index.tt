@@ -1,6 +1,7 @@
 [% META
 	otitle = 'Inställningar'
 	next_action = 'member_update'
+	default_template = '-me'
 	level = 2
 %]
 
@@ -46,6 +47,10 @@ Spenderat [% elapsed_time(m.total_time_online) %] online
 [% END %]
 
 	<li>[% jump('Presentation', 'presentation.tt', run='mark', mid=m.id) %]
+[% IF u.complexity >= 30 AND u.level < 7 %]
+	<li>[% jump('Avsluta medlemskap', 'remove.tt', run='mark', mid=m.id) %]
+[% END %]
+
 [% IF u.level > 40 %] 
 	<li>[% jump('Innersta väsen', 'admin.tt', run='mark', mid=m.id) %]
 [% END %]

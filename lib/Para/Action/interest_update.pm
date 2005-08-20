@@ -23,7 +23,7 @@ sub handler
 	or throw('incomplete', "tid param missing\n");
     my $mid = $q->param('mid') || $u->id;
     my $m = Para::Member->get($mid);
-    my $t = Para::Topic->get($tid);
+    my $t = Para::Topic->get_by_id($tid);
 
     if( $u->level < 40 and $u->id != $mid )
     {

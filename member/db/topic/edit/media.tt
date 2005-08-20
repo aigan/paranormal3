@@ -1,6 +1,6 @@
 [% META
 	otitle = 'Editera URL för media'
-	next_action = 'media_update'
+	next_action = 'topic_update'
 	default_template = 'media.tt'
 %]
 

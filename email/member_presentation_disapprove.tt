@@ -1,4 +1,4 @@
-[% u.title %] [% u.nickname %] har tittat på
+[% u.title %] [%+ u.nickname %] har tittat på
 din presentation och bedömt att den ännu inte är klar.
 
 [% IF q.param('comment') %]
@@ -13,4 +13,4 @@ dig om eller pröva på?  Har du någon gång haft en upplevelse av något
 paranormalt?
 
 Du kan ändra på din presentation här:
-  http://[% host %]/member/db/person/quest/level_02/presentation.tt
+  http://paranormal.se/member/db/person/quest/level_02/presentation.tt

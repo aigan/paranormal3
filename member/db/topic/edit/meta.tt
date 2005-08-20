@@ -37,7 +37,8 @@ END;
 
 [% submit('Ändra') %]
 
-<table border>
+<div class="entry">
+<table>
 <tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ämne <th>Uppdaterad av</tr>
 
 [% FOREACH arc = t.arcs(arctypes) %]
@@ -152,7 +153,7 @@ END;
 </table>
 [% hr %]
 
-<table border>
+<table>
 <tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Värde <th>Uppdaterad av </tr>
 
 [% FOREACH arc = t.arcs(get_arctype_list('literals')) %]
@@ -195,7 +196,7 @@ END;
 </table>
 [% hr %]
 
-<table border>
+<table>
 <tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ämne <th>Uppdaterad av</tr>
 
 [% FOREACH arc = t.arcs(pred_not = arctypes) %]
@@ -271,6 +272,7 @@ END;
 [% END %]
 
    </table>
+</div>
 
    [% hidden("_rel__rows", count.row) %]
    [% hr %]

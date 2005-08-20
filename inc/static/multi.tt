@@ -7,7 +7,7 @@
 <body>
    [% PROCESS body_top.tt %]
    <h1>
-      [% t.title | html %] [% INCLUDE typelist rel=tid %]
+      [% t.title | html %] [% INCLUDE typelist.tt %]
    </h1>
    [% FOREACH arc = t.rel(type=15).arcs %]
       <h2>[% arc.value | html %]</h2>

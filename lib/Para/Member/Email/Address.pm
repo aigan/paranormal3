@@ -69,7 +69,7 @@ sub add
     my( $this, $m, $email_address_in ) = @_;
     my $class = ref($this) || $this;
 
-    my $ea = $class->parse( $email_address_in );
+    my $ea = Para::Frame::Email::Address->parse( $email_address_in );
 
     my $st = "insert into mailalias
               ( mailalias_member, mailalias, mailalias_created )

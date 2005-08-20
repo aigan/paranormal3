@@ -1,7 +1,7 @@
 [% META
 	title = 'Logga in'
 	next_template = '/member/db/person/quest/level_02/welcome.tt'
-	next_action = 'user_login&member_promote'
+	next_action = 'user_login'
 	focus = 'password'
 %]
 [% PROCESS load_member.tt %]

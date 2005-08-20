@@ -49,6 +49,7 @@ sub handler
     check_text_edit($t);
     check_class($t);
     check_oldfile($t);
+    check_media($t);
 
     if( my $cnt = $t->save )
     {
@@ -457,6 +458,47 @@ sub check_status
 #    }
 
     push @Para::clear_fields, 't_status';
+}
+
+sub check_media
+{
+    my( $t ) = @_;
+
+    # Change to the active version of the topic
+    $t = $t->active_ver;
+    unless( $t )
+    {
+	throw('validation', "Ämnet har inte en aktiv version");
+    }
+
+    my $req = $Para::Frame::REQ;
+    my $q = $req->q;
+    my $url = $q->param('media_url');
+    my $mime = $q->param('media_mimetype');
+    my $c = $req->{'changes'};
+
+    my $m = $Para::Frame::U;
+
+    if( $m->status < $t->status )
+    {
+	throw('denied', "Din status är lägre än ämnets");
+    }
+
+    if( $mime eq '' and $url eq '' )
+    {
+	$t->media_remove();
+	$c->note("Raderade mediareferens");
+    }
+    elsif( $mime and $url )
+    {
+	$t->media_set( $url, $mime );
+	$c->note("Uppdaterar mediareferens");
+    }
+    else
+    {
+	$c->note("Ingen ändring av mediareferens");
+    }
+    return;
 }
 
 1;

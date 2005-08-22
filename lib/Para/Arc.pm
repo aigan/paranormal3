@@ -87,7 +87,7 @@ sub new
 
 sub get
 {
-    my( $this, $id ) = @_;
+    my( $this, $id, $rec ) = @_;
     my $class = ref($this) || $this;
 
     if( $Para::Arc::CACHE{ $id } )
@@ -95,7 +95,7 @@ sub get
 	return $Para::Arc::CACHE{ $id };
     }
 
-    my $rec = $Para::dbix->select_possible_record('from rel where rel_topic=?', $id);
+    $rec ||= $Para::dbix->select_possible_record('from rel where rel_topic=?', $id);
     return undef unless $rec;
     return Para::Arc->new( $rec );
 }
@@ -966,6 +966,14 @@ sub updated_by
     Para::Member->get( shift->{'rel_changedby'} );
 }
 
+sub infered
+{
+    my( $arc ) = @_;
+
+    return 1 if $arc->active and $arc->validate_check;
+    return 0;
+}
+
 sub remove
 {
     my( $arc, $arg ) = @_;
@@ -975,7 +983,7 @@ sub remove
     $arg ||= '';
     unless( $arg eq 'force' )
     {
-	die "infered arc" if $arc->active and $arc->validate_check;
+	confess "infered arc" if $arc->infered;
     }
 
     $arc->remove_check;

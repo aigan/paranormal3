@@ -97,20 +97,27 @@ use Para::Email;
     #
 
     # Just in case we temporarily switched to root and got an exception
-    Para::Frame->add_hook('on_error_detect',
-			  sub { Para::Member->revert_from_root() }
-			  );
+    Para::Frame->add_hook('on_error_detect', sub
+			  {
+			      Para::Member->revert_from_root();
+			    });
 
-    Para::Frame->add_hook('before_user_logout',
-			  sub
+    Para::Frame->add_hook('before_user_logout', sub
 			  {
 			      $_[0]->latest_out(time);
 			  });
 
-    Para::Frame->add_hook('user_login',
-			  sub
+    Para::Frame->add_hook('user_login', sub
 			  {
 			      $_[0]->on_login;
+			  });
+    Para::Frame->add_hook('before_db_commit', sub
+			  {
+			      Para::Topic->commit();
+			  });
+    Para::Frame->add_hook('after_db_rollback', sub
+			  {
+			      Para::Topic->rollback();
 			  });
 
 

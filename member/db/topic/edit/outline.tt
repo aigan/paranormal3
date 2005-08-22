@@ -36,11 +36,11 @@
 <table border="0" width="100%">
 
 [% IF t.entry %]
-   <tr><td width="10">[%  radio("place", "0-0", 1) %]</td><td colspan="9"></td></tr>
+   <tr><td width="10">[%  radio("place", "0-0", 1) %]0-0</td><td colspan="9"></td></tr>
 [% END %]
 
-[% INCLUDE ident_outline ident=0 e=t %]
-[% INCLUDE ident_place ident=0 e=t %]
+[% INCLUDE indent_outline indent=0 e=t %]
+[% INCLUDE indent_place indent=0 e=t %]
 [% INCLUDE subentry e=t %]
 </table>
 
@@ -69,64 +69,91 @@ med ny rubrik.</p>
 [% BLOCK subentry %]
    [% DEFAULT elevel=0 %]
 
-   [% IF global.seen.$e; THROW recursion "on $e.id"; END %]
+   [% IF global.seen.$e;
+         IF tfilter.include_inactive;
+            RETURN;
+         ELSE;
+            "<tr><td colspan='10'><p class='important'>Rekursionsfel:<br>$e.id förekommer flera gånger.<br>Städa ämnet!</p></td></tr>";
+            RETURN;
+         END;
+      END;
+   %]
    [% global.seen.$e = 1 %]
 
    [% FOREACH se = e.entry_list(tfilter) %]
       [% warn("$e.id -sub($elevel)-> $se.id\n") %]
-      [% INCLUDE ident_outline ident=elevel+1 e=se %]
-      [% INCLUDE ident_place ident=elevel+1 e=se%]
+      [% INCLUDE indent_outline indent=elevel+1 e=se parent=e %]
+      [% INCLUDE indent_place indent=elevel+1 e=se%]
       [% INCLUDE subentry e=se elevel=elevel+1 %]
       [% UNLESS loop.last %]
-         [% ident = elevel+1 %]
-         [% span = 10 - ident %]
-         <tr><td colspan="$ident"><td colspan="$span"><hr/></td></tr>
+         [% indent = elevel+1 %]
+         [% span = 10 - indent %]
+         <tr><td colspan="$indent"><td colspan="$span"><hr/></td></tr>
       [% END %]
    [% END %]
 
-   [% IF e.next(tfilter) %]
-      [% ne = e.next(tfilter) %]
+   [% IF e.next(undef,tfilter) %]
+      [% ne = e.next(undef,tfilter) %]
       [% warn("$e.id -next($elevel)-> $ne.id\n") %]
-      [% INCLUDE ident_outline ident = elevel e=ne %]
-      [% INCLUDE ident_place ident=elevel e=ne %]
+      [% INCLUDE indent_outline indent = elevel e=ne previous=e %]
+      [% INCLUDE indent_place indent=elevel e=ne %]
       [% INCLUDE subentry e=ne elevel=elevel %]
   [% END %]
 [% END %]
 
 
-[% BLOCK ident_outline %]
+[% BLOCK indent_outline %]
    <tr>
-   [% span  = 10 - ident %]
+   [% span  = 10 - indent %]
    [% i = 0 %]
-   [% IF ident %]<td colspan="$ident"></td>[% END %]
+   [% IF indent %]<td colspan="$indent"></td>[% END %]
    <td colspan="$span">
    [% IF e.entry %]
       [% checkbox("thing", e.id, 0) %]
    [% END %]
    [% jump(e.id,me, tid=e.id) +%]
+   v[% e.ver %]
+   [% UNLESS e.active %]
+      <em class="highlight">inactive</em>
+   [% END %]
+   [% IF parent and not parent.equals( e.parent ) %]
+      [% IF e.parent %]
+         <em class="highlight">child to [% e.parent.id %]</em>
+      [% ELSE %]
+         <em class="highlight">lost entry</em>
+      [% END %]
+   [% END %]
+   [% IF previous and not previous.equals( e.previous ) %]
+      [% IF e.previous %]
+         <em class="highlight">follows [% e.previous.id %]</em>
+      [% ELSE %]
+         <em class="highlight">lost entry</em>
+      [% END %]
+   [% END %]
    [% hidden("placing_$global.row", e.id) %]
-   [% hidden("ident_$global.row", ident) %]
+   [% hidden("indent_$global.row", indent) %]
+   -
    [%+ e.outline | html %]
-   [%# warn("$ident> $e.id\n") %]
+   [%# warn("$indent> $e.id\n") %]
    <span style="font-size: small; vertical-align: text-middle;">- [% jump('ändra', '/member/db/topic/edit/text.tt', tid=e.id) %]</span>
    </td></tr>
 [% END %]
 
-[% BLOCK ident_place %]
+[% BLOCK indent_place %]
    <tr>
-   [% span  = 7 - ident %]
+   [% span  = 7 - indent %]
    <td width="10">
    [% IF t.entry %]
-      [% radio("place", "${global.row}-0", 0) %]
+      [% radio("place", "${global.row}-0", 0) %]${global.row}-0
    [% END %]
    </td>
    [% i = 1 %]
-   [% WHILE i < ident + 2 %]
-      <td width="10">[% radio("place", "${global.row}-$i", 0) %]</td>
+   [% WHILE i < indent + 2 %]
+      <td width="10">[% radio("place", "${global.row}-$i", 0) %]${global.row}-$i</td>
       [% i = i + 1 %]
    [% END %]
    [% IF e.has_child(tfilter) %]
-      <td colspan="$span" width="100%"> &nbsp; \ [% radio("place", "${global.row}-$i-s", 0) %]</td>
+      <td colspan="$span" width="100%"> &nbsp; \ [% radio("place", "${global.row}-$i-s", 0) %]${global.row}-$i-s</td>
    [% ELSE %]
       <td colspan="$span" width="100%">&nbsp;</td>
    [% END %]

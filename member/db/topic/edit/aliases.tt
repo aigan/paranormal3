@@ -1,6 +1,7 @@
 [% META
 	otitle = 'Ändra alias'
 	next_action = 'topic_update'
+	default_template = '-me'
 	level = 5
 %]
 [%

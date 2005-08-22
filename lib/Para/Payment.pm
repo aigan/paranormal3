@@ -63,12 +63,12 @@ sub company
 {
     return  $_[0]->{'payment_company'} ? Para::Topic->get_by_id( $_[0]->{'payment_company'} ) : undef;
 }
-sub date      { Para::Time->get($_[0]->{'payment_date'} ) }
+sub date      { Para::Frame::Time->get($_[0]->{'payment_date'} ) }
 
-sub order_date      { Para::Time->get($_[0]->{'payment_order_date'} ) }
-sub invoice_date      { Para::Time->get($_[0]->{'payment_invoice_date'} ) }
-sub payment_date      { Para::Time->get($_[0]->{'payment_date'} ) }
-sub log_date      { Para::Time->get($_[0]->{'payment_log_date'} ) }
+sub order_date      { Para::Frame::Time->get($_[0]->{'payment_order_date'} ) }
+sub invoice_date      { Para::Frame::Time->get($_[0]->{'payment_invoice_date'} ) }
+sub payment_date      { Para::Frame::Time->get($_[0]->{'payment_date'} ) }
+sub log_date      { Para::Frame::Time->get($_[0]->{'payment_log_date'} ) }
 
 
 sub product   { Para::Topic->get_by_id($_[0]->{'payment_product'} ) }
@@ -89,7 +89,7 @@ sub set_completed
 
     my $sth = $Para::dbh->prepare("update payment set payment_completed=true, payment_reference=?, payment_date=?, payment_log_date=now() where payment_id=?");
 
-    my $payment_date = $p->payment_date ? $p->payment_date->cdate : Para::Time->get(time)->cdate;
+    my $payment_date = $p->payment_date ? $p->payment_date->cdate : Para::Frame::Time->get(time)->cdate;
     $sth->execute( $reference, $payment_date, $p->id );
 
     my $body = "Betalning från ".$p->member->name."\n";
@@ -143,11 +143,11 @@ sub add_to_member_stats
 	my $length     = $p->quantity;
 	my $member     = $p->member;
 	my $old_expire = $m->payment_expire;
-	my $date       = Para::Time->get(time);
+	my $date       = Para::Frame::Time->get(time);
 #	warn "$$:     date is $date\n";
 #	warn "$$:     old_expire is $old_expire\n";
 	$old_expire    = $date if $date > $old_expire;
-	my $new_expire = Para::Time->get( $old_expire + $length * ONE_DAY );
+	my $new_expire = Para::Frame::Time->get( $old_expire + $length * ONE_DAY );
 	my $cost       = $p->price;
 	my $total      = $m->payment_total + $cost;
 

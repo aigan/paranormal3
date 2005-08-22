@@ -19,7 +19,7 @@ package Para::Topic;
 use strict;
 use base qw( Exporter );
 use Data::Dumper;
-use Carp qw( cluck croak );
+use Carp qw( cluck croak confess shortmess );
 use locale;
 use Date::Manip;
 use IO::LockedFile;
@@ -38,7 +38,7 @@ BEGIN
 use Para::Frame::Reload;
 use Para::Frame::DBIx qw( pgbool );
 use Para::Frame::Utils qw( deunicode trim throw minof debug );
-use Para::Frame::Time;
+use Para::Frame::Time qw( now );
 use Para::Frame::Widget;
 
 use Para::Arcs;
@@ -50,7 +50,7 @@ use Para::Constants qw( :all );
 use Para::Widget;
 
 use constant BATCH => 3;
-
+use constant LIMIT => 10000;
 #
 # CONSTRUCTOR
 #
@@ -110,12 +110,16 @@ sub _new
 	#
 	$rec->{'maby_loopy'} = 1;
 
-	my $t = $Para::Topic::CACHE->{"$tid-$v"} = bless($rec, $class);
-	if( $t->active )
+	my $t = bless($rec, $class);
+	unless( $nocache ) # Do not replace cache
 	{
-	    $Para::Topic::CACHE->{"$tid-"} = $t;
+	    $Para::Topic::CACHE->{"$tid-$v"} = $t;
+	    if( $t->active )
+	    {
+		$Para::Topic::CACHE->{"$tid-"} = $t;
+	    }
+	    warn "Initialized $tid-$v\n";
 	}
-	warn "Initialized $tid-$v\n";
 	return $t;
     }
     else
@@ -384,7 +388,26 @@ sub publish_from_queue
     return --$cnt;
 }
 
+sub commit
+{
+    foreach my $t ( values %Para::Topic::UNSAVED )
+    {
+	$t->save;
+    }
+}
+
+sub rollback
+{
+    foreach my $t ( values %Para::Topic::UNSAVED )
+    {
+	$t->changed;
+    }
+}
+
+
+####################################################################
 ################  Methods
+####################################################################
 
 sub reset
 {
@@ -398,7 +421,7 @@ sub changed  # Topic changed. Refresh from DB
     my $tid = $t->id;
 
     my $v   = $t->ver;
-#    warn "  refresh $tid, v$v\n";
+    debug(1,"refresh $tid, v$v");
     my $rec = $Para::dbix->select_possible_record("from t LEFT JOIN media on t=media where t=? and t_ver=?", $tid, $v);
 
     if( not $rec )
@@ -452,7 +475,10 @@ sub topic
     #
     # - Return undef if this is a topic (Depended on by mark_unpublished() )
     #
-    my( $t ) = @_;
+    my( $t, $seen ) = @_;
+
+    $seen ||= {};# confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; debug(1,"Looking at $t->{'t'} in topic",1);
+    confess if $Para::safety++ > LIMIT;
 
     unless( $t->{'topic'} )
     {
@@ -462,7 +488,7 @@ sub topic
 	    {
 		if( $parent->{t_entry} )
 		{
-		    $t->{'topic'} = $parent->topic;
+		    $t->{'topic'} = $parent->topic( $seen );
 		}
 		else
 		{
@@ -473,7 +499,7 @@ sub topic
 	    {
 		if( $previous->{t_entry} )
 		{
-		    $t->{'topic'} = $previous->topic;
+		    $t->{'topic'} = $previous->topic( $seen );
 		}
 		else
 		{
@@ -483,6 +509,7 @@ sub topic
 	    }
 	}
     }
+    debug(-1);
     return $t->{'topic'};
 }
 
@@ -492,7 +519,10 @@ sub top_entry
     #
     # - Return undef if this is the top entry
     #
-    my( $t ) = @_;
+    my( $t, $seen ) = @_;
+
+    $seen ||= {};# confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in top_entry",1);
+    confess if $Para::safety++ > LIMIT;
 
     unless( $t->{top_entry} )
     {
@@ -502,13 +532,15 @@ sub top_entry
 	    if( my $previous = $t->previous )
 	    {
 #		warn "  previous entry for $t->{'t'} found\n"; # DEBUG
-		if( my $top = $previous->top_entry )
+		if( my $top = $previous->top_entry($seen) )
 		{
+		    debug(-1);
 		    return $t->{top_entry} = $top;
 		}
 		else
 		{
 #		    warn "    returning $t->{top_entry}{t}\n";
+		    debug(-1);
 		    return $t->{top_entry} = $previous;
 		}
 	    }
@@ -517,19 +549,22 @@ sub top_entry
 	    if( $parent and $parent->{'t_entry'} )
 	    {
 #		warn "  Are there a parent entry to $t->{'t'}?\n"; # DEBUG
-		my $grandparent = $parent->parent;
+		my $grandparent = $parent->parent($seen);
 		if( $grandparent and $grandparent->{'t_entry'} )
 		{
-		    return $t->{top_entry} = $parent->top_entry;
+		    $t->{top_entry} = $parent->top_entry($seen);
 		}
 		else
 		{
-		    return $t->{top_entry} = $parent;
+		    $t->{top_entry} = $parent;
 		}
+		debug(-1);
+		return $t->{top_entry};
 	    }
 	}
 	$t->{top_entry} = undef;
     }
+    debug(-1);
     return $t->{top_entry};
 }
 
@@ -537,9 +572,12 @@ sub parent
 {
     # Find parent for entry
     #
-    my( $t ) = @_;
+    my( $t, $seen ) = @_;
 
-#    warn "  Parent of ".$t->id."($t) is ".($t->{'t_entry_parent'}||'null')."\n"; ## DEBUG
+    debug(1,"Parent of ".$t->id." is ".($t->{'t_entry_parent'}||'null')); ## DEBUG
+
+    $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in parent");
+    confess if $Para::safety++ > LIMIT;
 
     if( my $p = $t->get_by_id( $t->{'t_entry_parent'} ) )
     {
@@ -551,7 +589,12 @@ sub parent
 
 sub next
 {
-    my( $t, $filter ) = @_;
+    my( $t, $seen, $filter ) = @_;
+
+    $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in next");
+    confess if $Para::safety++ > LIMIT;
+
+    debug(3,"Get next entry for $t->{t} v$t->{t_ver}");
 
     # Find next entry in chain
     #
@@ -570,17 +613,37 @@ sub next
     return undef;
 }
 
+sub last_entry
+{
+    # Follow next entry til the end
+    #
+    my( $t, $seen ) = @_;
+
+    $seen ||= {};
+    if( my $next = $t->next($seen) )
+    {
+	return $next->last_entry($seen);
+    }
+
+    return $t;
+}
+
 sub previous
 {
     # Find previous entry in chain
     #
-    my( $t, $args ) = @_;
+    my( $t, $seen, $args ) = @_;
+
+    $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in previous",1);
+    confess if $Para::safety++ > LIMIT;
 
     unless( exists $t->{'previous'} )
     {
+	debug(2,"getting previous of $t->{t} from db");
 	my $recs = $Para::dbix->select_list("from t where t_entry_next=? and t_status>=?", $t->id, S_PROPOSED );
 	if( @$recs == 0 )
 	{
+	    debug(-1);
 	    return $t->{'previous'} = undef;
 	}
 
@@ -589,6 +652,8 @@ sub previous
 	# First try sorting out the official connection
 	if( @$recs > 1 )
 	{
+	    confess "FIXME"; ## DEBUG
+
 	    my $active = [];
 	    my $proposed = [];
 	    foreach my $rec ( @$recs )
@@ -608,7 +673,9 @@ sub previous
 	    {
 		# Too many active previous.
 		$t->break_previous;
-		return $t->previous;
+		$previous = $t->previous($seen);
+		debug(-1);
+		return $previous;
 	    }
 	    elsif( @$active == 1 )
 	    {
@@ -641,6 +708,11 @@ sub previous
 	    }
 	}
     }
+
+    debug(3,"$t->{t} follows $t->{'previous'}{t}")
+	if $t->{'previous'};
+
+    debug(-1);
     return $t->{'previous'};
 }
 
@@ -675,11 +747,8 @@ sub file
 	#
 	$t->remove_page;
 
-	my $sth_update = $Para::dbh->prepare("update t set t_file=? where t=? and t_active is true");
-	$sth_update->execute($file, $t->{'t'});
-
 	$t->{'t_file'} = $file;
-	$t->changed;
+	$t->mark_unsaved;
 	$t->publish; # Publish right now since the page got deleted
 
 	return $t->{'t_file'}; # Could be undef
@@ -1088,105 +1157,142 @@ sub has_rel
     return 0;
 }
 
+=head2 set_parent
+
+  $t->set_parent( $t )
+
+=cut
+
 sub set_parent
 {
     my( $t, $parent ) = @_;
 
-    ###   FIX: Work on your own session version
-    my $st = "update t set t_entry_parent=?, t_updated=now(), t_changedby=? where t=? and t_ver=?";
-    my $sth = $Para::dbh->prepare( $st );
-    my $mid = $Para::Frame::U->id;
+    confess if $Para::safety++ > LIMIT;
 
+    # Avoid making a loop
+    #
+    if( $parent and $parent->child_of( $t ) )
+    {
+	throw('validation', "Will not make $parent->{'t'} parent of $t->{'t'} since it's a child of  $t->{'t'} in the tree");
+    }
+
+
+    my $mid = $Para::Frame::U->id;
     my $tid = $t->id;
     my $ver = $t->ver;
     my $result = "";
 
     my $parent_id = $parent ? $parent->id : undef;
     my $parent_id_str = $parent ? $parent_id : 'null';
-    $t->{'t_entry_parent'} = $parent_id;
-    $t->{'parent'} = $parent;
-    $t->maby_loopy(1);
 
     $result .=  "  Set $tid v$ver - parent: $parent_id_str\n";
-    $sth->execute( $parent_id, $mid, $tid, $ver );
+    debug(1,"Set $tid v$ver - parent: $parent_id_str");
 
-    # Don't care about loops in t_previous since we now is changing that
-    # That's why we get the obj ouerself
-    if( my $t_previous = $t->previous({ignore_check=>1}) )
+    if( my $t_previous = $t->previous(undef, {ignore_check=>1}) )
     {
-#	warn "2A\n";
+	# Uncoupling from previous
 	$result .=  $t_previous->set_next(undef);
     }
 
-    $t->changed;
-    $parent->changed if $parent;
+    if( my $old_parent = $t->parent )
+    {
+	$old_parent->unregister_child( $t );
+    }
+
+    $t->{'t_entry_parent'} = $parent_id;
+    $t->{'parent'} = $parent;
+    $parent->register_child( $t ) if $parent;
+    $t->mark_updated;
     $t->mark_publish;
 
     return $result;
 }
 
+
+=head2 set_next
+
+    $t->set_next( $n );
+
+fails if $t already has a next
+
+=cut
+
 sub set_next
 {
     my( $t, $next ) = @_;
 
-    ###   FIX: Work on your own session version
-    my $st = "update t set t_entry_next=?, t_updated=now(), t_changedby=? where t=? and t_ver=?";
-    my $sth = $Para::dbh->prepare( $st );
-    my $mid = $Para::Frame::U->id;
+    confess if $Para::safety++ > LIMIT;
 
+    my $mid = $Para::Frame::U->id;
     my $tid = $t->id;
     my $ver = $t->ver;
     my $result = "";
 
-    # Don't care about loops in old_next since we now is changing that
-    # That's why we get the obj ouerself
-    if( my $old_next = Para::Topic->get_by_id( shift->{'t_entry_next'} ) )
-    {
-#	warn "B\n";
-	$old_next->{'previous'} = undef;
-	warn "    Previous for ".$old_next->id." is now undef\n";
-    }
 
     my $next_id = undef;
     my $next_id_str = 'null';
+
     if( $next )
     {
-#	warn "C\n";
-	$next_id = $next->id;
-	$next_id_str = $next_id;
-	if( my $next_previous = $next->previous )
-	{
-#	warn "D\n";
-	    $result .= $next_previous->set_next( undef );
-	}
-
+	# Fail if $t already has a next. It should not be abandoned
+	#
 	if( my $t_next = $t->next )
 	{
-#	warn "E\n";
-	    $result .= $next->set_next( $t_next );
+	    throw('validation', "Will not set next for $tid since it already has a next: $t_next->{t}");
+	}
+
+	# Do not set next if $t is not an entry
+	#
+	if( $t->is_topic )
+	{
+	    throw('validation', "Will not set next for $tid since it's not an entry");
+	}
+
+	$next_id = $next->id;
+	$next_id_str = $next_id;
+
+	# Avoid making a loop
+	#
+	debug(1,"Is $tid a child of $next_id_str?");
+	if( $t->child_of( $next )  )
+	{
+	    throw('validation', "Will not make $next->{'t'} follow $t->{'t'} since $t->{'t'} is a child of $next->{'t'} in the tree");
+	}
+
+	if( my $next_previous = $next->previous )
+	{
+	    # The thing that used to point at $next now doesn't
+	    $result .= $next_previous->set_next( undef );
 	}
 
 	if( my $next_parent = $next->parent )
 	{
-#	warn "F\n";
+	    # Since $next now follows $t it doesn't need a parent
 	    $result .=  $next->set_parent(undef);
 	}
 
 	$next->{'previous'} = $t;
-	$next->maby_loopy(1);
+	$next->mark_updated;
+#	$next->maby_loopy(1);
+    }
+    else
+    {
+	# Set the previous of existing next to undef
+	#
+	if( my $old_next = $t->next )
+	{
+	    $old_next->{'previous'} = undef;
+	}
     }
 
     $result .=  "  Set $tid v$ver - next: $next_id_str\n";
-    $sth->execute( $next_id, $mid, $tid, $ver );
+    debug(1,"Set $tid v$ver - next: $next_id_str");
 
     $t->{'t_entry_next'} = $next_id;
-    $t->maby_loopy(1);
-
-    $t->changed;
-    $next->changed if $next;
+    $t->mark_updated;
+#    $t->maby_loopy(1);
     $t->mark_publish;
 
-#    warn "G\n";
     return $result;
 }
 
@@ -1194,19 +1300,21 @@ sub break_previous
 {
     my( $t ) = @_;
 
+    confess; ### FIXME
+
     my $cnt = 0;
     my $recs = $Para::dbix->select_list("select t from t where t_entry_next=? and t_status>=? order by t_active desc, t_status desc, t desc, t_ver desc", $t->id, S_PROPOSED );
     # Sorted such that the first rec should keep t_entry_next
 
     my $rec = shift @$recs;
     my $pt = Para::Topic->get_by_id( $rec->{'t'} );
-    warn sprintf "Break multipple previus for topic %d\n", $t->id;
-    warn sprintf "  Keeping topic %d v%d\n", $pt->id, $pt->ver;
+    debug(1,sprintf "Break multipple previus for topic %d", $t->id);
+    debug(1,sprintf "  Keeping topic %d v%d", $pt->id, $pt->ver);
 
     foreach my $rec ( @$recs )
     {
 	my $pt = Para::Topic->get_by_id( $rec->{'t'} );
-	warn sprintf "  Decouple next from %d v%d\n", $pt->id, $pt->ver;
+	debug(1,sprintf "  Decouple next from %d v%d", $pt->id, $pt->ver);
 	$pt->set_next( undef );
 	$cnt++;
     }
@@ -1218,9 +1326,9 @@ sub break_entry_loop
     my( $t ) = @_;
     return undef unless $t;
 
-#    warn sprintf("Checking loopiness of %d\n", $t->id);
-
     return unless $t->{'maby_loopy'};
+
+    debug(1,sprintf "Checking loopiness of %d", $t->id);
 
     my $tid = $t->id;
     my $ver = $t->ver;
@@ -1231,31 +1339,31 @@ sub break_entry_loop
     # Start with simple cases?..
     if( $t->previous and $t->parent )
     {
-	warn "Crossbranches for $tid v$ver detected\n";
-	warn "  keeping the parent\n";
+	debug(1,"Crossbranches for $tid v$ver detected");
+	debug(1,"  keeping the parent");
 	$t->previous->set_next(undef);
     }
 
     # Complex cases
-    if( $t->child_of( $t ) )
+    if( $t->child_of( $t, 1 ) )
     {
 	# LOOP DETECTED
-	warn "Recursive loop for $tid v$ver detected\n";
+	debug(0,"Recursive loop for $tid v$ver detected");
 
 	# Decouple
-	warn "  Does $tid has a previous?\n";
+	debug(1,"  Does $tid has a previous?");
 	if( my $p = $t->previous )
 	{
 	    my $pid = $p->id;
-	    warn "    Yes: $pid.  Decoupling\n";
+	    debug(1,"    Yes: $pid.  Decoupling");
 	    warn $p->set_next(undef);
-	    warn "    Decoupled $pid!\n";
+	    debug(1,"    Decoupled $pid!");
 
 	    ## CHECK
 	    if( my $p = $t->previous )
 	    {
 		my $pid = $p->id;
-		warn "      $tid ($t) STILL has $pid as previous!\n";
+		debug(0,"      $tid ($t) STILL has $pid as previous!");
 		die "Oh no!\n";
 	    }
 	}
@@ -1267,26 +1375,26 @@ sub break_entry_loop
 
 	    my $le = Para::Topic->find_one('Lost entry');
 	    warn $t->set_parent($le);
-	    warn "  Placed $tid in the hall of lost entries\n";
+	    debug(1,"  Placed $tid in the hall of lost entries");
 	}
 	else
 	{
-	    warn "  $tid has now become independant\n";
+	    debug(1,"  $tid has now become independant");
 	}
 
 	if( my $p = $t->parent )
 	{
-	    warn "  $tid has parent ".$p->id."\n";
+	    debug(1,"  $tid has parent ".$p->id);
 	}
 	if( my $n = $t->next )
 	{
-	    warn "  $tid has next   ".$n->id."\n";
+	    debug(1,"  $tid has next   ".$n->id);
 	}
     }
 
     if( $t->follows( $t ) )
     {
-	warn sprintf("Recursion loop detected for %d\n", $t->id );
+	debug(0,sprintf "Recursion loop detected for %d", $t->id );
 
 	my $next = $t->next;
 	$t->set_next(undef);
@@ -1299,8 +1407,9 @@ sub break_entry_loop
 		# Add to Lost entries
 		my $le = Para::Topic->find_one('Lost entry');
 		my $fid = $first->id;
-		warn $first->set_parent($le);
-		warn "  Placed $fid in the hall of lost entries\n";
+		my $res = $first->set_parent($le);
+		debug(0,$res);
+		debug(1,"  Placed $fid in the hall of lost entries");
 	    }
 	}
 	else
@@ -1668,7 +1777,12 @@ sub text    { shift->{'t_text'} }
 sub id      { shift->{'t'} }
 sub status  { shift->{'t_status'} }
 sub oldfile { shift->{'t_oldfile'} }
+
 sub entry   { shift->{'t_entry'} }
+sub is_entry { shift->{'t_entry'} }
+sub is_topic { ! shift->{'t_entry'} }
+
+
 sub active  { shift->{'t_active'} }
 sub created
 {
@@ -1691,8 +1805,15 @@ sub set_updated
     $t->{'updated'} = $time;
     $t->{'t_updated'} = $t->{'updated'}->cdate;
     $t->mark_unsaved;
+    return $time;
 }
 
+sub mark_updated
+{
+    my( $t, $m, $time ) = @_;
+    $t->set_updated_by( $m );
+    return $t->set_updated( $time );
+}
 
 sub admin_comment { shift->{'t_comment_admin'} }
 
@@ -1721,6 +1842,16 @@ sub updated_by
     Para::Member->get( shift->{'t_changedby'} || -1 );
 }
 
+sub set_updated_by
+{
+    my( $t, $m ) = @_;
+
+    $m ||= $Para::Frame::U;
+    $t->{'t_changedby'} = $m->id;
+    $t->mark_unsaved;
+    return $m;
+}
+
 sub member
 {
     Para::Member->get_by_tid( shift->{'t'} );
@@ -1746,6 +1877,11 @@ sub media_remove
 
     return undef unless $t->{'media'};
 
+    if( $Para::Frame::U->status < $t->status )
+    {
+	throw('denied', "Din status är lägre än ämnets");
+    }
+
     my $sth = $Para::dbh->prepare("delete from media where media=?");
     $sth->execute( $t->id ) or die;
     $t->changed_all_versions;
@@ -1757,6 +1893,11 @@ sub media_set
     my( $t, $url, $mime ) = @_;
 
     croak "not implemented setting without mime" unless $mime;
+
+    if( $Para::Frame::U->status < $t->status )
+    {
+	throw('denied', "Din status är lägre än ämnets");
+    }
 
     if( $t->{'media'} )
     {
@@ -1826,6 +1967,8 @@ returns hashref of name=>alias pairs
 sub aliases
 {
     my( $t, $crits ) = @_;
+
+#    warn Dumper $Para::Topic::ALIASES{$t->id};
 
     # Shared by all versions of topic
     unless( $Para::Topic::ALIASES{$t->id} )
@@ -1897,61 +2040,131 @@ sub entry_list
 {
     my( $t, $filter ) = @_;
 
-    my $list;
+    confess if $Para::safety++ > LIMIT;
+
     $filter ||= {};
+
+    unless( $t->{'childs'} )
+    {
+	# Create a list of childs. Order first by status and next by
+	# id. This includes inactive entries.
+	#
+	my $list = $Para::dbix->select_list("select t, max(t_status) as max_status from t where t_entry_parent=? group by t order by max_status desc, t asc", $t->id);
+
+	my @childs;
+	foreach my $rec ( @$list )
+	{
+	    # Get entry with highest status or highest version
+	    if( my $c = Para::Topic->get_by_id( $rec->{'t'} ) )
+	    {
+		$c->break_entry_loop;
+		push @childs, $c;
+	    }
+	}
+	$t->{'childs'} = \@childs;
+    }
 
     if( $filter->{'include_inactive'} )
     {
-	$list = $Para::dbix->select_list("select t, max(t_status) as max_status from t where t_entry_parent=? group by t order by max_status desc, t asc", $t->id);
+	debug(1,($t->id." has childs ".join(", ", map $_->id, @{$t->{childs}})));
+	return $t->{'childs'};
     }
     else
     {
-	$list = $Para::dbix->select_list("select t from t where t_entry_parent=? and t_active is true order by t_status desc, t asc", $t->id);
-    }
-    my @entries;
-    foreach my $rec ( @$list )
-    {
-	if( my $c = Para::Topic->get_by_id( $rec->{'t'} ) )
+	my @list;
+	foreach my $child ( @{$t->{'childs'}} )
 	{
-	    $c->break_entry_loop;
-	    push @entries, $c;
+	    next unless $child->active;
+
+	    # It may not be the active child that's a child of $t
+	    #
+	    my $child_parent = $child->parent or next;
+	    next unless $child_parent->equals( $t );
+
+	    push @list, $child;
 	}
+	debug(1,($t->id." has active childs ".join(", ", map $_->id, @list)));
+	return \@list;
     }
-    return \@entries;
+}
+
+sub unregister_child
+{
+    my( $t, $old_child ) = @_;
+    #
+    # Remove $old_child from $t->{childs}
+
+    my @new_childs;
+    foreach my $child (@{ $t->childs })
+    {
+	next if $child->equals( $old_child );
+	push @new_childs, $child;
+    }
+    $t->{'childs'} = \@new_childs;
+}
+
+sub register_child
+{
+    my( $t, $new_child ) = @_;
+    #
+    # Add $new_child to $t->{childs}
+
+    # We must add the child in the right place using the same sorting
+    # as the original list
+
+    my $new_status     = $new_child->status;
+    my $new_id         = $new_child->id;
+
+    my $childs = $t->childs;
+  CHECK:
+    {
+	for( my $i=0; $i<= $#$childs; $i++ )
+	{
+	    my $child = $childs->[0];
+	    if( $new_status >= $child->status and
+		$new_id     <  $child->id )
+	    {
+		# insert $new_child before 
+		splice @$childs, $i, 0, $new_child;
+		debug(1,"placed $new_id as child $i of $t->{t}");
+		last CHECK;
+	    }
+	}
+	debug(1,"placed $new_id as last child of $t->{t}");
+	push @$childs, $new_child;
+    }
+    
+    return $t->{'childs'} = $childs; # Make it stick...
 }
 
 sub has_child
 {
     my( $t, $filter ) = shift;
 
+    confess if $Para::safety++ > LIMIT;
+
     my $rec;
     $filter ||= {};
 
-    if( $filter->{'include_inactive'} )
-    {
-	$rec = $Para::dbix->select_possible_record("from t where t_entry_parent=?", $t->id);
-    }
-    else
-    {
-	$rec = $Para::dbix->select_possible_record("from t where t_entry_parent=? and t_active is true", $t->id);
-    }
-
-    return $rec ? 1 : 0;
+    # Count number of childs...
+    return 1 if @{ $t->childs($filter) };
+    return 0;
 }
 
 sub child_of
 {
-    my( $t, $sup ) = @_;
+    my( $t, $sup, $ignore_direct ) = @_;
+
+    return 1 if $t->id == $sup->id and not $ignore_direct;
+    confess if $Para::safety++ > LIMIT;
 
     if( my $prev = $t->previous )
     {
-	return 1 if $prev->id == $sup->id;
 	return 1 if $prev->child_of( $sup );
     }
 
     if( my $parent = $t->parent )
     {
-	return 1 if $parent->id == $sup->id;
 	return 1 if $parent->child_of( $sup );
     }
     return 0;
@@ -1960,6 +2173,8 @@ sub child_of
 sub follows
 {
     my( $t, $prev ) = @_;
+
+    confess if $Para::safety++ > LIMIT;
 
     if( my $n = $prev->next )
     {
@@ -2256,6 +2471,7 @@ sub mark_publish_now
 {
     my( $t ) = @_;
 
+    return unless $t->active;
     if( $t->topic )
     {
 	$t = $t->topic;
@@ -2298,6 +2514,7 @@ sub save
 
     my( @fields, @values );
 
+    debug(1,"saving $tid v$v");
     my $saved = $t->_new( $tid, $v, 1); # Nocache
 
     my @fields_to_check = qw( t_pop t_size t_title
@@ -2306,7 +2523,8 @@ sub save
 			      t_urlpart t_class t_entry t_entry_parent
 			      t_entry_next t_entry_imported
 			      t_connected t_connected_status
-			      t_replace t_updated t_changedby);
+			      t_replace t_published t_updated
+			      t_changedby);
 
     my %fields_added;
 
@@ -2314,10 +2532,10 @@ sub save
     {
 	if( ($t->{ $key }||'') ne ($saved->{ $key }||'') )
 	{
-	    $fields_added{ $key };
+	    $fields_added{ $key } ++;
 	    push @fields, $key;
 	    push @values, $t->{ $key };
-	    warn "$$: field $key differ\n";
+	    debug(1,"  field $key differ");
 	}
     }
 
@@ -2346,8 +2564,6 @@ sub save
 	my $sth = $Para::dbh->prepare( $statement );
 #	warn "Running $statement\n";
 	$sth->execute( @values, $tid, $v );
-
-	$t->mark_publish;
     }
 
     delete $Para::Topic::UNSAVED{"$tid-$v"};
@@ -2376,12 +2592,10 @@ sub vacuum
 	    $v->vacuum( $seen, {one_version=>1} );
 	}
 
-	### Add top t_entry_imported, as a vaccum counter
+	### Add to t_entry_imported, as a vaccum counter
 	#
-	my $st = "update t set t_entry_imported=t_entry_imported+1 where t=? and t_ver=?";
-#	warn sprintf "Execute $st (%d, %d)\n", $t->id, $t->ver;
-	my $sth = $Para::dbh->prepare( $st );
-	$sth->execute( $t->id, $t->ver );
+	$t->{'t_entry_imported'} ++;
+	$t->mark_unsaved;
     }
 
     # Break loops
@@ -3037,23 +3251,22 @@ sub remove_page
 
 sub set_published
 {
-    my( $t, $sth ) = @_;
+    my( $t ) = @_;
 
-    my $sth ||= $Para::dbh->prepare("update t set t_published='t' where t=?");
+    $t->{'t_published'} ||= pgbool(1); #may already be
+    $t->mark_unsaved;
 
     # Och publicera nu alla aktiva barn
     #
     foreach my $child ( @{$t->childs} )
     {
-	$child->set_published($sth);
+	$child->set_published;
     }
 
     if( $t->next )
     {
-	$t->next->set_published($sth);
+	$t->next->set_published;
     }
-
-    $sth->execute($t->id);
 }
 
 sub type_list

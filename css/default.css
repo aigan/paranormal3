@@ -526,6 +526,11 @@ hr.subdivider
 	font-style: normal;
 }
 
+.highlight
+{
+	BACKGROUND-COLOR: #ffff00
+}
+
 .important
 {
 	BORDER: thick solid;

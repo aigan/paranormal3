@@ -31,7 +31,7 @@
       <td>[% talias_status %]</td>
       <td>[% jump(talias, '/member/db/topic/view/', talias=talias, target='info') %]</td>
       <td>$acnt.cnt</td>
-      <td>[% jump('Skapa', '/member/db/topic/create_maby', _name=talias, target='_blank') %]</td>
+      <td>[% jump('Skapa', '/member/db/topic/create/maby.tt', _name=talias, target='_blank') %]</td>
       <td>[% checkbox("_talias__${loop.count}_talias_autolink", 't', talias_autolink) %]</td>
       <td>[% checkbox("_talias__${loop.count}_talias_index", 't', talias_index) %]</td>
 
@@ -47,8 +47,8 @@
       </td>
 
 
-      <td>[% jump(t_title, '/member/db/topic/edit/meta', tid=t, target='info') %]</td>
-      <td>[% PROCESS typelist.tt rel=t %]</td>
+      <td>[% jump(t_title, '/member/db/topic/edit/meta.tt', tid=t, target='info') %]</td>
+      <td>[% PROCESS typelist.tt %]</td>
       <td>[% getmember(talias_createdby).link %]</td>
   </tr>
    [% subpart.shown = loop.size %]

@@ -207,6 +207,11 @@ abbr, acronym
         border-bottom: black;
 }
 
+.highlight
+{
+	BACKGROUND-COLOR: #ffff00
+}
+
 .important
 {
 	BORDER-COLOR: black;
@@ -222,5 +227,31 @@ abbr, acronym
 .important A:visited
 {
 	COLOR: #0000ff
+}
+
+.selected
+{
+	BACKGROUND: #EEBB1D;
+	COLOR: black;
+}
+
+.same_place
+{
+	BACKGROUND: #F0F0E0;
+}
+
+.selected:link
+{
+	COLOR: black;
+}
+
+.selected:visited
+{
+	COLOR: black;
+}
+
+.selected:hover
+{
+	BACKGROUND: #FF0000;
 }
 

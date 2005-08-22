@@ -1483,7 +1483,7 @@ sub update_topic_member
 	{
 	    if( my $arc = $t->arc({pred=>1, obj=>$tid}) )
 	    {
-		$arc->remove;
+		$arc->remove unless $arc->infered;
 	    }
 	}
     }

@@ -152,8 +152,8 @@
       [% END %]
    [% END %]
 
-   [% IF e.next(tfilter) %]
-      [% ne = e.next(tfilter) %]
+   [% IF e.next(undef,tfilter) %]
+      [% ne = e.next(undef,tfilter) %]
       [% IF ne.title %]
          <h$level>[% ne.title | html %]</h$level>
       [% END %]

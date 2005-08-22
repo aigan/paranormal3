@@ -477,13 +477,6 @@ sub check_media
     my $mime = $q->param('media_mimetype');
     my $c = $req->{'changes'};
 
-    my $m = $Para::Frame::U;
-
-    if( $m->status < $t->status )
-    {
-	throw('denied', "Din status är lägre än ämnets");
-    }
-
     if( $mime eq '' and $url eq '' )
     {
 	$t->media_remove();

@@ -405,6 +405,9 @@ sub update
 	$status = $props->{'status'};
 	$active = $props->{'status'} >= S_PENDING ? 1 : 0;
 
+	warn "  Setting status to $status\n";
+	warn "  Existing status is ".$a->status."\n";
+
 	# Status changed explicitly?
 	#
 	if( $status != $a->status )
@@ -547,6 +550,7 @@ sub vacuum
 {
     my( $a ) = @_;
 
+    $a->reset;
 }
 
 1;

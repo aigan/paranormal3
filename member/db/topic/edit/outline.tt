@@ -81,7 +81,7 @@ med ny rubrik.</p>
    [% global.seen.$e = 1 %]
 
    [% FOREACH se = e.entry_list(tfilter) %]
-      [% warn("$e.id -sub($elevel)-> $se.id\n") %]
+      [% warn("$e.id -sub($elevel)-> $se.id") %]
       [% INCLUDE indent_outline indent=elevel+1 e=se parent=e %]
       [% INCLUDE indent_place indent=elevel+1 e=se%]
       [% INCLUDE subentry e=se elevel=elevel+1 %]
@@ -94,7 +94,7 @@ med ny rubrik.</p>
 
    [% IF e.next(undef,tfilter) %]
       [% ne = e.next(undef,tfilter) %]
-      [% warn("$e.id -next($elevel)-> $ne.id\n") %]
+      [% warn("$e.id -next($elevel)-> $ne.id") %]
       [% INCLUDE indent_outline indent = elevel e=ne previous=e %]
       [% INCLUDE indent_place indent=elevel e=ne %]
       [% INCLUDE subentry e=ne elevel=elevel %]
@@ -119,6 +119,8 @@ med ny rubrik.</p>
    [% IF parent and not parent.equals( e.parent ) %]
       [% IF e.parent %]
          <em class="highlight">child to [% e.parent.id %]</em>
+      [% ELSIF e.previous %]
+         <em class="highlight">follows [% e.previous.id %]</em>
       [% ELSE %]
          <em class="highlight">lost entry</em>
       [% END %]
@@ -126,6 +128,8 @@ med ny rubrik.</p>
    [% IF previous and not previous.equals( e.previous ) %]
       [% IF e.previous %]
          <em class="highlight">follows [% e.previous.id %]</em>
+      [% ELSIF e.parent %]
+         <em class="highlight">child to [% e.parent.id %]</em>
       [% ELSE %]
          <em class="highlight">lost entry</em>
       [% END %]

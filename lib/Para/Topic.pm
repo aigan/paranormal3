@@ -50,7 +50,7 @@ use Para::Constants qw( :all );
 use Para::Widget;
 
 use constant BATCH => 3;
-use constant LIMIT => 10000;
+#use constant LIMIT => 10000;
 #
 # CONSTRUCTOR
 #
@@ -478,7 +478,7 @@ sub topic
     my( $t, $seen ) = @_;
 
     $seen ||= {};# confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; debug(1,"Looking at $t->{'t'} in topic",1);
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     unless( $t->{'topic'} )
     {
@@ -522,7 +522,7 @@ sub top_entry
     my( $t, $seen ) = @_;
 
     $seen ||= {};# confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in top_entry",1);
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     unless( $t->{top_entry} )
     {
@@ -577,7 +577,7 @@ sub parent
     debug(1,"Parent of ".$t->id." is ".($t->{'t_entry_parent'}||'null')); ## DEBUG
 
     $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in parent");
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     if( my $p = $t->get_by_id( $t->{'t_entry_parent'} ) )
     {
@@ -592,7 +592,7 @@ sub next
     my( $t, $seen, $filter ) = @_;
 
     $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in next");
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     debug(3,"Get next entry for $t->{t} v$t->{t_ver}");
 
@@ -635,7 +635,7 @@ sub previous
     my( $t, $seen, $args ) = @_;
 
     $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in previous",1);
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     unless( exists $t->{'previous'} )
     {
@@ -1167,7 +1167,7 @@ sub set_parent
 {
     my( $t, $parent ) = @_;
 
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     # Avoid making a loop
     #
@@ -1221,7 +1221,7 @@ sub set_next
 {
     my( $t, $next ) = @_;
 
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     my $mid = $Para::Frame::U->id;
     my $tid = $t->id;
@@ -2040,7 +2040,7 @@ sub entry_list
 {
     my( $t, $filter ) = @_;
 
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     $filter ||= {};
 
@@ -2141,7 +2141,7 @@ sub has_child
 {
     my( $t, $filter ) = shift;
 
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     my $rec;
     $filter ||= {};
@@ -2156,7 +2156,7 @@ sub child_of
     my( $t, $sup, $ignore_direct ) = @_;
 
     return 1 if $t->id == $sup->id and not $ignore_direct;
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     if( my $prev = $t->previous )
     {
@@ -2174,7 +2174,7 @@ sub follows
 {
     my( $t, $prev ) = @_;
 
-    confess if $Para::safety++ > LIMIT;
+#    confess if $Para::safety++ > LIMIT;
 
     if( my $n = $prev->next )
     {

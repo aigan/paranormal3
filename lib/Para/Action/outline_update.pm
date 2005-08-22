@@ -40,7 +40,7 @@ sub handler
     my $result = "";
 
     my @clear_fields = ();
-    $Para::safety = 0;
+#    $Para::safety = 0;
 
 
     ############################################
@@ -198,7 +198,7 @@ sub move_branch
 {
     my( $e ) = @_;
 
-    confess if $Para::safety++ > 1000;
+#    confess if $Para::safety++ > 1000;
 
     my $eid = $e->id;
     my $did = dest->id; # Destination topic id
@@ -291,7 +291,7 @@ sub move_node
 {
     my( $e ) = @_;
 
-    confess if $Para::safety++ > 1000;
+#    confess if $Para::safety++ > 1000;
 
     my $eid = $e->id;
     my $did = dest->id; # Destination topic id

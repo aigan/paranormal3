@@ -76,7 +76,7 @@ use Para::Email;
     Para::Frame->daemonize unless @ARGV;
 
 
-    # Connect to database
+    # Configure database
     #
     $Para::dbix = Para::Frame::DBIx ->
 	new({
@@ -119,7 +119,10 @@ use Para::Email;
 			  {
 			      Para::Topic->rollback();
 			  });
-
+    Para::Frame->add_hook('on_startup', sub
+			  {
+			      $Para::dbix->connect;
+			  });
 
     my $global_params =
     {
@@ -172,13 +175,16 @@ use Para::Email;
     };
     Para::Frame->add_global_tt_params( $global_params );
 
-    Para::Frame->startup();
+    Para::Frame->watchdog_startup();
 }
 
 #########################################################
 
 END
 {
-    warn "Closing down creation\n" unless $Para::Frame::FORK;
+    unless( $Para::Frame::FORK )
+    {
+	warn "Closing down creation\n\n";
+    }
 }
 

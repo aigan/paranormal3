@@ -78,7 +78,7 @@ sub handler
     $q->param('tid', $tid);
 #    $q->param('step_replace_params', 'tid'); #use new tid
 
-    $changes->success("De nya uppgifterna har sparats");
+#    $changes->success("De nya uppgifterna har sparats");
     $changes->report;
 }
 
@@ -477,19 +477,21 @@ sub check_media
     my $mime = $q->param('media_mimetype');
     my $c = $req->{'changes'};
 
+    return unless defined $url and defined $mime;
+
     if( $mime eq '' and $url eq '' )
     {
-	$t->media_remove();
-	$c->note("Raderade mediareferens");
+	$t->media_remove() and
+	    $c->note("Raderade mediareferens");
     }
     elsif( $mime and $url )
     {
-	$t->media_set( $url, $mime );
-	$c->note("Uppdaterar mediareferens");
+	$t->media_set( $url, $mime ) and
+	    $c->note("Uppdaterar mediareferens");
     }
     else
     {
-	$c->note("Ingen ändring av mediareferens");
+	$c->note("Definiera både url och mime för att ändra mediareferens");
     }
     return;
 }

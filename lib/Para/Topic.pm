@@ -1899,6 +1899,8 @@ sub media_set
 	throw('denied', "Din status är lägre än ämnets");
     }
 
+    return 1 if $url eq $t->{'media_url'} and $mime eq $t->{'media_mimetype'};
+
     if( $t->{'media'} )
     {
 	my $sth = $Para::dbh->prepare("update media set media_url=?, media_mimetype=? where media=?");

@@ -239,7 +239,9 @@ sub get_by_nickname
 	$sth->finish;
 	if( $rec )
 	{
-	    return $class->get_by_id($rec->{'member'}, $rec, $no_cache);
+	    my $m =$class->get_by_id($rec->{'member'}, $rec, $no_cache);
+	    return undef if $censor_part and $m->present_contact<5;
+	    return $m;
 	}
 	return undef;
     }
@@ -253,8 +255,10 @@ sub get_by_nickname
 	$sth->finish;
 	if( $rec )
 	{
-	    return $Para::Member::CACHE->{$nick} =
+	    my $m = $Para::Member::CACHE->{$nick} =
 	      $class->get_by_id($rec->{'member'}, $rec, $no_cache);
+	    return undef if  $censor_part and $m->present_contact<5 and $nick ne $m->nickname;
+	    return $m;
 	}
 	return undef;
     }
@@ -2556,7 +2560,9 @@ sub by_name  ## LIST CONSTRUCTOR
 	foreach my $rec ( @$recs2, @$recs3 )
 	{
 	    next unless $rec;
-	    $recs{$rec->{'member'}} = $rec;
+	    my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+	    next if $censor_part and $m->present_contact < 5;
+	    $recs{$rec->{'member'}} = $m;
 	    $found ++;
 	}
     }
@@ -2564,13 +2570,20 @@ sub by_name  ## LIST CONSTRUCTOR
     {
 	if( my $rec = $Para::dbix->select_possible_record("from member where member=? $censor_part", $identity) )
 	{
-	    $recs{$rec->{'member'}} = $rec;
+	    my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+	    unless( $censor_part and $m->present_contact < 5 )
+	    {
+		$recs{$rec->{'member'}} = $m;
+		$found ++;
+	    }
 	}
 	elsif( my $recs = $Para::dbix->select_list("from member where home_online_icq=? $censor_part", $identity) )
 	{
 	    foreach my $rec ( @$recs )
 	    {
-		$recs{$rec->{'member'}} = $rec;
+		my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+		next if $censor_part and $m->present_contact < 5;
+		$recs{$rec->{'member'}} = $m;
 		$found ++;
 	    }
 	}
@@ -2586,8 +2599,12 @@ sub by_name  ## LIST CONSTRUCTOR
 	if( my $rec = $Para::dbix->select_possible_record("from member, nick where nick_member=member
                                               and uid=? $censor_part", $nick) )
 	{
-	    $recs{$rec->{'member'}} = $rec;
-	    $found ++;
+	    my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+	    unless( $censor_part and $m->present_contact < 5 and lc($nick) ne lc($m->nickname) )
+	    {
+		$recs{$rec->{'member'}} = $m;
+		$found ++;
+	    }
 	}
 
 	if( $complete or not $found )
@@ -2606,7 +2623,9 @@ sub by_name  ## LIST CONSTRUCTOR
 	    my $recs2 = $Para::dbix->select_list("from member where $part $censor_part", @data);
 	    foreach my $rec ( @$recs2 )
 	    {
-		$recs{$rec->{'member'}} = $rec;
+		my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+		next if $censor_part and $m->present_contact < 12;
+		$recs{$rec->{'member'}} = $m;
 		$found++;
 	    }
 	}
@@ -2617,7 +2636,9 @@ sub by_name  ## LIST CONSTRUCTOR
 	    foreach my $rec ( @$recs2 )
 	    {
 		next unless $rec->{'home_online_email'} =~ /^${identity}[^a-zA-Z]/;
-		$recs{$rec->{'member'}} = $rec;
+		my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+		next if $censor_part and $m->present_contact < 5;
+		$recs{$rec->{'member'}} = $m;
 		$found ++;
 	    }
 	}
@@ -2628,10 +2649,10 @@ sub by_name  ## LIST CONSTRUCTOR
                                     "$identity%");
 	    foreach my $rec ( @$recs2 )
 	    {
-#		warn "Checking $identity against $rec->{'mailalias'}\n";
 		next unless $rec->{'mailalias'} =~ /^${identity}[^a-zA-Z]/;
-#		warn "\tYes\n";
-		$recs{$rec->{'member'}} = $rec;
+		my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+		next if $censor_part and $m->present_contact < 12;
+		$recs{$rec->{'member'}} = $m;
 		$found ++;
 	    }
 	}
@@ -2642,7 +2663,9 @@ sub by_name  ## LIST CONSTRUCTOR
 	    foreach my $rec ( @$recs2 )
 	    {
 		next unless $rec->{'home_online_msn'} =~ /^${identity}[^a-zA-Z]/;
-		$recs{$rec->{'member'}} = $rec;
+		my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+		next if $censor_part and $m->present_contact < 5;
+		$recs{$rec->{'member'}} = $m;
 		$found ++;
 	    }
 	}
@@ -2651,13 +2674,7 @@ sub by_name  ## LIST CONSTRUCTOR
 
     my @sorted = sort { lc($a->{'nickname'}) cmp lc($b->{'nickname'}) } values %recs;
 
-    my @objs;
-    foreach my $rec ( @sorted )
-    {
-	push @objs, Para::Member->get_by_id( $rec->{'member'}, $rec );
-    }
-
-    return \@objs;
+    return \@sorted;
 }
 
 sub count_currently_online

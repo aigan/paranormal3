@@ -20,8 +20,6 @@
 <h1>[% PROCESS tlink.tt %]: Ändra alias</h1>
 [% PROCESS topic_edit_menu.tt %]
 
-<p>[% PROCESS typelist.tt rel = tid %] <em>[% t.text | html %]</em></p>
-
 [% langrecs = select_list('from rel, t where t=rev and rel_type=1 and rel=33859 and t_active is true and rel_active is true order by t_title') %]
 
 <div class="entry">
@@ -65,7 +63,7 @@
 </table>
 </div>
 
-[% IF q.param('_aliaslist') %]
+[% IF q.param('_aliaslist');# FIXME %]
    <p>Ta bort de alias som inte passar på just detta ämnet.
 [% END %]
 
@@ -76,6 +74,8 @@ stavningar och samma ord på vanligt förekommande språk.
 <textarea cols="30" rows="3" name="_meta_talias">[% list2block('_aliaslist', 't_title') %]</textarea>
 
 <p>[% step('Uppdatera') %]
+
+[% WRAPPER instruction formcount=1 %]
 
 <p>Avmarkera <em>behåll</em> för de alias som inte ska vara kopplade till detta ämnet.
 
@@ -117,3 +117,5 @@ Efter, För Mellan    A  I
 Efter, För M         A  -
 Efter, F M           A  -
 </pre>
+
+[% END %]

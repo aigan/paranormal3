@@ -22,10 +22,10 @@
 | [% jump('Text', "$base/edit/text.tt", keep_params=keep) +%]
 | [% jump('Metadata', "$base/edit/meta.tt", keep_params=keep) +%]
 | [% jump('Versioner', "$base/edit/versions.tt", keep_params=keep) +%]
-| [% jump('Alias', "$base/edit/aliases.tt", keep_params=keep) %]
+| [% jump('Alias', "$base/edit/aliases.tt", keep_params=keep) +%]
 | [% jump('TS', "$base/edit/topicstatements.tt", keep_params=keep) +%]
 | [% jump('URL', "$base/edit/media.tt", keep_params=keep) +%]
-| [% jump('Bokmärka', me, keep_params=keep) %]
+| [% jump('Bokmärka', me, keep_params=keep) +%]
 ]<br>
 
 [% IF u.level > 10 %]

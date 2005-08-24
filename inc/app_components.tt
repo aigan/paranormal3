@@ -108,7 +108,7 @@
       [% label_display='none' %]
    [% END %]
    [% DEFAULT label = "Instruktion" %]
-<a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');" id="fid_[% formcount %]_label" style="display:[% label_display %]">Visa [% label %]...</a>
+<div><a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');" id="fid_[% formcount %]_label" style="display:[% label_display %]">Visa [% label %]...</a></div>
 <div id="fid_$formcount" style="display:$display">
 <a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');">Dölj [% label %]...</a>
 $content

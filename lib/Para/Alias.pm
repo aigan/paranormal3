@@ -234,11 +234,11 @@ sub add
 
     $name = lc trim $name;
 
-    debug(1,"Adding alias $name");
+    debug(4,"Adding alias $name");
 
     if( my $a = $t->alias( $name ) )
     {
-	debug(1,"  Already exists. Updating");
+	debug(4,"  Already exists. Updating");
 	return $a->update( $props );
     }
 
@@ -324,9 +324,9 @@ sub update
 	$props->{'language'} = undef;
     }
 
-    debug(1,sprintf "  updating alias %s", $a->desig);
+    debug(4,sprintf "  updating alias %s", $a->desig);
 
-    debug(1,"Got ".Dumper($props));
+#    debug(1,"Got ".Dumper($props));
 
 
     # Check to see if anything changed
@@ -437,7 +437,7 @@ sub update
 	    {
 		$status = S_DENIED;
 		$changed ++;
-		debug(1,"Status changed to DENIED");
+		debug(3,"Status changed to DENIED");
 	    }
 	}
 	else
@@ -454,7 +454,7 @@ sub update
 				      vnew  => $status,
 				  });
 		$changed ++;
-		debug(1,"Alias deactivated");
+		debug(3,"Alias deactivated");
 	    }
 	}
     }
@@ -463,11 +463,11 @@ sub update
     #
     if( $changed )
     {
-	debug(1,"Changes detected. Store update");
+	debug(4,"Changes detected. Store update");
     }
     else
     {
-	debug(1,"No changes");
+	debug(4,"No changes");
 	return $a;
     }
 
@@ -477,7 +477,7 @@ sub update
     {
 	if( $props->{'quiet'} )
 	{
-	    debug(1,"Status to low. But be quiet about it");
+	    debug(4,"Status to low. But be quiet about it");
 	    return $a;
 	}
 	else
@@ -519,7 +519,7 @@ sub update
     $sth->execute( $autolink, $index, $language, $status,
 		   $active, $changedby, $talias_t, $talias );
 
-    debug(1,"updated (S$status)!");
+    debug(4,"updated (S$status)!");
 
     ### Sync
     #

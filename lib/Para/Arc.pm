@@ -246,7 +246,7 @@ sub find
 
     if( $all_versions )
     {
-	debug(1,"Finding all arcs $explain_string");
+	debug(3,"Finding all arcs $explain_string");
 
 	my $list = [];
 	foreach my $rec ( @$recs )
@@ -256,7 +256,7 @@ sub find
 	return $list;
     }
 
-    debug(1,"Finding the first arc $explain_string");
+    debug(3,"Finding the first arc $explain_string");
 
     return undef unless @$recs;
     return Para::Arc->new( $recs->[0] );
@@ -319,7 +319,7 @@ sub create
     if( @$arcs )
     {
 	my $arc = $arcs->[0];
-	debug(0, sprintf( "Found existing %s, activation %d\n", $arc->desig, $arc->active),1);
+	debug(3, sprintf( "Found existing %s, activation %d\n", $arc->desig, $arc->active),1);
 
 	# Cases:
 	# 1. Found active, want inactive
@@ -329,7 +329,7 @@ sub create
 
 	if( $arc->active and not $active )
 	{
-	    debug(1,"Found active, want inactive\n");
+	    debug(4,"Found active, want inactive\n");
 	    unless( $u->status >= S_NORMAL )
 	    {
 		throw( 'denied', "Du har för låg nivå" );
@@ -345,20 +345,20 @@ sub create
 	elsif( $arc->active and $active and
 	       $status > $arc->status )
 	{
-	    debug(1,"Found active, want active with higher status");
+	    debug(4,"Found active, want active with higher status");
 	    unless( $u->status >= $arc->status and
 		    $u->status >= $status )
 	    {
 		throw( 'denied', "Du har för låg nivå" );
 	    }
 
-	    debug(1,sprintf "Trying to activate arc %s", $arc->desig);
+	    debug(5,sprintf "Trying to activate arc %s", $arc->desig);
 	    $arc->activate( $status );
 	}
 	elsif( $arc->inactive and not $active and
 	       $arc->status != $status )
 	{
-	    debug(1,"Found inactive, want inactive with other status");
+	    debug(4,"Found inactive, want inactive with other status");
 	    unless( $u->status >= S_NORMAL )
 	    {
 		throw( 'denied', "Du har för låg nivå" );
@@ -368,14 +368,14 @@ sub create
 	}
 	elsif( $arc->inactive and $active )
 	{
-	    debug(1,"Found inactive, want active");
+	    debug(4,"Found inactive, want active");
 	    # No authorization required
 
 	    $arc->activate( $status );
 	}
 	else
 	{
-	    debug(1,"No change to arc");
+	    debug(5,"No change to arc");
 	}
 
 	debug(-1);
@@ -384,7 +384,7 @@ sub create
     }
     else
     {
-	debug(1,"none found");
+	debug(3,"none found");
     }
 
     my( $obj, $literal, $rel );
@@ -424,8 +424,8 @@ sub create
 
     $subj->mark_publish;
 
-    $obj->reset if $obj;
-    $subj->reset;
+    $obj->reset_rev if $obj;
+    $subj->reset_rel;
 
     my $arc = Para::Arc->get( $rid );
     if( $active and $strength >= TRUE_MIN )
@@ -922,8 +922,8 @@ sub reset
     my( $arc, $rec ) = @_;
 
     my $obj = $arc->obj;
-    $arc->subj->reset;
-    $obj and $obj->reset;
+    $arc->subj->reset_rel;
+    $obj and $obj->reset_rev;
 
     # Refresh this arc from DB
     #
@@ -998,8 +998,8 @@ sub remove
 
     # Same as arc->reset(), but arc is now gone. Only fix subj/obj
     my $obj = $arc->obj;
-    $arc->subj->reset;
-    $obj and $obj->reset;
+    $arc->subj->reset_rel;
+    $obj and $obj->reset_rev;
 
     # Clear out data from arc (and arc in cache)
     #
@@ -1429,10 +1429,10 @@ sub create_infere_rev
     {
 	next unless $arc2->status >= S_NORMAL;
 
-	debug(sprintf "arc2 %s, activation %d\n ", $arc2->desig, $arc2->active);
+	debug(4, sprintf "arc2 %s, activation %d\n ", $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )
 	{
-	    warn "Found an arc with wrong status during inference. Vacuuming!\n";
+	    debug "Found an arc with wrong status during inference. Vacuuming!";
 	    $arc2->subj->vacuum;
 	    next;
 	}
@@ -1479,17 +1479,17 @@ sub create_infere_rel
     {
 	next unless $arc2->status >= S_NORMAL;
 
-	debug(1,sprintf "arc2 %d: %s, activation %d\n", $arc2->id, $arc2->desig, $arc2->active);
+	debug(4,sprintf "arc2 %d: %s, activation %d\n", $arc2->id, $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )
 	{
-	    warn "Found an arc with wrong status during inference. Vacuuming!\n";
+	    debug "Found an arc with wrong status during inference. Vacuuming!";
 	    $arc2->subj->vacuum;
 	    next;
 	}
 	my $arc3 = Para::Arc->find( $p3, $subj, $arc2->obj);
 	if( $arc3 )
 	{
-	    debug(1,"Found existing arc to make infered: ".$arc3->desig);
+	    debug(3,"Found existing arc to make infered: ".$arc3->desig);
 	}
 	else
 	{
@@ -1539,8 +1539,8 @@ sub create_reflexive
 
 	if( $subj->equals( $obj ) )
 	{
-	    warn sprintf "Will not create cyclic reference for %s\n",
-	      $obj->desig;
+	    debug(sprintf("Will not create cyclic reference for %s\n",
+			  $obj->desig));
 	    next;
 	}
 

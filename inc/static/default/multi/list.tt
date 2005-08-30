@@ -5,7 +5,7 @@
    [% alias = pair.0 %]
    [% tr2 %]
       <td>[% jump(alias, te.file) %]<br>
-         [% INCLUDE typelist3 t=te %]
+         [% INCLUDE typelist.tt t=te %]
       </td>
       <td>
 [% IF te.entry %]

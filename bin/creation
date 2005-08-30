@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
-
 #  $Id$  -*-perl-*-
+package Para;
 
 #=====================================================================
 #
@@ -23,11 +23,16 @@ BEGIN
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
     warn "Starting creation $VERSION\n";
 
-    our $PARAFRAME = "/var/www/test.paranormal.se/paraframe";
-    our $APPROOT   = "/var/www/test.paranormal.se";
-
+    use FindBin;
+    my $configfile = $FindBin::Bin . "/config.pl";
+    do $configfile or die "Failed to load config $configfile: $! ($@)\n";
 }
 
+use strict;
+
+our $PARAFRAME; # Dir without ending /
+our $APPROOT;   # Dir without ending /
+our $SITE_CFG;  # Hashref with rest of config
 
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
@@ -39,27 +44,28 @@ use Para::Frame::Email;
 use Para::Frame::Email::Address;
 use Para::Frame::Utils;
 
-use Para::Member;
-use Para::Topic;
-use Para::Widget;
-use Para::Interest;
-use Para::Interests::Tree;
-use Para::Email;
+use Para;
 
 {
+    unless( $SITE_CFG )
+    {
+	die "Site configuration missing";
+    }
+
     my $cfg =
     {
 	'paraframe' => $PARAFRAME,
 	'paraframe_group' => 'psi_cgi',
 
-	'appbase' => 'Para',
-	'approot' => $APPROOT,
+	'appbase'      => 'Para',
+	'approot'      => $APPROOT,
 
-	'user_class' => 'Para::Member',
-	'logfile' => "$APPROOT/logs/creation.log",
+	'user_class'   => 'Para::Member',
+	'bg_user_code' => sub{ Para::Member->skapelsen },
+	'logfile'      => "$APPROOT/logs/creation.log",
 
-	port      => 7788,
-	debug     => 1,
+	port           => $SITE_CFG->{'port'},
+	debug          => $SITE_CFG->{'debug'},
 
 	'site'    =>
 	{
@@ -123,11 +129,15 @@ use Para::Email;
 			  {
 			      $Para::dbix->connect;
 			  });
+    Para::Frame->add_hook('add_background_jobs', \&Para::add_background_jobs);
+    Para::Frame->add_hook('on_memory', \&Para::on_memory);
+
 
     my $global_params =
     {
      'select_persons'    => \&Para::Widget::select_persons,
      'diff'              => \&Para::Widget::diff,
+     'tfilter_init'      => \&Para::Widget::tfilter_init,
 
      'select_persons_by_name' => sub{ Para::Member->by_name( @_ ) },
      'getmember'         => sub{ Para::Member->get_by_id( @_ ) },

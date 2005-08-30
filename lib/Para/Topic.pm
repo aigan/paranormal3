@@ -38,7 +38,7 @@ BEGIN
 use Para::Frame::Reload;
 use Para::Frame::DBIx qw( pgbool );
 use Para::Frame::Utils qw( deunicode trim throw minof debug );
-use Para::Frame::Time qw( now );
+use Para::Frame::Time qw( now date );
 use Para::Frame::Widget;
 
 use Para::Arcs;
@@ -49,17 +49,13 @@ use Para::Alias;
 use Para::Constants qw( :all );
 use Para::Widget;
 
-use constant BATCH => 3;
+use constant BATCH => 10;
+our $BATCHCOUNT;
+
 #use constant LIMIT => 10000;
 #
 # CONSTRUCTOR
 #
-sub get
-{
-    croak "get deprecated";
-    return shift->new(@_);
-}
-
 sub get_by_id  # Use this primarely
 {
     my( $class, $tid, $v ) = @_;
@@ -81,7 +77,7 @@ sub _new
     # This is maby already a topic
     return $tid if ref $tid eq 'Para::Topic';
 
-    debug(1, "looking for $tid-$v");
+#    debug(1, "looking for $tid-$v");
 
     my $rec;
     unless( $nocache )
@@ -118,7 +114,7 @@ sub _new
 	    {
 		$Para::Topic::CACHE->{"$tid-"} = $t;
 	    }
-	    warn "Initialized $tid-$v\n";
+	    debug(1,"Initialized $tid-$v");
 	}
 	return $t;
     }
@@ -342,54 +338,59 @@ sub vacuum_from_queue
 {
     my( $this, $limit ) = @_;
 
+    my $req = $Para::Frame::REQ;
     $limit ||= 6;
-    my( $cnt ) = 1;
+    my( $cnt ) = 0;
     my $seen = {};
 
-    my $minr = $Para::dbix->select_record("select min(t_entry_imported) as min from t where t_active is true and t_entry is false");
-    my $vts = $Para::dbix->select_list('select t from t where t_active is true and t_entry is false and t_entry_imported < ? limit ?', $minr->{'min'}+1, $limit);
+    my $vts = $Para::dbix->select_list('select t from t where t_active is true and t_entry is false order by t_vacuumed limit ?', $limit);
     foreach my $rec ( @$vts )
     {
 	my $t = Para::Topic->get_by_id( $rec->{'t'} );
-	$t->vacuum($seen);
-
-	unless( $cnt % BATCH )
-	{
-	    debug(1,"**** comitting at $cnt");
-	    $Para::dbh->commit;
-	}
-
-	$cnt ++;
+	$req->add_job('run_code', sub
+		      {
+			  $t->vacuum($seen);
+		      });
+	$cnt++;
     }
-    return --$cnt;
+    return $cnt;
 }
 
 sub publish_from_queue
 {
     my( $this, $limit ) = @_;
 
+    my $req = $Para::Frame::REQ;
     $limit ||= 40;
-    my( $cnt ) = 1;
+    my( $cnt ) = 0;
 
     my $topics =  $Para::dbix->select_list("select t from t where t_published is false and t_active is true and t_entry is false order by t_updated limit ?", $limit);
     foreach my $rec ( @$topics )
     {
 	my $tid = $rec->{'t'};
 	my $t = Para::Topic->get_by_id( $tid );
-	$t->publish;
-
-	unless( $cnt % BATCH )
-	{
-	    debug(1,"**** comitting at $cnt");
-	    $Para::dbh->commit;
-	}
-	$cnt ++;
+	$req->add_job('run_code', sub
+		      {
+			  $t->publish;
+		      });
+	$cnt++;
     }
-    return --$cnt;
+    return $cnt;
 }
 
 sub commit
 {
+    $BATCHCOUNT ||= 1;
+    foreach my $t ( values %$Para::Topic::to_publish_now )
+    {
+	$t->publish;
+	unless( $BATCHCOUNT++ % BATCH )
+	{
+	    $Para::Frame::REQ->yield;
+	}
+    }
+    $Para::Topic::to_publish_now = {};
+    
     foreach my $t ( values %Para::Topic::UNSAVED )
     {
 	$t->save;
@@ -400,8 +401,9 @@ sub rollback
 {
     foreach my $t ( values %Para::Topic::UNSAVED )
     {
-	$t->changed;
+	$t->discard_changes;
     }
+    %Para::Topic::UNSAVED = ();
 }
 
 
@@ -409,12 +411,35 @@ sub rollback
 ################  Methods
 ####################################################################
 
-sub reset
+sub changed
 {
-    shift->changed_all_versions;
+    croak "deprecated";
 }
 
-sub changed  # Topic changed. Refresh from DB
+sub changed_all_versions
+{
+    croak "deprecated";
+}
+
+sub reset_rev
+{
+    my( $t ) = @_;
+    foreach my $ver (@{ $t->cached_versions })
+    {
+	$ver->{'rev'} = undef;
+    }
+}
+
+sub reset_rel
+{
+    my( $t ) = @_;
+    foreach my $ver (@{ $t->cached_versions })
+    {
+	$ver->{'rel'} = undef;
+    }
+}
+
+sub discard_changes  # Topic changed. Refresh from DB
 {
     my( $t ) = @_;
 
@@ -448,16 +473,6 @@ sub changed  # Topic changed. Refresh from DB
     return $t;
 }
 
-sub changed_all_versions
-{
-    my( $t ) = @_;
-
-    foreach my $ver (@{ $t->versions(1) })
-    {
-	$ver->changed;
-    }
-}
-
 sub key
 {
     my( $t ) = @_;
@@ -473,12 +488,11 @@ sub topic
 {
     # Find topic for entry
     #
-    # - Return undef if this is a topic (Depended on by mark_unpublished() )
+    # - Return undef if this is a topic
     #
     my( $t, $seen ) = @_;
 
-    $seen ||= {};# confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; debug(1,"Looking at $t->{'t'} in topic",1);
-#    confess if $Para::safety++ > LIMIT;
+    $seen ||= {};
 
     unless( $t->{'topic'} )
     {
@@ -509,7 +523,6 @@ sub topic
 	    }
 	}
     }
-    debug(-1);
     return $t->{'topic'};
 }
 
@@ -521,8 +534,7 @@ sub top_entry
     #
     my( $t, $seen ) = @_;
 
-    $seen ||= {};# confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in top_entry",1);
-#    confess if $Para::safety++ > LIMIT;
+    $seen ||= {};
 
     unless( $t->{top_entry} )
     {
@@ -534,13 +546,11 @@ sub top_entry
 #		warn "  previous entry for $t->{'t'} found\n"; # DEBUG
 		if( my $top = $previous->top_entry($seen) )
 		{
-		    debug(-1);
 		    return $t->{top_entry} = $top;
 		}
 		else
 		{
 #		    warn "    returning $t->{top_entry}{t}\n";
-		    debug(-1);
 		    return $t->{top_entry} = $previous;
 		}
 	    }
@@ -558,13 +568,11 @@ sub top_entry
 		{
 		    $t->{top_entry} = $parent;
 		}
-		debug(-1);
 		return $t->{top_entry};
 	    }
 	}
 	$t->{top_entry} = undef;
     }
-    debug(-1);
     return $t->{top_entry};
 }
 
@@ -574,7 +582,7 @@ sub parent
     #
     my( $t, $seen ) = @_;
 
-    debug(1,"Parent of ".$t->id." is ".($t->{'t_entry_parent'}||'null')); ## DEBUG
+    debug(4,"Parent of ".$t->id." is ".($t->{'t_entry_parent'}||'null')); ## DEBUG
 
     $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in parent");
 #    confess if $Para::safety++ > LIMIT;
@@ -594,7 +602,7 @@ sub next
     $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in next");
 #    confess if $Para::safety++ > LIMIT;
 
-    debug(3,"Get next entry for $t->{t} v$t->{t_ver}");
+    debug(4,"Get next entry for $t->{t} v$t->{t_ver}");
 
     # Find next entry in chain
     #
@@ -634,8 +642,7 @@ sub previous
     #
     my( $t, $seen, $args ) = @_;
 
-    $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++; #debug(1,"Looking at $t->{'t'} in previous",1);
-#    confess if $Para::safety++ > LIMIT;
+    $seen ||= {}; confess "topic $t->{'t'} seen before in this tree" if $seen->{$t->id}++;
 
     unless( exists $t->{'previous'} )
     {
@@ -643,7 +650,6 @@ sub previous
 	my $recs = $Para::dbix->select_list("from t where t_entry_next=? and t_status>=?", $t->id, S_PROPOSED );
 	if( @$recs == 0 )
 	{
-	    debug(-1);
 	    return $t->{'previous'} = undef;
 	}
 
@@ -674,7 +680,6 @@ sub previous
 		# Too many active previous.
 		$t->break_previous;
 		$previous = $t->previous($seen);
-		debug(-1);
 		return $previous;
 	    }
 	    elsif( @$active == 1 )
@@ -712,7 +717,6 @@ sub previous
     debug(3,"$t->{t} follows $t->{'previous'}{t}")
 	if $t->{'previous'};
 
-    debug(-1);
     return $t->{'previous'};
 }
 
@@ -1203,7 +1207,6 @@ sub set_parent
     $t->{'parent'} = $parent;
     $parent->register_child( $t ) if $parent;
     $t->mark_updated;
-    $t->mark_publish;
 
     return $result;
 }
@@ -1273,7 +1276,6 @@ sub set_next
 
 	$next->{'previous'} = $t;
 	$next->mark_updated;
-#	$next->maby_loopy(1);
     }
     else
     {
@@ -1290,8 +1292,6 @@ sub set_next
 
     $t->{'t_entry_next'} = $next_id;
     $t->mark_updated;
-#    $t->maby_loopy(1);
-    $t->mark_publish;
 
     return $result;
 }
@@ -1328,7 +1328,7 @@ sub break_entry_loop
 
     return unless $t->{'maby_loopy'};
 
-    debug(1,sprintf "Checking loopiness of %d", $t->id);
+    debug(4,sprintf "Checking loopiness of %d", $t->id);
 
     my $tid = $t->id;
     my $ver = $t->ver;
@@ -1429,7 +1429,7 @@ sub break_topic_loop
     # For debugging:
     $level ||= 0;
     $level ++;
-    debug(1,sprintf "%d: Level %d - Check %s", $$, $level, $t->desig);
+    debug(3,sprintf("Level %d - Check %s", $level, $t->desig));
 
 
     # Holds all involved topics
@@ -1527,7 +1527,7 @@ sub break_topic_loop
 	if( $base )
 	{
 	    # We want to deactivate the newest arc and see if that helped
-	    debug(1,"Involved arcs rounded up");
+	    debug(4,"Involved arcs rounded up");
 
 	    my $arcs;
 	    foreach my $t2id ( keys %$involved )
@@ -1566,18 +1566,18 @@ sub break_topic_loop
 	    unless( $removed or $incomplete )
 	    {
 		# No (explicit) arcs found. Clean up
-		debug(1,"No arcs to deactivate. All done here");
+		debug(5,"No arcs to deactivate. All done here");
 		$done = 1;
 	    }
 
-	    debug(1,"Check involed topics");
+	    debug(4,"Check involed topics");
 
 	    # All seems fine now. Check arcs for involved topics
 	    #
 	    foreach my $t2id ( keys %$involved )
 	    {
 		my $t2 = Para::Topic->get_by_id( $t2id );
-		debug(1,sprintf "  Check %s", $t2->desig);
+		debug(4,sprintf "  Check %s", $t2->desig);
 		my $rel_arc_list = $t2->rel->arcs;
 		my $rev_arc_list = $t2->rev->arcs;
 		foreach my $arc ( @$rel_arc_list, @$rev_arc_list )
@@ -1689,8 +1689,6 @@ sub create_new_version
 		    undef
 		    );
 
-    $t->changed_all_versions;
-
     ### Switch to new version
     # DOES NOT CHANGE CACHED TOPIC
     #
@@ -1708,21 +1706,26 @@ sub create_new_version
 	$t->short ne $ot->short or
 	$t->plural ne $ot->plural )
     {
+	my $ctid; # Current tid (optimization)
+	if( my $q = $Para::Frame::REQ->q )
+	{
+	    $ctid = $q->param('tid');
+	}
+
 	foreach my $arc (@{$t->rel->arcs})
 	{
 	    next if $arc->indirect;
-	    $arc->obj and $arc->obj->mark_unpublished;
+	    $arc->obj and $arc->obj->mark_publish( $ctid );
 	}
 
 	foreach my $arc (@{$t->rev->arcs})
 	{
 	    next if $arc->indirect;
-	    $arc->obj and $arc->subj->mark_unpublished;
+	    $arc->obj and $arc->subj->mark_publish( $ctid );
 	}
     }
 
     # Old cahced info about active and other versions are outdated
-    # $t->reset; # Already done above
 
     $t->mark_publish;
 
@@ -1739,36 +1742,34 @@ sub set_status
     $m = Para::Member->get($m) unless ref $m;
 
     my $new_active = $status < S_PENDING ? 0 : 1;
+    my $ver = $t->ver;
 
     if( $new_active and not $t->active )
     {
-	# Unactivate all other
-	my $st = "update t set t_status=?,
-                 t_active='f', t_updated=now(), t_changedby=?
-                 where t=? and t_active is true";
-	my $sth = $Para::dbh->prepare( $st );
-	$sth->execute(S_REPLACED, $m->id, $t->id);
+	# Inactivate all other
+	foreach my $tv (@{ $t->versions })
+	{
+	    next if $tv->ver == $ver;
+	    $tv->{'t_active'} = undef;
+	    $tv->mark_unsaved;
+	}
 
 	$m->score_change('accepted_thing');
 	$t->created_by->score_change('thing_accepted');
     }
 
-    unless( $new_active )
+    if( $t->active and not $new_active )
     {
 	$m->score_change('rejected_thing');
 	$t->created_by->score_change('thing_rejected');
     }
 
-    my $st = "update t set t_status=?,
-              t_active=?, t_updated=now(), t_changedby=?
-              where t=? and t_ver=?";
-    my $sth = $Para::dbh->prepare( $st );
-    $sth->execute($status, pgbool($new_active), $m->id, $t->id, $t->ver);
+    $t->{'t_status'} = $status;
+    $t->{'t_active'} = $new_active;
+    $t->mark_updated;
 
     warn sprintf "Status for %d v%d changed to %d\n", $t->id, $t->ver, $status;
-
-    $t->changed_all_versions;
-    $t->mark_publish;
+    return $status;
 }
 
 #### Acessors
@@ -1803,7 +1804,6 @@ sub set_updated
     $time ||= now();
 
     $t->{'updated'} = $time;
-    $t->{'t_updated'} = $t->{'updated'}->cdate;
     $t->mark_unsaved;
     return $time;
 }
@@ -1812,6 +1812,7 @@ sub mark_updated
 {
     my( $t, $m, $time ) = @_;
     $t->set_updated_by( $m );
+    $t->mark_publish;
     return $t->set_updated( $time );
 }
 
@@ -1884,7 +1885,14 @@ sub media_remove
 
     my $sth = $Para::dbh->prepare("delete from media where media=?");
     $sth->execute( $t->id ) or die;
-    $t->changed_all_versions;
+
+    foreach my $ver (@{ $t->cached_versions })
+    {
+	$ver->{'media'} = undef;
+	$ver->{'media_mimetype'} = undef;
+	$ver->{'media_url'} = undef;
+    }
+
     return 1;
 }
 
@@ -1901,18 +1909,26 @@ sub media_set
 
     return 1 if $url eq $t->{'media_url'} and $mime eq $t->{'media_mimetype'};
 
+    my $tid = $t->id;
+
     if( $t->{'media'} )
     {
 	my $sth = $Para::dbh->prepare("update media set media_url=?, media_mimetype=? where media=?");
-	$sth->execute( $url, $mime, $t->id ) or die;
+	$sth->execute( $url, $mime, $tid ) or die;
     }
     else
     {
 	my $sth = $Para::dbh->prepare("insert into media (media, media_mimetype, media_url) values (?,?,?)");
-	$sth->execute( $t->id, $mime, $url ) or die;
+	$sth->execute( $tid, $mime, $url ) or die;
     }
 
-    $t->changed_all_versions;
+    foreach my $ver (@{ $t->cached_versions })
+    {
+	$ver->{'media'} = $tid;
+	$ver->{'media_mimetype'} = $mime;
+	$ver->{'media_url'} = $url;
+    }
+
     return 1;
 }
 
@@ -1978,12 +1994,14 @@ sub aliases
 	return Para::Alias->find_by_tid( $t->id );
     }
 
-    if( $crits )
+    # Filter out used crits
+    my $crit_active = $crits->{'active'};
+    my $crit_status_min = $crits->{'status_min'} || 0;
+
+
+    if( $crit_active or $crit_status_min )
     {
 	my %res = ();
-
-	my $crit_active = $crits->{'active'};
-	my $crit_status_min = $crits->{'status_min'} || 0;
 
 	foreach my $a ( values %{ $Para::Topic::ALIASES{$t->id} } )
 	{
@@ -2004,7 +2022,7 @@ sub aliases
 }
 
 
-sub alias_list
+sub aliases_list
 {
     die "deprecated"; # Clean up!
 
@@ -2068,7 +2086,7 @@ sub entry_list
 
     if( $filter->{'include_inactive'} )
     {
-	debug(1,($t->id." has childs ".join(", ", map $_->id, @{$t->{childs}})));
+	debug(4,($t->id." has childs ".join(", ", map $_->id, @{$t->{childs}})));
 	return $t->{'childs'};
     }
     else
@@ -2085,7 +2103,7 @@ sub entry_list
 
 	    push @list, $child;
 	}
-	debug(1,($t->id." has active childs ".join(", ", map $_->id, @list)));
+	debug(4,($t->id." has active childs ".join(", ", map $_->id, @list)));
 	return \@list;
     }
 }
@@ -2286,6 +2304,24 @@ sub versions
     return $versions;
 }
 
+sub cached_versions
+{
+    my( $t ) = @_;
+
+    my $versions = [];
+
+    # Best performance if this version is near the last
+    my $last_ver = $t->last_ver;
+    my $tid = $t->id;
+
+    for(my $v=1; $v <= $last_ver; $v++)
+    {
+	my $ver = $Para::Topic::CACHE->{"$tid-$v"} or next;
+	push @$versions, $ver;
+    }
+    return $versions;
+}
+
 sub is_url_media
 {
     my( $t ) = @_;
@@ -2343,9 +2379,9 @@ sub delete_cascade
 
     # Authorization
     #
-    if( $Para::Frame::U->level < 40 )
+    if( $Para::Frame::U->level < 100 )
     {
-	throw('denied', "Reserverat för mästare...");
+	throw('denied', "Renskriv koden först");
     }
 
     # Things to delete
@@ -2445,27 +2481,27 @@ sub delete_cascade
 
     $t->remove_page;
 
-    $t->changed_all_versions;
+    # TODO: REMOVE FROM CACHE!
 }
 
 sub mark_publish
 {
-    my( $t ) = @_;
+    my( $t, $ctid ) = @_;
 
-    unless( $ENV{MOD_PERL} )
+    unless( $ctid ) #To optimize
     {
-	return $t->mark_publish_now;
+	my $q = $Para::Frame::REQ->q;
+	$ctid = $q->param('tid');
     }
 
-    my $q = $Para::Frame::REQ->q;
-    my $tid = $q->param('tid');
-    if( $tid and $tid == $t->id )
+    if( $ctid and $ctid == $t->id )
     {
 	$t->mark_publish_now;
     }
     else
     {
-	$Para::Topic::to_publish->{$t->id} = $t->id;
+	debug "---> Set to_publish $t->{t}";
+	$Para::Topic::to_publish->{$t->id} = $t;
     }
 }
 
@@ -2479,23 +2515,24 @@ sub mark_publish_now
 	$t = $t->topic;
     }
 
+    debug "---> Set to_publish_now $t->{t}";
     $Para::Topic::to_publish_now->{$t->id} = $t;
 }
 
-sub mark_unpublished
-{
-    my( $t ) = @_;
-
-    unless( $t->entry )
-    {
-	$t->mark_publish;
-    }
-
-    if( my $top = $t->topic )
-    {
-	$top->mark_unpublished;
-    }
-}
+#sub mark_unpublished
+#{
+#    my( $t ) = @_;
+#
+#    unless( $t->entry )
+#    {
+#	$t->mark_publish;
+#    }
+#
+#    if( my $top = $t->topic )
+#    {
+#	$top->mark_unpublished;
+#    }
+#}
 
 sub mark_unsaved
 {
@@ -2519,16 +2556,16 @@ sub save
     debug(1,"saving $tid v$v");
     my $saved = $t->_new( $tid, $v, 1); # Nocache
 
-    my @fields_to_check = qw( t_pop t_size t_title
-			      t_title_short t_title_short_plural
-			      t_text t_comment_admin t_file t_oldfile
-			      t_urlpart t_class t_entry t_entry_parent
-			      t_entry_next t_entry_imported
-			      t_connected t_connected_status
-			      t_replace t_published t_updated
-			      t_changedby);
-
     my %fields_added;
+
+
+    my @fields_to_check = qw( t_pop t_size t_title t_title_short
+			      t_title_short_plural t_text
+			      t_comment_admin t_file t_oldfile
+			      t_urlpart t_entry_parent t_entry_next
+			      t_entry_imported t_connected
+			      t_connected_status t_replace t_changedby
+			      t_status );
 
     foreach my $key ( @fields_to_check )
     {
@@ -2541,25 +2578,37 @@ sub save
 	}
     }
 
+    foreach my $key (qw( t_class t_entry t_active t_published ))
+    {
+	if( pgbool($t->{ $key }) ne pgbool($saved->{ $key }) )
+	{
+	    $fields_added{ $key } ++;
+	    push @fields, $key;
+	    push @values, pgbool( $t->{ $key } );
+	    debug(1,"  field $key differ");
+	}
+    }
+
+    foreach my $key (qw( t_created t_updated t_vacuumed ))
+    {
+
+	# Dates can be written in many formats. We will assume that if
+	# the date has changed from what the DB returns, it's not the
+	# same date. That keeps us from bothering about the format
+
+	if( ($t->{ $key }||'') ne ($saved->{ $key }||'') )
+	{
+	    $fields_added{ $key } ++;
+	    push @fields, $key;
+	    push @values, date( $t->{ $key } )->cdate;
+	    debug(1,"  field $key differ");
+	}
+    }
+
+
+
     if( @fields )
     {
-	# Update changedby and timestamp
-	unless( $fields_added{ 't_changedby' } )
-	{
-	    push @fields, 't_changedby';
-	    $t->{'t_changedby'}  = $Para::Frame::U->id;
-	    push @values, $t->{'t_changedby'};
-	}
-	unless( $fields_added{ 't_updated' } )
-	{
-	    push @fields, 't_updated';
-	    $t->{'updated'} = now();
-	    $t->{'t_updated'} = $t->{'updated'}->cdate;
-	    push @values, $t->{'t_updated'};
-	    
-	}
-	
-
 	# Update topic
 	my $statement = "update t set ". join( ', ', map("$_=?", @fields)) .
 	    " where t=? and t_ver=?";
@@ -2577,11 +2626,17 @@ sub vacuum
 {
     my( $t, $seen, $args ) = @_;
 
+    my $req = $Para::Frame::REQ;
+
+    $BATCHCOUNT ||= 1;
+
     debug(1,sprintf "Vacuum %d v%d", $t->id, $t->ver);
     $args ||= {}; # one_version
     $seen ||= {};
     return if $seen->{ $t->key };
     $seen->{ $t->key } = $t; # Does this exclude topics?!?
+
+    $req->yield unless $BATCHCOUNT++ % BATCH;
 
     # Vacuum all other versions
     #
@@ -2594,9 +2649,9 @@ sub vacuum
 	    $v->vacuum( $seen, {one_version=>1} );
 	}
 
-	### Add to t_entry_imported, as a vaccum counter
+	### Set vacuum date
 	#
-	$t->{'t_entry_imported'} ++;
+	$t->{'t_vacuumed'} = now();
 	$t->mark_unsaved;
     }
 
@@ -2619,6 +2674,7 @@ sub vacuum
 	my $rev_arc_list = $t->rev->arcs;
 	foreach my $arc ( @$rel_arc_list, @$rev_arc_list )
 	{
+	    $req->yield unless $BATCHCOUNT++ % BATCH;
 	    $arc->vacuum( $seen );
 	}
 
@@ -2668,6 +2724,7 @@ sub vacuum
 	# Fix worng status in arcs
 	foreach my $arc (@{$t->arcs})
 	{
+	    $req->yield unless $BATCHCOUNT++ % BATCH;
 	    $arc->vacuum( $seen );
 	}
 
@@ -2689,6 +2746,7 @@ sub vacuum
 	if( $t->active )
 	{
 	    $active_ver = $t->ver;
+	    $t->publish;
 	}
 	# Starts with latest version (prefered)
 	foreach my $v ( reverse @{$t->versions} )
@@ -2732,6 +2790,7 @@ sub vacuum
     #
     foreach my $e (@{ $t->childs({include_inactive=>1}) })
     {
+	$req->yield unless $BATCHCOUNT++ % BATCH;
 	$e->vacuum( $seen );
     }
     if( my $e = $t->next )
@@ -2955,13 +3014,6 @@ sub generate_url
     return(\@handled);
 }
 
-sub publish_lock
-{
-    my $lock = new IO::LockedFile( { block => 0 }, PUBLISH_LOCK, '>' );
-    $lock and $lock->print($$);
-    return $lock;
-}
-
 sub publish
 {
     my( $t ) = @_;
@@ -3055,7 +3107,7 @@ sub publish
 	    {
 		next unless $mt->file;
 
-		foreach my $alias (@{ $mt->alias_list })
+		foreach my $alias (values %{ $mt->aliases({active=>1}) })
 		{
 		    next unless $alias->index;
 
@@ -3161,10 +3213,7 @@ sub write_page
 
     local $Para::state = 'static';
 
-    # Become unpriviliged user
-    $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
-    my $john_doe = Para::Member->get( 46 );
-    $Para::Frame::U->change_current_user( $john_doe );
+    $Para::Frame::U->become_unpriviliged_user;
 
     my $approot = $Para::Frame::CFG->{'approot'};
     my $pfroot  = $Para::Frame::CFG->{'paraframe'};
@@ -3269,6 +3318,8 @@ sub set_published
     {
 	$t->next->set_published;
     }
+
+    return 1;
 }
 
 sub type_list

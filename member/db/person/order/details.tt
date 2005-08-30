@@ -21,7 +21,7 @@
    [% jump('<<', me, pid=before.payment_id) %] |
 [% END %]
 
-[%+ jump('Uppdatera', 'update.tt', pid=p.id) %]
+[%+ jump('Uppdatera', 'update.tt', pid=p.id) IF u.id == 1%]
 
 [% IF before.payment_id %]
    | [% jump('>>', me, pid=after.payment_id) %]

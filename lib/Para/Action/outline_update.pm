@@ -144,18 +144,23 @@ sub handler
                            t_entry_parent, t_entry_imported )
            values ( ?, now(), now(), ?, ?, ?, 't', 't', ?, 1)");
 
-	my $parent = undef;
+	my $parent_id = undef;
 	if( $place_parent )
 	{
-	    $parent = $place_parent->id;
-	    $place_parent->changed;
+	    $parent_id = $place_parent->id;
 	}
-	$sth->execute( $eid, $mid, $mid, $m->new_status, $parent );
+
+	$sth->execute( $eid, $mid, $mid, $m->new_status, $parent_id );
+	my $e = Para::Topic->get_by_id( $eid );
 
 	if( $place_previous )
 	{
-	    my $e = Para::Topic->get_by_id( $eid );
 	    $place_previous->set_next( $e );
+	}
+
+	if( $place_parent )
+	{
+	    $place_parent->register_child( $e );
 	}
 
 	$q->param('tid', $eid);

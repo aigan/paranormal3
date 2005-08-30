@@ -88,7 +88,7 @@ END;
       </td>
       [% END %]
  
-      <td>[% jump("$arc.obj.id $arc.obj.title", 'meta' tid=arc.obj.id) %]</td>
+      <td>[% jump("$arc.obj.id $arc.obj.title", 'meta.tt' tid=arc.obj.id) %]</td>
       <td>[% arc.updated_by.link %] [%+ arc.updated %]</td>
    </tr>
 [% END %]
@@ -143,7 +143,7 @@ END;
       </td>
       [% END %]
 
-      <td>[% jump("$arc.subj.id $arc.subj.title", 'meta' tid=arc.subj.id) %]</td>
+      <td>[% jump("$arc.subj.id $arc.subj.title", 'meta.tt' tid=arc.subj.id) %]</td>
       <td>[% arc.updated_by.link %] [% arc.updated %]</td>
    </tr>
 [% END %]
@@ -182,7 +182,7 @@ END;
          $arc.strength
       </td>
 
-      <td>[% jump("$arc.pred.id $arc.pred.rel_name", '/member/db/reltype/edit' reltype=arc.pred.id) %]</td>
+      <td>[% jump("$arc.pred.id $arc.pred.rel_name", '/member/db/reltype/edit.tt' reltype=arc.pred.id) %]</td>
       
       [% IF arc.indirect %]
          <td><code>$arc.value</code></td>
@@ -226,9 +226,9 @@ END;
          $arc.strength
       </td>
 
-      <td>[% jump("$arc.pred.id $arc.pred.rel_name", '/member/db/reltype/edit' reltype=arc.pred.id) %]</td>
+      <td>[% jump("$arc.pred.id $arc.pred.rel_name", '/member/db/reltype/edit.tt' reltype=arc.pred.id) %]</td>
       
-      <td>[% jump("$arc.obj.id $arc.obj.title", 'meta' tid=arc.obj.id) %]</td>
+      <td>[% jump("$arc.obj.id $arc.obj.title", 'meta.tt' tid=arc.obj.id) %]</td>
       <td>[% arc.updated_by.link %] [% arc.updated %]</td>
    </tr>
 [% END %]
@@ -262,9 +262,9 @@ END;
          $arc.strength
       </td>
 
-      <td>[% jump("$arc.pred.id $arc.pred.rev_name", '/member/db/reltype/edit' reltype=arc.pred.id) %]</td>
+      <td>[% jump("$arc.pred.id $arc.pred.rev_name", '/member/db/reltype/edit.tt' reltype=arc.pred.id) %]</td>
  
-      <td>[% jump("$arc.subj.id $arc.subj.title", 'meta' tid=arc.subj.id) %]</td>
+      <td>[% jump("$arc.subj.id $arc.subj.title", 'meta.tt' tid=arc.subj.id) %]</td>
       <td>[% arc.updated_by.link %] [% arc.updated %]</td>
    </tr>
 [% END %]
@@ -282,7 +282,7 @@ END;
 <h3>Skapa nya relationer</h3>
 
 <table>
-<tr><th>[% jump('Relation', '/member/db/reltype/list' target='reltype') %] <th>Till 
+<tr><th>[% jump('Relation', '/member/db/reltype/list.tt' target='reltype') %] <th>Till 
    <th>Kommentar
 
 [% FOREACH [1..5] %]

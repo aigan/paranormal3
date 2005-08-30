@@ -1476,9 +1476,29 @@ sub diff
 
 
 #    return Text::ParagraphDiff::create_diff( \$old, \$new );
-    warn "Old: $old\n";
-    warn "New: $new\n";
+#    warn "Old: $old\n";
+#    warn "New: $new\n";
     return Text::ParagraphDiff::create_diff( [map $_ ? $_ : '', split /\r?\n/, $old], [map $_ ? $_ : '', split /\r?\n/, $new] );
+}
+
+sub tfilter_init
+{
+    # Create the tfilter hashref
+    my $q = $Para::Frame::REQ->q;
+
+    my $tfilter =
+    {
+      include_inactive  => $q->param('include_inactive')||0,
+      include_false     => $q->param('include_false')||0,
+      include_indirect  => $q->param('include_indirect')||0,
+      include_rev       => $q->param('include_rev')||0,
+    };
+    $tfilter->{'active'} = ! $tfilter->{'include_inactive'};
+    $tfilter->{'true'} = ! $tfilter->{'include_false'};
+    $tfilter->{'direct'} = ! $tfilter->{'include_indirec'};
+    $tfilter->{'exclude_rev'} = ! $tfilter->{'include_rev'};
+
+    return $tfilter;
 }
 
 1;

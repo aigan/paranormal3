@@ -4,13 +4,8 @@
    DEFAULT tid=t.id;
    DEFAULT v=t.ver;
    DEFAULT keep=[ 'tid' 'v' 'include_inactive'];
-   DEFAULT tfilter =
-   {
-      include_inactive = q.param('include_inactive'),
-      include_false = q.param('include_false'),
-      include_indirect = q.param('include_indirect'),
-      include_rev = q.param('include_rev'),
-   };
+   DEFAULT tfilter = tfilter_init;
+   
    hidden('include_inactive', tfilter.include_inactive);
    hidden('include_false', tfilter.include_false);
    hidden('include_indirect', tfilter.include_indirect);

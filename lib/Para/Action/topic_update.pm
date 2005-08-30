@@ -151,6 +151,8 @@ sub check_talias_edit
 	    $active = 0;
 	}
 
+	next unless $active or $a->active; # Don't change inactive aliases
+
 	my $autolink    = $q->param("_talias__${row}_talias_autolink") || 0;
 	my $index       = $q->param("_talias__${row}_talias_index") || 0;
 	my $language = $q->param("_talias__${row}_talias_language");

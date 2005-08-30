@@ -9,7 +9,7 @@
 <h2>Intressen</h2>
 [% FOREACH intr = interests %]
    <span class="link">
-      [% intr.topic.tlink %]<br>
+      [% intr.topic.link %]<br>
       [% IF intr.comment %]
          - [% intr.comment | html %]<br>
       [% END %]

@@ -33,7 +33,7 @@
 <tr><th>ID<th>Datum<th>Produkt<th>Pris<th>Antal
 [% FOREACH p = m.payments %]
 [% tr2 %]
-   <td>[% jump(p.id, 'details', pid=p.id) %]
+   <td>[% jump(p.id, 'details.tt', pid=p.id) %]
    <td>[% p.date.ymd %]
    <td>[% p.product.link %]
    <td align="right">[% p.price %]

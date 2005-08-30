@@ -74,9 +74,17 @@ sub skapelsen
 
 sub become_root
 {
-    debug(0,"Becoming root",1);
+    debug(3,"Becoming root",1);
     $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
     return $_[0]->change_current_user( $_[0]->skapelsen );
+}
+
+sub become_unpriviliged_user
+{
+    debug(3,"Becoming John Doe",1);
+    $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
+    my $john_doe = Para::Member->get( 46 );
+    return $_[0]->change_current_user( $john_doe );
 }
 
 sub revert_from_temporary_identity
@@ -88,7 +96,7 @@ sub revert_from_root
 {
     if( my $ru = delete $Para::Frame::REQ->{'real_user'} )
     {
-	debug(0,"Reverting from temporary identity",-1);
+	debug(3,"Reverting from temporary identity",-1);
 	# Remove {'real_user'} slot after its use here
 	return $_[0]->change_current_user( $ru );
     }

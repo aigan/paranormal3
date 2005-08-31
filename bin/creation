@@ -30,6 +30,8 @@ BEGIN
 
 use strict;
 
+use Devel::LeakTrace;
+
 our $PARAFRAME; # Dir without ending /
 our $APPROOT;   # Dir without ending /
 our $SITE_CFG;  # Hashref with rest of config
@@ -185,7 +187,8 @@ use Para;
     };
     Para::Frame->add_global_tt_params( $global_params );
 
-    Para::Frame->watchdog_startup();
+#    Para::Frame->watchdog_startup();
+    Para::Frame->startup();
 }
 
 #########################################################

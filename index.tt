@@ -20,7 +20,7 @@
 [% IF u.level %]
 <center class="notice">
 <h2>NYHETER</h2>
-[% INSERT var/motd %]
+[% motd %]
 </center>
 [% ELSE %]
   <br/>

@@ -114,7 +114,7 @@ sub _new
 	    {
 		$Para::Topic::CACHE->{"$tid-"} = $t;
 	    }
-	    debug(1,"Initialized $tid-$v");
+	    debug(2,"Initialized $tid-$v");
 	}
 	return $t;
     }
@@ -451,8 +451,11 @@ sub discard_changes  # Topic changed. Refresh from DB
 
     if( not $rec )
     {
-	delete $Para::Topic::CACHE->{"$tid-$v"};
-	delete $Para::Topic::CACHE->{"$tid-"};
+	my $cv = $Para::Topic::CACHE->{"$tid-$v"};
+	$cv and $cv->clear_from_memory;
+	my $ct = $Para::Topic::CACHE->{"$tid-"};
+	$ct and $ct->clear_from_memory;
+
 	$t = undef;
 	return undef;
     }
@@ -471,6 +474,19 @@ sub discard_changes  # Topic changed. Refresh from DB
 
 
     return $t;
+}
+
+sub clear_cached
+{
+    my( $t ) = @_;
+    # Clears cyclic references
+
+    $t->{'rel'} = undef;
+    $t->{'rev'} = undef;
+    $t->{'topic'} = undef;
+    $t->{'top_entry'} = undef;
+    $t->{'previous'} = undef;
+    $t->{'outline'} = undef;
 }
 
 sub key
@@ -1356,7 +1372,7 @@ sub break_entry_loop
 	{
 	    my $pid = $p->id;
 	    debug(1,"    Yes: $pid.  Decoupling");
-	    warn $p->set_next(undef);
+	    $p->set_next(undef);
 	    debug(1,"    Decoupled $pid!");
 
 	    ## CHECK
@@ -1367,14 +1383,14 @@ sub break_entry_loop
 		die "Oh no!\n";
 	    }
 	}
-	warn $t->set_parent(undef);
+	$t->set_parent(undef);
 
 	if( $t->entry )
 	{
 	    # Add to Lost entries
 
 	    my $le = Para::Topic->find_one('Lost entry');
-	    warn $t->set_parent($le);
+	    $t->set_parent($le);
 	    debug(1,"  Placed $tid in the hall of lost entries");
 	}
 	else
@@ -1621,9 +1637,18 @@ sub create_new_version
     my $new_status = $m->new_status;
     my $new_active = 't';
 
-    warn "Old status: $old_status\n";
-    warn "New status: $new_status\n";
-    warn "M   status: $m_status\n";
+    if( debug )
+    {
+	debug "Old status: $old_status";
+	debug "New status: $new_status";
+	debug "M   status: $m_status";
+    }
+
+    my $new_parent = $rec->{'parent'} || $t->{'t_entry_parent'};
+    $new_parent = $new_parent->id if ref $new_parent;
+
+    my $new_replace = $rec->{'replace'};
+    $new_replace = $new_replace->id if ref $new_replace;
 
 
     if( $m_status < $old_status ) # New version is proposed
@@ -1662,32 +1687,32 @@ sub create_new_version
     undef $rec->{'plural'} if $rec->{'plural'} and length $rec->{'plural'} > 50;
 
     $sth->execute(
-		    $t->id,
-		    $t->{'t_pop'},
-		    $t->{'t_size'},
-		    $mid,
-		    $mid,
-		    $new_status,
-		    defined $rec->{'title'} ? $rec->{'title'} : $t->{'t_title'},
-		    defined $rec->{'short'} ? $rec->{'short'} : $t->{'t_title_short'},
-		    defined $rec->{'plural'}? $rec->{'plural'}: $t->{'t_title_short_plural'},
-		    $rec->{'text'} || $t->{'t_text'},
-		    $rec->{'admin_comment'} || $t->{'comment_admin'},
-		    $t->{'t_file'},
-		    $t->{'t_oldfile'},
-		    $rec->{'url'} || $t->{'t_urlpart'},
-		    $t->{'t_class'},
-		    $t->{'t_entry'},
-		    $t->{'t_entry_parent'},
-		    $t->{'t_entry_next'},
-		    $t->{'t_entry_imported'},
-		    $t->id, ### for calculating new version number   {'t_ver'}+1,
-		    $t->{'t_connected'},
-		    $new_active,
-		    $t->{'t_connected_status'},
-		    undef,
-		    undef
-		    );
+		  $t->id,
+		  $t->{'t_pop'},
+		  $t->{'t_size'},
+		  $mid,
+		  $mid,
+		  $new_status,
+		  defined $rec->{'title'} ? $rec->{'title'} : $t->{'t_title'},
+		  defined $rec->{'short'} ? $rec->{'short'} : $t->{'t_title_short'},
+		  defined $rec->{'plural'}? $rec->{'plural'}: $t->{'t_title_short_plural'},
+		  $rec->{'text'} || $t->{'t_text'},
+		  $rec->{'admin_comment'} || $t->{'comment_admin'},
+		  $t->{'t_file'},
+		  $rec->{'oldfile'} || $t->{'t_oldfile'},
+		  $rec->{'url'} || $t->{'t_urlpart'},
+		  $t->{'t_class'},
+		  $t->{'t_entry'},
+		  $new_parent,
+		  $t->{'t_entry_next'},
+		  $t->{'t_entry_imported'},
+		  $t->id, ### for calculating new version number   {'t_ver'}+1,
+		  $t->{'t_connected'},
+		  $new_active,
+		  $t->{'t_connected_status'},
+		  $new_replace,
+		  undef
+		  );
 
     ### Switch to new version
     # DOES NOT CHANGE CACHED TOPIC
@@ -1768,7 +1793,7 @@ sub set_status
     $t->{'t_active'} = $new_active;
     $t->mark_updated;
 
-    warn sprintf "Status for %d v%d changed to %d\n", $t->id, $t->ver, $status;
+    debug(sprintf "Status for %d v%d changed to %d activation %d\n", $t->id, $t->ver, $status, $new_active);
     return $status;
 }
 
@@ -1860,12 +1885,12 @@ sub member
 
 sub ts_list
 {
-    Para::TS->rel_list( shift->id );
+    Para::TS->rel_list( @_ );
 }
 
 sub ts_revlist
 {
-    Para::TS->rev_list( shift->id );
+    Para::TS->rev_list( @_ );
 }
 
 sub media_url { shift->{'media_url'} }
@@ -2231,7 +2256,7 @@ sub replaced_by
     unless( exists $t->{'replaced_by'} )
     {
 	my $recs = $Para::dbix->select_list("from t where t_replace=?", $t->id);
-	warn "Getting replaced_by for ".$t->id."\n";
+	debug("Getting replaced_by for ".$t->id);
 
 	if( $recs->[0] )
 	{
@@ -2239,7 +2264,7 @@ sub replaced_by
 	}
     }
 
-    warn "replaced_by is ".($t->{'replaced_by'}||'undef')."\n";
+    debug("replaced_by is ".($t->{'replaced_by'}||'undef'));
     return $t->{'replaced_by'};
 }
 
@@ -2264,7 +2289,8 @@ sub next_ver
 {
     my( $t ) = @_;
 
-    return $t->get_by_id( $t->id, ($t->ver + 1) );
+    my $ver = $t->ver + 1;
+    return $t->get_by_id( $t->id, $ver );
 }
 
 sub last_ver
@@ -2283,6 +2309,7 @@ sub active_ver
 {
     my( $t ) = @_;
 
+    return $t if $t->active;
     my $av = $t->get_by_id( $t->id );
     if( $av->active )
     {
@@ -2311,7 +2338,7 @@ sub cached_versions
     my $versions = [];
 
     # Best performance if this version is near the last
-    my $last_ver = $t->last_ver;
+    my $last_ver = $t->last_ver->ver;
     my $tid = $t->id;
 
     for(my $v=1; $v <= $last_ver; $v++)
@@ -2488,10 +2515,10 @@ sub mark_publish
 {
     my( $t, $ctid ) = @_;
 
-    unless( $ctid ) #To optimize
+    my $req = $Para::Frame::REQ;
+    if( not $ctid and $req->is_from_client ) #To optimize
     {
-	my $q = $Para::Frame::REQ->q;
-	$ctid = $q->param('tid');
+	$ctid = $req->q->param('tid');
     }
 
     if( $ctid and $ctid == $t->id )
@@ -2519,21 +2546,6 @@ sub mark_publish_now
     $Para::Topic::to_publish_now->{$t->id} = $t;
 }
 
-#sub mark_unpublished
-#{
-#    my( $t ) = @_;
-#
-#    unless( $t->entry )
-#    {
-#	$t->mark_publish;
-#    }
-#
-#    if( my $top = $t->topic )
-#    {
-#	$top->mark_unpublished;
-#    }
-#}
-
 sub mark_unsaved
 {
     my( $t ) = @_;
@@ -2556,70 +2568,52 @@ sub save
     debug(1,"saving $tid v$v");
     my $saved = $t->_new( $tid, $v, 1); # Nocache
 
-    my %fields_added;
-
-
-    my @fields_to_check = qw( t_pop t_size t_title t_title_short
-			      t_title_short_plural t_text
-			      t_comment_admin t_file t_oldfile
-			      t_urlpart t_entry_parent t_entry_next
-			      t_entry_imported t_connected
-			      t_connected_status t_replace t_changedby
-			      t_status );
-
-    foreach my $key ( @fields_to_check )
+    my $types =
     {
-	if( ($t->{ $key }||'') ne ($saved->{ $key }||'') )
-	{
-	    $fields_added{ $key } ++;
-	    push @fields, $key;
-	    push @values, $t->{ $key };
-	    debug(1,"  field $key differ");
-	}
-    }
+     t_pop                 => 'string',
+     t_size                => 'string',
+     t_title               => 'string',
+     t_title_short         => 'string',
+     t_title_short_plural  => 'string',
+     t_text                => 'string',
+     t_comment_admin       => 'string',
+     t_file                => 'string',
+     t_oldfile             => 'string',
+     t_urlpart             => 'string',
+     t_entry_parent        => 'string',
+     t_entry_next          => 'string',
+     t_entry_imported      => 'string',
+     t_connected           => 'string',
+     t_connected_status    => 'string',
+     t_replace             => 'string',
+     t_changedby           => 'string',
+     t_status              => 'string',
 
-    foreach my $key (qw( t_class t_entry t_active t_published ))
-    {
-	if( pgbool($t->{ $key }) ne pgbool($saved->{ $key }) )
-	{
-	    $fields_added{ $key } ++;
-	    push @fields, $key;
-	    push @values, pgbool( $t->{ $key } );
-	    debug(1,"  field $key differ");
-	}
-    }
+     t_class               => 'boolean',
+     t_entry               => 'boolean',
+     t_active              => 'boolean',
+     t_published           => 'boolean',
 
-    foreach my $key (qw( t_created t_updated t_vacuumed ))
-    {
-
-	# Dates can be written in many formats. We will assume that if
-	# the date has changed from what the DB returns, it's not the
-	# same date. That keeps us from bothering about the format
-
-	if( ($t->{ $key }||'') ne ($saved->{ $key }||'') )
-	{
-	    $fields_added{ $key } ++;
-	    push @fields, $key;
-	    push @values, date( $t->{ $key } )->cdate;
-	    debug(1,"  field $key differ");
-	}
-    }
+     t_created             => 'date',
+     t_updated             => 'date',
+     t_vacuumed            => 'date',
+    };
 
 
+    my $changes = $Para::dbix->save_record({
+	rec_new => $t,
+	rec_old => $saved,
+	table   => 't',
+	key     => ['t', 't_ver'],
+	keyval  => [$tid, $v],
+	types   => $types,
+	fields_to_check => [keys %$types],
+    });
 
-    if( @fields )
-    {
-	# Update topic
-	my $statement = "update t set ". join( ', ', map("$_=?", @fields)) .
-	    " where t=? and t_ver=?";
-	my $sth = $Para::dbh->prepare( $statement );
-#	warn "Running $statement\n";
-	$sth->execute( @values, $tid, $v );
-    }
 
     delete $Para::Topic::UNSAVED{"$tid-$v"};
 
-    return scalar @fields; # The number of changes
+    return $changes; # The number of changes
 }
 
 sub vacuum
@@ -2690,7 +2684,7 @@ sub vacuum
 
 	    if( my $arc2 = $mem->{ $key }{ $rid }{ $true }{ $comment } )
 	    {
-		warn "$$: Eliminating duplicate arc\n";
+	        debug("Eliminating duplicate arc");
 		if( $arc->active and $arc2->inactive )
 		{
 		    $arc2->remove;
@@ -2746,7 +2740,7 @@ sub vacuum
 	if( $t->active )
 	{
 	    $active_ver = $t->ver;
-	    $t->publish;
+	    $t->mark_publish;
 	}
 	# Starts with latest version (prefered)
 	foreach my $v ( reverse @{$t->versions} )
@@ -2806,6 +2800,173 @@ sub vacuum
     }
 
     return $t;
+}
+
+sub merge
+{
+    my( $t2, $t1 ) = @_;
+
+    # Merging t2 into t1 <<<---- NB !!!!
+
+    my $u = $Para::Frame::U;
+
+    my $tid1 = $t1->id;
+    my $tid2 = $t2->id;
+
+
+    # Check if we are merging member topics
+    if( $t2->member )
+    {
+	throw('denied', "Ämne $tid2 är kopplat till medlem.\nSlå samman åt andra hållet.");
+    }
+
+    my $u_status = $u->status;
+
+    if( debug )
+    {
+	debug "Merging $tid2 into $tid1";
+	debug "  T1 status: $t1->{'t_status'}";
+	debug "  T2 status: $t2->{'t_status'}";
+        debug "  M  status: $u_status";
+    }
+
+    # Check for authorization
+    if( $t2->status > $u_status )
+    {
+        if( $t1->status > $u_status )
+        {
+	    throw('denied', "Du har inte access att göra detta");
+	}
+	else
+	{
+	    throw('denied', "Slå samman åt andra hållet istället");
+	}
+    }
+
+    unless( $t1->active )
+    {
+	throw('validation', "Ämne $tid1 är inte aktivt");
+    }
+
+
+    # Things to transfer
+    #
+    # 1. t
+    # 2. talias
+    # 3. interest
+    # 4. arcs
+    # 5. t.t_entry_parent
+    # 6. ts
+    # 7. media
+    # Not supported: member, publ
+
+
+    ### t
+    # Keep most of t1 since that is regarded as the more correct
+    # version. Keeping the name, description and more.
+
+    $t1 = $t1->create_new_version({
+	oldfile => $t1->{'t_oldfile'}||$t2->{'t_oldfile'},
+	replace => $tid2,
+    });
+    $t2->set_status( S_REPLACED, $u);
+
+    ### talias
+    foreach my $a (values %{$t2->aliases})
+    {
+	$t1->add_alias( $a->name,
+			{
+			    status => $a->status,
+			    autolink => $a->autolink,
+			    index => $a->index,
+			    language => $a->language,
+			});
+    }
+
+    ### interest
+    my $intr_rec_list = $Para::dbix->select_list('from intrest where intrest_topic=?', $tid2);
+    foreach my $intr_rec ( @$intr_rec_list )
+    {
+	my $i2 = Para::Interest->get( $u, $t2, $intr_rec );
+
+	my $i1 = Para::Interest->get( $u, $t1 );
+
+	unless( $i1 )
+	{
+	    $i1 = Para::Interest->create( $u, $t1 );
+	    $i1->update({
+		defined => $i2->defined,
+		connected => $i2->connected,
+		belief => $i2->belief,
+		practice => $i2->practice,
+		theory => $i2->theory,
+		knowledge => $i2->knowledge,
+		editor => $i2->editor,
+		helper => $i2->helper,
+		meeter => $i2->meeter,
+		bookmark => $i2->bookmark,
+		interest => $i2->interest,
+		description => $i2->description,
+	    });
+	}
+    }
+
+    ### Arcs
+    my $arcs = $t2->arcs({
+	all => 1,
+	active => 1,
+	explicit => 1,
+    });
+
+    my $revarcs = $t2->rev_arcs({
+	all => 1,
+	active => 1,
+	explicit => 1,
+    });
+
+    foreach my $arc ( @{$arcs}, @{$revarcs} )
+    {
+	my $pred = $arc->pred,
+	my $subj = $arc->subj,
+	my $obj_name = $arc->obj || $arc->value;
+	my $props =
+	{
+	    true => $arc->true,
+	    active => $arc->active,
+	    status => $arc->status,
+	    strength => $arc->strength,
+	    comment => $arc->comment,
+	};
+
+	Para::Arc->create($pred, $subj, $obj_name, $props );
+    }
+    
+    ### t.t_entry_parent
+    foreach my $e ( @{$t2->entry_list} )
+    {
+	$e = $e->create_new_version({parent=>$t1});
+    }
+
+    ### media
+    if( $t2->media and not $t1->media )
+    {
+	$t1->media_set( $t2->media_url, $t2->media_type );
+    }
+
+    ### ts
+    foreach my $ts ( @{$t2->ts_list} )
+    {
+	Para::TS->set($t1, $ts->topic);
+    }
+    foreach my $ts ( @{$t2->ts_revlist} )
+    {
+	Para::TS->set($ts->entry, $t1);
+    }
+
+    my $creator = $t1->created_by();
+    $u->score_change( 'rejected_thing', 1 );
+    $creator->score_change( 'thing_rejected', 1 );
+
 }
 
 sub set_class_flag

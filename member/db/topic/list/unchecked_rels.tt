@@ -13,7 +13,7 @@
 
 <div class="entry">
 <table>
-   <tr><th>Ja</th><th>?</th><th>Nej</th><th>rev</th><th>reltype</th><th>rel</th></tr>
+   <tr><th>Ja</th><th>?</th><th>Nej</th><th>rev</th><th>arctype</th><th>rel</th></tr>
 [% FOREACH select_list("select distinct rel_topic, t_rev.t_title as rev_title, t_rel.t_title as rel_title, rel_name, rev, rel, reltype from rel, t t_rev, reltype, t t_rel where rev=t_rev.t and rel=t_rel.t and rel_type=reltype and t_rev.t_active is true and t_rel.t_active is true and (rel_status=2 or rel_status=3) and rel_indirect is false order by rel_name, rel_title, rev_title, rev limit 10 offset ?", part_offset ) %]
    [% tr2 %]
       [% a = getarc( rel_topic ) %]

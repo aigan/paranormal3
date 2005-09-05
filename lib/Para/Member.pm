@@ -2527,6 +2527,17 @@ sub log_activity
 #    return $last;
 }
 
+sub clear_cached
+{
+    my( $m ) = @_;
+
+    $m->{interests} = undef;
+    $m->{nicks} = undef;
+    $m->{mailaliases} = undef;
+    $m->{score} = undef;
+}
+
+
 #################################################################
 
 sub by_name  ## LIST CONSTRUCTOR
@@ -2736,7 +2747,6 @@ sub trim_name
 	return $ref;
     }
 }
-
 
 # warn "Loaded Para::Member\n";
 

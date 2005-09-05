@@ -1,7 +1,7 @@
 [% META
-	otitle = 'Editera relation'
-	default_template = 'rel.tt'
-	next_action = 'rel_update'
+	otitle = 'Editera arc'
+	default_template = 'arc.tt'
+	next_action = 'arc_update'
 %]
 
 [%

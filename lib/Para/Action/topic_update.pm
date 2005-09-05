@@ -31,7 +31,8 @@ sub handler
 	or throw('incomplete', "tid param missing\n");
     my $ver = $q->param('v');
 
-    my $t = Para::Topic->get_by_id( $tid, $ver );
+    my $t = Para::Topic->get_by_id( $tid, $ver )
+	or throw('validation', "Can't find topic $tid v$ver");
     $ver ||= $t->ver;
 
     # Create a changes obj

@@ -52,10 +52,43 @@ sub on_memory
     debug "Arc cache    : $arc_cache";
     debug "Alias cache  : $alias_cache";
 
-    $Para::Topic::CACHE = {};
-    $Para::Member::CACHE = {};
-    %Para::Arc::CACHE = ();
-    %Para::Alias::CACHE = ();
+    $Para::CLEAR_CACHE = 1;
+}
+
+sub clear_caches
+{
+    # Called from busy_background_job
+    my( $delta ) = @_;
+
+    if( $Para::CLEAR_CACHE )
+    {
+	foreach my $tkey ( keys %{$Para::Topic::CACHE} )
+	{
+	    my $t = $Para::Topic::CACHE->{$tkey};
+	    next unless $t;
+#	    warn "Clearing $tkey fore removal\n";
+	    $t->clear_cached;
+	}
+	$Para::Topic::CACHE = {};
+
+	foreach my $arc ( values %Para::Arc::CACHE )
+	{
+#	    warn "Clearing $arc->{rel_topic} for removal\n";
+	    $arc->clear_cached;
+	}
+	%Para::Arc::CACHE = ();
+
+	foreach my $m ( values %{$Para::Member::CACHE} )
+	{
+#	    warn "Clearing $m->{member} for removal\n";
+	    $m->clear_cached;
+	}
+	$Para::Member::CACHE = {};
+
+	%Para::Alias::CACHE = ();
+
+	$Para::CLEAR_CACHE = 0;
+    }
 }
 
 sub add_background_jobs

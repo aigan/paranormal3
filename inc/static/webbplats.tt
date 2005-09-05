@@ -52,7 +52,7 @@
          )
          </span>
          [% END %]
-         [% INCLUDE typelist2 rel=tid %]
+         [% INCLUDE typelist.tt %]
          [% IF eng %]
             [% jump('Go to site »', url) %]
          [% ELSE %]

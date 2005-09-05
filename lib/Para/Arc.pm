@@ -114,7 +114,8 @@ sub find
     $props ||= {};
 
     my( $all_versions, $true_versions, $false_versions,
-	$active_versions, $inactive_versions, $with_comment );
+	$active_versions, $inactive_versions, $with_comment, $direct,
+	$indirect, $explicit, $implicit );
 
     $all_versions = 1 if $props->{'all'};
     $true_versions = 1 if $props->{'true'};
@@ -122,6 +123,11 @@ sub find
     $active_versions = 1 if $props->{'active'};
     $inactive_versions = 1 if $props->{'inactive'};
     $with_comment = $props->{'comment'} if defined $props->{'comment'};
+
+    $direct = 1 if $props->{'direct'};
+    $indirect = 1 if $props->{'indirect'};
+    $explicit = 1 if $props->{'explicit'};
+    $implicit = 1 if $props->{'implicit'};
 
     $false_versions ||= defined $props->{'true'} ? !$props->{'true'} : 0;
     $inactive_versions ||= defined $props->{'active'} ?
@@ -196,10 +202,37 @@ sub find
 	push @parts,  "rel=?";
 	push @values, $obj->id;
     }
+
     if( defined $literal )
     {
 	push @parts,  "rel_value=?";
 	push @values, $literal;
+    }
+
+    if( defined $with_comment )
+    {
+	push @parts, "rel_comment = ?";
+	push @values, $with_comment;
+    }
+
+    if( $direct )
+    {
+	push @parts, "rel_indirect is false";
+    }
+
+    if( $indirect )
+    {
+	push @parts, "rel_indirect is true";
+    }
+
+    if( $explicit )
+    {
+	push @parts, "rel_implicit is false";
+    }
+
+    if( $implicit )
+    {
+	push @parts, "rel_implicit is true";
     }
 
     if( $all_versions )
@@ -219,11 +252,6 @@ sub find
 	if( $inactive_versions )
 	{
 	    push @parts, "rel_active is false";
-	}
-	if( defined $with_comment )
-	{
-	    push @parts, "rel_comment = ?";
-	    push @values, $with_comment;
 	}
     }
     else
@@ -305,14 +333,14 @@ sub create
 			      comment => $comment,
 			     });
 
-    if( debug )
+    if( debug >= 2 )
     {
-	my $desc = "$$: Looking for arc that";
+	my $desc = "Looking for arc that";
 
 	$desc .= $true ? ' are true' : ' are false';
 	$desc .= $active ? ', active' : ', inactive';
 	$desc .= " with status $status\n";
-	warn $desc;
+	debug($desc);
     }
 
     # May find inactive arc. Make it active. Or vice versa
@@ -1029,12 +1057,12 @@ sub explain
     {
 	if( $arc->validate_check )
 	{
-	    warn "Inference recorded\n";
+	    debug(3,"Inference recorded");
 	    # All good
 	}
 	else
 	{
-	    warn "Couldn't be infered\n";
+	    debug(2,"Couldn't be infered");
 	    if( $arc->implicit )
 	    {
 		$arc->deactivate;
@@ -1043,7 +1071,7 @@ sub explain
     }
     else
     {
-	warn "Not indirect\n";
+	debug(3,"Not indirect");
     }
 
     return $arc->{'explain'};
@@ -1612,6 +1640,13 @@ sub remove_reflexive
     {
 	$arc2->deactivate_implicit;
     }
+}
+
+sub clear_cached
+{
+    my( $arc ) = @_;
+
+    $arc->{'explain'} = undef;
 }
 
 ################################################

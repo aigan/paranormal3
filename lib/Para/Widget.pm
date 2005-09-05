@@ -922,7 +922,7 @@ sub insert_autolinks
     #
     for( my $size=$#$Para::link_db; $size >= 0; $size -- )
     {
-	debug(1,"***** Size $size");
+	debug(3,"***** Size $size");
 	$text =~ /(\s*)/gc;
 	my $newtext = $1 || "";
 	while( $text =~ /(\W*\w+)([^\s\w]*\s*)/gc ) #iterate failsafe
@@ -945,7 +945,7 @@ sub insert_autolinks
 		  $debug_ra_text .= "Analyze '$match' followed by '$middle'\n" if debug;
 		  if( my $try = $Para::link_db->[$size]{lc($match)} )
 		  {
-		      debug(1,"$debug_ra_text  Checking $match");
+		      debug(3,"$debug_ra_text  Checking $match");
 		      my $pos = pos($text);
 		      #		warn " - perform matching on '$text'\n";
 		      if( $size and $text =~ /((?:\w+(?:\W+|$)){$size})/gc )
@@ -963,7 +963,7 @@ sub insert_autolinks
 			{
 			    while(1)
 			    {
-				debug(1,"  looking for $looking");
+				debug(3,"  looking for $looking");
 				if( my $rec = $try->{lc($looking)} )
 				{
 				    if( $rec->{'tid'} and $Para::entry_links->{$rec->{'tid'}} ++ )
@@ -974,7 +974,7 @@ sub insert_autolinks
 				    }
 				    else
 				    {
-					debug(1,"    Matched $looking!");
+					debug(3,"    Matched $looking!");
 					push @links, set_autolink( $rec, $looking );
 					$newtext .= "¤$#links¤$last";
 				    }
@@ -1012,7 +1012,7 @@ sub insert_autolinks
 			{
 			    while(1)
 			    {
-				debug(1,"  looking for $match");
+				debug(3,"  looking for $match");
 				if( my $rec = $try->{lc($match)} )
 				{
 				    if( $rec->{'tid'} and $Para::entry_links->{$rec->{'tid'}} ++ )
@@ -1023,7 +1023,7 @@ sub insert_autolinks
 				    }
 				    else
 				    {
-					debug(1,"    Matched $match!");
+					debug(3,"    Matched $match!");
 					push @links,  set_autolink( $rec, $match );
 					$newtext .= "¤$#links¤$middle";
 				    }
@@ -1074,7 +1074,7 @@ sub insert_autolinks
 	  }
 	}
 	$text = $newtext;
-	    debug(1,"text: '$text'");
+	    debug(3,"text: '$text'");
     }
 
 
@@ -1149,7 +1149,7 @@ sub insert_explicit_links
 	my $targettopics = Para::Topic->find( $target );
 	my $namehtml = CGI::escapeHTML($name);
 
-	debug(1,"Finding explicit linking with '$name' to '$target'");
+	debug(3,"Finding explicit linking with '$name' to '$target'");
 
 	my @topics;
 	my $url;
@@ -1157,10 +1157,10 @@ sub insert_explicit_links
 	# Is name matching an alias?
 	if( @$nametopics )
 	{
-	    debug(1,"Name matching an alias");
+	    debug(3,"Name matching an alias");
 	    if( @$targettopics )
 	    {
-		debug(1,"  Targettopics exist");
+		debug(3,"  Targettopics exist");
 
 		# 1. Select the nt that is the same as tt
 		# 2. select the nt related to tt
@@ -1174,7 +1174,7 @@ sub insert_explicit_links
 			if( $nt->equals( $tt ) )
 			{
 			    push @topics, $nt;
-			    debug(1,sprintf "    Specified topic added to primary: %s", $nt->desig);
+			    debug(3,sprintf "    Specified topic added to primary: %s", $nt->desig);
 			}
 		    }
 		}
@@ -1188,7 +1188,7 @@ sub insert_explicit_links
 			    if( $nt->has_rel([0,1,2,3], $tt ) )
 			    {
 				push @topics, $nt;
-				debug(1,sprintf "    Related topic added to primary: %s", $nt->desig);
+				debug(3,sprintf "    Related topic added to primary: %s", $nt->desig);
 			    }
 			}
 		    }
@@ -1197,7 +1197,7 @@ sub insert_explicit_links
 		unless( @topics )
 		{
 		    push @topics, @$targettopics;
-		    debug(1,"  Setting targettopics as primary");
+		    debug(3,"  Setting targettopics as primary");
 		}
 	    }
 	    else
@@ -1206,17 +1206,17 @@ sub insert_explicit_links
 		# 2. fail
 		if( $target =~ /^(http|\/)/ )
 		{
-		    debug(1,"  Use URL: $target");
+		    debug(3,"  Use URL: $target");
 		    $url = $target;
 		}
 	    }
 	}
 	else
 	{
-	    debug(1,"Name doesn't match an alias");
+	    debug(3,"Name doesn't match an alias");
 	    if( @$targettopics )
 	    {
-		debug(1,"  Targettopics exist");
+		debug(3,"  Targettopics exist");
 		# 1. select tt
 		push @topics, @$targettopics;
 	    }
@@ -1226,7 +1226,7 @@ sub insert_explicit_links
 		# 2. fail
 		if( $target =~ /^(http|\/)/ )
 		{
-		    debug(1,"  Use URL: $target");
+		    debug(3,"  Use URL: $target");
 		    $url = $target;
 		}
 	    }
@@ -1234,7 +1234,7 @@ sub insert_explicit_links
 
 	if( $url )
 	{
-	    debug(1,"Inserting link to $url with name $name");
+	    debug(3,"Inserting link to $url with name $name");
 	    push @$linkref, link_page($url, $name);
 	    $newtext .= "¤$#$linkref¤";
 	}
@@ -1244,7 +1244,7 @@ sub insert_explicit_links
 	    if( @$tref > 1 )
 	    {
 		my @tids = map "tid=".$_->id, @$tref;
-		debug(1,"Inserting link to several files with name $name");
+		debug(3,"Inserting link to several files with name $name");
 		my $tids = join '&', @tids;
 		push @$linkref, "<a href=\"/search/alternatives.tt?run=topic_search_published&$tids\">$namehtml</a>";
 		$newtext .= "¤$#$linkref¤";
@@ -1257,7 +1257,7 @@ sub insert_explicit_links
 		    my $url = $t->media_url;
 		    if( $t->media_type =~ /^image/ )
 		    {
-			debug(1,"Inserting image $url");
+			debug(3,"Inserting image $url");
 			if( $namehtml )
 			{
 			    push @$linkref, "<img alt=\"$namehtml\" src=\"$url\" class=\"inline_image\">";
@@ -1284,7 +1284,7 @@ sub insert_explicit_links
 			    push @$linkref, '['.link_page($url, $name).']';
 			}
 
-			debug(1,"Inserting media link to $url with name $name");
+			debug(3,"Inserting media link to $url with name $name");
 			$newtext .= "¤$#$linkref¤";
 		    }
 		}
@@ -1301,7 +1301,7 @@ sub insert_explicit_links
 			$namehtml = CGI::escapeHTML($name);
 			push @$linkref, "[<a href=\"$file\">$namehtml</a>]";
 		    }
-		    debug(1,"Inserting nonmedia link to $file with name $name");
+		    debug(3,"Inserting nonmedia link to $file with name $name");
 		    $newtext .= "¤$#$linkref¤";
 		}
 	    }
@@ -1314,7 +1314,7 @@ sub insert_explicit_links
 	}
 	else
 	{
-	    debug(1,"No topics or URL found.  Leaving text");
+	    debug(3,"No topics or URL found.  Leaving text");
 	    my $targethtml =  CGI::escapeHTML($target);
 	    push @$linkref, "\"$namehtml\"[$targethtml]";
 	    $newtext .= "¤$#$linkref¤";

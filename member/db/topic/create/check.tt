@@ -15,7 +15,7 @@
 databasen.  Om så är fallet kanske du vill använda det existerande
 ämnet istället för att skapa ett nytt.
 
-[% title_aliases = alias_list(title, active=1) %]
+[% title_aliases = getalias_list(title, active=1) %]
 [% IF title_aliases.size %]
    <p>Titeln [% title | html %] är redan knuten till annat ämne:
       <ul>
@@ -40,7 +40,7 @@ databasen.  Om så är fallet kanske du vill använda det existerande
 <div class="entry">
 <table>
 [% FOREACH row = rowlist('_aliases') %]
-   [% aliases = alias_list(row, active=1) %]
+   [% aliases = getalias_list(row, active=1) %]
    [% IF aliases.size %]
       [% found = 1 %]
       <tr><td>[% checkbox('_aliaslist',row,'f') %]

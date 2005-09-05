@@ -21,19 +21,20 @@ END;
 
 [% PROCESS edit_menu.tt %]
 
-
-<table border="1">
+<div class="entry">
+<table>
   <tr><th>Behåll</th><th>Ämne</th><th>Kommentar</th></tr>
-  [% FOREACH ts = t.ts_list %]
+  [% FOREACH ts = t.ts_list(tfilter) %]
   <tr>
   <td>
-  [% checkbox("_ts__${loop.count}_keep", 't', 1);
+  [% checkbox("_ts__${loop.count}_keep", 't', ts.active);
      hidden("_ts__${loop.count}_topic", ts.topic.id);
   %]
   </td>
   <td>[% jump(ts.topic.title, '/member/db/topic/view/', tid=ts.topic.id) %]</td><td>[% ts.comment | html %]</td></tr>
   [% END %]
 </table>
+</div>
 
 <h3><code>$t.desig</code> behandlar även dessa ämnen:</h3>
 

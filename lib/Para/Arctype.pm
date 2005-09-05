@@ -27,6 +27,8 @@ BEGIN
 }
 
 use Para::Frame::Reload;
+use Para::Frame::Time qw( now );
+
 use Para::Topic;
 
 sub new
@@ -53,7 +55,7 @@ sub new
 
     unless( ref $rec eq 'HASH' )
     {
-	die "Reltype '$name' doesn't exist\n";
+	die "Arctype '$name' doesn't exist\n";
     }
 
 
@@ -95,6 +97,55 @@ sub list
     return \@list;
 }
 
+sub create
+{
+    my( $class ) = @_;
+
+    my $m = $Para::Frame::U;
+
+    my $id = get_nextval( "reltype_seq" );
+
+    my $sth_reltype = $Psi::dbh->prepare_cached(
+	  "insert into reltype (reltype, reltype_updated, reltype_changedby)
+           values ( ?, now(), ? )");
+    $sth_reltype->execute($id, $m->id) or die;
+
+    return Para::Arctype->new( $id );
+}
+
+sub update
+{
+    my( $at, $rec_in ) = @_;
+
+    my $rec_new =
+    {
+	'rel_name'            => $rec_in->{'rel_name'},
+	'rev_name'            => $rec_in->{'rev_name'},
+	'reltype_super'       => $rec_in->{'super'},
+	'reltype_topic'       => $rec_in->{'topic'},
+	'reltype_description' => $rec_in->{'description'},
+	'reltype_literal'     => $rec_in->{'literal'},
+    };
+
+    my $types =
+    {
+	'reltype_literal'     => 'boolean',
+    };
+
+    return $Para::dbix->save_record({
+	rec_new => $rec_new,
+	rec_old => $at,
+	table   => 'reltype',
+	keyval  => $at->id,
+	types   => $types,
+	on_update =>
+	{
+	    reltype_updated   => now()->cdate,
+	    reltype_changedby => $Para::Frame::U->id,
+	},
+    });
+}
+
 sub name
 {
     my( $type, $dir ) = @_;
@@ -121,5 +172,17 @@ sub rev_name { $_[0]->{'rev_name'} }
 sub literal  { $_[0]->{'reltype_literal'} }
 sub id       { $_[0]->{'reltype'} }
 
+sub topic    { Para::Topic->get_by_id( $_[0]->{'reltype_topic'} ) }
+
+sub super
+{
+    return undef unless $_[0]->{'reltype_super'};
+    return Para::Arctype->new($_[0]->{'reltype_super'});
+}
+
+sub description
+{
+    $_[0]->{'reltype_description'};
+}
 
 1;

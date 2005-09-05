@@ -16,10 +16,10 @@
 [% IF u.level > 10 %]
   <li>[% jump('Skapa ämne', 'create/admin.tt') %]
   <li>[% jump('Hitta förlorade texter', '/member/db/topic/edit/outline.tt', run='entry_find_lost', tid=137624) %]
-  <li>[% jump('Publicera / synka sidor', me, run='publish_sync', class="") %]
+  <li>[% jump('Publicera / synka sidor', me, run='topic_sync', class="") %]
 [% END %]
   <li>[% jump('Viktiga klasser', 'list/class.tt') %]
-  <li>[% jump('Rel-typer', '/member/db/reltype/list.tt') %]
+  <li>[% jump('Arc-typer', '/member/db/arctype/list.tt') %]
   <li>[% jump('Toppkategorier', '/member/db/topic/list/topcat.tt') %]
 </ul>
 

@@ -30,7 +30,7 @@ BEGIN
 
 use strict;
 
-use Devel::LeakTrace;
+#use Devel::LeakTrace;
 
 our $PARAFRAME; # Dir without ending /
 our $APPROOT;   # Dir without ending /
@@ -47,6 +47,7 @@ use Para::Frame::Email::Address;
 use Para::Frame::Utils;
 
 use Para;
+use Para::Member;
 
 {
     unless( $SITE_CFG )
@@ -130,9 +131,14 @@ use Para;
     Para::Frame->add_hook('on_startup', sub
 			  {
 			      $Para::dbix->connect;
+			      
+			      # Setup MOTD
+			      Para::Widget::new_entry(undef, 'static');
+			      $Para::MOTD = Para::Widget::html_psi( Para::Member->skapelsen->presentation );
 			  });
     Para::Frame->add_hook('add_background_jobs', \&Para::add_background_jobs);
     Para::Frame->add_hook('on_memory', \&Para::on_memory);
+    Para::Frame->add_hook('busy_background_job', \&Para::clear_caches);
 
 
     my $global_params =
@@ -154,10 +160,10 @@ use Para;
      'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
 
      'getarc'            => sub{ Para::Arc->get( @_ ) },
-     'getreltype'        => sub{ Para::Arctype->new( @_ ) },
-     'get_arctype_list'  => sub{ Para::Arctype->list( @_ ) },
+     'getarctype'        => sub{ Para::Arctype->new( @_ ) },
+     'getarctype_list'   => sub{ Para::Arctype->list( @_ ) },
 
-     'alias_list'        => sub{ Para::Alias->find_by_name( @_ ) },
+     'getalias_list'     => sub{ Para::Alias->find_by_name( @_ ) },
 
      'getpayment'        => sub{ Para::Payment->new( @_ ) },
 
@@ -184,11 +190,12 @@ use Para;
      },
      'favicon'           => "/favicon.ico",
      'body_class'        => "meta",
+     'motd'              => sub{ $Para::MOTD },
     };
     Para::Frame->add_global_tt_params( $global_params );
 
-#    Para::Frame->watchdog_startup();
-    Para::Frame->startup();
+    Para::Frame->watchdog_startup();
+#    Para::Frame->startup();
 }
 
 #########################################################

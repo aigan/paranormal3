@@ -255,3 +255,41 @@ abbr, acronym
 	BACKGROUND: #FF0000;
 }
 
+.diff
+{
+	BORDER-COLOR: #c0a678;
+	COLOR: black;
+	BACKGROUND-COLOR: #f2f2f2;
+}
+
+.diff B
+{
+}
+
+.diff .plus
+{
+	BACKGROUND-COLOR: #acc
+}
+
+.diff .minus
+{
+	BACKGROUND-COLOR: #f99
+}
+
+.togglep
+{
+	COLOR: black;
+	BACKGROUND-COLOR: #0bb
+}
+
+.togglem
+{
+	FONT-SIZE: 12px;
+	COLOR: black;
+	BACKGROUND-COLOR: #f99
+}
+
+.diff TD
+{
+	COLOR: black;
+}

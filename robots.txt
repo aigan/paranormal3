@@ -1,0 +1,23 @@
+# robots.txt for paranormal.se
+User-agent: *
+
+Disallow: /admin/
+Disallow: /bin/
+Disallow: /css/
+Disallow: /CVS/
+Disallow: /email/
+Disallow: /images/
+Disallow: /inc/
+Disallow: /lib/
+Disallow: /logs/
+Disallow: /member/chat/frames
+Disallow: /member/chat/java/
+Disallow: /member/chat/test/
+Disallow: /member/db/
+Disallow: /member/maillist/
+Disallow: /old/
+Disallow: /old2/
+Disallow: /search/
+Disallow: /test/
+Disallow: /webalizer/
+Disallow: /topic/index.tt

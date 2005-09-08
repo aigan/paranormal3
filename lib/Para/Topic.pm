@@ -389,7 +389,6 @@ sub commit
 	    $Para::Frame::REQ->yield;
 	}
     }
-    $Para::Topic::to_publish_now = {};
     
     foreach my $t ( values %Para::Topic::UNSAVED )
     {
@@ -1720,6 +1719,13 @@ sub create_new_version
     my $ot = $t;
     $t = $ot->last_ver;
 
+    if( $new_parent )
+    {
+	# May update parent to use the new child
+	my $parent = Para::Topic->get_by_id( $new_parent );
+	$parent->register_child( $t );
+    }
+
     $t->title2aliases( $t->title, 1 );
     $t->title2aliases( $t->real_short, 1 );
     $t->title2aliases( $t->real_plural );
@@ -2161,6 +2167,24 @@ sub register_child
     my $new_id         = $new_child->id;
 
     my $childs = $t->childs;
+
+    # If an instance of the topic already is a child of $t, replace it
+    # if the new child has equal or higher status
+    
+    foreach my $child ( @$childs )
+    {
+	if( $child->equals( $new_child ) )
+	{
+	    if( $child->status <= $new_status )
+	    {
+		$t->unregister_child( $child );
+		last;
+	    }
+	    # else, use the exisitng child
+	    return $t->{'childs'};
+	}
+    }
+
   CHECK:
     {
 	for( my $i=0; $i<= $#$childs; $i++ )
@@ -3479,6 +3503,10 @@ sub set_published
     {
 	$t->next->set_published;
     }
+
+    # No need to publish them now
+    delete $Para::Topic::to_publish->{$t->id};
+    delete $Para::Topic::to_publish_now->{$t->id};
 
     return 1;
 }

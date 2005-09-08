@@ -1,0 +1,125 @@
+[% META
+   otitle = 'Sökresultat'
+   hide='notfound'
+   next_template = '/search/alternatives.tt'
+   next_action = "topic_search_published"
+%]
+
+[% IF result.info.alternatives;
+   alts = result.info.alternatives;
+%]
+
+<div id="main">
+[% string = q.param('talias') %]
+<div id="topic_header">
+   [% IF string %]
+      Flera ämnen har aliaset <code>[% string | html %]</code>
+   [% ELSE %]
+      [% result.parts.0.message %]
+   [% END %]
+</div>
+
+<div class="entry">
+   <table cellpadding="10">
+   [% FOREACH t = alts.list %]
+      [% tr2 %]
+         <td valign="top">[% jump(t.desig, me, tid=t.id, run='topic_search_published') %] [% PROCESS typelist.tt %]</td><td valign="top">[% t.text | html %]</td>
+      </tr>
+   [% END %]
+   </table>
+</div>
+
+</div>
+[% ELSIF result.parts.0.type == 'notfound' %]
+   [% info = result.info.notfound %]
+<h1 align="center">404 - Vilse i det okända</h1>
+
+<div id="main">
+<div id="topic_header">
+[% IF info.uri %]
+   Hittar inte adressen <code>[% info.uri | html %]</code><br>
+[% ELSE %]
+   Hittar inte <code>[% info.name %]</code><br>
+[% END %]
+[% result.parts.0.message | html %]
+</div>
+<div class="entry">
+
+[% IF info.tid %]
+   [% t = topic(info.tid).last_ver %]
+   <p>
+      Ämnet <code>[% t.desig %]</code>
+      [% SWITCH t.status %]
+         [% CASE 0 %]
+            har raderats.
+         [% CASE 1 %]
+            har ersatts med [% jump(t.replaced_by.desig,
+                                    t.replaced_by.file) %].
+         [% CASE %]
+            [% IF t.file %]
+               är inte publicerat.
+            [% ELSE %]
+               är hemligt.
+            [% END %]
+      [% END %]
+   </p>
+   <p>Du kan se versioner av uppslagsordet på
+   [% jump('adminsidan', '/member/db/topic/view/', tid=t.id, v=t.ver) %].
+[% ELSE %]
+   <p>Vi kan tyvärr inte hitta den sida du tänke ta dig till.  Vi har
+   försökt.  Jättemycket. -- Har ödet valt en annan väg åt dig?</p>
+[% END %]
+
+<p>Pröva att söka igen: [% input('talias', info.name) %]
+[% submit('Sök') %]
+<script language="javascript">
+<!--
+document.f.talias.focus();
+//-->
+</script>
+
+</div>
+<div class="entry">
+
+<p>Eller får jag kanske lov att fresta med några länkar?</p>
+
+<table><tr>
+<th align="left" class="colheader">Kategorier</th>
+<td><a href="/topic/kategori_vetenskap.html">Vetenskap</a></td>
+<td><a href="/topic/kategori_samhalle.html">Samhälle</a></td>
+<td><a href="/topic/kategori_spadom.html">Spådom</a></td>
+<td><a href="/topic/kategori_sociologi.html">Sociologi</a></td>
+</tr><tr><th class="colheader"></th>
+<td><a href="/topic/kategori_halsa.html">Hälsa</a></td>
+<td><a href="/topic/kategori_magi.html">Magi</a></td>
+<td><a href="/topic/kategori_underhallning.html">Nöje</a></td>
+<td><a href="/topic/kategori_estetik.html">Estetik</a></td>
+
+</tr><tr>
+
+<th align="left" class="colheader">Sorter</th>
+<td><a href="/topic/person.html">Personer</a></td>
+<td><a href="/topic/bok.html">Böcker</a></td>
+<td><a href="/topic/film.html">Filmer</a></td>
+<td><a href="/topic/webbplats.html">Webbplatser</a></td>
+</tr><tr><th class="colheader"></th>
+<td><a href="/topic/grupp.html">Grupper</a></td>
+<td><a href="/topic/upplevbart/fenomen.html">Fenomen</a></td>
+<td><a href="/faq/">FAQs</a></td>
+<td><a href="/member/db/person/find/">Medlemmar</a></td>
+
+</tr></table>
+
+</div>
+</div>
+[% END %]
+
+
+[% IF result.info.create_confirm;
+   RETURN;
+END;
+%]
+
+</form>
+[% PROCESS static/default/footer.tt %]
+<form>

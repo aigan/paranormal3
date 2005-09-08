@@ -114,9 +114,6 @@ sub add_background_jobs
 	$added ++;
     }
     
-    $Para::Topic::to_publish     = {};
-    $Para::Topic::to_publish_now = {};
-
     eval
     {
 	unless( $added )

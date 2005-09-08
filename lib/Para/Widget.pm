@@ -1119,7 +1119,7 @@ sub insert_web_links
     my( $textref, $linkref ) = @_;
 
     my $newtext = "";
-    while( $$textref =~ /\G(.*?)((?:https?|ftp):\/\/)([\w\-\.]+\.(\w\w|com|net|org|edu|gov|mil|info)\b(?::\d+)?(?:\/[\w~\-\.\/]*)?)/sgc ) #iterate failsafe
+    while( $$textref =~ /\G(.*?)((?:https?|ftp):\/\/)([\w\-\.]+\.(\w\w|com|net|org|edu|gov|mil|info)\b(?::\d+)?(?:\/[\w~\-\.\/]*)?(?:\?[\w&%=]+)?)/sgc ) #iterate failsafe
     {
 	$newtext .= $1;
 	my $link = $2.$3;
@@ -1357,10 +1357,7 @@ sub primary_choice
 	return $topics;
     }
 
-    if( debug )
-    {
-	warn sprintf "Having a choice between %s\n",  join ' and ', map $_->desig, @$topics;
-    }
+    debug(0,sprintf("Having a choice between %s\n",  join ' and ', map $_->desig, @$topics));
 
     my @nt = ();
 

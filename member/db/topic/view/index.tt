@@ -83,7 +83,6 @@
 
 
 [% FOREACH e = t.entry_list(tfilter) %]
-   <hr>
    <div class="entry">
    [% IF e.title %]
       <h2>[% e.title | html %]</h2>

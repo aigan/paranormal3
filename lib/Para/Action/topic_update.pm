@@ -4,7 +4,7 @@ package Para::Action::topic_update;
 use strict;
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw trim );
+use Para::Frame::Utils qw( throw trim debug );
 use Para::Constants qw( S_PROPOSED S_PENDING );
 
 use Para::Utils qw( trim_text );
@@ -41,7 +41,7 @@ sub handler
 
     Para::History->begin();
 
-    warn "Checking $tid, $ver\n";
+    debug "Checking $tid v$ver";
 
     check_talias_edit($t);
     check_rel_edit($t);
@@ -129,7 +129,7 @@ sub check_talias_edit
 
     for( my $row=1; defined(my $talias = $q->param("_talias__${row}_talias")); $row++ )
     {
-	warn "Checking $row, $talias\n";
+	debug "Checking $row, $talias";
 	push @Para::clear_fields, "_talias__${row}_talias", "_talias__${row}_keep", "_talias__${row}_activate", "_talias__${row}_talias_autolink", "_talias__${row}_talias_index", "_talias__${row}_talias_language";
 
 	my $a = $t->alias($talias) or

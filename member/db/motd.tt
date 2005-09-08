@@ -1,0 +1,12 @@
+[% META
+	title = 'Dagens meddelande'
+	next_action = 'today'
+	next_template = '/'
+	level = 12
+%]
+
+
+[% m =  getmember( -1 ) %]
+<textarea name="statement" wrap="soft" cols="40" rows="10">[% m.presentation|html %]</textarea>
+
+<p>[% step %]

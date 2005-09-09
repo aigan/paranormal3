@@ -86,7 +86,7 @@
 
 
 [%
-   irecs = select_list("from intrest where intrest_member=?
+   irecs = select_list("from intrest join t on intrest_topic=t where intrest_member=? and t_active is true
                         $extra
                         order by $order $direction
                         limit $pagesize
@@ -111,6 +111,8 @@
       [% END %]
       </tr>
    [% END %]
+
+   
 
    [% tr2 %]
       <td>[% jump(i.t.title, i.next_step(redefine=1).template , run='mark', tid=i.t.id, mid=m.id) %]

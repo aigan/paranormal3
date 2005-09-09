@@ -36,6 +36,8 @@ use Para::Arctype;
 use Para::Utils qw( cache_update );
 use Para::Constants qw( :all );
 
+use constant BATCH => 50;
+
 # This will make "if($arc)" false if the arc is 'removed'
 #
 use overload 'bool' => sub{ ref $_[0] and $_[0]->subj };
@@ -284,7 +286,7 @@ sub find
 	return $list;
     }
 
-    debug(3,"Finding the first arc $explain_string");
+    debug(4,"Finding the first arc $explain_string");
 
     return undef unless @$recs;
     return Para::Arc->new( $recs->[0] );
@@ -465,7 +467,7 @@ sub create
 
     $by->score_change( 'topic_connected', 1 );
 
-    warn sprintf "Created %s\n", $arc->desig;
+    debug( "Created ". $arc->desig );
     return $arc;
 }
 
@@ -740,7 +742,7 @@ sub activate
     return if $arc->active and $arc->status == $status;
     return if $arc->disregard;
 
-    warn sprintf "$$: Activating %s\n", $arc->desig; ### DEBUG
+    debug "Activating ". $arc->desig;
 
     # Fix both ends for reflexive relations
     my $rarc; # Holds the corresponding rel
@@ -751,7 +753,7 @@ sub activate
 
     if( $rarc ) # Reverse relation
     {
-	warn sprintf "$$:   activating reverse %s\n", $rarc->desig; ### DEBUG
+	debug "  activating reverse ". $rarc->desig;
 	my $sth = $Para::dbh->prepare(
 	  "update rel set rel_active=true, rel_status=?,
            rel_changedby=?, rel_updated=?
@@ -830,7 +832,7 @@ sub deactivate
     return if $arc->inactive and $arc->status == $status;
     return if $arc->disregard;
 
-    warn sprintf "$$: Deactivating %s\n", $arc->desig; ### DEBUG
+    debug "Deactivating ". $arc->desig;
 
     # Fix both ends for reflexive relations
     my $rarc; # Holds the corresponding rel
@@ -841,7 +843,7 @@ sub deactivate
 
     if( $rarc ) # Reverse relation
     {
-	warn sprintf "$$:   deactivating reverse %s\n", $rarc->desig; ### DEBUG
+	debug "  deactivating reverse ". $rarc->desig;
 	my $sth = $Para::dbh->prepare(
 	  "update rel set rel_active=false, rel_status=?,
            rel_changedby=?, rel_updated=?
@@ -922,12 +924,12 @@ sub vacuum
     if( $arc->active and  $arc->status < S_PENDING)
     {
 	# Before this, we made the topic PENDING. Now we deactivate
-	warn sprintf "$$: arc %s has the wrong status\n", $arc->desig;
+	debug sprintf "arc %s has the wrong status", $arc->desig;
 	$arc->deactivate;
     }
     elsif( $arc->inactive and $arc->status >= S_PENDING )
     {
-	warn sprintf "$$: arc %s has the wrong status\n", $arc->desig;
+	debug sprintf "arc %s has the wrong status", $arc->desig;
 	$arc->deactivate( S_REPLACED );
     }
 
@@ -1017,8 +1019,7 @@ sub remove
     $arc->remove_check;
 
     my $arc_id = $arc->id;
-    warn sprintf "%d: Removed arc %s\n",
-      $$, $arc->desig;
+    debug "Removed arc ". $arc->desig;
 
     my $sth = $Para::dbh->prepare("delete from rel where rel_topic=?");
     $sth->execute($arc_id);
@@ -1402,6 +1403,9 @@ sub validate_infere
 	    next if disregard $arc3;
 	    next unless $arc3->status >= S_NORMAL;
 
+	    $Para::Frame::REQ->yield unless
+		$Para::Frame::BATCHCOUNT++ % BATCH;
+
 	    if( $arc3->obj->id == $obj->id )
 	    {
 		my $exp =
@@ -1457,10 +1461,14 @@ sub create_infere_rev
     {
 	next unless $arc2->status >= S_NORMAL;
 
+	$Para::Frame::REQ->yield unless
+	    $Para::Frame::BATCHCOUNT++ % BATCH;
+
 	debug(4, sprintf "arc2 %s, activation %d\n ", $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )
 	{
 	    debug "Found an arc with wrong status during inference. Vacuuming!";
+	    confess;  ### DEBUG
 	    $arc2->subj->vacuum;
 	    next;
 	}
@@ -1473,7 +1481,7 @@ sub create_infere_rev
 
 	    if( $arc2->subj->equals( $obj ) )
 	    {
-		warn sprintf "Will not create cyclic reference for %s\n",
+		debug "Will not create cyclic reference for ".
 		  $obj->desig;
 		next;
 	    }
@@ -1507,6 +1515,9 @@ sub create_infere_rel
     {
 	next unless $arc2->status >= S_NORMAL;
 
+	$Para::Frame::REQ->yield unless
+	    $Para::Frame::BATCHCOUNT++ % BATCH;
+
 	debug(4,sprintf "arc2 %d: %s, activation %d\n", $arc2->id, $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )
 	{
@@ -1517,7 +1528,7 @@ sub create_infere_rel
 	my $arc3 = Para::Arc->find( $p3, $subj, $arc2->obj);
 	if( $arc3 )
 	{
-	    debug(3,"Found existing arc to make infered: ".$arc3->desig);
+	    debug(4,"Found existing arc to make infered: ".$arc3->desig);
 	}
 	else
 	{
@@ -1527,7 +1538,7 @@ sub create_infere_rel
 
 	    if( $subj->equals( $arc2->obj ) )
 	    {
-		warn sprintf "Will not create cyclic reference for %s\n",
+		debug "Will not create cyclic reference for ".
 		  $subj->desig;
 		next;
 	    }

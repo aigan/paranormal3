@@ -29,4 +29,4 @@
 
 <h2>Instruktioner</h2>
 
-<p>Se [% jump("hur väktare bedömmer ämnen och texter", "/topic/hur_vaktare_bedommer_amnen_och_texter.html" ) %]</p>
+<p>Se [% jump("hur väktare bedömer ämnen och texter", "/topic/hur_vaktare_bedommer_amnen_och_texter.html" ) %]</p>

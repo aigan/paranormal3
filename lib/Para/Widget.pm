@@ -848,7 +848,7 @@ sub new_entry
 #		sleep 5;
 #	    }
 
-	    debug(2,"W0 $words[0] A $alias T $tid F $file");
+	    debug(5,"W0 $words[0] A $alias T $tid F $file");
 	    unless( length($words[0]) and length($alias) )
 	    {
 		warn "STRANGE ALIAS: W0 $words[0] A $alias T $tid F $file";

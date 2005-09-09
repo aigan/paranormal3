@@ -49,7 +49,7 @@ use Para::Alias;
 use Para::Constants qw( :all );
 use Para::Widget;
 
-use constant BATCH => 10;
+use constant BATCH => 50;
 our $BATCHCOUNT;
 
 #use constant LIMIT => 10000;
@@ -1542,7 +1542,7 @@ sub break_topic_loop
 	if( $base )
 	{
 	    # We want to deactivate the newest arc and see if that helped
-	    debug(4,"Involved arcs rounded up");
+	    debug(3,"Involved arcs rounded up");
 
 	    my $arcs;
 	    foreach my $t2id ( keys %$involved )
@@ -1581,24 +1581,25 @@ sub break_topic_loop
 	    unless( $removed or $incomplete )
 	    {
 		# No (explicit) arcs found. Clean up
-		debug(5,"No arcs to deactivate. All done here");
+		debug(4,"No arcs to deactivate. All done here");
 		$done = 1;
 	    }
 
-	    debug(4,"Check involed topics");
+	    debug(3,"Check involed topics");
 
 	    # All seems fine now. Check arcs for involved topics
 	    #
 	    foreach my $t2id ( keys %$involved )
 	    {
 		my $t2 = Para::Topic->get_by_id( $t2id );
-		debug(4,sprintf "  Check %s", $t2->desig);
+		debug(3,"  Check ".$t2->desig);
 		my $rel_arc_list = $t2->rel->arcs;
 		my $rev_arc_list = $t2->rev->arcs;
 		foreach my $arc ( @$rel_arc_list, @$rev_arc_list )
 		{
 		    $arc->vacuum;
 		}
+		debug(3,"  Done with ".$t2->desig);
 	    }
 
 	    # Clean up for a new round
@@ -1607,16 +1608,11 @@ sub break_topic_loop
 	}
 	else
 	{
-	    # We're not in the base of recursio. Done with this. On to
+	    # We're not in the base of recursion. Done with this. On to
 	    # the next branch
 	    $done = 1;
 	}
     }
-
-#    # Special handling for now!!!!
-#    warn "-----> commit\n";
-#    $Para::dbh->commit;
-
 }
 
 sub create_new_version

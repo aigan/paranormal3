@@ -68,7 +68,7 @@ use Para::Member;
 	'logfile'      => "$APPROOT/logs/creation.log",
 
 	port           => $SITE_CFG->{'port'},
-	debug          => $SITE_CFG->{'debug'},
+	debug          => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
 
 	'site'    =>
 	{
@@ -89,7 +89,7 @@ use Para::Member;
     #
     $Para::dbix = Para::Frame::DBIx ->
 	new({
-	    connect => ["dbi:Pg:dbname=psi1;port=5433"],
+	    connect => $SITE_CFG->{'dbconnect'},
 	    bind_dbh => \ $Para::dbh,
 	});
 

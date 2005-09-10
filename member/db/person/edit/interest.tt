@@ -12,7 +12,7 @@
 <p>
 [ [% jump('Lägg till fler intressen', '/member/db/person/interest/enter_list.tt', run='mark', mid=m.id) %]
 ]
-[%+ m.interests.count %] intressen
+[%+ m.interests.count %] intressen, varav [% m.interests.count_real %] <em>besvarade</em>
 </p>
 
 [% 
@@ -159,3 +159,5 @@ $this_from - $this_to
 <p>Kolumnen <code>S</code> anger intressets definieringsgrad.  Det är
 ett mått på hur säkra vi är på att intressenivån stämmer.  Ju fler
 detaljer om intresset som besvarats, desto högre säkerhet.</p>
+
+<p><em>Besvarade</em> intressen är de där du inte är ointresserad och inte markerade som osäkra.</p>

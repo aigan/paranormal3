@@ -21,6 +21,9 @@
 <p>Lista intressen 
 [ [% jump('Lagom', me, mid=m.id) %]
 | [% jump('Flera', me, max=25, cutof=75, mid=m.id) %]
+  [% IF m.equals(u) %]
+| [% jump('Visa detaljlista för intressena', '/member/db/person/edit/interest.tt') %]
+  [% END %]
 ]</p>
 
 <p>Klicka på siffran för att säga hur intresserad du själv är i ämnet</p>
@@ -32,7 +35,7 @@
 <tr>
    [% t = intr.topic %]
    <td valign="top">[% PROCESS tlink.tt %]</td>
-   <td align="right" valign="top">[% jump(intr.general, '/member/db/intrest/specify', plan=me, run='mark', tid=t.id) %]%</td>
+   <td align="right" valign="top">[% jump(intr.general, '/member/db/person/interest/specify.tt', run='mark', tid=t.id) %]%</td>
    <td valign="top">[% intr.comment %]</td>
 </tr>
 [% END %]

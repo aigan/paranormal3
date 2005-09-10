@@ -33,7 +33,7 @@ Spenderat [% elapsed_time(m.total_time_online) %] online
 	<li>[% jump('Anonymitet', 'privacy.tt', run='mark', mid=m.id) %]
 [% IF u.complexity >= 5 %]
 	<li>[% jump('Intressetyper', 'general_interest.tt', run='mark', mid=m.id) %]
-	<li>[% jump('Intressen', 'interest.tt', run='mark', mid=m.id) %]
+	<li>[% jump('Intressen - detaljlista', 'interest.tt', run='mark', mid=m.id) %]
 [% END %]
 	<li>[% jump('E-post', 'email.tt', run='mark', mid=m.id) %]
 

@@ -39,10 +39,10 @@
 
 <h2>Personer</h2>
 
-   <span class="link">[% jump('Hjälpare', "/member/db/topic/view/helpers" tid=t.id) %]<br></span>
-   <span class="link">[% jump('Diskutanter', "/member/db/topic/view/discussors" tid=t.id) %]<br></span>
-   <span class="link">[% jump('Söker kontakt', "/member/db/topic/view/meeters" tid=t.id) %]<br></span>
-   <span class="link">[% jump('Redaktörer', "/member/db/topic/view/editors" tid=t.id) %]<br></span>
+   <span class="link">[% jump('Hjälpare', "/member/db/topic/view/helpers.tt" tid=t.id) %]<br></span>
+   <span class="link">[% jump('Diskutanter', "/member/db/topic/view/discussors.tt" tid=t.id) %]<br></span>
+   <span class="link">[% jump('Söker kontakt', "/member/db/topic/view/meeters.tt" tid=t.id) %]<br></span>
+   <span class="link">[% jump('Redaktörer', "/member/db/topic/view/editors.tt" tid=t.id) %]<br></span>
 
 
 [% PROCESS topic/list_websites.tt UNLESS multi == 'rev_ts' %]

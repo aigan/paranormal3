@@ -81,7 +81,7 @@ K = Kunskap.
    [% NEXT UNLESS u.level or ( interest.intrest_description and im.newsmail > 3 and im.general_helper > 30 ) %]
    [% tr2 %]
    [% IF u.level %]
-      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', member=interest.member) %]</td>
+      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', mid=interest.member) %]</td>
    [% ELSE %]
       <td valign="top">[% jump(interest.nickname, '/member/db/person/view/send_email.tt', mid=interest.member, tid=tid) %]</td>
    [% END %]

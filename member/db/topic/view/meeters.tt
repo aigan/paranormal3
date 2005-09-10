@@ -44,7 +44,7 @@ I = Intresse.
 
 [% FOREACH interest = interest_meeter %]
    [% tr2 %]
-      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', member=interest.member) %]</td>
+      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', mid=interest.member) %]</td>
       <td valign="top">[% (interest.intrest||0) / 17 | replace(',','.') | format('%d') %]</td>
       [% IF trobart %]<td valign="top">[% (interest.belief||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
       [% IF upplevbart %]<td valign="top">[% (interest.experience||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]

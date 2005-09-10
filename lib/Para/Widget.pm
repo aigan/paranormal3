@@ -27,7 +27,7 @@ use Text::ParagraphDiff;
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    warn "  Loading ".__PACKAGE__." $VERSION\n";
+    print "  Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
@@ -798,7 +798,7 @@ sub new_entry
 {
     my( $tid, $state ) = @_;
 
-    debug(1,"New entry");
+    debug(1,"New entry $tid");
     if( $state )
     {
 	$Para::state = $state;
@@ -1357,7 +1357,7 @@ sub primary_choice
 	return $topics;
     }
 
-    debug(0,sprintf("Having a choice between %s\n",  join ' and ', map $_->desig, @$topics));
+    debug(2,sprintf("Having a choice between %s\n",  join ' and ', map $_->desig, @$topics));
 
     my @nt = ();
 

@@ -21,7 +21,7 @@ package Para;
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    warn "Starting creation $VERSION\n";
+    print "Starting creation $VERSION\n";
 
     use FindBin;
     my $configfile = $FindBin::Bin . "/config.pl";
@@ -29,8 +29,6 @@ BEGIN
 }
 
 use strict;
-
-#use Devel::LeakTrace;
 
 our $PARAFRAME; # Dir without ending /
 our $APPROOT;   # Dir without ending /
@@ -44,7 +42,8 @@ use Para::Frame::DBIx;
 use Para::Frame::Time;
 use Para::Frame::Email;
 use Para::Frame::Email::Address;
-use Para::Frame::Utils;
+use Para::Frame::Utils qw( chmod_tree );
+use Para::Frame::Watchdog;
 
 use Para;
 use Para::Member;
@@ -66,6 +65,7 @@ use Para::Member;
 	'user_class'   => 'Para::Member',
 	'bg_user_code' => sub{ Para::Member->skapelsen },
 	'logfile'      => "$APPROOT/logs/creation.log",
+	'pidfile'      => "$APPROOT/logs/creation.pid",
 
 	port           => $SITE_CFG->{'port'},
 	debug          => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
@@ -75,15 +75,19 @@ use Para::Member;
 	    # Path in  URL to website
 	    'webhome' => '',
 	    'last_step' => "/member/db/",
+	    'static_ttc' => "$PARAFRAME/var/ttc/psidb2",
 	}
 
     };
     Para::Frame->configure( $cfg );
 
-    # Detatch and run in background
-    #
-    Para::Frame->daemonize unless @ARGV;
+    # Make sure we can write to tempfiles
+    chmod_tree( "$PARAFRAME/var/ttc" );
 
+
+    # Do not daemonize if run with cmdline argument
+    my $daemonize = @ARGV ? 0 : 1;
+    my $watchdog = 0;
 
     # Configure database
     #
@@ -171,7 +175,7 @@ use Para::Member;
      'year'              => sub{ localtime->year },
      'now'               => sub{ scalar localtime },
      'date'              => sub{ Para::Frame::Time->get(@_) },
-#	'elapsed_time'      => \&elapsed_time,
+     'elapsed_time'      => sub{ Para::Frame::Utils::elapsed_time(@_) },
 
      'delay'             => sub{ sleep(@_) },
      'uc'                => sub{ "\U$_[0]" },
@@ -194,17 +198,19 @@ use Para::Member;
     };
     Para::Frame->add_global_tt_params( $global_params );
 
-    Para::Frame->watchdog_startup();
-#    Para::Frame->startup();
-}
-
-#########################################################
-
-END
-{
-    unless( $Para::Frame::FORK )
+    if( $daemonize )
     {
-	warn "Closing down creation\n\n";
+        Para::Frame->daemonize( $watchdog );
+    }
+    elsif( $watchdog )
+    {
+	Para::Frame->watchdog_startup();
+    }
+    else
+    {
+	Para::Frame->startup();
+	Para::Frame::main_loop();
     }
 }
 
+#########################################################

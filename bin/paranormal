@@ -1,0 +1,87 @@
+#!/bin/bash
+#  $Id$  -*-perl-*-
+#
+#=====================================================================
+#
+# DESCRIPTION
+#   paranormal - start the server
+#
+# AUTHOR
+#   Jonas Liljegren   <jonas@paranormal.se>
+#
+# COPYRIGHT
+#   Copyright (C) 2005 Jonas Liljegren.  All Rights Reserved.
+#
+#   This module is free software; you can redistribute it and/or
+#   modify it under the same terms as Perl itself.
+#
+#=====================================================================
+
+APPROOT=/var/www/test.paranormal.se
+
+NAME=creation
+DAEMON=$APPROOT/bin/$NAME
+PIDFILE=$APPROOT/logs/$NAME.pid
+# note: SSD is required only at startup of the daemon.
+SSD=`which start-stop-daemon`
+ENV="env -i LANG=C PATH=/bin:/usr/bin:/usr/local/bin"
+
+trap "" 1
+
+
+test_config() {
+    if ! perl -c $DAEMON >/dev/null 2>/dev/null
+    then
+        printf "Program syntax error detected. Not reloading.\n\n"
+        perl -c $DAEMON
+        exit 1
+    fi
+#    echo "Config ok"
+}
+
+should_start() {
+    if [ ! -x $DAEMON ]; then
+	echo "$NAME ($DAEMON) is not executable, not starting"
+	exit 0
+    fi
+}
+
+case "$1" in
+  start)
+    should_start
+    test_config
+    echo -n "Starting paraframe server $NAME"
+    $ENV $SSD --start --chuid psi_cgi --pidfile $PIDFILE --exec $DAEMON >/dev/null 2>/dev/null
+    ;;
+
+  stop)
+    echo -n "Stopping paraframe server $NAME"
+    $ENV $SSD --stop --quiet --pidfile $PIDFILE --oknodo
+    ;;
+
+  reload | force-reload)
+    test_config
+    echo -n "Reloading configuration for $NAME"
+    $ENV $SSD --stop --pidfile $PIDFILE --signal USR1
+    ;;
+
+  restart)
+    test_config
+    echo -n "Restarting $NAME"
+    $ENV $SSD --stop --quiet --oknodo --retry 30 --pidfile $PIDFILE
+    $ENV $SSD --start --chuid psi_cgi --pidfile $PIDFILE --exec $DAEMON >/dev/null 2>/dev/null
+    ;;
+
+  *)
+    echo "Usage: /etc/init.d/$NAME {start|stop|reload|force-reload|restart}"
+    exit 1
+    ;;
+esac
+
+if [ $? -eq 0 ]; then
+	echo .
+	exit 0
+else
+	echo " failed"
+	exit 1
+fi

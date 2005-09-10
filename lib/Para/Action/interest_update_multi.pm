@@ -98,7 +98,8 @@ sub handler
 	$m->interest($tid)->update_by_query()
     }
 
-    return( inflect( $interest_count,
+    return( "Antal intressen uppdaterade: ".
+	    inflect( $interest_count,
 		     "Inga nya intressen, men ",
 		     "Ett nytt intresse och ",
 		     "%d nya intressen och ").

@@ -32,7 +32,7 @@ BEGIN
 {
     our @EXPORT_OK = qw( title2url );
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    warn "  Loading ".__PACKAGE__." $VERSION\n";
+    print "  Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
@@ -3410,7 +3410,7 @@ sub write_page
 	(
 	 INTERPOLATE  => 1,
 	 INCLUDE_PATH => \@incpath,
-	 COMPILE_DIR  =>  '/var/local/paranormal/ttc/psidb2',
+	 COMPILE_DIR  =>  $Para::Frame::CFG->{'paraframe'}.'/var/ttc/psidb2',
 	 COMPILE_EXT  => '.ttc',
 	 PRE_CHOMP    => 0,
 	 POST_CHOMP   => 0,

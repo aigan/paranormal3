@@ -25,7 +25,7 @@ use Date::Manip;
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    warn "  Loading ".__PACKAGE__." $VERSION\n";
+    print "  Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
@@ -85,7 +85,27 @@ sub count
 {
     my( $ins ) = @_;
     $ins->init_list unless $ins->{'list'};
-    return scalar @{ shift->{'list'} };
+    return scalar @{ $ins->{'list'} };
+}
+
+sub count_real
+{
+    my( $ins ) = @_;
+    $ins->init_list unless $ins->{'list'};
+
+    my $m = $ins->member;
+    my $cnt = 0;
+    my $total = scalar @{ $ins->{'list'} };
+    for( my $n=0; $n <= $total; $n++ )
+    {
+	my $rec = $ins->{'list'}[$n];
+	my $in = Para::Interest->get( $m, $rec->{'intrest_topic'}, $rec);
+	last if $in->interest < 30;
+	next if $in->defined < 75;
+	$cnt ++;
+    }
+
+    return $cnt;
 }
 
 sub updated
@@ -234,7 +254,7 @@ sub get
 	    Para::Interest->_new( $t );
     }
 
-    warn "  get interest $t->{id} (interests)\n";
+    debug "get interest $t->{id} (interests)";
 
     # Get will set the cache
     return Para::Interest->get( $ins->member, $t );

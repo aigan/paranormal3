@@ -1,10 +1,17 @@
 #!/bin/bash
 #  $Id$  -*-perl-*-
-#
+
+APPROOT=/var/www/test.paranormal.se
+
 #=====================================================================
 #
 # DESCRIPTION
 #   paranormal - start the server
+#
+# Copy this file to /etc/init.d and run the command:
+#   update-rc.d paranormal defaults
+#
+# Configure the APPROOT...
 #
 # AUTHOR
 #   Jonas Liljegren   <jonas@paranormal.se>
@@ -16,8 +23,6 @@
 #   modify it under the same terms as Perl itself.
 #
 #=====================================================================
-
-APPROOT=/var/www/test.paranormal.se
 
 NAME=creation
 DAEMON=$APPROOT/bin/$NAME
@@ -50,30 +55,30 @@ case "$1" in
   start)
     should_start
     test_config
-    echo -n "Starting paraframe server $NAME"
+    echo -n "Starting paraframe server: $NAME"
     $ENV $SSD --start --chuid psi_cgi --pidfile $PIDFILE --exec $DAEMON >/dev/null 2>/dev/null
     ;;
 
   stop)
-    echo -n "Stopping paraframe server $NAME"
+    echo -n "Stopping paraframe server: $NAME"
     $ENV $SSD --stop --quiet --pidfile $PIDFILE --oknodo
     ;;
 
   reload | force-reload)
     test_config
-    echo -n "Reloading configuration for $NAME"
+    echo -n "Reloading paraframe server: $NAME"
     $ENV $SSD --stop --pidfile $PIDFILE --signal USR1
     ;;
 
   restart)
     test_config
-    echo -n "Restarting $NAME"
+    echo -n "Restarting paraframe server: $NAME"
     $ENV $SSD --stop --quiet --oknodo --retry 30 --pidfile $PIDFILE
     $ENV $SSD --start --chuid psi_cgi --pidfile $PIDFILE --exec $DAEMON >/dev/null 2>/dev/null
     ;;
 
   *)
-    echo "Usage: /etc/init.d/$NAME {start|stop|reload|force-reload|restart}"
+    echo "Usage: /etc/init.d/paranormal {start|stop|reload|force-reload|restart}"
     exit 1
     ;;
 esac

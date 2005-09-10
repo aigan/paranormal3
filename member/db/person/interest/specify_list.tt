@@ -20,7 +20,7 @@
      [% tid = t.id %]   
      [% intr = m.interest(t) %]
 
-     <h3>[% t.link %]</h3>
+     <h3>[% PROCESS tlink.tt %]</h3>
 
      <p>[% t.text | html %]</p>
       

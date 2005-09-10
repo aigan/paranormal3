@@ -49,6 +49,10 @@ use Para;
 use Para::Member;
 
 {
+    # Do not daemonize if run with cmdline argument
+    my $daemonize = @ARGV ? 0 : 1;
+    my $watchdog = 1;   # Use watchdog
+
     unless( $SITE_CFG )
     {
 	die "Site configuration missing";
@@ -83,11 +87,6 @@ use Para::Member;
 
     # Make sure we can write to tempfiles
     chmod_tree( "$PARAFRAME/var/ttc" );
-
-
-    # Do not daemonize if run with cmdline argument
-    my $daemonize = @ARGV ? 0 : 1;
-    my $watchdog = 0;
 
     # Configure database
     #

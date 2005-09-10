@@ -142,7 +142,7 @@
     <center>
       <p><font size="-2">
        <span class="subdued">------------</span>
-        <a href="/member/db/topic/list/latest_texts">Senast ändrade texter</a>
+        <a href="/member/db/topic/list/latest_texts.tt">Senast ändrade texter</a>
         <span class="subdued">------------</span><br/>
     
         [% FOREACH rec = select_list("from t where t_entry is true and t_active is true and t_status>3 and t_published is true order by t_created desc limit 5") %]

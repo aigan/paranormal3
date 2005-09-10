@@ -3389,6 +3389,7 @@ sub write_page
 {
     my($t, $template, $params, $file) = @_;
 
+    my $req = $Para::Frame::REQ;
     $file ||= $t->{'t_file'};
     $params ||= $t->publish_params;
 
@@ -3442,7 +3443,6 @@ sub write_page
     };
     if( $@ )
     {
-	my $req = $Para::Frame::REQ;
 	$req->result->message("Fel uppstod när vi försökte skapa\n$file\nmed hjälp av $template_file");
     }
 
@@ -3451,6 +3451,8 @@ sub write_page
     $Para::Frame::U->revert_from_temporary_identity;
 
     die $@ if $@; # Forward exception
+
+    $req->yield; # Something else waiting?
 
     return 1;
 }

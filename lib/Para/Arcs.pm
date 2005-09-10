@@ -33,6 +33,8 @@ use Para::Topic;
 use Para::Arc;
 use Para::Constants qw( :all );
 
+use constant BATCH => 50;
+
 sub new
 {
     my( $this, $props ) = @_;
@@ -461,6 +463,10 @@ sub presentation
 		# The related topic. Same as $t unless $t are an entry
 		#
 		my $topic = (($t->entry ? $t->topic : $t ) || $t );
+
+		$Para::Frame::REQ->yield unless
+		    $Para::Frame::BATCHCOUNT++ % BATCH;
+
 
 		# Does the related topic have a relation of the
 		# reltype for this iteration?  This will be the

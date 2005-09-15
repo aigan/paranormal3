@@ -20,29 +20,38 @@ sub handler
 	throw('denied', "Du måste vara minst nivå 7 för att skicka epost till en lista");
     }
 
-    my $list = Para::Widget::select_persons();
+    my $list = Para::Widget::select_persons({all=>1});
     my $subject = $q->param('subject');
 
     my $from = $u->sys_email->format;
 
-    my $note = "";
+    my $e = Para::Email->new({
+	subject => $subject,
+	template => 'custom.tt',
+	from => $from,
+	cnt => scalar(@$list),
+    });
 
-    foreach my $rec ( @$list )
+    $req->add_background_job(\&send_to_list, $e, $list);
+
+    return "Skickar breveven i bakgrunden i fork ...";
+}
+
+sub send_to_list
+{
+    my( $req, $e, $list ) = @_;
+
+    my $fork = $Para::Frame::REQ->create_fork;
+    if( $fork->in_child )
     {
-	my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
-	my $fork = Para::Email->send_in_fork({
-	    subject => $subject,
-	    m => $m,
-	    template => 'custom.tt',
-	    from => $from,
-	    return_message => "Skickade till ".$m->desig,
-	});
-
-#	$fork->yield;
-#	return "Misslyckades skicka till ".$m->desig if $fork->failed;
+	foreach my $rec ( @$list )
+	{
+	    my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+	    $e->send({ m => $m }) or throw('email', $e->error_msg);
+	}
+	$fork->return('Sent e-mail to all of list');
     }
-
-    return "Skickar breveven i fork...";
+    return 1;
 }
 
 1;

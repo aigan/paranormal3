@@ -4,7 +4,7 @@ package Para::Action::interest_update_multi;
 use strict;
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw maxof inflect );
+use Para::Frame::Utils qw( throw maxof );
 
 use Para::Member;
 
@@ -99,14 +99,14 @@ sub handler
     }
 
     return( "Antal intressen uppdaterade: ".
-	    inflect( $interest_count,
-		     "Inga nya intressen, men ",
-		     "Ett nytt intresse och ",
-		     "%d nya intressen och ").
-	    inflect( $disinterest_count,
-		     "inga o-intressen",
-		     "ett o-intresse",
-		     "%d o-intressen")
+	    Para::Frame::Widget::inflect( $interest_count,
+					  "Inga nya intressen, men ",
+					  "Ett nytt intresse och ",
+					  "%d nya intressen och ").
+	    Para::Frame::Widget::inflect( $disinterest_count,
+					  "inga o-intressen",
+					  "ett o-intresse",
+					  "%d o-intressen")
 	    );
 }
 

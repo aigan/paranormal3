@@ -4,7 +4,7 @@ package Para::Action::interest_find_new;
 use strict;
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw uri debug trim inflect );
+use Para::Frame::Utils qw( throw uri debug trim );
 
 use Para::Member;
 use Para::Topic;
@@ -50,7 +50,7 @@ sub handler
 	$news->{$name} ++;
     }
 
-    $req->result->message(inflect scalar( keys %$news),
+    $req->result->message(Para::Frame::Widget::inflect scalar( keys %$news),
 			  "Inga fler nya intressen att undersöka",
 			  "Tittar igenom ett nytt intresse",
 			  "Tittar igenom %d nya intressen" );

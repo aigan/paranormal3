@@ -76,7 +76,7 @@ $this_from - $this_to
 
 <p>[% textarea('body') %]
 
-<p>Skickar medan du vänta. Är det många kanske du ska skicka till 20 åt gången eller liknande...
+<p><span class="highlight">Ändrat beteende:</span> Numera skickas brevet till <em>hela</em> sökresultatet. Inte bara till de på den sida som visas ovan. Breven skickas i bakgrunden, så du behöver inte vänta.</p>
 
 
 <p>[% go('Skicka brevet','result.tt','email_combined_list') %]

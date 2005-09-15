@@ -32,12 +32,12 @@ BEGIN
 {
     our @EXPORT_OK = qw( title2url );
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "  Loading ".__PACKAGE__." $VERSION\n";
+    print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
 use Para::Frame::DBIx qw( pgbool );
-use Para::Frame::Utils qw( deunicode trim throw minof debug );
+use Para::Frame::Utils qw( deunicode trim throw minof debug create_file );
 use Para::Frame::Time qw( now date );
 use Para::Frame::Widget;
 
@@ -3432,14 +3432,7 @@ sub write_page
  
 	my $sysfile = sysfile( $file );
 
-	my $dir = $sysfile; $dir =~ s/\/[^\/]+$//g;
-	mkpath( $dir );
-
-#    warn "--> Publishing to $sysfile using $template\n";
-	open PAGE, ">$sysfile"
-	    or die "Kunde inte skriva till $sysfile: $!";
-	print PAGE $page;
-	close PAGE;
+	create_file( $sysfile, $page );
     };
     if( $@ )
     {
@@ -3448,7 +3441,7 @@ sub write_page
 
 
     # Return to original user
-    $Para::Frame::U->revert_from_temporary_identity;
+    $Para::Frame::U->revert_from_temporary_user;
 
     die $@ if $@; # Forward exception
 

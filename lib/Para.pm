@@ -48,11 +48,15 @@ sub on_memory
     my $member_cache = scalar keys %{$Para::Member::CACHE};
     my $arc_cache = scalar keys %Para::Arc::CACHE;
     my $alias_cache = scalar keys %Para::Alias::CACHE;
+    my $place_cache = scalar keys %{$Para::Place::CACHE};
+    my $template_cache = scalar keys %Para::Frame::Cache::td;
 
     debug "Topic cache  : $topic_cache";
     debug "Member cache : $member_cache";
     debug "Arc cache    : $arc_cache";
     debug "Alias cache  : $alias_cache";
+    debug "Place cache  : $place_cache";
+    debug "TT cache     : $template_cache";
 
     $Para::CLEAR_CACHE = 1;
 }
@@ -119,6 +123,7 @@ sub add_background_jobs
     }
 
     $req->add_job('run_code', \&timeout_login);
+    $req->add_job('run_code', \&Para::Place::fix_zipcodes);
     
 
     return unless $Para::Frame::CFG->{'do_bgjob'};
@@ -171,7 +176,9 @@ sub timeout_login
 	elsif( $latest_seen < $now - 30 * 60 )
 	{
 	    debug "Logging out ".$m->desig;
-	    $m->latest_out( $now );
+
+	    # Temporary disabled...
+#	    $m->latest_out( $now );
 	}
     }
 }

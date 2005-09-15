@@ -57,7 +57,7 @@ sub handler
 	# Become root in order to get access to passwords
 	Para::Member->become_root;
 	$e->send or throw('email', $e->error_msg);
-	Para::Member->revert_from_root;
+	Para::Member->revert_from_temporary_user;
 	$fork->return("E-post med lösenordet har nu skickats till minst en av adresserna för $nick.\n");
       }
 

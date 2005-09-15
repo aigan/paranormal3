@@ -40,7 +40,7 @@ sub on_memory
 {
     my( $size ) = @_;
 
-    debug "Should clear some memory";
+    debug "Planning to clear some memory";
 
     my $topic_cache = scalar keys %{$Para::Topic::CACHE};
     my $member_cache = scalar keys %{$Para::Member::CACHE};
@@ -62,6 +62,8 @@ sub clear_caches
 
     if( $Para::CLEAR_CACHE )
     {
+	debug "Clearing caches";
+
 	foreach my $tkey ( keys %{$Para::Topic::CACHE} )
 	{
 	    my $t = $Para::Topic::CACHE->{$tkey};

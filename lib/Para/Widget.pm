@@ -27,7 +27,7 @@ use Text::ParagraphDiff;
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "  Loading ".__PACKAGE__." $VERSION\n";
+    print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
@@ -222,6 +222,13 @@ sub interest_next_step
 
 sub select_persons
 {
+    my( $crits ) = @_;
+
+    $crits ||= {};
+    my $all = 0;
+    $all = 1 if $crits->{'all'};
+
+
     my $q = $Para::Frame::REQ->q;
     my $offset = $q->param('offset')||1;
     my $pagesize = $q->param('pagesize')||50;
@@ -230,6 +237,14 @@ sub select_persons
 
     $q->param('offset', $offset);
     $q->param('pagesize', $pagesize);
+
+    if( $all )
+    {
+	$offset = 1;
+	$pagesize = 100000;
+    }
+
+
 
 
     my $belief     = $q->param('_belief')||0;

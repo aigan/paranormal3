@@ -77,8 +77,9 @@ use Para::Member;
 	'site'    =>
 	{
 	    # Path in  URL to website
-	    'webhome' => '',
-	    'last_step' => "/member/db/",
+	    'webhome'    => '',
+	    'webhost'    => $SITE_CFG->{'webhost'},
+	    'last_step'  => "/member/db/",
 	    'static_ttc' => "$PARAFRAME/var/ttc/psidb2",
 	}
 
@@ -111,7 +112,7 @@ use Para::Member;
     # Just in case we temporarily switched to root and got an exception
     Para::Frame->add_hook('on_error_detect', sub
 			  {
-			      Para::Member->revert_from_root();
+			      Para::Member->revert_from_temporary_user();
 			    });
 
     Para::Frame->add_hook('before_user_logout', sub
@@ -159,7 +160,6 @@ use Para::Member;
      'find_topic'        => sub{ Para::Topic->find( @_ ) },
      'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
 
-#	'touch_interest'    => sub{ Para::Interest->touch(@_) },
      'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
 
      'getarc'            => sub{ Para::Arc->get( @_ ) },

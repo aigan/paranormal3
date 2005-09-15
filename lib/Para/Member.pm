@@ -27,11 +27,11 @@ use Time::Seconds;
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "  Loading ".__PACKAGE__." $VERSION\n";
+    print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Time;
+use Para::Frame::Time qw( now );
 use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd debug uri );
 use Para::Frame::Email;
 
@@ -55,6 +55,8 @@ BEGIN
 
 }
 
+our $ONLINE_COUNT;
+
  INIT:
 {
     my $rec = 
@@ -65,6 +67,7 @@ BEGIN
 	'name_given'    => 'Gäst',
     };
     $Para::Member::CACHE->{0} = bless($rec, __PACKAGE__);
+
 }
 
 sub skapelsen
@@ -75,32 +78,14 @@ sub skapelsen
 sub become_root
 {
     debug(3,"Becoming root",1);
-    $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
-    return $_[0]->change_current_user( $_[0]->skapelsen );
+    return $_[0]->become_temporary_user( $_[0]->skapelsen );
 }
 
 sub become_unpriviliged_user
 {
     debug(3,"Becoming John Doe",1);
-    $Para::Frame::REQ->{'real_user'} = $Para::Frame::U;
     my $john_doe = Para::Member->get( 46 );
-    return $_[0]->change_current_user( $john_doe );
-}
-
-sub revert_from_temporary_identity
-{
-    return $_[0]->revert_from_root;
-}
-
-sub revert_from_root
-{
-    if( my $ru = delete $Para::Frame::REQ->{'real_user'} )
-    {
-	debug(3,"Reverting from temporary identity",-1);
-	# Remove {'real_user'} slot after its use here
-	return $_[0]->change_current_user( $ru );
-    }
-    return $Para::Frame::U;
+    return $_[0]->become_temporary_user( $john_doe );
 }
 
 sub get
@@ -333,11 +318,15 @@ sub verify_password
 
     $password_encrypted ||= '';
 
+    my $now = now();
+
     # Update login time
     if( $m->offline )
     {
-	$m->latest_in( time );
+	$m->latest_in( $now );
     }
+
+    $m->latest_seen( $now );
 
     if( $password_encrypted eq passwd_crypt($m->{'passwd'}) )
     {
@@ -438,8 +427,8 @@ sub set_passwd
 	return $m->change->fail("De två lösenorden stämde inte överens\n");
     }
 
-    my $now = time;
-    my $now_str = localtime($now)->date;
+    my $now = now();
+    my $now_str = $now->date;
     my $st = "update passwd set passwd_updated=?, passwd_changedby=?, ".
 	"passwd_previous=?, passwd=? where passwd_member=?";
     my $sth = $Para::dbh->prepare( $st );
@@ -1848,6 +1837,7 @@ sub latest_in
 	my $sth = $Para::dbh->prepare($st);
 	$sth->execute( $time->cdate, $m->id );
 	$m->{'latest_in'} = $time->epoch;
+	$ONLINE_COUNT ++;
     }
 
     my $latest_in = $m->{'latest_in'};
@@ -1870,9 +1860,25 @@ sub latest_out
 	my $sth = $Para::dbh->prepare($st);
 	$sth->execute( $time->cdate, $m->id );
 	$m->{'latest_out'} = $time->epoch;
+	$ONLINE_COUNT --;
     }
 
     return $m->{'latest_out'} = Para::Frame::Time->get( $m->{'latest_out'} || $m->latest_in );
+}
+
+sub latest_seen
+{
+    my( $m, $time ) = @_;
+
+    # NB! Not stored in the DB!
+
+    if( $time )
+    {
+	$time = Para::Frame::Time->get( $time );
+	$m->{'latest_seen'} = $time;
+    }
+
+    return $m->{'latest_seen'} || $m->latest_in;
 }
 
 sub online
@@ -2223,8 +2229,8 @@ sub store_db_field
 	$props->{$field} = undef unless length $props->{$field};
     }
 
-    my $now = time;
-    my $now_str = localtime($now)->date;
+    my $now = now();
+    my $now_str = $now->date;
     my $st = "update member set member_updated=?, ".
 	join( ', ', map("$_=?", @keys)) .
 	" where member = ?";
@@ -2698,10 +2704,13 @@ sub by_name  ## LIST CONSTRUCTOR
 
 sub count_currently_online
 {
-    # FIXME - use internal counter
-    # my $db = paraframe_dbm_open( DB_ONLINE );
-    # return scalar keys %$db;
-    return 999;
+    undef $ONLINE_COUNT if $ONLINE_COUNT < 0;
+    unless( defined $ONLINE_COUNT )
+    {
+	my $rec = $Para::dbix->select_record("select count(member) as cnt from member where latest_in is not null and (latest_out is null or latest_in > latest_out)");
+	$ONLINE_COUNT = $rec->{'cnt'};
+    }
+    return $ONLINE_COUNT;
 }
 
 ######################################################

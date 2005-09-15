@@ -19,15 +19,17 @@ package Para;
 
 use strict;
 use Data::Dumper;
+use Time::Seconds qw( ONE_HOUR );
 
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "  Loading ".__PACKAGE__." $VERSION\n";
+    print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( debug );
+use Para::Frame::Time qw( now );
 
 use Para::Member;
 use Para::Topic;
@@ -115,7 +117,12 @@ sub add_background_jobs
 		      });
 	$added ++;
     }
+
+    $req->add_job('run_code', \&timeout_login);
     
+
+    return unless $Para::Frame::CFG->{'do_bgjob'};
+
     eval
     {
 	unless( $added )
@@ -138,6 +145,35 @@ sub add_background_jobs
 	debug "Finished setting up background jobs";
     }
     return 1;
+}
+
+sub timeout_login
+{
+    my( $req ) = @_;
+
+    my $recs = $Para::dbix->select_list("select member  from member where latest_in is not null and (latest_out is null or latest_in > latest_out) order by latest_in");
+
+    my $now = now();
+
+    foreach my $rec ( @$recs )
+    {
+	my $m = Para::Member->get_by_id( $rec->{'member'} );
+
+	my $latest_in = $m->latest_in;
+	my $latest_seen = $m->latest_seen;
+
+	# Failsafe in case no logout was registred
+	if( $latest_in < $now - 40 * ONE_HOUR )
+	{
+	    debug $m->desig." has been online since $latest_in";
+	    $m->latest_out( $latest_in + ONE_HOUR );
+	}
+	elsif( $latest_seen < $now - 30 * 60 )
+	{
+	    debug "Logging out ".$m->desig;
+	    $m->latest_out( $now );
+	}
+    }
 }
 
 1;

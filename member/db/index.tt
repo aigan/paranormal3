@@ -94,3 +94,5 @@
 <p>[% step %]
 </p>
 [% END %]
+
+<p>Det är just nu [% inflect(count_online, '1 medlem inloggad', '%d medlemmar inloggade') %] här</p>

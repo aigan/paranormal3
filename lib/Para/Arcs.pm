@@ -23,7 +23,7 @@ use Carp qw( confess );
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "  Loading ".__PACKAGE__." $VERSION\n";
+    print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
@@ -426,7 +426,7 @@ sub presentation
 	#
 	# $other = $group_a;
 
-	if( debug )
+	if( debug 3 )
 	{
 	    warn "\n";
 	    warn "Relation: $title\n";
@@ -446,7 +446,7 @@ sub presentation
 	    #
 	    foreach my $basearc ( @{$arcs->arcs} )
 	    {
-		debug(1,"basearc ".$basearc->desig);
+		debug(3,"basearc ".$basearc->desig);
 
 		# The related node to be presented (may be entry)
 		#
@@ -475,7 +475,7 @@ sub presentation
 		if( my $rels = $topic->rel({type => $type}) )
 		{
 		    my $count = $rels->size;
-		    debug(1,"\tHas $count arcs");
+		    debug(3,"\tHas $count arcs");
 
 		    # Iterate through the related topic relations
 		    #
@@ -497,24 +497,24 @@ sub presentation
 			#
 			next if grep $reltid == $_, @taboo;
 
-			debug(1,"\t\tInserting ".$relt->desig);
+			debug(3,"\t\tInserting ".$relt->desig);
 			$groups{$reltid}{'content'}{$t->id}{'arc'} = $basearc;
 			$groups{$reltid}{'content'}{$t->id}{'topic'} = $t;
 			$groups{$reltid}{'topic'} ||= $relt;
 			$placements{$t->id}{$reltid} = $relt;
 		    }
-		    debug(1,"\tdone");
+		    debug(3,"\tdone");
 		}
 		else
 		{
-		    debug(1,"\tNo arcs of type $type");
+		    debug(3,"\tNo arcs of type $type");
 		}
-		debug(1,"more basearcs?");
+		debug(3,"more basearcs?");
 	    }
-	    debug(1,"Type $type done");
+	    debug(3,"Type $type done");
 	}
 
-	debug(1,"\nChecking topics\n\n");
+	debug(3,"\nChecking topics\n\n");
 
 	# Go through the groups, starting with the worst
 	# groups. Groups with to many or to few members.
@@ -526,7 +526,7 @@ sub presentation
 	{
 	    my $super = $group_a->{'topic'};
 
-	    debug(1,"Check group ".$super->desig);
+	    debug(3,"Check group ".$super->desig);
 
 	    # Mark as exclusive if this group has members not present
 	    # in any other group.  In that case, we can't get rid of
@@ -547,10 +547,13 @@ sub presentation
 		    {
 			my $t = Para::Topic->get_by_id($tid);
 			my $title = $t->desig;
-			warn "\t$title has no other belongings\n";
-			foreach my $relt ( values %{$placements{$tid}} )
+			if( debug( 3 ) )
 			{
-			    warn "\t\t".$relt->desig."\n";
+			    debug "\t$title has no other belongings";
+			    foreach my $relt ( values %{$placements{$tid}} )
+			    {
+				debug "\t\t".$relt->desig;
+			    }
 			}
 		    }
 
@@ -571,13 +574,13 @@ sub presentation
 	    # Also remove groups that contaions all related topics
 	    #
 	    $groups_number = scalar(keys %groups);
-	    debug(1,"\tNow $groups_number groups");
+	    debug(3,"\tNow $groups_number groups");
 	    next if $groups_number < NORMSIZE;
 
 	    my $group_size = scalar(keys %{$group_a->{'content'}});
 	    if( $group_a->{'exclusive'} and $group_size == $total_size )
 	    {
-		debug(1,"\tremoved because all inclusive");
+		debug(3,"\tremoved because all inclusive");
 		foreach my $tid ( keys %{$group_a->{'content'}} )
 		{
 		    $temp_others{ $tid } = $group_a->{'content'}{ $tid };
@@ -588,7 +591,7 @@ sub presentation
 
 	    if( not $group_a->{'exclusive'} )
 	    {
-		debug(1,"\tremoved");
+		debug(3,"\tremoved");
 		foreach my $tid ( keys %{$group_a->{'content'}} )
 		{
 		    delete $placements{$tid}{$super->id};
@@ -619,11 +622,11 @@ sub presentation
 	foreach my $group_id ( @best_other )
 	{
 	    my $gname = Para::Topic->get_by_id( $group_id )->desig;
-	    debug(1,"group $gname has $points{ $group_id } points");
+	    debug(3,"group $gname has $points{ $group_id } points");
 	    if( $points{ $group_id } > NORMSIZE*2 )
 	    {
 		$other = {};
-		if( debug )
+		if( debug 3 )
 		{
 		    warn "    Moving topics from group $gname to others\n";
 		}
@@ -648,10 +651,10 @@ sub presentation
 	#
 	foreach my $group_a ( values %groups )
 	{
-	    debug(1,"Check group ".$group_a->{'topic'}->desig);
+	    debug(3,"Check group ".$group_a->{'topic'}->desig);
 	    if( scalar(keys %{$group_a->{'content'}}) < NORMSIZE/2 )
 	    {
-		debug(1,"\tremoved because too small");
+		debug(3,"\tremoved because too small");
 		foreach my $tid ( keys %{$group_a->{'content'}} )
 		{
 		    $temp_others{ $tid } = $group_a->{'content'}{ $tid };
@@ -676,22 +679,22 @@ sub presentation
       CHECK:
 	foreach my $group_a ( values %groups )
 	{
-	    debug(1,"Check group ".$group_a->{'topic'}->desig);
+	    debug(3,"Check group ".$group_a->{'topic'}->desig);
 	    foreach my $tid ( keys %{$group_a->{'content'}} )
 	    {
 		if( scalar( keys %{$placements{$tid}} ) == 1 )
 		{
-		    if( debug )
+		    if( debug 3 )
 		    {
 			my $title = Para::Topic->get_by_id($tid)->desig;
-			warn "\t$title has no other place\n";
+			debug "\t$title has no other place";
 		    }
 		    next CHECK;
 		}
 
 	    }
-
-	    debug(1,"\tremoved");
+	    
+	    debug(3,"\tremoved");
 	    foreach my $tid ( keys %{$group_a->{'content'}} )
 	    {
 		delete $placements{$tid}{$group_a->{'topic'}->id};
@@ -743,7 +746,7 @@ sub presentation
 	    $group_cnt ++;
 	}
 
-	debug(1,"Inserted $link_cnt links over $group_cnt groups");
+	debug(3,"Inserted $link_cnt links over $group_cnt groups");
     }
 
     my $result =

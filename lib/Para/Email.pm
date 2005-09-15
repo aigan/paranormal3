@@ -30,7 +30,7 @@ use Data::Dumper;
 BEGIN
 {
     $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "  Loading ".__PACKAGE__." $VERSION\n";
+    print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
@@ -49,6 +49,15 @@ sub set
 
     $p->{'from'} ||= '"Paranormal.se" <info@paranormal.se>';
     $p->{'subject'} ||= 'Info från Paranormal.se';
+
+    if( $p->{'m'} )
+    {
+
+	# Removing previous recipient in case the $e object is reused
+	# for sending to a list of reciepients
+
+	delete $p->{'to'};
+    }
 
     unless( $p->{'to'} )
     {

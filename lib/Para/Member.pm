@@ -56,6 +56,7 @@ BEGIN
 }
 
 our $ONLINE_COUNT;
+our %UNSAVED;
 
  INIT:
 {
@@ -118,7 +119,8 @@ sub get_by_id
     return $mid if ref $mid eq 'Para::Member';
     confess "mid not a number: $mid" unless $mid =~ /^-?\d+$/;
 
-    if( not $no_cache or not $rec )
+    # If we should use the cache
+    if( not $no_cache )
     {
 	if( $Para::Member::CACHE->{$mid} )
 	{
@@ -158,7 +160,16 @@ sub get_by_id
 
     if( $rec )
     {
-	return $Para::Member::CACHE->{$mid} = bless($rec, $class);
+	if( $no_cache )
+	{
+	    debug(4, "Got member $mid, bypassing cache");
+	    return bless($rec, $class);
+	}
+	else
+	{
+	    debug(4, "Initiated member $mid");
+	    return $Para::Member::CACHE->{$mid} = bless($rec, $class);
+	}
     }
     else
     {
@@ -372,7 +383,8 @@ sub set_field
     trim(\$value);
     $m->{$field} ||= '';
     return if $value eq $m->{$field};
-    $m->store_db_field({ $field => $value });
+    $m->{$field} = $value;
+    $m->mark_unsaved;
     return $m->change->success("$field uppdaterad");
 }
 
@@ -390,7 +402,8 @@ sub set_field_number
 	    return $m->change->fail("$field tillåter bara nummer");
 	}
     }
-    $m->store_db_field({ $field => $value });
+    $m->{$field} = $value;
+    $m->mark_unsaved;
     return $m->change->success("$field uppdaterad");
 }
 
@@ -499,7 +512,7 @@ sub update_by_query
 			    home_postal_street home_postal_visiting
 			    home_tele_phone_comment
 			    home_tele_mobile_comment
-			    home_tele_fax_comment statement style
+			    home_tele_fax_comment statement
 			    home_online_email presentation
 			    member_comment_admin show_style
 
@@ -528,6 +541,7 @@ sub update_by_query
 	}
     }
 
+    $m->mark_updated;
 }
 
 sub show_complexity
@@ -580,7 +594,7 @@ sub unset_sys_uid
     my( $m ) = @_;
 
     $m->{'sys_uid'} = undef;
-    $m->store_db_field({ 'sys_uid' => undef });
+    $m->mark_updated;
     return 1;
 }
 
@@ -703,6 +717,25 @@ sub geo_y()
 {
     my( $m ) = @_;
     return $m->{'geo_y'};
+}
+
+sub set_geo
+{
+    my( $m, $geo_x, $geo_y, $geo_precision ) = @_;
+
+    # See also $m->zip2city()
+
+    $geo_precision ||= 0;
+    throw('validation', "geo_y not given") unless $geo_y;
+
+    # TODO: Validate against zip if existing
+
+    $m->{'geo_x'} = $geo_x;
+    $m->{'geo_y'} = $geo_y;
+    $m->{'geo_precision'} = $geo_precision;
+
+    $m->mark_unsaved;
+    return 1;
 }
 
 sub dist
@@ -1313,10 +1346,15 @@ sub set_home_online_msn
     if( length $email )
     {
 	### TODO: FIXME
-	$email = $m->validate_email( $email ) or return undef;
+	my $ea = Para::Email::Address->parse( $email );
+	unless( $ea->validate )
+	{
+	    return $m->change->fail("$email är inte en korrekt e-postadress");
+	}
     }
 
-    $m->store_db_field({ home_online_msn => $email });
+    $m->{home_online_msn} = $email;
+    $m->mark_updated;
     return $m->change->success("Ändrade home_online_msn till '$email'");
 }
 
@@ -1325,7 +1363,11 @@ sub sys_email
     my( $m ) = @_;
 
     return undef unless $m->{'sys_email'};
-    return $m->{'sys_email_obj'} ||= Para::Member::Email::Address->new( $m, $m->{'sys_email'} );
+    unless( ref $m->{'sys_email'} )
+    {
+	$m->{'sys_email'} =  Para::Member::Email::Address->new( $m, $m->{'sys_email'} );
+    }
+    return $m->{'sys_email'};
 }
 
 sub set_sys_email
@@ -1349,8 +1391,8 @@ sub set_sys_email
     eval
     {
 	$m->add_mailalias($ea); # Must be done before setting sys_email
-	$m->store_db_field({ sys_email => $ea->as_string });
-	undef $m->{'sys_email_obj'}; # Reset object
+	$m->{'sys_email'} = $ea;
+	$m->mark_updated;
 	$m->update_mail_forward;
     };
     if( $@ )
@@ -1399,7 +1441,8 @@ sub set_bdate_ymd_year
 	    return $m->change->fail("Du är för ung för att vara här");
 	}
     }
-    $m->store_db_field({ bdate_ymd_year => $year });
+    $m->{'bdate_ymd_year'} = $year;
+    $m->mark_updated;
     return $m->change->success("Ändrade födelseår till '$year'");
 }
 
@@ -1422,7 +1465,8 @@ sub level
 	    return $m->change->fail("Level out of range");
 	}
 
-	$m->store_db_field({ member_level => $level });
+	$m->{'member_level'} = $level;
+	$m->mark_updated;
 	$m->create_topic;
 
 	return $m->change->success("Ändrade nivån till $level");
@@ -1439,7 +1483,8 @@ sub create_topic
     return if $m->present_contact_public < 5;
 
     my $t = Para::Topic->create( $m->_nickname );
-    $m->store_db_field({ 'member_topic' => $t->id });
+    $m->{'member_topic'} =  $t->id;
+    $m->mark_updated;
 
     $m->update_topic_aliases;
     $m->update_topic_member;
@@ -1519,7 +1564,8 @@ sub set_gender
 	    return $m->change->fail("Använd M/F");
 	}
     }
-    $m->store_db_field({ gender => $gender });
+    $m->{'gender'} = $gender;
+    $m->mark_updated;
     return $m->change->success("Könsbyte genomfört utan komplikationer");
 }
 
@@ -1536,7 +1582,8 @@ sub set_name_given
 	    return $m->change->fail("Du får bara ange ett förnamn");
 	}
     }
-    $m->store_db_field({ name_given => $fn });
+    $m->{'name_given'} = $fn;
+    $m->mark_updated;
     $m->update_topic_aliases;
     if( length( $fn ) )
     {
@@ -1614,7 +1661,8 @@ sub set_home_postal_code
 	$zip = $prefix . $number;
     }
 
-    $m->store_db_field({ home_postal_code => $zip });
+    $m->{'home_postal_code'} = $zip;
+    $m->mark_updated;
     $m->zip2city;
 
     if( my $city = $m->home_postal_city )
@@ -1697,7 +1745,9 @@ sub set_home_tele_phone
     {
 	$phone = $m->validate_phone( $phone ) or return undef;
     }
-    $m->store_db_field({ home_tele_phone => $phone });
+
+    $m->{'home_tele_phone'} = $phone;
+    $m->mark_updated;
     return $m->change->success("Hemtelefonnummer ändrat till '$phone'");
 }
 
@@ -1711,7 +1761,8 @@ sub set_home_tele_mobile
     {
 	$phone = $m->validate_phone( $phone ) or return undef;
     }
-    $m->store_db_field({ home_tele_mobile => $phone });
+    $m->{'home_tele_mobile'} = $phone;
+    $m->mark_updated;
     return $m->change->success("Mobilnummer ändrat till '$phone'");
 }
 
@@ -1725,7 +1776,8 @@ sub set_home_tele_fax
     {
 	$phone = $m->validate_phone( $phone ) or return undef;
     }
-    $m->store_db_field({ home_tele_fax => $phone });
+    $m->{'home_tele_fax'} = $phone;
+    $m->mark_updated;
     return $m->change->success("Fax ändrat till '$phone'");
 }
 
@@ -1739,7 +1791,8 @@ sub set_home_online_uri
     {
 	$uri = $m->validate_uri( $uri ) or return undef;
     }
-    $m->store_db_field({ home_online_uri => $uri });
+    $m->{'home_online_uri'} = $uri;
+    $m->mark_updated;
     return $m->change->success("Webbplats ändrad till '$uri'");
 }
 
@@ -1804,9 +1857,9 @@ sub set_nickname
     # TODO: chatnick for every nick
     my $chat_nick = name2chat_nick($nickname);
 
-    $m->store_db_field({ nickname  => $nickname,
-			 chat_nick => $chat_nick,
-		     });
+    $m->{'nickname'} = $nickname;
+    $m->{'chat_nick'} = $chat_nick;
+    $m->mark_updated;
     $m->update_topic_aliases;
     return $m->change->success( "Ändrade alias till $nickname\n" );
 }
@@ -1832,11 +1885,8 @@ sub latest_in
 
     if( $time )
     {
-	$time = Para::Frame::Time->get( $time );
-	my $st = "update member set latest_in=? where member=?";
-	my $sth = $Para::dbh->prepare($st);
-	$sth->execute( $time->cdate, $m->id );
-	$m->{'latest_in'} = $time->epoch;
+	$m->{'latest_in'} = Para::Frame::Time->get( $time );
+	$m->mark_unsaved;
 	$ONLINE_COUNT ++;
     }
 
@@ -1855,11 +1905,8 @@ sub latest_out
 
     if( $time )
     {
-	$time = Para::Frame::Time->get( $time );
-	my $st = "update member set latest_out=? where member=?";
-	my $sth = $Para::dbh->prepare($st);
-	$sth->execute( $time->cdate, $m->id );
-	$m->{'latest_out'} = $time->epoch;
+	$m->{'latest_out'} = Para::Frame::Time->get( $time );
+	$m->mark_unsaved;
 	$ONLINE_COUNT --;
     }
 
@@ -2217,34 +2264,166 @@ sub validate_uri
     return "$prot//$host$port$path";
 }
 
-sub store_db_field
+sub mark_unsaved
 {
-    my( $m, $props ) = @_;
+    my( $m ) = @_;
 
-    my @keys = keys %$props; # Ensure ordering
+    my $mid = $m->id;
 
-    # Make value undef if its set to ""
-    foreach my $field ( @keys )
+    $UNSAVED{$mid} = $m;
+}
+
+sub mark_updated
+{
+    my( $m, $time ) = @_;
+    $time ||= now();
+    $m->{'member_updated'} = $time;
+    $m->mark_unsaved;
+    return $time;
+}
+
+sub commit
+{
+    eval
     {
-	$props->{$field} = undef unless length $props->{$field};
+	foreach my $m ( values %UNSAVED )
+	{
+	    $m->save;
+	}
+    };
+    if( $@ )
+    {
+	debug $@;
+	rollback();
+    }
+}
+
+sub rollback
+{
+    foreach my $m ( values %UNSAVED )
+    {
+	$m->discard_changes;
+    }
+    %UNSAVED = ();
+}
+
+sub save
+{
+    my( $m ) = @_;
+
+    my $mid = $m->id;
+
+    my( @fields, @values );
+
+    debug(1,"Saving member $mid");
+    my $saved = $m->get_by_id( $mid, undef, 1); # Nocache
+
+    my $types =
+    {
+	sys_uid                      => 'string',
+	sys_email                    => 'email',
+	sys_logging                  => 'integer',
+	sys_level                    => 'integer',
+	present_intrests             => 'integer',
+	present_activity             => 'integer',
+	present_gifts                => 'integer',
+	general_belief               => 'integer',
+	general_theory               => 'integer',
+	general_practice             => 'integer',
+	general_editor               => 'integer',
+	general_helper               => 'integer',
+	general_meeter               => 'integer',
+	general_bookmark             => 'integer',
+	general_discussion           => 'integer',
+	bdate_ymd_year               => 'integer',
+	member_level                 => 'integer',
+	member_topic                 => 'integer',
+	gender                       => 'string',
+	nickname                     => 'string',
+	name_prefix                  => 'string',
+	name_given                   => 'string',
+	name_suffix                  => 'string',
+	home_postal_name             => 'string',
+	home_postal_street           => 'string',
+	home_postal_visiting         => 'string',
+	home_postal_code             => 'string',
+	home_postal_city             => 'string',
+	home_tele_phone              => 'string',
+	home_tele_phone_comment      => 'string',
+	home_tele_mobile             => 'string',
+	home_tele_mobile_comment     => 'string',
+	home_tele_fax                => 'string',
+	home_tele_fax_comment        => 'string',
+	home_online_msn              => 'email',
+	home_online_icq              => 'integer',
+	home_online_aol              => 'integer',
+	home_online_uri              => 'string',
+	home_online_email            => 'email',
+	chat_nick                    => 'string',
+	geo_x                        => 'float',
+	geo_y                        => 'float',
+	geo_precision                => 'integer',
+	latest_in                    => 'date',
+	latest_out                   => 'date',
+	member_payment_period_length => 'integer',
+	member_payment_period_expire => 'integer',
+	member_payment_period_cost   => 'integer',
+	member_payment_total         => 'integer',
+	statement                    => 'string',
+	show_style                   => 'string',
+	show_complexity              => 'integer',
+	show_detail                  => 'integer',
+	show_edit                    => 'integer',
+	show_level                   => 'integer',
+	newsmail                     => 'integer',
+	presentation                 => 'string',
+	member_comment_admin         => 'string',
+	member_topic                 => 'integer',
+	chat_level                   => 'integer',
+    };
+
+    my $changes = $Para::dbix->save_record({
+	rec_new => $m,
+	rec_old => $saved,
+	table   => 'member',
+	types   => $types,
+	keyval  => $mid,
+	fields_to_check => [keys %$types],
+    });
+
+
+    delete $UNSAVED{$mid};
+
+    return $changes; # The number of changes
+}
+
+sub discard_changes  # Member changed. Refresh from DB
+{
+    my( $m ) = @_;
+
+    my $mid = $m->id;
+
+    debug(1,"refresh member $mid");
+
+    my $saved = $m->get_by_id( $mid, undef, 1); # no cache
+
+    if( not $saved )
+    {
+	return undef;
     }
 
-    my $now = now();
-    my $now_str = $now->date;
-    my $st = "update member set member_updated=?, ".
-	join( ', ', map("$_=?", @keys)) .
-	" where member = ?";
-    my $sth = $Para::dbh->prepare( $st );
-    debug(3,"Member_db_update: $st (@{$props}{@keys})");
-#    die Dumper [@{$props}{@keys}];
-    $sth->execute( $now_str, @{$props}{@keys}, $m->id );
-
-    # DB changed. Now change object. REMEMBER change chached atributes
-    foreach my $field ( @keys )
+    ###  Replace all parts of object
+    #
+    foreach my $key ( keys %$m )
     {
-	$m->{$field} = $props->{$field};
+	delete $m->{$key};
     }
-    $m->{'member_updated'} = $now;
+    foreach my $key ( keys %$saved )
+    {
+	$m->{$key} = $saved->{$key};
+    }
+
+    return $m;
 }
 
 sub change { shift->{'changes'}  ||= new Para::Change }
@@ -2255,7 +2434,6 @@ sub zip2city
     my( $m ) = @_;
 
     my $zip = $m->home_postal_code;
-    my $prop = {};
 
     if( $zip and $zip =~ s/^S-// )
     {
@@ -2271,12 +2449,12 @@ sub zip2city
 	{
 	    $city_name = undef if $zip eq '';
 	    debug(3,"  Found city $city_name");
-	    $prop->{'home_postal_city'} = $city_name;
+	    $m->{'home_postal_city'} = $city_name;
 	}
 	else
 	{
 	    debug(3,"Removing city");
-	    $prop->{'home_postal_city'} = undef;
+	    $m->{'home_postal_city'} = undef;
 	}
 
 	if( my $x = $rec->{'zip_x'} || $rec->{'city_x'} )
@@ -2286,32 +2464,32 @@ sub zip2city
 	    debug(3,"  Got koordinates $x:$y");
 	    my $precision = $rec->{'zip_precision'} || $rec->{'city_precision'};
 
-	    $prop->{'geo_x'} = $x;
-	    $prop->{'geo_y'} = $y;
-	    $prop->{'geo_precision'} = $precision || 0;
+	    $m->{'geo_x'} = $x;
+	    $m->{'geo_y'} = $y;
+	    $m->{'geo_precision'} = $precision || 0;
 	}
 	else
 	{
 	    debug(3,"Removing koordinates");
 
-	    $prop->{'geo_x'} = undef;
-	    $prop->{'geo_y'} = undef;
+	    $m->{'geo_x'} = undef;
+	    $m->{'geo_y'} = undef;
 
 	    # Set geo precision to undef so that it will trigger a coord loading
-	    $prop->{'geo_precision'} = undef;
+	    $m->{'geo_precision'} = undef;
 	}
     }
     else
     {
 	debug(3,"Removing koordinates and city");
 
-	$prop->{'home_postal_city'} = undef;
-	$prop->{'geo_x'} = undef;
-	$prop->{'geo_y'} = undef;
-	$prop->{'geo_precision'} = 0;
+	$m->{'home_postal_city'} = undef;
+	$m->{'geo_x'} = undef;
+	$m->{'geo_y'} = undef;
+	$m->{'geo_precision'} = 0;
     }
 
-    $m->store_db_field($prop);
+    $m->mark_updated;
 }
 
 sub score_change
@@ -2415,17 +2593,8 @@ sub reset_payment_stats
 
     debug(0,"Resetting payment stats");
 
-    my $sth = $Para::dbh->prepare("update member set
-               member_payment_period_length=?,
-               member_payment_period_expire=?,
-               member_payment_period_cost=0,
-               member_payment_total=0
-               where member=?");
-
     my $period_length = 30;
     my $expire = $m->created + ONE_DAY*7;
-
-    $sth->execute($period_length, $expire->cdate, $m->id );
 
     $m->{'member_payment_period_length'} = 30;
     $m->{'member_payment_period_expire'} = $expire->cdate;
@@ -2437,6 +2606,8 @@ sub reset_payment_stats
 	debug(0,sprintf("  Readd payment %d", $p->id));
 	$p->add_to_member_stats;
     }
+
+    $m->mark_unsaved;
 }
 
 

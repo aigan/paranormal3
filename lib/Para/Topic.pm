@@ -50,7 +50,11 @@ use Para::Constants qw( :all );
 use Para::Widget;
 
 use constant BATCH => 50;
+
 our $BATCHCOUNT;
+our $TO_PUBLISH_NOW;
+our $TO_PUBLISH;
+our %UNSAVED;
 
 #use constant LIMIT => 10000;
 #
@@ -378,10 +382,10 @@ sub publish_from_queue
     return $cnt;
 }
 
-sub commit
+sub publish_urgent
 {
     $BATCHCOUNT ||= 1;
-    foreach my $t ( values %$Para::Topic::to_publish_now )
+    foreach my $t ( values %$TO_PUBLISH_NOW )
     {
 	$t->publish;
 	unless( $BATCHCOUNT++ % BATCH )
@@ -389,8 +393,11 @@ sub commit
 	    $Para::Frame::REQ->yield;
 	}
     }
-    
-    foreach my $t ( values %Para::Topic::UNSAVED )
+}
+
+sub commit
+{
+    foreach my $t ( values %UNSAVED )
     {
 	$t->save;
     }
@@ -398,12 +405,13 @@ sub commit
 
 sub rollback
 {
-    foreach my $t ( values %Para::Topic::UNSAVED )
+    foreach my $t ( values %UNSAVED )
     {
 	$t->discard_changes;
     }
-    %Para::Topic::UNSAVED = ();
+    %UNSAVED = ();
 }
+
 
 
 ####################################################################
@@ -451,9 +459,12 @@ sub discard_changes  # Topic changed. Refresh from DB
     if( not $rec )
     {
 	my $cv = $Para::Topic::CACHE->{"$tid-$v"};
-	$cv and $cv->clear_from_memory;
+	$cv and $cv->clear_cached;
+	delete $Para::Topic::CACHE->{"$tid-$v"};
+
 	my $ct = $Para::Topic::CACHE->{"$tid-"};
-	$ct and $ct->clear_from_memory;
+	$ct and $ct->clear_cached;
+	delete $Para::Topic::CACHE->{"$tid-"};
 
 	$t = undef;
 	return undef;
@@ -2548,7 +2559,7 @@ sub mark_publish
     else
     {
 	debug "---> Set to_publish $t->{t}";
-	$Para::Topic::to_publish->{$t->id} = $t;
+	$TO_PUBLISH->{$t->id} = $t;
     }
 }
 
@@ -2563,7 +2574,7 @@ sub mark_publish_now
     }
 
     debug "---> Set to_publish_now $t->{t}";
-    $Para::Topic::to_publish_now->{$t->id} = $t;
+    $TO_PUBLISH_NOW->{$t->id} = $t;
 }
 
 sub mark_unsaved
@@ -2573,7 +2584,7 @@ sub mark_unsaved
     my $tid = $t->id;
     my $v = $t->ver;
 
-    $Para::Topic::UNSAVED{"$tid-$v"} = $t;
+    $UNSAVED{"$tid-$v"} = $t;
 }
 
 sub save
@@ -2582,8 +2593,6 @@ sub save
 
     my $tid = $t->id;
     my $v   = $t->ver;
-
-    my( @fields, @values );
 
     debug(1,"saving $tid v$v");
     my $saved = $t->_new( $tid, $v, 1); # Nocache
@@ -2631,7 +2640,7 @@ sub save
     });
 
 
-    delete $Para::Topic::UNSAVED{"$tid-$v"};
+    delete $UNSAVED{"$tid-$v"};
 
     return $changes; # The number of changes
 }
@@ -3496,8 +3505,8 @@ sub set_published
     }
 
     # No need to publish them now
-    delete $Para::Topic::to_publish->{$t->id};
-    delete $Para::Topic::to_publish_now->{$t->id};
+    delete $TO_PUBLISH->{$t->id};
+    delete $TO_PUBLISH_NOW->{$t->id};
 
     return 1;
 }

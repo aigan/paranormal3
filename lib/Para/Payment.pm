@@ -30,6 +30,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
+use Para::Frame::Utils qw( debug );
 
 use Para::Topic;
 use Para::Member;
@@ -129,16 +130,7 @@ sub add_to_member_stats
     {
 	my $m = $p->member;
 
-	warn sprintf "$$:   Add stats for payment %d to %s\n", $p->id, $m->name;
-
-	# Add to member data
-	#
-	my $sth = $Para::dbh->prepare("update member set
-               member_payment_period_length=?,
-               member_payment_period_expire=?,
-               member_payment_period_cost=?,
-               member_payment_total=?
-               where member=?");
+	debug sprintf "Add stats for payment %d to %s", $p->id, $m->name;
 
 	my $length     = $p->quantity;
 	my $member     = $p->member;
@@ -151,14 +143,14 @@ sub add_to_member_stats
 	my $cost       = $p->price;
 	my $total      = $m->payment_total + $cost;
 
-	$sth->execute( $length, $new_expire->cdate, $cost, $total, $m->id );
-
 	$m->{'member_payment_period_length'} = $length;
 	$m->{'member_payment_period_expire'} = $new_expire->cdate;
 	$m->{'member_payment_period_cost'}   = $cost;
 	$m->{'member_payment_total'}         = $total;
 
-	warn "$$:     Total is now $total\n";
+	$m->mark_unsaved;
+
+	debug "Total is now $total";
     }
 }
 

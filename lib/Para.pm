@@ -38,6 +38,8 @@ use Para::Interest;
 use Para::Interests::Tree;
 use Para::Email;
 
+our $CLEAR_CACHE;
+
 sub on_memory
 {
     my( $size ) = @_;
@@ -58,7 +60,7 @@ sub on_memory
     debug "Place cache  : $place_cache";
     debug "TT cache     : $template_cache";
 
-    $Para::CLEAR_CACHE = 1;
+    $CLEAR_CACHE = 1;
 }
 
 sub clear_caches
@@ -66,7 +68,7 @@ sub clear_caches
     # Called from busy_background_job
     my( $delta ) = @_;
 
-    if( $Para::CLEAR_CACHE )
+    if( $CLEAR_CACHE )
     {
 	debug "Clearing caches";
 
@@ -95,7 +97,7 @@ sub clear_caches
 
 	%Para::Alias::CACHE = ();
 
-	$Para::CLEAR_CACHE = 0;
+	$CLEAR_CACHE = 0;
     }
 }
 
@@ -112,8 +114,8 @@ sub add_background_jobs
 	$Para::Topic::BATCHCOUNT = 1;
     }
 
-    foreach my $t ( values %$Para::Topic::to_publish_now,
-		    values %$Para::Topic::to_publish )
+    foreach my $t ( values %$Para::Topic::TO_PUBLISH_NOW,
+		    values %$Para::Topic::TO_PUBLISH )
     {
 	$req->add_job('run_code', sub
 		      {
@@ -182,5 +184,45 @@ sub timeout_login
 	}
     }
 }
+
+
+####### Cleanup we may want to do...
+###
+####### DAILY cleenup
+###
+###    ### Remove disable aliases for inactive topics
+###    #
+###    $Psi::dbh->do("update talias set talias_status=0, talias_active='f' where talias_active is true and talias_t not in (select t from t where t=talias_t and t_active is true)");
+###    
+###    ### Remove empty aliases
+###    #
+###    $Psi::dbh->do("delete from talias where talias=''");
+###
+###
+####### Houerly cleenup
+###
+###    ### Remove rels pointing to/from inactive topics
+###    #
+###    warn "Remove rels pointing to/from inactive topics\n" if $DEBUG;
+###    my $st  = qq{
+###	update rel set rel_status=0, rel_active='f', rel_updated=now(), rel_changedby = -1 where
+###	    (not exists ( select 1 from t where t=rev))
+###	    or
+###	    (rel is not null and not exists ( select 1 from t where t=rel))
+###	    or
+###	    (rel_status > 1 and not exists ( select 1 from t where t=rev and t_active is true))
+###	    or
+###	    (rel is not null and rel_status > 1 and not exists ( select 1 from t where t=rel and t_active is true))
+###	};
+###    my $sth = $Psi::dbh->prepare($st);
+###    $sth->execute;
+###
+###
+###    ### Move lost entries to Lost entry
+###    warn "Move lost entries to Lost entry\n" if $DEBUG;
+###    my $st3 = "update t set t_entry_parent = 137624 where t_active and t in (select t from t as y where t_active and t_entry and t_entry_parent is null and not exists (select t from t where t_active is true and t_entry_next = y.t))";
+###    my $sth3 = $Psi::dbh->prepare($st3);
+###    $sth3->execute;
+###
 
 1;

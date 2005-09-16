@@ -126,12 +126,15 @@ use Para::Member;
 			  });
     Para::Frame->add_hook('before_db_commit', sub
 			  {
+			      Para::Member->commit();
 			      Para::Topic->commit();
 			  });
     Para::Frame->add_hook('after_db_rollback', sub
 			  {
+			      Para::Member->rollback();
 			      Para::Topic->rollback();
 			  });
+    Para::Frame->add_hook('done', \&Para::Topic::publish_urgent);
     Para::Frame->add_hook('on_startup', sub
 			  {
 			      $Para::dbix->connect;

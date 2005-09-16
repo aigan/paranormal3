@@ -17,10 +17,8 @@ package Para::Widget;
 #=====================================================================
 
 use strict;
-use locale;
 use Carp;
 use Template 2;
-use POSIX qw(locale_h);
 use Data::Dumper;
 use Text::ParagraphDiff;
 
@@ -538,7 +536,7 @@ sub html_psi
     # text in $_[0]
     my $nolinks = $_[1];
 
-    setlocale(LC_ALL, "sv_SE");
+    # locale should have been set previously!
 
 
 #    warn ". . . .\n";
@@ -819,8 +817,8 @@ sub new_entry
 	$Para::state = $state;
     }
 
+    # locale should have been set previously!
 
-    setlocale(LC_ALL, "sv_SE");
     # Initialize with tid
     $Para::entry_links = {};
 
@@ -905,7 +903,9 @@ sub new_entry
 sub insert_autolinks
 {
     my( $textref, $nolinks ) = @_;
-    setlocale(LC_ALL, "sv_SE");
+
+    # locale should have been set previously!
+
     return "" unless $textref and length $$textref;
 
     my @links = ();

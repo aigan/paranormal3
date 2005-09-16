@@ -17,9 +17,7 @@ package Para::Action::member_presentation_topics;
 #=====================================================================
 
 use strict;
-use locale;
 use Data::Dumper;
-use POSIX qw(locale_h);
 
 use Para::Frame::Utils qw( throw debug );
 
@@ -36,7 +34,7 @@ sub handler
     my $mid = $q->param('mid') || $u->id;
     my $m = Para::Member->get( $mid );
 
-    setlocale(LC_ALL, "sv_SE");
+    # locale should have been set previously!
 
     Para::Widget::new_entry();
 

@@ -36,8 +36,6 @@ use Para::Arctype;
 use Para::Utils qw( cache_update );
 use Para::Constants qw( :all );
 
-use constant BATCH => 50;
-
 # This will make "if($arc)" false if the arc is 'removed'
 #
 use overload 'bool' => sub{ ref $_[0] and $_[0]->subj };
@@ -1404,7 +1402,7 @@ sub validate_infere
 	    next unless $arc3->status >= S_NORMAL;
 
 	    $Para::Frame::REQ->yield unless
-		$Para::Frame::BATCHCOUNT++ % BATCH;
+		$Para::Topic::BATCHCOUNT++ % &Para::Topic::BATCH;
 
 	    if( $arc3->obj->id == $obj->id )
 	    {
@@ -1462,7 +1460,7 @@ sub create_infere_rev
 	next unless $arc2->status >= S_NORMAL;
 
 	$Para::Frame::REQ->yield unless
-	    $Para::Frame::BATCHCOUNT++ % BATCH;
+	    $Para::Topic::BATCHCOUNT++ % &Para::Topic::BATCH;
 
 	debug(4, sprintf "arc2 %s, activation %d\n ", $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )
@@ -1516,7 +1514,7 @@ sub create_infere_rel
 	next unless $arc2->status >= S_NORMAL;
 
 	$Para::Frame::REQ->yield unless
-	    $Para::Frame::BATCHCOUNT++ % BATCH;
+	    $Para::Topic::BATCHCOUNT++ % &Para::Topic::BATCH;
 
 	debug(4,sprintf "arc2 %d: %s, activation %d\n", $arc2->id, $arc2->desig, $arc2->active);
 	if( $arc2->status < S_PENDING )

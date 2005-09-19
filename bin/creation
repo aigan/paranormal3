@@ -39,7 +39,7 @@ use lib "$APPROOT/lib";
 
 use Para::Frame;
 use Para::Frame::DBIx;
-use Para::Frame::Time;
+use Para::Frame::Time qw( now );
 use Para::Frame::Email;
 use Para::Frame::Email::Address;
 use Para::Frame::Utils qw( chmod_tree );
@@ -117,7 +117,7 @@ use Para::Member;
 
     Para::Frame->add_hook('before_user_logout', sub
 			  {
-			      $_[0]->latest_out(time);
+			      $_[0]->latest_out( now() );
 			  });
 
     Para::Frame->add_hook('user_login', sub
@@ -170,6 +170,9 @@ use Para::Member;
      'getarctype_list'   => sub{ Para::Arctype->list( @_ ) },
 
      'getalias_list'     => sub{ Para::Alias->find_by_name( @_ ) },
+
+     'getevent'          => sub{ Para::Event->get_by_id( @_ ) },
+     'getevent_list'     => sub{ Para::Event->list( @_ ) },
 
      'getpayment'        => sub{ Para::Payment->new( @_ ) },
 

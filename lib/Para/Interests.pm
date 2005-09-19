@@ -110,8 +110,7 @@ sub count_real
 
 sub updated
 {
-    my( $ins ) = @_;
-    return Para::Time->get( $ins->member->{'intrest_updated'} );
+    return $_[0]->member->interests_updated;
 }
 
 

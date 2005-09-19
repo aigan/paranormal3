@@ -293,7 +293,11 @@ sub experience
 
 sub visit_latest
 {
-    return Para::Frame::Time->get($_[0]->{'visit_latest'});
+    unless( ref $_[0]->{'visit_latest'} )
+    {
+	$_[0]->{'visit_latest'} = date( $_[0]->{'visit_latest'} );
+    }
+    return $_[0]->{'visit_latest'};
 }
 
 sub visit_version
@@ -303,7 +307,11 @@ sub visit_version
 
 sub updated
 {
-    return Para::Frame::Time->get($_[0]->{'intrest_updated'});
+    unless( ref $_[0]->{'intrest_updated'} )
+    {
+	$_[0]->{'intrest_updated'} = date( $_[0]->{'intrest_updated'} );
+    }
+    return $_[0]->{'intrest_updated'};
 }
 
 sub description
@@ -464,7 +472,7 @@ sub update
 
     # Update timestamp
     push @fields, 'intrest_updated';
-    push @values, scalar localtime;
+    push @values, now();
 
     my $tid = $i->topic->id;
     my $mid = $m->id;

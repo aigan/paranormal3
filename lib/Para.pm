@@ -19,7 +19,6 @@ package Para;
 
 use strict;
 use Data::Dumper;
-use Time::Seconds qw( ONE_HOUR );
 
 BEGIN
 {
@@ -29,7 +28,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( debug );
-use Para::Frame::Time qw( now );
+use Para::Frame::Time qw( now duration );
 
 use Para::Member;
 use Para::Topic;
@@ -37,6 +36,7 @@ use Para::Widget;
 use Para::Interest;
 use Para::Interests::Tree;
 use Para::Email;
+use Para::Calendar;
 
 our $CLEAR_CACHE;
 
@@ -109,6 +109,7 @@ sub add_background_jobs
     my $added = 0;
 
     # Just to avoid insanely large nymbers
+    $Para::Topic::BATCHCOUNT ||= 1;
     if( $Para::Topic::BATCHCOUNT > 1000000 )
     {
 	$Para::Topic::BATCHCOUNT = 1;
@@ -126,7 +127,8 @@ sub add_background_jobs
 
     $req->add_job('run_code', \&timeout_login);
     $req->add_job('run_code', \&Para::Place::fix_zipcodes);
-    
+
+    $req->add_job('run_code', \&Para::Calendar::do_planned_actions);
 
     return unless $Para::Frame::CFG->{'do_bgjob'};
 
@@ -158,7 +160,7 @@ sub timeout_login
 {
     my( $req ) = @_;
 
-    my $recs = $Para::dbix->select_list("select member  from member where latest_in is not null and (latest_out is null or latest_in > latest_out) order by latest_in");
+    my $recs = $Para::dbix->select_list("select member from member where latest_in is not null and (latest_out is null or latest_in > latest_out) order by latest_in");
 
     my $now = now();
 
@@ -170,12 +172,12 @@ sub timeout_login
 	my $latest_seen = $m->latest_seen;
 
 	# Failsafe in case no logout was registred
-	if( $latest_in < $now - 40 * ONE_HOUR )
+	if( $latest_in->delta_ms($now) > duration( hours => 40 ) )
 	{
 	    debug $m->desig." has been online since $latest_in";
-	    $m->latest_out( $latest_in + ONE_HOUR );
+	    $m->latest_out( $latest_in->add_duration(hours=>1) );
 	}
-	elsif( $latest_seen < $now - 30 * 60 )
+	elsif( $latest_seen->delta_ms($now) > duration( minutes => 30 ) )
 	{
 	    debug "Logging out ".$m->desig;
 
@@ -226,3 +228,13 @@ sub timeout_login
 ###
 
 1;
+
+__END__
+
+Calendar::Schedule - for managing calendar schedules
+* Data::ICal - Generates iCalendar (RFC 2445) calendar files
+** Date::Set - Date set math
+iCal::Parser - Parse iCalendar files into a data structure
+
+
+Date::ICal - Perl extension for ICalendar date objects.

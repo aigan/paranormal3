@@ -204,11 +204,19 @@ sub updated_by
 
 sub created
 {
-    return Para::Time->get( shift->{'talias_created'} );
+    unless( ref $_[0]->{'talias_created'} )
+    {
+	$_[0]->{'talias_created'} = date( $_[0]->{'talias_created'} );
+    }
+    return $_[0]->{'talias_created'};
 }
 
 sub updated
 {
+    unless( ref $_[0]->{'talias_updated'} )
+    {
+	$_[0]->{'talias_updated'} = date( $_[0]->{'talias_updated'} );
+    }
     return Para::Time->get( shift->{'talias_updated'} );
 }
 

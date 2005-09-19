@@ -64,12 +64,52 @@ sub company
 {
     return  $_[0]->{'payment_company'} ? Para::Topic->get_by_id( $_[0]->{'payment_company'} ) : undef;
 }
-sub date      { Para::Frame::Time->get($_[0]->{'payment_date'} ) }
 
-sub order_date      { Para::Frame::Time->get($_[0]->{'payment_order_date'} ) }
-sub invoice_date      { Para::Frame::Time->get($_[0]->{'payment_invoice_date'} ) }
-sub payment_date      { Para::Frame::Time->get($_[0]->{'payment_date'} ) }
-sub log_date      { Para::Frame::Time->get($_[0]->{'payment_log_date'} ) }
+sub date
+{
+    return $_[0]->payment_date;
+}
+
+sub payment_date
+{
+    unless( ref $_[0]->{'payment_date'} )
+    {
+	return $_[0]->{'payment_date'} =
+	    Para::Frame::Time->get($_[0]->{'payment_date'} );
+    }
+    return $_[0]->{'payment_date'};
+}
+
+
+sub order_date
+{
+    unless( ref $_[0]->{'payment_order_date'} )
+    {
+	return $_[0]->{'payment_order_date'} =
+	    Para::Frame::Time->get($_[0]->{'payment_order_date'} );
+    }
+    return $_[0]->{'payment_order_date'};
+}
+
+sub invoice_date
+{
+    unless( ref $_[0]->{'payment_invoice_date'} )
+    {
+	return $_[0]->{'payment_invoice_date'} =
+	    Para::Frame::Time->get($_[0]->{'payment_invoice_date'} );
+    }
+    return $_[0]->{'payment_invoice_date'};
+}
+
+sub log_date
+{
+    unless( ref $_[0]->{'payment_log_date'} )
+    {
+	return $_[0]->{'payment_log_date'} =
+	    Para::Frame::Time->get($_[0]->{'payment_log_date'} );
+    }
+    return $_[0]->{'payment_log_date'};
+}
 
 
 sub product   { Para::Topic->get_by_id($_[0]->{'payment_product'} ) }
@@ -90,7 +130,7 @@ sub set_completed
 
     my $sth = $Para::dbh->prepare("update payment set payment_completed=true, payment_reference=?, payment_date=?, payment_log_date=now() where payment_id=?");
 
-    my $payment_date = $p->payment_date ? $p->payment_date->cdate : Para::Frame::Time->get(time)->cdate;
+    my $payment_date = $p->payment_date ? $p->payment_date->cdate : Para::Frame::Time->now()->cdate;
     $sth->execute( $reference, $payment_date, $p->id );
 
     my $body = "Betalning från ".$p->member->name."\n";

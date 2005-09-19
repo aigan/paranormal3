@@ -132,14 +132,22 @@ sub member
 
 sub created
 {
-    my( $e ) = @_;
-    return Para::Frame::Time->get( $e->{'mailalias_created'} )
+    unless( ref $_[0]->{'mailalias_created'} )
+    {
+	return $_[0]->{'mailalias_created'} =
+	    Para::Frame::Time->get($_[0]->{'mailalias_created'} );
+    }
+    return $_[0]->{'mailalias_created'};
 }
 
 sub working
 {
-    my( $e ) = @_;
-    return Para::Frame::Time->get( $e->{'mailalias_working'} )
+    unless( ref $_[0]->{'mailalias_working'} )
+    {
+	return $_[0]->{'mailalias_working'} =
+	    Para::Frame::Time->get($_[0]->{'mailalias_working'} );
+    }
+    return $_[0]->{'mailalias_working'};
 }
 
 sub failed

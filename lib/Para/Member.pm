@@ -19,8 +19,6 @@ package Para::Member;
 use strict;
 use Data::Dumper;
 use Mail::Address;
-#use BerkeleyDB::Hash;
-#use DB_File;
 use Carp;
 use Time::Seconds;
 
@@ -31,7 +29,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Time qw( now );
+use Para::Frame::Time qw( now date );
 use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd debug uri );
 use Para::Frame::Email;
 
@@ -93,6 +91,7 @@ sub get
 {
     my( $this, $member_in ) = @_;
 
+    carp "No member info" unless $member_in;
     if( ref $member_in )
     {
 	return $member_in;
@@ -598,11 +597,11 @@ sub unset_sys_uid
     return 1;
 }
 
-sub present_contact   { shift->{'present_contact'} }
-sub present_contact_public { shift->{'present_contact_public'} }
-sub present_activity  { shift->{'present_activity'} }
-sub present_interests { shift->{'present_intrests'} }
-sub present_gifts { shift->{'present_gifts'} }
+sub present_contact   { shift->{'present_contact'} ||0 }
+sub present_contact_public { shift->{'present_contact_public'} ||0 }
+sub present_activity  { shift->{'present_activity'} ||0 }
+sub present_interests { shift->{'present_intrests'} ||0  }
+sub present_gifts { shift->{'present_gifts'} ||0 }
 
 sub topic
 {
@@ -819,6 +818,13 @@ sub desig
     return $m->name( $publ ) || $m->nickname( $publ );
 }
 
+sub sysdesig
+{
+    my( $m ) = @_;
+
+    return $m->nickname;
+}
+
 sub name
 {
     my( $m, $publ ) = @_;
@@ -891,7 +897,7 @@ sub age
 	    $m->equals( $Para::Frame::U ) )
     {
 	return undef unless $m->{'bdate_ymd_year'};
-	return localtime->year - $m->{'bdate_ymd_year'};
+	return now()->year - $m->{'bdate_ymd_year'};
     }
     return undef;
 }
@@ -1436,7 +1442,7 @@ sub set_bdate_ymd_year
 	    return $m->change->fail("Födelseår har felaktigt format");
 	}
 
-	if( localtime->year < $year + 6 )
+	if( now()->year < $year + 6 )
 	{
 	    return $m->change->fail("Du är för ung för att vara här");
 	}
@@ -1893,10 +1899,15 @@ sub latest_in
     my $latest_in = $m->{'latest_in'};
     if( not $latest_in and $m->equals($Para::Frame::U) )
     {
-	$latest_in = time;
+	return $m->{'latest_in'} = now();
     }
 
-    return $m->{'latest_in'} = Para::Frame::Time->get( $latest_in );
+    unless( ref $m->{'latest_in'} )
+    {
+	return $m->{'latest_in'} = date( $latest_in );
+    }
+
+    return $m->{'latest_in'};
 }
 
 sub latest_out
@@ -1906,11 +1917,21 @@ sub latest_out
     if( $time )
     {
 	$m->{'latest_out'} = Para::Frame::Time->get( $time );
+
+	# Update time_online
+	my $delta = ( $time->epoch - $m->latest_in()->epoch );
+	$m->score_change('time_online', $delta);
+
 	$m->mark_unsaved;
 	$ONLINE_COUNT --;
     }
 
-    return $m->{'latest_out'} = Para::Frame::Time->get( $m->{'latest_out'} || $m->latest_in );
+    unless( ref $m->{'latest_out'} )
+    {
+	return $m->{'latest_out'} = date( $m->{'latest_out'} );
+    }
+
+    return $m->{'latest_out'};
 }
 
 sub latest_seen
@@ -1947,27 +1968,49 @@ sub offline
 
 sub created
 {
-    my( $m ) = @_;
-    return $m->{'member_created'} = Para::Frame::Time->get( $m->{'member_created'} );
+    unless( ref $_[0]->{'member_created'} )
+    {
+	return $_[0]->{'member_created'} =
+	    date( $_[0]->{'member_created'} );
+    }
+    return $_[0]->{'member_created'};
 }
 
 sub updated
 {
-    my( $m ) = @_;
-    return $m->{'member_updated'} = Para::Frame::Time->get( $m->{'member_updated'} );
+    unless( ref $_[0]->{'member_updated'} )
+    {
+	return $_[0]->{'member_updated'} =
+	    date( $_[0]->{'member_updated'} );
+    }
+    return $_[0]->{'member_updated'};
+}
+
+sub interests_updated
+{
+    unless( ref $_[0]->{'intrest_updated'} )
+    {
+	return $_[0]->{'intrest_updated'} =
+	    date( $_[0]->{'intrest_updated'} );
+    }
+    return $_[0]->{'intrest_updated'};
 }
 
 sub payment_expire
 {
-    my( $m ) = @_;
-    return Para::Frame::Time->get( $m->{'member_payment_period_expire'} );
+    unless( ref $_[0]->{'member_payment_period_expire'} )
+    {
+	return $_[0]->{'member_payment_period_expire'} =
+	    date( $_[0]->{'member_payment_period_expire'} );
+    }
+    return $_[0]->{'member_payment_period_expire'};
 }
 
 sub payment_active
 {
     my( $m ) = @_;
     my $expire = $m->payment_expire or return 0;
-    return 0 if localtime > $expire;
+    return 0 if now() > $expire;
     return 1;
 }
 
@@ -2004,7 +2047,7 @@ sub payment_rate
 sub payment_total_rate
 {
     my( $m ) = @_;
-    my $months = (localtime->epoch - $m->created->epoch) / ONE_MONTH;
+    my $months = now()->delta_md( $m->created )->delta_months;
     return sprintf('%.2f', $m->{'member_payment_total'} / $months );
 }
 
@@ -2366,7 +2409,7 @@ sub save
 	latest_in                    => 'date',
 	latest_out                   => 'date',
 	member_payment_period_length => 'integer',
-	member_payment_period_expire => 'integer',
+	member_payment_period_expire => 'date',
 	member_payment_period_cost   => 'integer',
 	member_payment_total         => 'integer',
 	statement                    => 'string',
@@ -2522,6 +2565,8 @@ sub score
 
 sub total_time_online
 {
+    # TODO: Convert to DateTime::Duration
+
     my( $m ) = @_;
     if( $m->equals( $Para::Frame::U ) )
     {
@@ -2875,7 +2920,7 @@ sub by_name  ## LIST CONSTRUCTOR
 
 sub count_currently_online
 {
-    undef $ONLINE_COUNT if $ONLINE_COUNT < 0;
+    undef $ONLINE_COUNT if $ONLINE_COUNT||0 < 0;
     unless( defined $ONLINE_COUNT )
     {
 	my $rec = $Para::dbix->select_record("select count(member) as cnt from member where latest_in is not null and (latest_out is null or latest_in > latest_out)");

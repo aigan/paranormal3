@@ -391,13 +391,13 @@ sub select_persons
     if( $age_min )
     {
 	push @where_part, "bdate_ymd_year < ?";
- 	push @where_data,  localtime->year - $age_min;
+ 	push @where_data,  now()->year - $age_min;
     }
 
     if( $age_max )
     {
 	push @where_part, "bdate_ymd_year > ?";
- 	push @where_data,  localtime->year - $age_max;
+ 	push @where_data,  now()->year - $age_max;
     }
 
     if( $level_min )
@@ -811,7 +811,7 @@ sub new_entry
 {
     my( $tid, $state ) = @_;
 
-    debug(1,"New entry $tid");
+    debug(1,"New entry ".($tid||''));
     if( $state )
     {
 	$Para::state = $state;
@@ -1157,7 +1157,7 @@ sub insert_explicit_links
 	$newtext .= $1;
 	$pos = pos( $$textref );
 #	warn " -- pos $pos\n";
-	my $name = $2 || $3;
+	my $name = $2 || $3 || '';
 	my $target = $4;
 
 	my $nametopics = Para::Topic->find( $name );

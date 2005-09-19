@@ -7,7 +7,7 @@ use Digest::MD5  qw(md5_hex);
 use LWP::Simple;
 
 use Para::Frame::Utils qw( throw trim );
-use Para::Frame::Time;
+use Para::Frame::Time qw( now );
 
 use Para::Topic;
 use Para::Constants qw( T_PRENUMERATION T_PARANORMAL_SWEDEN T_PAYNOVA MONTH_LENGTH );
@@ -82,7 +82,7 @@ sub handler
     my $product_id  = T_PRENUMERATION;
     my $method_id   = T_PAYNOVA;
     my $receiver_id = T_PARANORMAL_SWEDEN;
-    my $today = localtime;
+    my $today = now();
 
     my $vat_db = $vat;
     $vat_db =~ s/,/./;
@@ -101,7 +101,6 @@ sub handler
     }
 
     my $new_expire = $old_expire + $length * 24*60*60;
-#    my $new_expire = $today + $length * 24*60*60;
 
 
     # Contract text. This text is displayed in the wallet and should

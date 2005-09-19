@@ -3,7 +3,7 @@ package Para::History;
 #=====================================================================
 #
 # DESCRIPTION
-#   Paranormal.se eventy history
+#   Paranormal.se event history
 #
 # AUTHOR
 #   Jonas Liljegren   <jonas@paranormal.se>
@@ -43,7 +43,7 @@ sub add
 
     my $id = $Para::dbix->get_nextval('history_seq');
     my $status = $args->{status} || HS_CREATED;
-    my $created = localtime;
+    my $created = now();
     my $createdby = $args->{createdby} || $Para::Frame::U;
     my $secret = $args->{secret} || 0;
     my $partof = $args->{partof};

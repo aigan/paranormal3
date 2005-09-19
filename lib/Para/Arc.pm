@@ -27,7 +27,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Time qw( date );
+use Para::Frame::Time qw( date now );
 use Para::Frame::Utils qw( maxof minof throw debug );
 use Para::Frame::DBIx qw( pgbool );
 
@@ -306,7 +306,7 @@ sub create
     my $implicit = defined $props->{'implicit'} ? $props->{'implicit'} : 0;
     my $indirect = defined $props->{'indirect'} ? $props->{'indirect'} : 0;
     my $changed = $props->{'changed'};
-    my $now = localtime;
+    my $now = now();
     my $u = $Para::Frame::U;
 
     $true = ( $strength >= TRUE_MIN ? 1 : 0 );
@@ -623,7 +623,7 @@ sub set_implicit
 
     my $arc_id    = $arc->id;
     my $mid       = $Para::Frame::U->id;
-    my $now       = localtime;
+    my $now       = now();
 
     my $sth = $Para::dbh->prepare("update rel set rel_implicit=?, ".
 				   "rel_updated=?, rel_changedby=? ".
@@ -671,7 +671,7 @@ sub set_indirect
 
     my $arc_id    = $arc->id;
     my $mid       = $Para::Frame::U->id;
-    my $now       = localtime;
+    my $now       = now();
 
     my $sth = $Para::dbh->prepare("update rel set rel_indirect=?, ".
 				   "rel_updated=?, rel_changedby=? ".
@@ -725,7 +725,7 @@ sub activate
 
     my $m = $Para::Frame::U;
     $status ||= $m->new_status;
-    my $now       = localtime;
+    my $now       = now();
     my $mid       = $Para::Frame::U->id;
 
     confess sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= S_PROPOSED;
@@ -819,7 +819,7 @@ sub deactivate
     my( $arc, $status ) = @_;
 
     $status ||= S_DENIED;
-    my $now       = localtime;
+    my $now       = now();
     my $mid       = $Para::Frame::U->id;
 
     die "Wrong status" if $status >= S_PENDING;

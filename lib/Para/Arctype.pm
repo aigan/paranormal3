@@ -140,7 +140,7 @@ sub update
 	types   => $types,
 	on_update =>
 	{
-	    reltype_updated   => now()->cdate,
+	    reltype_updated   => now(),
 	    reltype_changedby => $Para::Frame::U->id,
 	},
     });

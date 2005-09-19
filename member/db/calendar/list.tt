@@ -1,0 +1,27 @@
+[% META
+	title = 'Kalendarium - Lista'
+%]
+
+[% PROCESS calendar_menu.tt %]
+
+<div class="entry">
+<table>
+<tr><th>id
+    <th>topic
+    <th>action
+    <th>as_user
+    <th>active
+    <th>created
+    <th>updated
+[% FOREACH e IN getevent_list %]
+[% tr2 %]
+<td>[% jump(e.id, 'edit.tt', eventid=e.id) %]
+<td>[% e.topic.desig %]
+<td>[% e.action %]
+<td>[% e.as_user.desig %]
+<td>[% e.active %]
+<td>[% e.created_by.desig %] [% e.created %]
+<td>[% e.updated_by.desig %] [% e.updated %]
+[% END %]
+</table>
+</div>

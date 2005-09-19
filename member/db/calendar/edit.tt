@@ -1,0 +1,34 @@
+[% META
+	title = 'Kalendarium - Lägg till'
+	default_template = 'list.tt'
+	next_action = 'event_update'
+%]
+
+[% PROCESS calendar_menu.tt %]
+
+[% e = getevent(q.param('eventid')) %]
+[% hidden('eventid', e.id) %]
+
+<div class="entry">
+<table>
+<tr><th>Fält        <th>Värde
+<tr><th>id          <td>[% e.id %]
+<tr><th>topic       <td>[% input('topic', e.topic.sysdesig) %]
+<tr><th>type        <td>[% input('rule_type', e.rule_type) %]
+<tr><th>rule        <td>[% input('rule', e.rule) %]
+<tr><th>action      <td>[% input('action', e.action) %]
+<tr><th>all         <td>[% checkbox('do_all', 1, e.all) %]
+<tr><th>as_user     <td>[% input('as_user', e.as_user.sysdesig) %]
+<tr><th>active      <td>[% e.active %]
+<tr><th>created_by  <td>[% e.created_by.desig %]
+<tr><th>created     <td>[% e.created %]
+<tr><th>updated_by  <td>[% e.updated_by.desig %]
+<tr><th>updated     <td>[% e.updated %]
+</table>
+</div>
+
+[% IF e %]
+   [% step('Uppdatera') %]
+[% ELSE %]
+   [% step('Skapa') %]
+[% END %]

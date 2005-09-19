@@ -1,4 +1,4 @@
-[% DEFAULT t = topic(tid) %]
+[% UNLESS t; t = topic(tid); END %]
 [% IF t.file %]
    [% jump(t.desig, t.file) %]
 [% ELSE %]

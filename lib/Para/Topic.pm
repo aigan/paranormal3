@@ -19,7 +19,7 @@ package Para::Topic;
 use strict;
 use base qw( Exporter );
 use Data::Dumper;
-use Carp qw( cluck croak confess shortmess );
+use Carp qw( cluck croak confess shortmess carp );
 use locale;
 use Date::Manip;
 use IO::LockedFile;
@@ -63,6 +63,8 @@ our %UNSAVED;
 sub get_by_id  # Use this primarely
 {
     my( $class, $tid, $v ) = @_;
+    carp "Called get_by_id with undef value" unless $tid;
+    return undef unless $tid;
     $v ||= "";
     return $Para::Topic::CACHE->{"$tid-$v"} ||
 	$class->_new( $tid, $v );
@@ -237,6 +239,7 @@ sub find
 	return [$name];
     }
 
+    $name ||= "";
     trim( \$name );
     return [] unless length $name;
     my( $recs );
@@ -318,7 +321,7 @@ sub find_one
     my( $this, $name ) = @_;
     my $class = ref($this) || $this;
 
-    croak "No name given" unless $name;
+    confess "No name given" unless $name;
     my $topics = Para::Topic->find( $name );
 
 
@@ -1825,14 +1828,22 @@ sub is_topic { ! shift->{'t_entry'} }
 sub active  { shift->{'t_active'} }
 sub created
 {
-    return $_[0]->{'created'} ||=
-	Para::Frame::Time->get( $_[0]->{'t_created'} );
+    unless( ref $_[0]->{'t_created'} )
+    {
+	return $_[0]->{'t_created'} =
+	    Para::Frame::Time->get($_[0]->{'t_created'} );
+    }
+    return $_[0]->{'t_created'};
 }
 
 sub updated
 {
-    return $_[0]->{'updated'} ||=
-	Para::Frame::Time->get( $_[0]->{'t_updated'} );
+    unless( ref $_[0]->{'t_updated'} )
+    {
+	return $_[0]->{'t_updated'} =
+	    Para::Frame::Time->get($_[0]->{'t_updated'} );
+    }
+    return $_[0]->{'t_updated'};
 }
 
 sub set_updated
@@ -1841,7 +1852,7 @@ sub set_updated
 
     $time ||= now();
 
-    $t->{'updated'} = $time;
+    $t->{'t_updated'} = $time;
     $t->mark_unsaved;
     return $time;
 }

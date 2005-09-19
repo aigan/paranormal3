@@ -7,7 +7,7 @@ use File::Find;
 use IO::LockedFile;
 
 use Para::Frame::Utils qw( throw debug );
-use Para::Frame::Time;
+use Para::Frame::Time qw( date );
 
 use Para::Topic;
 
@@ -69,8 +69,8 @@ sub handler
 	    debug "Found an unpublished page\n";
 	    debug "File: $file\n";
 	    debug "\n";
-	    debug sprintf "Published: %s\n", scalar localtime $published;
-	    debug sprintf "Updated  : %s\n", scalar localtime $updated;
+	    debug sprintf "Published: %s\n", date($published);
+	    debug sprintf "Updated  : %s\n", date($updated);
 	    debug "\n";
 
 	}

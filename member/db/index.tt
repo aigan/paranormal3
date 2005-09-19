@@ -67,6 +67,7 @@
      <li>[% jump('Skicka lösen', '/member/db/member_forgot_pwd') %]
      <li>[% jump('RT', 'http://rt.paranormal.se/') %]
      <li>[% jump('motd', 'motd.tt') %]
+     <li>[% jump('events', 'calendar/') %]
   [% END %]
 </ul>
 

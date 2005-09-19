@@ -1,12 +1,12 @@
 [% MACRO row_edit(field) BLOCK %]
    [% DEFAULT object = m %]
-   <tr><td>$field </td><td><input name="$field" value="[% 
+   <tr><th>$field </th><td><input name="$field" value="[% 
       ( q.param(field) || object.$field )| html 
    %]"></td></tr>
 [% END %]
 [% MACRO row_view(field) BLOCK %]
    [% DEFAULT object = m %]
-   <tr><td>$field </td><td>[% object.$field | html %]
+   <tr><th>$field </th><td>[% object.$field | html %]
    </td></tr>
 [% END %]
 [% BLOCK draw_string %]

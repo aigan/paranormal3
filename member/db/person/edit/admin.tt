@@ -25,7 +25,8 @@
 </tr>
 [% END %]
 
-<table align="left" border=1>
+<div class="entry">
+<table align="left">
 [% row_view("member") %]
 [% row_view('nickname') %]
 [% row_edit('member_topic') %]
@@ -48,6 +49,7 @@
 [% row_view("payment_total") %]
 
 </table>
+</div>
 
 [% textarea("member_comment_admin", m.member_comment_admin) %]<br>
 <em>Medlemmar med kommentarer raderas inte automagiskt vid inaktivitet</em>

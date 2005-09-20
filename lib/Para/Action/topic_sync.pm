@@ -32,7 +32,7 @@ sub handler
 
 
     # Active files
-    $afs = select_key('t_file', "select t, t_file, t_updated, t_title
+    $afs = $Para::dbix->select_key('t_file', "select t, t_file, t_updated, t_title
                                  from t where t_active is true and
                                  t_entry is false and t_file is not null
                                 ") or die;

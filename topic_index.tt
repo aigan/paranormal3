@@ -28,7 +28,7 @@
 </p>
 
 <table cellpadding="10" width="100%">
-[% FOREACH rec IN select_list("select talias, t from t, talias where t=talias_t and talias $sel and talias_index is true and t_active is true and talias_active is true and not exists (select media from media where media=t) order by talias, talias_t limit 5 offset $part_offset") %]
+[% FOREACH rec IN select_list("select talias, t from t, talias where t=talias_t and talias $sel and talias_index is true and t_active is true and talias_active is true and not exists (select media from media where media=t) order by talias, talias_t limit 10 offset $part_offset") %]
     [% tr2 %]
       <td valign="top">
 [% t = topic(rec.t) %]
@@ -44,20 +44,20 @@
 [%
    DEFAULT subpart.shown = 0;
 
-   prev_from = offset - 5;
+   prev_from = offset - 10;
    prev_to = offset - 1;
    this_to = offset + subpart.shown - 1;
    this_from = this_to ? offset : 0;
-   next_from = offset + 5;
-   next_to = offset + 9;
+   next_from = offset + 10;
+   next_to = offset + 19;
 %]
 
 <p align="center">
-[% IF offset > 5 %]
+[% IF offset > 10 %]
    [% forward("$prev_from - $prev_to", '/topic/' offset = prev_from) %] | 
 [% END %]
 $this_from - $this_to
-[% IF subpart.shown == 5 %]
+[% IF subpart.shown == 10 %]
    | [% forward("$next_from - $next_to", '/topic/' offset = next_from) %]
 [% END %]
 </p>

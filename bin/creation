@@ -117,7 +117,7 @@ use Para::Member;
 
     Para::Frame->add_hook('before_user_logout', sub
 			  {
-			      $_[0]->latest_out( now() );
+			      $_[0]->on_logout;
 			  });
 
     Para::Frame->add_hook('user_login', sub

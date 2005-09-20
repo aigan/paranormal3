@@ -86,8 +86,13 @@ use Para::Member;
     };
     Para::Frame->configure( $cfg );
 
-    # Make sure we can write to tempfiles
+    # Make sure we can read/write generated files
     chmod_tree( "$PARAFRAME/var/ttc" );
+    chmod_tree( "$APPROOT/topic",
+		{
+		    dirmode => 02775,
+		    filemode => 0664,
+		});
 
     # Configure database
     #
@@ -138,7 +143,10 @@ use Para::Member;
     Para::Frame->add_hook('on_startup', sub
 			  {
 			      $Para::dbix->connect;
-			      
+
+			      # Take shortcut...
+			      return unless $Para::Frame::CFG->{'do_bgjob'};
+
 			      # Setup MOTD
 			      Para::Widget::new_entry(undef, 'static');
 			      $Para::MOTD = Para::Widget::html_psi( Para::Member->skapelsen->presentation );

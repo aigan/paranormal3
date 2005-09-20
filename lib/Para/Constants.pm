@@ -55,9 +55,9 @@ use constant T_PAYNOVA           => 422381;
 use constant T_PERSON            => 2140;
 use constant T_ENGLISH           => 396598;
 
-use constant DB_ALIAS    => '/var/local/paranormal.test/alias.db';
-use constant DB_PASSWD   => '/var/local/paranormal.test/passwd.db';
-use constant DB_ONLINE   => '/var/local/paranormal.test/online.db';
+use constant DB_ALIAS    => '/var/local/paranormal/alias.db';
+use constant DB_PASSWD   => '/var/local/paranormal/passwd.db';
+use constant DB_ONLINE   => '/var/local/paranormal/online.db';
 
 use constant HA_CREATE   => 1;
 use constant HA_UPDATE   => 2;

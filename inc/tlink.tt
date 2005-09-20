@@ -1,4 +1,4 @@
-[% UNLESS t; t = topic(tid); END %]
+[% UNLESS t; UNLESS tid; RETURN; END; t = topic(tid); END %]
 [% IF t.file %]
    [% jump(t.desig, t.file) %]
 [% ELSE %]

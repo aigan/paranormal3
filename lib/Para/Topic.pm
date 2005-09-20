@@ -3452,7 +3452,11 @@ sub write_page
  
 	my $sysfile = sysfile( $file );
 
-	create_file( $sysfile, $page );
+	create_file( $sysfile, $page,
+		     {
+			 dirmode => 02775,
+			 filemode => 0664,
+		     });
     };
     if( $@ )
     {

@@ -558,7 +558,7 @@ sub show_complexity
 }
 sub complexity
 {
-    return $_[0]->{'show_complexity'};
+    return $_[0]->{'show_complexity'}||0;
 }
 
 sub show_level

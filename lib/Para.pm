@@ -125,10 +125,17 @@ sub add_background_jobs
 	$added ++;
     }
 
-    $req->add_job('run_code', \&timeout_login);
+
+    # These are qick enough to be done directly
+    #
+    &timeout_login;
+    &clear_tempfiles;
+
+
     $req->add_job('run_code', \&Para::Place::fix_zipcodes);
 
     $req->add_job('run_code', \&Para::Calendar::do_planned_actions);
+
 
     return unless $Para::Frame::CFG->{'do_bgjob'};
 
@@ -182,9 +189,30 @@ sub timeout_login
 	    debug "Logging out ".$m->desig;
 
 	    # Temporary disabled...
-#	    $m->latest_out( $now );
+	    $m->on_logout;
 	}
     }
+}
+
+
+# This is for the old paranormal.se
+#   Not needed for the paraframe version
+#
+sub clear_tempfiles
+{
+    opendir TMP, "/tmp" or die $!;
+    while( my $file = readdir(TMP) )
+    {
+	next if $file eq "Psi_cache"; # not this file
+	next unless $file =~ /^Psi_/;
+
+	my $st = stat("/tmp/$file") or die $!;
+	if( time - $st->ctime > 900 ) # 15 minutes old
+	{
+	    unlink "/tmp/$file" or die $!;
+	}
+    }
+    close TMP;
 }
 
 

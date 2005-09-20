@@ -6,7 +6,7 @@ use Data::Dumper;
 use File::Find;
 use IO::LockedFile;
 
-use Para::Frame::Utils qw( throw debug );
+use Para::Frame::Utils qw( throw debug uri2file );
 use Para::Frame::Time qw( date );
 
 use Para::Topic;

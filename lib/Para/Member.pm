@@ -366,6 +366,15 @@ sub on_login
     }
 }
 
+sub on_logout
+{
+    my( $u ) = @_;
+
+    $u->latest_out( now() );
+    my $db = paraframe_dbm_open( DB_ONLINE );
+    delete $db->{$u->id};
+}
+
 sub set
 {
     my( $m, $field, @args ) = @_;
@@ -1924,6 +1933,7 @@ sub latest_out
 
 	$m->mark_unsaved;
 	$ONLINE_COUNT --;
+	return $m->{'latest_out'};
     }
 
     unless( ref $m->{'latest_out'} )
@@ -1940,13 +1950,31 @@ sub latest_seen
 
     # NB! Not stored in the DB!
 
+    # We look in the DB for online info from other sources (Paraserv
+    # and other instances of Paranormal.se) but don't bother updating
+    # it if we got more acurate info
+
     if( $time )
     {
 	$time = Para::Frame::Time->get( $time );
 	$m->{'latest_seen'} = $time;
     }
+    else
+    {
+	$m->{'latest_seen'} ||= $m->latest_in;
 
-    return $m->{'latest_seen'} || $m->latest_in;
+	# Update info if seen more than 15 mins ago
+	if( now->epoch - $m->{'latest_seen'}->epoch > 60 * 15 )
+	{
+	    my $db = paraframe_dbm_open( DB_ONLINE );
+	    if( my $last = $db->{ $m->id } )
+	    {
+		$m->{'latest_seen'} = date( $last );
+	    }
+	}
+    }
+
+    return $m->{'latest_seen'};
 }
 
 sub online
@@ -2735,18 +2763,6 @@ sub remove
     }
 
     return 1;
-}
-
-sub log_activity
-{
-    my( $m ) = @_;
-
-    # FIXME - use internal counter
-    die "not implemented";
-#    my $db = paraframe_dbm_open( DB_ONLINE );
-#    my $last = $db->{ $m->id } || 0;
-#    $db->{ $m->id } = time;
-#    return $last;
 }
 
 sub clear_cached

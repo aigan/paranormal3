@@ -27,7 +27,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::DBIx;
-use Para::Frame::Time;
+use Para::Frame::Time qw( now );
 
 use Para::Topic;
 use Para::Constants qw( :all );

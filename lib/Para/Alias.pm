@@ -28,7 +28,7 @@ BEGIN
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( minof throw debug trim reset_hashref );
 use Para::Frame::DBIx qw( pgbool );
-use Para::Frame::Time;
+use Para::Frame::Time qw( date );
 
 use Para::Topic qw( title2url );
 use Para::Constants qw( :all );

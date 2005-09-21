@@ -76,13 +76,13 @@ sub skapelsen
 
 sub become_root
 {
-    debug(3,"Becoming root",1);
+    debug(3,"Becoming root");
     return $_[0]->become_temporary_user( $_[0]->skapelsen );
 }
 
 sub become_unpriviliged_user
 {
-    debug(3,"Becoming John Doe",1);
+    debug(3,"Becoming John Doe");
     my $john_doe = Para::Member->get( 46 );
     return $_[0]->become_temporary_user( $john_doe );
 }

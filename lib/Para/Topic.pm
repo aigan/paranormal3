@@ -56,14 +56,13 @@ our $TO_PUBLISH_NOW;
 our $TO_PUBLISH;
 our %UNSAVED;
 
-#use constant LIMIT => 10000;
-#
+
 # CONSTRUCTOR
 #
 sub get_by_id  # Use this primarely
 {
     my( $class, $tid, $v ) = @_;
-    carp "Called get_by_id with undef value" unless $tid;
+#    carp "Called get_by_id with undef value" unless $tid;
     return undef unless $tid;
     $v ||= "";
     return $Para::Topic::CACHE->{"$tid-$v"} ||

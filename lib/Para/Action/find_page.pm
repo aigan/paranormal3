@@ -150,7 +150,7 @@ sub handler
 	    if( debug )
 	    {
 		debug "First: $first";
-		debug "Second: $second";
+		debug "Second: $second" if $second;
 		debug "Rest: $rest" if $rest;
 	    }
 
@@ -192,7 +192,11 @@ sub handler
 	my $talias = $choice->[0];
 	my $typename   = $choice->[1];
 
-	debug "Looking for $talias ($typename)";
+	if( debug )
+	{
+	    my $typenamestr = $typename ? " ($typename)" : "";
+	    debug "Looking for $talias$typenamestr";
+	}
 
 	my $found;
 	if( $talias =~ /^\d+$/ )

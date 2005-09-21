@@ -17,12 +17,6 @@ sub handler
     my $u = $req->s->u;
     my $result = $req->result;
 
-
-    if( $u->level < 12 )
-    {
-	throw('denied', "");
-    }
-
     my $talias = $q->param('talias');
 
     debug("Searching for '$talias'") if $talias;

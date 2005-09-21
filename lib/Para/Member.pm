@@ -1929,24 +1929,35 @@ sub latest_out
 {
     my( $m, $time ) = @_;
 
+    warn "a\n";
     if( $time )
     {
+    warn "b\n";
 	$m->{'latest_out'} = Para::Frame::Time->get( $time );
+    warn "c\n";
 
 	# Update time_online
+    warn "d\n";
 	my $delta = ( $time->epoch - $m->latest_in()->epoch );
+    warn "e\n";
 	$m->score_change('time_online', $delta);
+    warn "f\n";
 
+    warn "g\n";
 	$m->mark_unsaved;
+    warn "h\n";
 	$ONLINE_COUNT --;
 	return $m->{'latest_out'};
     }
 
+    warn "i\n";
     unless( ref $m->{'latest_out'} )
     {
+    warn "j\n";
 	return $m->{'latest_out'} = date( $m->{'latest_out'} );
     }
 
+    warn "k\n";
     return $m->{'latest_out'};
 }
 

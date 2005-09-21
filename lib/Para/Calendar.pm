@@ -47,6 +47,8 @@ sub do_planned_actions
     my $span = DateTime::Span->from_datetimes( after => $last_run,
 					       end => $now );
 
+    return if $span < duration(minutes => 5);
+
     $c->add_events_to_plan( $span );
 
     $c->do_action_events($now);
@@ -64,6 +66,7 @@ sub do_action_events
     # 3. Do the rest of the events
 
     my $recs = $Para::dbix->select_list("from plan where plan_finished is false and plan_is_action is true and plan_start <= ? and plan_started is null", $til);
+    debug "Check for plans til $til";
 
     my %plan_one;
     foreach my $rec ( @$recs )

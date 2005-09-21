@@ -368,9 +368,10 @@ sub on_login
 
 sub on_logout
 {
-    my( $u ) = @_;
+    my( $u, $time ) = @_;
 
-    $u->latest_out( now() );
+    $time ||= now();
+    $u->latest_out( $time );
     my $db = paraframe_dbm_open( DB_ONLINE );
     delete $db->{$u->id};
 }

@@ -25,6 +25,6 @@
 </table>
 
 [% anoncount = count_online - list.size %]
-<p>Samt [% inflect(anoncount, "anonym medlem", "%d anonyma medlemmar") %]...
+<p>Samt [% inflect(anoncount, "1 anonym medlem", "%d anonyma medlemmar") %]...
 
 </div>

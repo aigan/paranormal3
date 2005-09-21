@@ -27,6 +27,7 @@ use Template::Context;
 use Sys::CpuLoad;
 use Image::Size;
 use Clone qw( clone );
+use File::Path;
 
 BEGIN
 {
@@ -3218,8 +3219,6 @@ sub publish
 {
     my( $t ) = @_;
 
-    use File::Path;
-
     $t = Para::Topic->get_by_id( $t ) unless ref $t eq 'Para::Topic';
     $t = $t->topic if $t->entry;
     return undef unless $t;
@@ -3256,7 +3255,6 @@ sub publish
 
 	$template ||= "default";
 	debug(1,"Using template $template");
-
 
 	# Is this a mass member topic?
 	#

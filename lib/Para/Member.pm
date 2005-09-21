@@ -2939,7 +2939,10 @@ sub currently_online
     my @list;
     foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
     {
-	push @list, $this->get_by_id($mid);
+	my $m = $this->get_by_id($mid);
+	next if $m->present_activity < 10;
+	next if $m->present_contact < 5;
+	push @list, $m;
     }
     return \@list;
 }

@@ -107,7 +107,8 @@ sub find
     # Alternatively, look up all arcs matching whats been given
 
     my( $class, $pred, $subj, $obj_name, $props ) = @_;
-    my( $obj, $literal, $all, $tid, $explain_string );
+    my( $obj, $literal, $all, $tid );
+    my $explain_string = "";
 
 #    warn "find props: ".Dumper($props) if $DEBUG;
 

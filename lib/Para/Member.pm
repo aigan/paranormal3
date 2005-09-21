@@ -2589,7 +2589,9 @@ sub score_change
 
     my $statement = "update score set $field=? where score_member=?";
     my $sth = $Para::dbh->prepare( $statement );
+    warn "Changing score for $mid\n";
     $sth->execute( $value, $mid );
+    warn "Changing score for $mid - done\n";
     $m->{'score'}{$field} = $value;
 }
 

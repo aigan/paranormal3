@@ -11,7 +11,8 @@
 <table>
 <tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th>
 </tr>
-[% FOREACH m IN getmember_currently_online %]
+[% list = getmember_currently_online %]
+[% FOREACH m IN list %]
    [% tr2 %]
        <td>$m.id</td>
        <td>$m.created</td>
@@ -22,6 +23,7 @@
    </tr>
 [% END %]
 </table>
-</div>
 
-[% step %]
+<p>Samt [% count_online - list.size %] anonyma medlemmar...
+
+</div>

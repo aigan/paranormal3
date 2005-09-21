@@ -276,7 +276,12 @@ sub as_user
 
 sub created_by
 {
-    Para::Member->get( shift->{'event_createdby'});
+    unless( ref $_[0]->{'event_createdby'} )
+    {
+	return $_[0]->{'event_createdby'} =
+	    Para::Member->get( shift->{'event_createdby'});
+    }
+    return $_[0]->{'event_createdby'};
 }
 
 sub created
@@ -291,7 +296,13 @@ sub created
 
 sub updated_by
 {
-    Para::Member->get( shift->{'event_updatedby'});
+    return undef unless $_[0]->{'event_updatedby'};
+    unless( ref $_[0]->{'event_updatedby'} )
+    {
+	return $_[0]->{'event_updatedby'} =
+	    Para::Member->get( shift->{'event_updatedby'});
+    }
+    return $_[0]->{'event_updatedby'};
 }
 
 sub updated

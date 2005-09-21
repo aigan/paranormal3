@@ -35,7 +35,7 @@ sub handler
 
 	my $a = Para::Topic->get_by_id($tid)->alias( $talias ) or die;
 
-	my $verdict = $q->param("_talias__${row}_keep");
+	my $verdict = $q->param("_talias__${row}_keep")||'';
 
 	if( $verdict eq 't' )
 	{

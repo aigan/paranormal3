@@ -145,7 +145,7 @@ use Para::Member;
 			      $Para::dbix->connect;
 
 			      # Take shortcut...
-			      return unless $Para::Frame::CFG->{'do_bgjob'};
+			      return unless $SITE_CFG->{'do_bgjob'};
 
 			      # Setup MOTD
 			      Para::Widget::new_entry(undef, 'static');

@@ -138,7 +138,7 @@ sub add_background_jobs
     $req->add_job('run_code', \&Para::Calendar::do_planned_actions);
 
 
-    return unless $Para::Frame::CFG->{'do_bgjob'};
+    return unless $Para::SITE_CFG->{'do_bgjob'};
 
     eval
     {

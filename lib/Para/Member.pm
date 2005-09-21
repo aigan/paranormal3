@@ -373,7 +373,9 @@ sub on_logout
     $time ||= now();
     $u->latest_out( $time );
     my $db = paraframe_dbm_open( DB_ONLINE );
+    warn "Delete from DB\n";
     delete $db->{$u->id};
+    warn "Delete from DB - done\n";
 }
 
 sub set

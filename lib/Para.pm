@@ -28,7 +28,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( debug paraframe_dbm_open );
+use Para::Frame::Utils qw( debug );
 use Para::Frame::Time qw( now duration );
 
 use Para::Member;
@@ -38,7 +38,6 @@ use Para::Interest;
 use Para::Interests::Tree;
 use Para::Email;
 use Para::Calendar;
-use Para::Constants qw( DB_ONLINE );
 
 our $CLEAR_CACHE;
 
@@ -176,7 +175,6 @@ sub timeout_login
 
     my $now = now();
 
-    my $db = paraframe_dbm_open( DB_ONLINE );
     foreach my $rec ( @$recs, @$online )
     {
 	my $m = Para::Member->get_by_id( $rec->{'member'} );
@@ -189,15 +187,12 @@ sub timeout_login
 	if( $latest_in->delta_ms($now) > duration( hours => 40 ) )
 	{
 	    debug $m->desig." has been online since $latest_in";
-	    $m->latest_out( $latest_in->add(hours=>1) );
-	    delete $db->{$m->id};
+	    $m->on_logout( $latest_in->add(hours=>1) );
 	}
 	elsif( $latest_seen->delta_ms($now) > duration( minutes => 30 ) )
 	{
 	    debug "Logging out ".$m->desig;
-	    # Does the same thing as $m->on_logout
-	    $m->latest_out( $now );
-	    delete $db->{$m->id};
+	    $m->on_logout( $now );
 	}
     }
 }

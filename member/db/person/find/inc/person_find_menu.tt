@@ -3,6 +3,7 @@
 | [%+ jump('Kombinerad', '/member/db/person/find/combined.tt') +%]
 | [%+ jump('Nya', '/member/db/person/find/latest_citizen.tt') +%]
 | [%+ jump('Senast inne', '/member/db/person/find/latest_visitor.tt') +%]
+| [%+ jump('Online just nu', '/member/db/person/find/online.tt') +%]
 | [%+ jump('ICQ', '/member/db/person/find/icq_list.tt') +%]
 [% IF u.level >= 41 %]
    | [% jump("Skapa", "/member/db/person/create/") +%]

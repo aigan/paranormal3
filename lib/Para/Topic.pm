@@ -120,7 +120,7 @@ sub _new
 	    {
 		$Para::Topic::CACHE->{"$tid-"} = $t;
 	    }
-	    debug(2,"Initialized $tid-$v");
+	    debug(2,"Initialized topic $tid-$v");
 	}
 	return $t;
     }

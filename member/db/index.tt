@@ -96,4 +96,4 @@
 </p>
 [% END %]
 
-<p>Det är just nu [% inflect(count_online, '1 medlem inloggad', '%d medlemmar inloggade') %] här</p>
+<p>Det är just nu [% jump(inflect(count_online, '1 medlem inloggad', '%d medlemmar inloggade'), "person/find/online.tt") %] här</p>

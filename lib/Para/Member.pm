@@ -53,7 +53,7 @@ BEGIN
 
 }
 
-our $ONLINE_COUNT;
+our $ONLINE_COUNT; # Not used, since DB_ONLINE changes externally
 our %UNSAVED;
 
  INIT:
@@ -1948,16 +1948,14 @@ sub latest_seen
 {
     my( $m, $time ) = @_;
 
-    # NB! Not stored in the DB!
-
-    # We look in the DB for online info from other sources (Paraserv
-    # and other instances of Paranormal.se) but don't bother updating
-    # it if we got more acurate info
-
     if( $time )
     {
 	$time = Para::Frame::Time->get( $time );
 	$m->{'latest_seen'} = $time;
+
+	# Update DBM
+	my $db = paraframe_dbm_open( DB_ONLINE );
+	$db->{ $m->id } = $time->epoch;
     }
     else
     {
@@ -2934,15 +2932,32 @@ sub by_name  ## LIST CONSTRUCTOR
     return \@sorted;
 }
 
+sub currently_online
+{
+    my( $this ) = @_;
+    my $db = paraframe_dbm_open( DB_ONLINE );
+    my @list;
+    foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
+    {
+	push @list, $this->get_by_id($mid);
+    }
+    return \@list;
+}
+
 sub count_currently_online
 {
-    undef $ONLINE_COUNT if $ONLINE_COUNT||0 < 0;
-    unless( defined $ONLINE_COUNT )
-    {
-	my $rec = $Para::dbix->select_record("select count(member) as cnt from member where latest_in is not null and (latest_out is null or latest_in > latest_out)");
-	$ONLINE_COUNT = $rec->{'cnt'};
-    }
-    return $ONLINE_COUNT;
+    my $db = paraframe_dbm_open( DB_ONLINE );
+    return scalar keys %$db;
+
+    
+#    undef $ONLINE_COUNT if $ONLINE_COUNT||0 < 0;
+#    unless( defined $ONLINE_COUNT )
+#    {
+#	my $rec = $Para::dbix->select_record("select count(member) as cnt from member where latest_in is not null and (latest_out is null or latest_in > latest_out)");
+#	$ONLINE_COUNT = $rec->{'cnt'};
+#    }
+#    debug sprintf "Count online $ONLINE_COUNT (%s)", $_[0]->count_currently_online_dbm();
+#    return $ONLINE_COUNT;
 }
 
 ######################################################

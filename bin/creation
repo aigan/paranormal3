@@ -165,6 +165,8 @@ use Para::Member;
      'select_persons_by_name' => sub{ Para::Member->by_name( @_ ) },
      'getmember'         => sub{ Para::Member->get_by_id( @_ ) },
      'getmember_by_nick' => sub{ Para::Member->get_by_nickname( @_ ) },
+     'getmember_currently_online'
+ 	                 => sub{ Para::Member->currently_online( @_ ) },
      'count_online'      => sub{ Para::Member->count_currently_online },
 
      'topic'             => sub{ Para::Topic->get_by_id( @_ ) },

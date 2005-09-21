@@ -151,7 +151,7 @@ sub handler
      checksum          => $checksum,
     );
 
-    warn Dumper \%data;
+#    warn Dumper \%data;
 
     my $post_data = join '&', map {$_."=".$q->escape($data{$_})} keys %data;
 

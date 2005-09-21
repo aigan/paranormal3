@@ -193,7 +193,6 @@ sub timeout_login
 	{
 	    debug "Logging out ".$m->desig;
 	    $m->on_logout( $now );
-	    debug "Logging out - done";
 	}
     }
 }

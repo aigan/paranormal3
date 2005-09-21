@@ -6,8 +6,11 @@
 
 [% PROCESS calendar_menu.tt %]
 
-[% e = getevent(q.param('eventid')) %]
-[% hidden('eventid', e.id) %]
+[% eid = q.param('eventid') %]
+[% IF eid %]
+[% e = getevent(eid) %]
+[% hidden('eventid', eid) %]
+[% END %]
 
 <div class="entry">
 <table>

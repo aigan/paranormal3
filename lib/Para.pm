@@ -132,13 +132,11 @@ sub add_background_jobs
     &timeout_login;
     &clear_tempfiles;
 
+    return unless $Para::SITE_CFG->{'do_bgjob'};
 
     $req->add_job('run_code', \&Para::Place::fix_zipcodes);
 
     $req->add_job('run_code', \&Para::Calendar::do_planned_actions);
-
-
-    return unless $Para::SITE_CFG->{'do_bgjob'};
 
     eval
     {

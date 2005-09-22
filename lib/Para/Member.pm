@@ -450,14 +450,20 @@ sub set_passwd
     }
 
     my $now = now();
-    my $now_str = $now->date;
-    my $st = "update passwd set passwd_updated=?, passwd_changedby=?, ".
-	"passwd_previous=?, passwd=? where passwd_member=?";
-    my $sth = $Para::dbh->prepare( $st );
-    $sth->execute( $now_str, $u->id, $m->{'passwd'}, $new, $mid );
+
+    $Para::dbix->update('passwd',
+			{
+			    passwd_updated => $now,
+			    passwd_changedby => $u->id,
+			    passwd_previous => $m->{'passwd'},
+			    passwd => $new,
+			},
+			{
+			    passwd_member => $mid,
+			});
 
     $m->{'passwd_updated'} = $now;
-    $m->{'passwd_changedby'} = $u->id;
+    $m->{'passwd_changedby'} = $u;
     $m->{'passwd_previous'} = $m->{'passwd'};
     $m->{'passwd'} = $new;
 
@@ -640,7 +646,14 @@ sub interest
 {
     my( $m, $t ) = @_;
 
-    return $m->interests->getset( $t );
+    if( $m->equals($Para::Frame::U) )
+    {
+	return $m->interests->getset( $t );
+    }
+    else
+    {
+	return $m->interests->get( $t );
+    }
 }
 
 sub title
@@ -760,7 +773,7 @@ sub dist
     }
 
 
-    debug(3,"in dist m $m->{'geo_x'} n $obj->{'geo_x'}");
+    debug(0,"in dist m $m->{'geo_x'} n $obj->{'geo_x'}");
     if( UNIVERSAL::isa( $obj, 'Para::Member') and
 	$m->{'geo_x'} and $obj->{'geo_x'})
     {

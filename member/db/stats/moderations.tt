@@ -25,7 +25,7 @@
    <td>$accepted_thing
    <td>$rejected_thing
    [% IF rejected_thing %]
-   <td align="right">[% (accepted_thing + rejected_thing) / rejected_thing  | replace(',','.') | format('%d') %]
+   <td align="right">[% (accepted_thing + rejected_thing) / rejected_thing  | format('%d') %]
    [% END %]
 [% END %]
 </table>

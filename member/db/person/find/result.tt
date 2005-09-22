@@ -34,7 +34,7 @@
        <td>[% jump(m.nickname, "../view/", mid=m.id) %]</td>
        <td>[% m.level %]</td>
        <td>[% m.name %]</td>
-       <td>[% IF dist.length; dist / 1000 | replace(',','.') | format('%d km'); END %]</td>
+       <td>[% IF dist.length; dist / 1000 | format('%d km'); END %]</td>
        <td>[% m.home_postal_city %]</td>
        <td>[% m.latest_in %]</td>
    </tr>

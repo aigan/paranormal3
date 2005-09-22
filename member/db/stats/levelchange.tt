@@ -27,7 +27,7 @@
    <td>$promoted_user
    <td>$demoted_user
    [% IF demoted_user %]
-   <td align="right">[% (promoted_user + demoted_user) / demoted_user  | replace(',','.') | format('%d') %]
+   <td align="right">[% (promoted_user + demoted_user) / demoted_user  | format('%d') %]
    [% END %]
 [% END %]
 </table>

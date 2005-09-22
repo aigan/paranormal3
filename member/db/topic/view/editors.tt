@@ -34,8 +34,8 @@ väktare.  Dvs någon med minst nivå 11.
    [% tr2 %]
       <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', mid=interest.member) %]</td>
       <td valign="top" align="right">[% interest.member_level %]</td>
-      <td valign="top">[% (interest.editor||0) / 17 | replace(',','.') | format('%d') %]</td>
-      <td valign="top">[% (interest.knowledge||0) / 17 | replace(',','.') | format('%d') %]</td>
+      <td valign="top">[% (interest.editor||0) / 17 | format('%d') %]</td>
+      <td valign="top">[% (interest.knowledge||0) / 17 | format('%d') %]</td>
       <td valign="top">[% interest.intrest_description %]</td>
    </tr>
 [% END %]

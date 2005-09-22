@@ -23,7 +23,7 @@
 
 [% FOREACH select_list("select nickname, member, member_level, thing_finalised, thing_accepted, thing_rejected, topic_connected, (thing_finalised*10 + thing_accepted - thing_rejected) as score, (thing_finalised + thing_accepted) / (thing_rejected+1) as quality, thing_finalised + thing_accepted as total_accepted from member, score where score_member=member and member_level < 12 and topic_connected >= 10 order by $order $direction limit 160") %]
 
-[% tr2 %]<td>[% jump(nickname, '/member/db/person/view/', mid=member) %] <td>$member_level <td>$score <td>[% quality | replace(',', '.') | format('%d') %] <td>$total_accepted <td>$thing_rejected <td>$topic_connected
+[% tr2 %]<td>[% jump(nickname, '/member/db/person/view/', mid=member) %] <td>$member_level <td>$score <td>[% quality | format('%d') %] <td>$total_accepted <td>$thing_rejected <td>$topic_connected
 
 [% END %]
 </table>

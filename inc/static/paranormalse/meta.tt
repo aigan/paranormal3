@@ -1,6 +1,6 @@
 [% PROCESS topic/button_update.tt %]
 
-[% jump('Detaljer','/member/db/person/view', mid=m.id, class='link_button' id='member_details') %]
+[% jump('Detaljer','/member/db/person/view/', mid=m.id, class='link_button' id='member_details') %]
 
 <table align="left">
  
@@ -59,7 +59,7 @@
 [%- END -%]
 [%- IF m.newsmail > 2 -%]
    [%- ', ' IF contact %]
-   [% jump('E-post', '/member/db/person/view/send_email' member=m.id) -%]
+   [% jump('E-post', '/member/db/person/view/send_email.tt' mid=m.id) -%]
    [%- contact = 1 -%]
 [%- END -%]
 [%- IF m.home_online_icq(1) -%]

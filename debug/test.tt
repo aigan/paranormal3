@@ -1,0 +1,14 @@
+[% META
+	title = 'Test'
+	next_action = 'test'
+%]
+
+[% submit("Test 1") %]
+
+[% go("Test 2", me, "test2") %]
+
+[% go("Sleep", me, "sleep") %]
+
+[%# PROCESS typelist.tt tid=390340 %]
+
+<p>[% jump('ENV', 'env.tt') %]

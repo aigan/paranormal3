@@ -19,6 +19,7 @@ sub handler
 	throw('denied', "Reserverat för sysadmin");
     }
 
+    debug "Running CRON DAILY";
 
     remove_member_level1();
     remove_member_level2();
@@ -36,7 +37,8 @@ sub handler
 sub remove_member_level1
 {
     ### Remove persons that never logged in
-    #
+    debug "* remove_member_level1";
+
     my $recs = $Para::dbix->select_list("select member from member where member_level = 1 and member > ? and age(member_created) > '14 days' and member_comment_admin is null", M_VIP);
 
     foreach my $rec (@$recs)
@@ -49,6 +51,8 @@ sub remove_member_level1
 
 sub remove_member_level2
 {
+    debug "* remove_member_level2";
+
     # Members on level 2
 
     # takers: Not logged in in 6 months
@@ -67,6 +71,8 @@ sub remove_member_level2
 
 sub promote_member_level5
 {
+    debug "* promote_member_level5";
+
     # Members on level 5
     # Contact internal=5, external=10
 
@@ -85,6 +91,8 @@ sub promote_member_level5
 
 sub promote_member_level6
 {
+    debug "* promote_member_level6";
+
     # Members on level 6
     # Contact internal=15
 
@@ -109,6 +117,8 @@ sub promote_member_level6
 
 sub promote_member_level7
 {
+    debug "* promote_member_level7";
+
     # Members on level 7
     # Has an active member topic
     # Has a surname
@@ -178,6 +188,8 @@ sub promote_member_level7
 
 sub promote_member_level8
 {
+    debug "* promote_member_level8";
+
     # Members on level 8
     # Contatc public=15
 
@@ -232,6 +244,8 @@ sub promote_member_level8
 
 sub promote_member_level9
 {
+    debug "* promote_member_level9";
+
     # Member on level 9
     # Contatc public=15
     # Has been a member at least 90 days

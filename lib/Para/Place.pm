@@ -507,7 +507,7 @@ sub get_city
     else
     {
 	# create record
-	$city = get_nextval('city_seq');
+	$city = $Para::dbix->get_nextval('city_seq');
 
 	my $sth_create = $Para::dbh->prepare(
 	      "insert into city
@@ -565,7 +565,7 @@ sub get_street
     else
     {
 	# create record
-	$street = get_nextval('street_seq');
+	$street = $Para::dbix->get_nextval('street_seq');
 
 	my $sth_create = $Para::dbh->prepare(
 	      "insert into street

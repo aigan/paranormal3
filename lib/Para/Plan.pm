@@ -190,22 +190,7 @@ sub execute
     {
 	debug "Execution of planned event action $action failed";
 	debug(1);
-	foreach my $part (@{ $req->result->parts })
-	{
-	    my $type = $part->{'type'} || '';
-	    my $msg  = $part->{'message'};
-	    debug "$type:\n$msg\n";
-	    if( $part->{'view_context'} )
-	    {
-		my $line = $part->{'context_line'};
-		my $context = $part->{'context'};
-		if( length $context )
-		{
-		    debug "Context at line $line:\n";
-		    debug $context;
-		}
-	    }
-	}
+	debug $req->result->as_string;
 	debug(-1);
 	$plan->{'plan_started'} = undef;
 	$Para::dbix->update('plan',

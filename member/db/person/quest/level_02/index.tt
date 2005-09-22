@@ -17,4 +17,4 @@
   <li><a href="presentation.tt">Presentation</a></li>
 </ol>
 
-<p>[% step %]
+<p>[% nostep %]

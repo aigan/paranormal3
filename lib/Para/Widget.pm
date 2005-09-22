@@ -30,87 +30,12 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
-use Para::Frame::Utils qw( maxof debug );
+use Para::Frame::Utils qw( maxof debug get_from_fork );
 
 use Para::Constants qw( :all );
 use Para::Topic;
 use Para::Member;
 use Para::Place;
-
-sub select_person_advanced
-{
-    # Return list or records
-
-    my @where = ();
-    my @values = ();
-    my $q = $Para::Frame::REQ->q;
-
-    foreach my $key ( $q->param )
-    {
-	next unless length $q->param($key);
-
-	$key =~ /^_\w+?_(.*)/ or next;
-	my $field = $1;
-	my $match = $field;
-	if( $q->param("_lower_$field") )
-	{
-	    $match = "lower($field)";
-	}
-
-	if( $key =~ /^_like_(.*)/ )
-	{
-	    push @where, "$match like ?";
-	    push @values, $q->param($key);
-	}
-
-	if( $key =~ /^_max_(.*)/ )
-	{
-	    push @where, "$match <= ?";
-	    push @values, $q->param($key);
-	}
-
-	if( $key =~ /^_min_(.*)/ )
-	{
-	    push @where, "$match >= ?";
-	    push @values, $q->param($key);
-	}
-    }
-
-    if( $Para::Frame::U->level < 41 )
-    {
-	push @where, "present_contact > 4";
-
-    }
-
-    my $part_limit = "";
-    if( my $limit = $q->param('limit') )
-    {
-	$limit =~ /^\d+$/ or die;
-	my $offset = $q->param('offset') || 0;
-	unless( $offset > 1 )
-	{
-	    $offset = 0;
-	    $q->param('offset', 0);
-	}
-	$part_limit = "limit $limit offset $offset";
-#	push @values, $limit, $offset;
-    }
-
-    my $where = join " and ", @where;
-    $where = "where $where" if @where;
-
-    my $st = "select * from member $where order by member_level desc, member $part_limit";
-
-    warn "  Advanced: $st\n";
-    warn "  Values: ".join(',',@values)."\n";
-
-    my $sth = $Para::dbh->prepare( $st ) or die $st;
-    $sth->execute( @values ) or die $st;
-    my $ref =  $sth->fetchall_arrayref({});
-    $sth->finish;
-
-    return $ref;
-}
 
 sub status2level
 {
@@ -523,11 +448,16 @@ sub select_persons
 
     my $where_string = join " and ", @where_part;
 
-    my $part_select = join ", ", '*', @select;
+    my $part_select = join ", ", 'member', @select;
     my $sql = 'select '.$part_select.' from member where '.$where_string.
 	" order by $order limit ? offset ?";
     my(@data) = ($sql, @where_data, int($pagesize), int($offset-1));
-    my $persons = $Para::dbix->select_list(@data);
+
+
+    my $values = join ", ",map defined($_)?"'$_'":'<undef>', @data;
+    debug "SQL: $values";
+
+    my $persons = get_from_fork(sub{$Para::dbix->select_list(@data)});
     return $persons;
 }
 

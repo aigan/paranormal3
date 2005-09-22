@@ -36,7 +36,7 @@ sub handler
     my $uri = $ENV{'REDIRECT_SCRIPT_URI'} or
 	throw('denied',"You should not be here!!!");
 
-    my $host = $req->http_host_name;
+    my $host = $req->http_host;
     $uri =~ s/^https?:\/\/$host//;
 
     $uri =~ s/^\/topic\/(\w\w\/)/\/topic\//;

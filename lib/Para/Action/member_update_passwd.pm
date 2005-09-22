@@ -2,7 +2,10 @@
 package Para::Action::member_update_passwd;
 
 use strict;
+use Data::Dumper;
+
 use Para::Frame::Utils qw( throw );
+
 use Para::Member;
 
 sub handler
@@ -22,7 +25,8 @@ sub handler
     }
 
     my $m =  Para::Member->get( $mid );
-    $m->changes_reset;
+
+    my $change = $m->change->reset;
 
     $m->set_passwd( $q->param('passwd_old')||'',
 		    $q->param('passwd')||'',
@@ -30,7 +34,6 @@ sub handler
 		    );
 
 
-    my $change = $m->change;
     if( $change->changes )
     {
 	$req->result->message( $change->message );

@@ -121,7 +121,7 @@ från
 
 Sortera på:<br>
 
-[% radio("order", "dist", 1) %] Avstånd<br>
+[% radio("order", "dist", 'dist') %] Avstånd<br>
 [% radio("order", "latest_in desc") %] Senast inloggad<br>
 [% radio("order", "member_level desc") %] Nivå<br>
 [% radio("order", "nickname") %] Namn<br>
@@ -131,8 +131,8 @@ Sortera på:<br>
 
 
 Visa
-[% IF u.level > 10 %]
-[% select("pagesize", 10,
+[% IF u.level > 7 %]
+[% select("pagesize", '00030',
 {
 	'00010' = 10,
 	'00020' = 20,
@@ -141,13 +141,14 @@ Visa
 	'00100' = 100,
 	'00200' = 200,
 	'00500' = 500,
-	'10000' = 10000,
 }) %]	
 [% ELSE %]
-[% select("pagesize", 10,
+[% select("pagesize", '00030',
 {
 	'00010' = 10,
 	'00020' = 20,
+	'00030' = 30,
+	'00050' = 50,
 }) %]	
 [% END %]
 träffar

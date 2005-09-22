@@ -44,6 +44,7 @@ use Para::Frame::Email;
 use Para::Frame::Email::Address;
 use Para::Frame::Utils qw( chmod_tree );
 use Para::Frame::Watchdog;
+use Para::Frame::Site;
 
 use Para;
 use Para::Member;
@@ -57,6 +58,14 @@ use Para::Member;
     {
 	die "Site configuration missing";
     }
+
+    Para::Frame::Site->add({
+	# Path in  URL to website
+	'webhome'    => '',
+	'webhost'    => $SITE_CFG->{'webhost'},
+	'last_step'  => "/member/db/",
+	'static_ttc' => "$PARAFRAME/var/ttc/psidb2",
+    });
 
     my $cfg =
     {
@@ -73,18 +82,10 @@ use Para::Member;
 
 	port           => $SITE_CFG->{'port'},
 	debug          => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
-
-	'site'    =>
-	{
-	    # Path in  URL to website
-	    'webhome'    => '',
-	    'webhost'    => $SITE_CFG->{'webhost'},
-	    'last_step'  => "/member/db/",
-	    'static_ttc' => "$PARAFRAME/var/ttc/psidb2",
-	}
-
     };
     Para::Frame->configure( $cfg );
+
+
 
     # Make sure we can read/write generated files
     chmod_tree( "$PARAFRAME/var/ttc" );

@@ -8,4 +8,4 @@ Lösenord    : [% m.passwd %]
 
 Du kan gå till denna sida för att logga in automatiskt:
 
-    http://[% host %]/?run=user_login&username=[% m.nickname | uri %]&password=[% m.passwd | uri %]
+    http://[% site.webhost %]/?run=user_login&username=[% m.nickname | uri %]&password=[% m.passwd | uri %]

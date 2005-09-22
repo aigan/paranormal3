@@ -475,7 +475,7 @@ sub import_zip
     $sth_zip->execute($zip, $city, $lk );
 
     # Update all members with zip
-    my $list = $Para::dbix->select_list("from member where home_postal_code = ?)", "S-$zip");
+    my $list = $Para::dbix->select_list("from member where home_postal_code = ?", "S-$zip");
     foreach my $rec (@$list)
     {
 	my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );

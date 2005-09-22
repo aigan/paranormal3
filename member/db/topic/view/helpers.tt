@@ -26,9 +26,9 @@
 
 [% hr %]
 
-<h2>[% jump('Hjälp-linjen', '/member/db/get_help.tt', tid=tid) %]</h2>
+<h2>[% jump('Hjälp-linjen', '/help/', tid=tid) %]</h2>
 
-<p>Är du drabbad av något paranormalt eller andligt fenomen? Vi har en hjälp-linje där du kan få hjälp med dina problem.  Skriv till [% jump('Hjälp-linjen', '/member/db/get_help.tt', tid=tid) %].
+<p>Är du drabbad av något paranormalt eller andligt fenomen? Vi har en hjälp-linje där du kan få hjälp med dina problem.  Skriv till [% jump('Hjälp-linjen', '/help/', tid=tid) %].
 
 <p>Är du på jakt efter kunskap eller information om något bör du istället fråga någon av de enskilda hjälparna listade här nedan. Dessa frågor är för många för att vi ska kunna ta hand om dem.</p>
 
@@ -53,7 +53,7 @@ till [% forward('redaktörerna för detta ämnet','editors') %].  Frågor
 om webbplatsen i allmänhet ska gå till <a
 href="/member/mail.cgi?helpers">red@paranormal.se</a>.
 [% ELSE %]
-<p>Om du [% jump("loggar in", "/user_login.tt", run='mark') %] har du möjlighet att hitta fler personer som vill hjälpa inom ett visst område.  Då kan du även göra göra speciella sökningar och hitta personer som bor i närheten av dig. Du kommer även kunna läsa medlemmarnas presentationer, med mera.
+<p>Om du [% jump("loggar in", "/login.tt", run='mark') %] har du möjlighet att hitta fler personer som vill hjälpa inom ett visst område.  Då kan du även göra göra speciella sökningar och hitta personer som bor i närheten av dig. Du kommer även kunna läsa medlemmarnas presentationer, med mera.
 [% END %]
 
 
@@ -83,14 +83,14 @@ K = Kunskap.
    [% IF u.level %]
       <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', mid=interest.member) %]</td>
    [% ELSE %]
-      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/send_email.tt', mid=interest.member, tid=tid) %]</td>
+      <td valign="top">[% jump(interest.nickname, '/member/db/person/view/send_email.tt', mid=interest.member, tid=tid, run='mark') %]</td>
    [% END %]
 
-      <td valign="top">[% (interest.helper||0) / 17 | replace(',','.') | format('%d') %]</td>
-      [% IF trobart %]<td valign="top">[% (interest.belief||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
-      [% IF upplevbart %]<td valign="top">[% (interest.experience||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
-      <td valign="top">[% (interest.knowledge||0) / 17 | replace(',','.') | format('%d') %]</td>
-      [% IF praktiserbart %]<td valign="top">[% (interest.practice||0) / 17 | replace(',','.') | format('%d') %]</td>[% END %]
+      <td valign="top">[% (interest.helper||0) / 17 | format('%d') %]</td>
+      [% IF trobart %]<td valign="top">[% (interest.belief||0) / 17 | format('%d') %]</td>[% END %]
+      [% IF upplevbart %]<td valign="top">[% (interest.experience||0) / 17 | format('%d') %]</td>[% END %]
+      <td valign="top">[% (interest.knowledge||0) / 17 | format('%d') %]</td>
+      [% IF praktiserbart %]<td valign="top">[% (interest.practice||0) / 17 | format('%d') %]</td>[% END %]
       <td valign="top">[% interest.intrest_description %]</td>
    </tr>
    [% rows.count = rows.count + 1 %]

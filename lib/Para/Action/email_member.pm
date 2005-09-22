@@ -18,7 +18,7 @@ sub handler
     my $mid = $q->param('mid') or
 	throw('validation', "mid param missing");
 
-    my $from = $q->param('from') || 'Anonym';
+    my $from = $q->param('from') || 'spam@paranormal.se';
     my $subject = $q->param('subject') || '<inget ämne>';
 
     my $m = Para::Member->get_by_id( $mid );
@@ -28,6 +28,7 @@ sub handler
 	m => $m,
 	template => 'custom.tt',
 	from => $from,
+	cnt => 1,
     });
 
     $fork->yield;

@@ -15,9 +15,9 @@ sub handler
     my $u = $Para::Frame::U;
     my $q = $req->q;
 
-    my $from = $q->param('from')
-	or throw('validation', "Du behöver ange en från-adress");
-    my $subject = $q->param('subject') || '<inget ämne>';
+    my $from = $q->param('from') || 'spam@paranormal.se';
+    my $subject = $q->param('subject')
+	or throw('validation', "Ange en tydlig rubrik till brevet");
 
     my $fork = Para::Email->send_in_fork({
 	subject => $subject,

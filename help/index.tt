@@ -1,6 +1,7 @@
 [% META
 	otitle = 'Skicka e-post'
 	next_action = 'email_help'
+	default_template = '/member/db/topic/view/helpers.tt'
 	focus = 'subject'
 %]
 
@@ -32,8 +33,11 @@
 <p>[% textarea('body','' ) %]
 
 [% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
-<p>[% submit('Skicka brevet') %]
 
+<p>[% step('Skicka brevet') %]
+
+[% DEFAULT tid = 428516 %]
+[% hidden('tid',tid) %]
 [% hr %]
 
 <p>Vill du prata med någon direkt, går det bra att ringa också!</p>

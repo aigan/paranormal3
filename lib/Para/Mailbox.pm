@@ -52,8 +52,6 @@ sub new
     bless $mbx, $class;
     $mbx->imap_connect;
 
-    debug(1,"Mailbox object created");
-
     return $mbx;
 }
 

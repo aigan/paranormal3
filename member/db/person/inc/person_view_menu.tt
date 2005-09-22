@@ -1,3 +1,4 @@
+[% RETURN UNLESS u.level %]
 [%
    DEFAULT keep=[ 'mid' ];
 %]

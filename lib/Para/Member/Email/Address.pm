@@ -18,7 +18,7 @@ package Para::Member::Email::Address;
 
 use strict;
 use Data::Dumper;
-use Carp;
+use Carp qw( confess croak );
 
 BEGIN
 {
@@ -50,9 +50,9 @@ sub new
     }
     else
     {
-	$rec = $Para::dbix->select_record('from mailalias where mailalias_member=? and mailalias=?', $m->id, $ea->as_string );
+	$rec = $Para::dbix->select_possible_record('from mailalias where mailalias_member=? and mailalias=?', $m->id, $ea->as_string );
 
-	$rec or die "Email $email_str is not coupled to member ".$m->id."\n";
+	$rec or croak "Email $email_str is not coupled to member ".$m->id."\n";
     }
 
     # Copy to Para::Email::Address object

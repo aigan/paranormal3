@@ -1,7 +1,6 @@
 [% META
 	otitle = 'Skicka e-post'
 	next_action = 'email_help'
-	next_handler = '/index.tt'
 	focus = 'subject'
 %]
 

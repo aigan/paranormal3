@@ -8,7 +8,9 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Skicka e-post till [% jump("$m.title $m.nickname", '/member/db/person/view/' member=m.member) %]</h1>
+<h1>Skicka e-post till [% m.tlink %]</h1>
+
+[% PROCESS person_view_menu.tt %]
 
 [% UNLESS (u.level and m.newsmail > 2) or (u.level > 40) or (m.newsmail > 0 and u.level > 5) or (m.newsmail > 3 and m.general_helper > 30 ) %]
    [% THROW denied "Du har för låg nivå för att skicka e-post till denna medlem" %]
@@ -29,6 +31,9 @@
 
 <p>[% textarea('body','' ) %]
 
-[% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
-
-<p>[% step('Skicka brevet') %]
+[% IF u.level %]
+   <p>(Mottagaren kommer att se ditt användarnamn)
+   <p>[% step('Skicka brevet') %]
+[% ELSE %]
+   <p>[% go('Skicka brevet', "/member/db/", "email_member") %]
+[% END %]

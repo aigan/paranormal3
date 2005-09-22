@@ -1,7 +1,7 @@
 [% META
 	otitle = 'Skicka e-post'
 	next_action = 'email_member'
-	next_template = '/member/db/person/view/'
+	default_template = '/member/db/person/view/'
 	focus = 'subject'
 	level = 0
 %]

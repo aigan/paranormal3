@@ -2519,7 +2519,7 @@ sub discard_changes  # Member changed. Refresh from DB
 
     my $mid = $m->id;
 
-    debug(1,"refresh member $mid");
+    debug(1,"discard changes for member $mid");
 
     my $saved = $m->get_by_id( $mid, undef, 1); # no cache
 

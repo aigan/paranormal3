@@ -1482,6 +1482,9 @@ sub level
 	    return $m->change->fail("Level out of range");
 	}
 
+	my $mid = $m->id;
+	debug "! Member $mid level changed to $level";
+
 	$m->{'member_level'} = $level;
 	$m->mark_updated;
 	$m->create_topic;
@@ -2463,9 +2466,38 @@ sub save
     });
 
 
+    # Also save scores
+    #
+    $changes += $m->save_scores({
+	m_old => $saved,
+    });
+
+
     delete $UNSAVED{$mid};
 
     return $changes; # The number of changes
+}
+
+sub save_scores
+{
+    my( $m, $params ) = @_;
+
+    $params ||= {};
+    my $mid = $m->id;
+
+    my $m_old = $params->{'m_old'} ||
+	$m->get_by_id( $mid, undef, 1);
+
+    my $m_scores = $m->score_hash;
+    my $m_old_scores = $m_old->score_hash;
+
+    return $Para::dbix->save_record({
+	rec_new => $m->score_hash,
+	rec_old => $m_old->score_hash,
+	table   => 'score',
+	key     => 'score_member',
+	keyval  => $mid,
+    });
 }
 
 sub discard_changes  # Member changed. Refresh from DB
@@ -2572,17 +2604,21 @@ sub score_change
 
     my $value = $m->score($field) + $delta;
 
-    my $statement = "update score set $field=? where score_member=?";
-    my $sth = $Para::dbh->prepare( $statement );
-    warn "Changing score for $mid\n";
-    $sth->execute( $value, $mid );
-    warn "Changing score for $mid - done\n";
-    $m->{'score'}{$field} = $value;
+    $m->mark_unsaved;
+    return $m->{'score'}{$field} = $value;
 }
 
 sub score
 {
     my( $m, $field ) = @_;
+
+    $m->{'score'} ||= $m->score_hash;
+    return $m->{'score'}{$field};
+}
+
+sub score_hash
+{
+    my( $m ) = @_;
 
     unless( $m->{'score'} )
     {
@@ -2590,7 +2626,7 @@ sub score
 	$m->{'score'} = $rec;
     }
 
-    return $m->{'score'}{$field};
+    return $m->{'score'};
 }
 
 sub total_time_online
@@ -2708,6 +2744,18 @@ sub remove
 	throw('denied', "Den här medlemen är kopplad till bokföringen");
     }
 
+    debug "! Removing member $mid from database";
+
+
+    # Don't bother about failed email
+    # Send before we remove info about reciepient
+    Para::Email->send_by_proxy({
+	    subject => "Medlemskap raderat",
+	    m => $m,
+	    template => 'member_remove.tt',
+	});
+
+
     # Remove from nickname cache
     foreach my $nick (@{ $m->nicks })
     {
@@ -2744,14 +2792,6 @@ sub remove
     $Para::dbh->do("update ipfilter set ipfilter_createdby=-2 where ipfilter_createdby = ?", undef, $mid);
 
 
-    # Don't bother about failed email
-    Para::Email->send_in_fork({
-	    subject => "Medlemskap raderat",
-	    m => $m,
-	    template => 'member_remove.tt',
-	});
-
-
     # Remove from mid cache
     #
     delete $Para::Member::CACHE->{$mid};
@@ -2763,6 +2803,10 @@ sub remove
     {
 	$u->logout;
     }
+
+
+    # Give room for something else
+    $Para::Frame::REQ->yield;
 
     return 1;
 }

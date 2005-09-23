@@ -1980,7 +1980,7 @@ sub latest_seen
 	$m->{'latest_seen'} ||= $m->latest_in;
 
 	# Update info if seen more than 15 mins ago
-	if( now->epoch - $m->{'latest_seen'}->epoch > 60 * 15 )
+	if( now()->epoch - $m->{'latest_seen'}->epoch > 60 * 15 )
 	{
 	    my $db = paraframe_dbm_open( DB_ONLINE );
 	    if( my $last = $db->{ $m->id } )

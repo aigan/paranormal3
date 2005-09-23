@@ -1977,7 +1977,7 @@ sub latest_seen
     }
     else
     {
-	$m->{'latest_seen'} ||= $m->latest_in;
+	$m->{'latest_seen'} ||= $m->latest_in || $m->created;
 
 	# Update info if seen more than 15 mins ago
 	if( now()->epoch - $m->{'latest_seen'}->epoch > 60 * 15 )

@@ -269,6 +269,7 @@ sub handler
 
 	my $name = url2title( $uri );
 	$res->{'info'}{'notfound'}{'name'} = $name;
+	$res->hide_part('notfound');
 
 	throw('notfound',"");
     }

@@ -69,7 +69,7 @@ sub handler
 	debug "Translating file to $uri";
 
 	# Lookup corresponding filename
-	my $filename = uri2filename( $uri );
+	my $filename = uri2file( $uri );
 	if( -r $filename ) # Realy existing?
 	{
 	    $req->redirect($uri);
@@ -85,7 +85,7 @@ sub handler
 	my $newuri = $rec->{'t_file'};
 
 	# Lookup corresponding filename
-	my $filename =  uri2filename( $newuri );
+	my $filename =  uri2file( $newuri );
 	if( -r $filename ) # Realy existing?
 	{
 	    $req->redirect( $newuri );

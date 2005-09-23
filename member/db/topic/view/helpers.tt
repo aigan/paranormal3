@@ -15,7 +15,7 @@
 
 <h1>Hjälpare inom [% PROCESS tlink.tt %]</h1>
 
-[% PROCESS static/default/interests.tt interest_limit=150 %]
+[% PROCESS static/default/interests/helper.tt interest_limit=150 %]
 
 [% IF u.level %]
    [% PROCESS topic_edit_menu.tt %]

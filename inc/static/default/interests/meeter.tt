@@ -1,0 +1,9 @@
+[%
+interest_meeter = select_list("from intrest, member
+              where intrest_member = member and intrest_topic=?
+              and meeter>=40 and intrest_defined>=50 and newsmail > 2
+              and member_level > 0 and present_intrests >= 20
+              order by ((meeter*2)+general_discussion+coalesce(belief,0)
+              - helper -general_meeter)*newsmail desc, meeter desc limit ?",
+		tid, interest_limit);
+%]

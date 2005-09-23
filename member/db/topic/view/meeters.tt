@@ -15,7 +15,7 @@
 
 [% PROCESS topic_edit_menu.tt %]
 
-[% PROCESS static/default/interests.tt interest_limit=150 %]
+[% PROCESS static/default/interests/meeter.tt interest_limit=150 %]
 
 <p>
 [ [% jump('Lista alla', '/member/db/person/find/result.tt' interest=tid _meeter=1) +%]

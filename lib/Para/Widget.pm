@@ -30,7 +30,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
-use Para::Frame::Utils qw( maxof debug get_from_fork );
+use Para::Frame::Utils qw( maxof debug get_from_fork minof);
 
 use Para::Constants qw( :all );
 use Para::Topic;
@@ -156,7 +156,7 @@ sub select_persons
     my $offset = $q->param('offset')||1;
     my $pagesize = $q->param('pagesize')||50;
 
-    $pagesize = 10 if $Para::Frame::U->level < 11;
+    $pagesize = minof($pagesize,50) if $Para::Frame::U->level < 11;
 
     $q->param('offset', $offset);
     $q->param('pagesize', $pagesize);

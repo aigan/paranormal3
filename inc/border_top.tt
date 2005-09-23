@@ -22,8 +22,6 @@
 
 <div id="search_field"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published">Sök <input size="10" name="talias"></form></div>
 
-<p><strong>OBS: Vi använder en separat databas, så allt som görs här påverkar inte paranormal.se eller betan. Bara test.</strong></p>
-
 [% PROCESS form_start.tt %]
 [% PROCESS headline.tt %]
 [% PROCESS info_box.tt %]

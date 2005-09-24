@@ -80,8 +80,9 @@ use Para::Member;
 	'logfile'      => "$APPROOT/logs/creation.log",
 	'pidfile'      => "$APPROOT/logs/creation.pid",
 
-	port           => $SITE_CFG->{'port'},
-	debug          => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
+	'port'         => $SITE_CFG->{'port'},
+	'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
+	'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
     };
     Para::Frame->configure( $cfg );
 

@@ -135,7 +135,7 @@ sub cancel_payment
 {
     my( $order_id ) = @_;
 
-    my $sth = $Para::dbh->prepare_cached("delete from payment where payment_id=?");
+    my $sth = $Para::dbh->prepare("delete from payment where payment_id=?");
     $sth->execute( $order_id );
 
 }

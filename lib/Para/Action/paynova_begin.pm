@@ -75,7 +75,7 @@ sub handler
 
     # Store preliminary payment record (without price)
     #
-    my $sth = $Para::dbh->prepare_cached("insert into payment
+    my $sth = $Para::dbh->prepare("insert into payment
       ( payment_id, payment_member, payment_company, payment_date, payment_order_date, payment_invoice_date, payment_log_date, payment_product, payment_price, payment_vat, payment_quantity, payment_method, payment_receiver, payment_message )
       values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 

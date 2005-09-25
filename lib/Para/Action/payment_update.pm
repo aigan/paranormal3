@@ -62,7 +62,7 @@ sub handler
     # Update payment record
     #
 
-    my $sth = $Para::dbh->prepare_cached("update payment set
+    my $sth = $Para::dbh->prepare("update payment set
     payment_member=?, payment_company=?, payment_date=?,
     payment_order_date=?, payment_invoice_date=?, payment_log_date=?,
     payment_product=?, payment_price=?, payment_vat=?,

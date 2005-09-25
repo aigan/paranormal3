@@ -138,7 +138,7 @@ sub handler
 	my $mid = $m->id;
 	my $eid = $Para::dbix->get_nextval( "t_seq" );
 	warn "Creating entry $eid\n";
-	my $sth = $Para::dbh->prepare_cached("
+	my $sth = $Para::dbh->prepare("
            insert into t ( t, t_created, t_updated, t_createdby,
                            t_changedby, t_status, t_active, t_entry,
                            t_entry_parent, t_entry_imported )

@@ -182,7 +182,7 @@ sub set
 	    {
 		my $st_u = "update ts set ts_active=?, ts_status=?, ts_updated=now(), ".
 		    "ts_changedby=? where ts_entry=? and ts_topic=?";
-		my $sth_u = $dbh->prepare_cached( $st_u );
+		my $sth_u = $dbh->prepare( $st_u );
 		$sth_u->execute( pgbool($active), $new_status, $mid, $eid, $tid );
 		$change ++;
 	    }
@@ -195,7 +195,7 @@ sub set
 	    my $st_add = "insert into ts ( ts_entry, ts_topic, ts_createdby, ts_changedby, ".
 		"ts_status, ts_active ) values ( ?, ?, ?, ?, ?, ? )";
 	    warn "$st_add ($eid, $tid, $mid, $mid, $new_status, $active)\n";
-	    my $sth_add = $dbh->prepare_cached( $st_add );
+	    my $sth_add = $dbh->prepare( $st_add );
 	    $sth_add->execute($eid, $tid, $mid, $mid, $new_status, pgbool($active));
 	    $change ++;
 	}

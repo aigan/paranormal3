@@ -105,7 +105,7 @@ sub create
 
     my $id = get_nextval( "reltype_seq" );
 
-    my $sth_reltype = $Psi::dbh->prepare_cached(
+    my $sth_reltype = $Psi::dbh->prepare(
 	  "insert into reltype (reltype, reltype_updated, reltype_changedby)
            values ( ?, now(), ? )");
     $sth_reltype->execute($id, $m->id) or die;

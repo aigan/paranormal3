@@ -84,6 +84,7 @@ use Para::Member;
 	'port'         => $SITE_CFG->{'port'},
 	'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
 	'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
+	'umask'        => 0007,
     };
     Para::Frame->configure( $cfg );
 
@@ -93,6 +94,7 @@ use Para::Member;
     chmod_tree( "$APPROOT/var" );
     chmod_tree( "$APPROOT/topic",
 		{
+		    umask => 0,
 		    dirmode => 02775,
 		    filemode => 0664,
 		});

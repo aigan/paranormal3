@@ -3428,7 +3428,7 @@ sub write_page
 	(
 	 INTERPOLATE  => 1,
 	 INCLUDE_PATH => \@incpath,
-	 COMPILE_DIR  =>  $Para::Frame::CFG->{'paraframe'}.'/var/ttc/psidb2',
+	 COMPILE_DIR  =>  $req->site->{'static_ttc'},
 	 COMPILE_EXT  => '.ttc',
 	 PRE_CHOMP    => 0,
 	 POST_CHOMP   => 0,
@@ -3451,8 +3451,7 @@ sub write_page
 
 	create_file( $sysfile, $page,
 		     {
-			 dirmode => 02775,
-			 filemode => 0664,
+			 umask => 02,
 		     });
     };
     if( $@ )

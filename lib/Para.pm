@@ -185,6 +185,7 @@ sub timeout_login
 	    debug $m->desig." should never have been set as online";
 	    my $db = paraframe_dbm_open( DB_ONLINE );
 	    delete $db->{$m->id};
+	    next;
 	}
 
 	# Failsafe in case no logout was registred

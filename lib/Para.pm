@@ -92,6 +92,7 @@ sub clear_caches
 
 	foreach my $m ( values %{$Para::Member::CACHE} )
 	{
+	    next unless $m->{'member'};
 #	    warn "Clearing $m->{member} for removal\n";
 	    $m->clear_cached;
 	}

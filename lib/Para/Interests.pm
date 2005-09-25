@@ -143,7 +143,7 @@ sub summary
 	next unless $topic->active;
 	next if $in->defined < $definedness_limit;
 
-	debug(1,"Consider ".$topic->desig);
+	debug(2,"Consider ".$topic->desig);
 
 
 	if( $in->general < $cutof )
@@ -162,7 +162,7 @@ sub summary
 	{
 	    $sum_idx->{ $topic->id } = $in;
 	    $sum_cnt = scalar keys %$sum_idx;
-	    debug(1,"  added");
+	    debug(2,"  added");
 	}
 
 	if( $sum_cnt > 1 )
@@ -178,7 +178,7 @@ sub summary
 
 		if( $topic->has_rel([1,2,3,4], $ointr->topic) )
 		{
-		    debug(1,"under ".$ointr->topic->desig);
+		    debug(2,"under ".$ointr->topic->desig);
 
 		    delete $sum_idx->{ $topic->id };
 		    $sum_cnt = scalar keys %$sum_idx;
@@ -186,7 +186,7 @@ sub summary
 		}
 		elsif( $ointr->topic->has_rel([1,2,3,4], $topic) )
 		{
-		    debug(1,"over ".$ointr->topic->desig);
+		    debug(2,"over ".$ointr->topic->desig);
 
 		    # Keep if REALY intrested or comment given
 		    unless( $ointr->general >= 98 or $ointr->comment )

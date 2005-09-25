@@ -1111,7 +1111,7 @@ sub has_rel
 	}
 	elsif( $rel )
 	{
-	    debug(1,"Looking for related topic $rel");
+	    debug(2,"Looking for related topic $rel");
 	    my $rels_in = $t->find_urlpart( $rel );
 	    if( @$rels_in == 1 )
 	    {
@@ -1123,7 +1123,7 @@ sub has_rel
 		my $media = Para::Topic->get_by_id( T_MEDIA );
 		foreach my $rel2 ( sort { $a->{'t'} <=> $b->{'t'} } @$rels_in )
 		{
-		    debug(1,"  Consider ".$rel2->sysdesig);
+		    debug(2,"  Consider ".$rel2->sysdesig);
 		    next if $rel2->media;
 		    next if $rel2->has_rel(1, $media);
 		    push @rels, $rel2;
@@ -1135,11 +1135,11 @@ sub has_rel
 		return 0;
 	    }
 
-	    if( debug )
+	    if( debug > 1 )
 	    {
 		foreach my $rel2 ( @rels )
 		{
-		    warn "    Using ".$rel2->sysdesig."\n";
+		    debug "    Using ".$rel2->sysdesig."\n";
 		}
 	    }
 	}
@@ -1163,7 +1163,7 @@ sub has_rel
 
     return 0 unless @rels;
 
-    debug(1,"See if ".$t->desig." has $dir @$pred to any of the rels");
+    debug(2,"See if ".$t->desig." has $dir @$pred to any of the rels");
 
     foreach my $rel_out ( @rels )
     {
@@ -1219,7 +1219,7 @@ sub set_parent
     my $parent_id_str = $parent ? $parent_id : 'null';
 
     $result .=  "  Set $tid v$ver - parent: $parent_id_str\n";
-    debug(1,"Set $tid v$ver - parent: $parent_id_str");
+    debug(2,"Set $tid v$ver - parent: $parent_id_str");
 
     if( my $t_previous = $t->previous(undef, {ignore_check=>1}) )
     {

@@ -28,9 +28,10 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( debug );
+use Para::Frame::Utils qw( debug paraframe_dbm_open );
 use Para::Frame::Time qw( now duration );
 
+use Para::Constants qw( DB_ONLINE );
 use Para::Member;
 use Para::Topic;
 use Para::Widget;
@@ -176,8 +177,15 @@ sub timeout_login
 	my $m = Para::Member->get_by_id( $rec->{'member'} );
 	next if $seen{$m->id} ++;
 
-	my $latest_in = $m->latest_in or next;
+	my $latest_in = $m->latest_in;
 	my $latest_seen = $m->latest_seen;
+
+	unless( $latest_in and $latest_seen )
+	{
+	    debug $m->desig." should never have been set as online";
+	    my $db = paraframe_dbm_open( DB_ONLINE );
+	    delete $db->{$m->id};
+	}
 
 	# Failsafe in case no logout was registred
 	if( $latest_in->delta_ms($now) > duration( hours => 40 ) )

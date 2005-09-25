@@ -72,7 +72,7 @@ sub handler
 	my $filename = uri2file( $uri );
 	if( -r $filename ) # Realy existing?
 	{
-	    $req->redirect($uri);
+	    $req->redirect($uri, 1);
 	    return "Redirecting";
 	}
     }
@@ -88,7 +88,7 @@ sub handler
 	my $filename =  uri2file( $newuri );
 	if( -r $filename ) # Realy existing?
 	{
-	    $req->redirect( $newuri );
+	    $req->redirect( $newuri, 1 );
 	    return "Redirecting";
 	}
     }
@@ -293,7 +293,7 @@ sub handler
     debug "Trying $filename";
     if( -r $filename ) # Realy existing?
     {
-	$req->redirect( $newuri );
+	$req->redirect( $newuri, 1 );
     }
     else
     {
@@ -301,7 +301,7 @@ sub handler
 	$t->publish;
 	if( -r $filename ) # Exists now?!?
 	{
-	    $req->redirect( $newuri );
+	    $req->redirect( $newuri, 1 );
 	}
 	else
 	{

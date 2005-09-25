@@ -2997,15 +2997,45 @@ sub by_name  ## LIST CONSTRUCTOR
 
 sub currently_online
 {
-    my( $this ) = @_;
+    my( $this, $mode ) = @_;
+
+    # mode 0 = public
+    # mode 1 = anonymous
+    # mode 2 = both
+
     my $db = paraframe_dbm_open( DB_ONLINE );
     my @list;
-    foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
+    if( $mode == 1 and $Para::Frame::U->level >= 41 )
     {
-	my $m = $this->get_by_id($mid);
-	next if $m->present_activity < 10;
-	next if $m->present_contact < 5;
-	push @list, $m;
+	foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
+	{
+	    my $m = $this->get_by_id($mid);
+	    $m->{'member'} = $mid;
+	    if( $m->present_activity < 10 or
+		$m->present_contact < 5 )
+	    {
+		push @list, $m;
+	    }
+	}
+    }
+    elsif( $mode == 2 and $Para::Frame::U->level >= 41 )
+    {
+	foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
+	{
+	    my $m = $this->get_by_id($mid);
+	    $m->{'member'} = $mid;
+	    push @list, $m;
+	}
+    }
+    else
+    {
+	foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
+	{
+	    my $m = $this->get_by_id($mid);
+	    next if $m->present_activity < 10;
+	    next if $m->present_contact < 5;
+	    push @list, $m;
+	}
     }
     return \@list;
 }

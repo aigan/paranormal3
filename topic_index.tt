@@ -1,5 +1,6 @@
 [% META otitle="Index"
    css="/css/default.css"
+   no_robots_follow="-q.param('part').replace('^.', '')"
 %]
 [%
    subpart = {};

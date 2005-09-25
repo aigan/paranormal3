@@ -64,12 +64,13 @@ use Para::Member;
 	'webhome'    => '',
 	'webhost'    => $SITE_CFG->{'webhost'},
 	'last_step'  => "/member/db/",
-	'static_ttc' => "$PARAFRAME/var/ttc/psidb2",
+	'static_ttc' => "$APPROOT/var/ttc/static",
     });
 
     my $cfg =
     {
 	'paraframe' => $PARAFRAME,
+	'ttcdir'    => "$APPROOT/var/ttc",
 	'paraframe_group' => 'psi_cgi',
 
 	'appbase'      => 'Para',
@@ -78,7 +79,7 @@ use Para::Member;
 	'user_class'   => 'Para::Member',
 	'bg_user_code' => sub{ Para::Member->skapelsen },
 	'logfile'      => "$APPROOT/logs/creation.log",
-	'pidfile'      => "$APPROOT/logs/creation.pid",
+	'pidfile'      => "$APPROOT/var/creation.pid",
 
 	'port'         => $SITE_CFG->{'port'},
 	'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
@@ -89,7 +90,7 @@ use Para::Member;
 
 
     # Make sure we can read/write generated files
-    chmod_tree( "$PARAFRAME/var/ttc" );
+    chmod_tree( "$APPROOT/var" );
     chmod_tree( "$APPROOT/topic",
 		{
 		    dirmode => 02775,

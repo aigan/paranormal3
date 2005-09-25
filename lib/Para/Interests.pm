@@ -121,7 +121,7 @@ sub summary
 {
     my( $ins, $max, $cutof ) = @_;
 
-    debug(1,"Creating a summary");
+    debug(2,"Creating a summary");
 
     $max   ||= 10;
     $cutof ||= 95;

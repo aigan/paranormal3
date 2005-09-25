@@ -176,7 +176,7 @@ sub timeout_login
 	my $m = Para::Member->get_by_id( $rec->{'member'} );
 	next if $seen{$m->id} ++;
 
-	my $latest_in = $m->latest_in;
+	my $latest_in = $m->latest_in or next;
 	my $latest_seen = $m->latest_seen;
 
 	# Failsafe in case no logout was registred

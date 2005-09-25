@@ -20,7 +20,6 @@ use strict;
 use Data::Dumper;
 use Carp;
 use MIME::Lite;
-use Time::Seconds;
 
 BEGIN
 {
@@ -29,7 +28,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Time;
+use Para::Frame::Time qw( duration );
 use Para::Frame::Utils qw( debug );
 
 use Para::Topic;
@@ -179,7 +178,7 @@ sub add_to_member_stats
 #	warn "$$:     date is $date\n";
 #	warn "$$:     old_expire is $old_expire\n";
 	$old_expire    = $date if $date > $old_expire;
-	my $new_expire = Para::Frame::Time->get( $old_expire + $length * ONE_DAY );
+	my $new_expire = Para::Frame::Time->get( $old_expire + duration( days => $length ) );
 	my $cost       = $p->price;
 	my $total      = $m->payment_total + $cost;
 

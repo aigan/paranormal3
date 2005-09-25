@@ -9,7 +9,7 @@
 
 <div class="entry">
 <table>
-<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th>
+<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
 </tr>
 [% FOREACH rec = select_list("from member where latest_in is not null and present_contact >= 5 order by latest_in desc limit 20") %]
    [% m = getmember( rec.member, rec ) %]
@@ -20,9 +20,10 @@
        <td>$m.level</td>
        <td>$m.home_postal_city</td>
        <td>$m.latest_in</td>
+       <td>$m.latest_seen</td>
    </tr>
 [% END %]
 </table>
 </div>
 
-[% step %]
+[% nostep %]

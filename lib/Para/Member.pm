@@ -9,7 +9,7 @@ package Para::Member;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2005 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -1919,6 +1919,7 @@ sub latest_in
     if( $time )
     {
 	$m->{'latest_in'} = Para::Frame::Time->get( $time );
+	$m->score_change('logged_in', 1);
 	$m->mark_unsaved;
 	$ONLINE_COUNT ++;
     }
@@ -1977,10 +1978,11 @@ sub latest_seen
     }
     else
     {
-	$m->{'latest_seen'} ||= $m->latest_in || $m->created;
+	$m->{'latest_seen'} ||= $m->latest_in;
 
 	# Update info if seen more than 15 mins ago
-	if( now()->epoch - $m->{'latest_seen'}->epoch > 60 * 15 )
+	if( not $m->{'latest_seen'} or
+	    ( now()->epoch - $m->{'latest_seen'}->epoch > 60 * 15 ) )
 	{
 	    my $db = paraframe_dbm_open( DB_ONLINE );
 	    if( my $last = $db->{ $m->id } )

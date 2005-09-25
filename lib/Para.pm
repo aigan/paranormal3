@@ -167,24 +167,25 @@ sub timeout_login
 
     my $recs = $Para::dbix->select_list("select member from member where latest_in is not null and (latest_out is null or latest_in > latest_out) order by latest_in");
 
-    my $online = Para::Member->currently_online;
+    my $online = Para::Member->currently_online(2);
     my %seen = ();
 
     my $now = now();
 
     foreach my $rec ( @$recs, @$online )
     {
-	my $m = Para::Member->get_by_id( $rec->{'member'} );
-	next if $seen{$m->id} ++;
+	my $mid = $rec->{'member'};
+	my $m = Para::Member->get_by_id( $mid );
+	next if $seen{$mid} ++;
 
 	my $latest_in = $m->latest_in;
 	my $latest_seen = $m->latest_seen;
 
 	unless( $latest_in and $latest_seen )
 	{
-	    debug $m->desig." should never have been set as online";
+	    debug "$mid: ".$m->desig." should never have been set as online";
 	    my $db = paraframe_dbm_open( DB_ONLINE );
-	    delete $db->{$m->id};
+	    delete $db->{$mid};
 	    next;
 	}
 

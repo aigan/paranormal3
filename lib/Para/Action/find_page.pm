@@ -201,7 +201,7 @@ sub handler
 	my $found;
 	if( $talias =~ /^\d+$/ )
 	{
-	    $found = [Para::Topic->find_by_alias( $talias )];
+	    $found = Para::Topic->find_by_alias( $talias );
 	}
 	else
 	{

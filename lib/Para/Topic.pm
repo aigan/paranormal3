@@ -175,7 +175,7 @@ sub find_urlpart
     my $class = ref($this) || $this;
 
     trim( \$name );
-    my $recs = $Para::dbix->select_list('from t, talias where t=talias_t and talias_urlpart = lower(?) and t_active is true and t_entry is false and talias_active is true', $name );
+    my $recs = $Para::dbix->select_list('select distinct t from t, talias where t=talias_t and talias_urlpart = lower(?) and t_active is true and t_entry is false and talias_active is true', $name );
     my @topics = map Para::Topic->get_by_id( $_->{'t'} ), @$recs;
 
     return \@topics;

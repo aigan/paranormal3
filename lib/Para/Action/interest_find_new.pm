@@ -99,7 +99,7 @@ sub handler
 				       mid => $mid,
 				   });
 
-	$req->result->message(inflect scalar(@news), "1 intresse är okänt", "%d intressen är okända" );
+	$req->result->message(Para::Frame::Widget::inflect scalar(@news), "1 intresse är okänt", "%d intressen är okända" );
 
 	my $alias = pop @news;
 	$q->param('_name', ucfirst $alias);

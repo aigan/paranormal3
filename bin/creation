@@ -65,6 +65,7 @@ use Para::Member;
 	'webhost'    => $SITE_CFG->{'webhost'},
 	'last_step'  => "/member/db/",
 	'static_ttc' => "$APPROOT/var/ttc/static",
+	'backup_host'=> $SITE_CFG->{'backup_host'},
     });
 
     my $cfg =

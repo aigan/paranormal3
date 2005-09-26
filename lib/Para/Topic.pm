@@ -3429,7 +3429,6 @@ sub write_page
 	 INTERPOLATE  => 1,
 	 INCLUDE_PATH => \@incpath,
 	 COMPILE_DIR  =>  $req->site->{'static_ttc'},
-	 COMPILE_EXT  => '.ttc',
 	 PRE_CHOMP    => 0,
 	 POST_CHOMP   => 0,
 	 TRIM         => 1,
@@ -3475,9 +3474,10 @@ sub publish_params
     my( $t, $extra ) = @_;
 
     my $params = clone($Para::Frame::PARAMS);
+    my $site = Para::Frame::Site->get();
 
-    $params->{'site'} = $Para::Frame::CFG->{'site'};
-    $params->{'home'} = $Para::Frame::CFG->{'site'}{'webhome'};
+    $params->{'site'} = $site;
+    $params->{'home'} = $site->webhome;
     return $params;
 }
 

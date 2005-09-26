@@ -92,12 +92,13 @@ use Para::Member;
 
     # Make sure we can read/write generated files
     chmod_tree( "$APPROOT/var" );
-    chmod_tree( "$APPROOT/topic",
-		{
-		    umask => 0,
-		    dirmode => 02775,
-		    filemode => 0664,
-		});
+ # Takes too long
+#    chmod_tree( "$APPROOT/topic",
+#		{
+#		    umask => 0,
+#		    dirmode => 02775,
+#		    filemode => 0664,
+#		});
 
     # Configure database
     #

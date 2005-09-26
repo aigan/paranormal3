@@ -151,7 +151,6 @@ sub select_persons
     my $all = 0;
     $all = 1 if $crits->{'all'};
 
-
     my $q = $Para::Frame::REQ->q;
     my $offset = $q->param('offset')||1;
     my $pagesize = $q->param('pagesize')||50;
@@ -1209,10 +1208,11 @@ sub insert_explicit_links
 			}
 			else # Image to be put on separate row
 			{
-			    my $context = $Para::Frame::th->{'html'}->context;
-			    my $params = Para::Common::construct_params();
+			    my $burner = $Para::Frame::th->{'html'};
+			    my $context = $burner->context;
+			    my $params = clone($Para::Frame::PARAMS);
 			    $params->{'t'} = $t;
-			    my $block = $context->process("static/part/spacy_image", $params);
+			    my $block = $context->process("/static/default/spacy_image.tt", $params);
 			    push @$linkref, $block;
 			}
 			$newtext .= "¤$#$linkref¤";

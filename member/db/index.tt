@@ -68,6 +68,7 @@
      <li>[% jump('RT', 'http://rt.paranormal.se/') %]
      <li>[% jump('motd', 'motd.tt') %]
      <li>[% jump('events', 'calendar/') %]
+     <li>[% jump('Pi', "/admin/update/browse.cgi") %]
   [% END %]
 </ul>
 

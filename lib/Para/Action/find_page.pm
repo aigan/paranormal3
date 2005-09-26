@@ -60,6 +60,8 @@ sub handler
     # Try with and without oe => o conversions
 
 
+    # 0. Was this url unicoded?
+    #
     # Start by checking coding variants
     #
     if( $uri =~ /Ã/ )
@@ -78,6 +80,8 @@ sub handler
     }
 
 
+    # 1. lookup t_oldfile in t
+    #
     # oldfile ?
     #
     if( my $rec = $Para::dbix->select_possible_record("from t where t_oldfile=? and t_active is true and t_file is not null", $uri) )
@@ -94,6 +98,9 @@ sub handler
     }
 
 
+    # 2. If this is in one of the old sections we will try converting
+    #    path to title
+    #
     $uri =~ m!^(.*?)(?:\.(html|txt))?$! or die "That was strange";
     my $path = lc($1);
     my $format = $2;
@@ -124,6 +131,9 @@ sub handler
     }
     else
     {
+    # 3. If this is one of the new sections, the section will be set.
+    #    Mostly only handle the topic section
+    #
 	my $type;
 	if( $section =~ /^(topic|old)$/ )
 	{
@@ -170,7 +180,7 @@ sub handler
 	    if( $second and $second =~ /^\d+$/ )
 	    {
 		debug "Lookig for tid $second";
-		push @possible, [$second]; # The tid
+		push @possible, $second; # The tid
 	    }
 	    else
 	    {
@@ -186,26 +196,28 @@ sub handler
 	}
     }
 
+    # 4. Other path parts is taken as qualifiers
+    #
     my %result;
     foreach my $choice ( @possible )
     {
-	my $talias = $choice->[0];
-	my $typename   = $choice->[1];
-
-	if( debug )
+	my( $found, $typename );
+	if( ref $choice )
 	{
-	    my $typenamestr = $typename ? " ($typename)" : "";
-	    debug "Looking for $talias$typenamestr";
-	}
+	    my $talias = $choice->[0];
+	    $typename   = $choice->[1];
 
-	my $found;
-	if( $talias =~ /^\d+$/ )
-	{
-	    $found = Para::Topic->find_by_alias( $talias );
+	    if( debug )
+	    {
+		my $typenamestr = $typename ? " ($typename)" : "";
+		debug "Looking for $talias$typenamestr";
+	    }
+	    $found  = Para::Topic->find_urlpart( $talias );
 	}
 	else
 	{
-	    $found  = Para::Topic->find_urlpart( $talias );
+	    debug "Looking for tid $choice";
+	    $found = [Para::Topic->get_by_id( $choice )];
 	}
 
 	debug "Found ".scalar(@$found)." matches";

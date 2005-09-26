@@ -19,7 +19,7 @@
             [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
             [% INCLUDE rel_list.tt t=it reltype=23 prefix="&copy; " suffix=" - " %]
             <em>[% INCLUDE rel_list.tt t=it reltype=22 %]</em>
-            <em>([% jump('detaljer', '/member/db/topic/view', tid=it.id) %])</em>
+            <em>([% jump('detaljer', '/member/db/topic/view/', tid=it.id) %])</em>
          </div>
       </div>
    [% END %]
@@ -36,7 +36,7 @@
             [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
             [% INCLUDE rel_list.tt t=it reltype=23 prefix="&copy; " suffix=" - " %]
             <em>[% INCLUDE rel_list.tt t=it reltype=22 %]</em>
-            <em>([% jump('detaljer', '/member/db/topic/view', tid=it.id) %])</em>
+            <em>([% jump('detaljer', '/member/db/topic/view/', tid=it.id) %])</em>
          </td></tr>
       </table>
    [% END %]
@@ -45,7 +45,7 @@
 [% BLOCK metadata %]
   <ul class="entry_meta">
 
-     <li>[% jump("Text $t.id", '/member/db/topic/edit/text', tid=t.id) %],
+     <li>[% jump("Text $t.id", '/member/db/topic/edit/text.tt', tid=t.id) %],
 
   v$t.ver
 
@@ -195,7 +195,7 @@
             [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
             [% INCLUDE rel_list.tt t=it reltype=23 prefix="&copy; " suffix=" - " %]
             <em>[% INCLUDE rel_list.tt t=it reltype=22 %]</em>
-            <em>([% jump('detaljer', '/member/db/topic/view', tid=it.id) %])</em>
+            <em>([% jump('detaljer', '/member/db/topic/view/', tid=it.id) %])</em>
          </div>
           </div>
       </div>

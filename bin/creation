@@ -90,7 +90,6 @@ use Para::Member;
     Para::Frame->configure( $cfg );
 
 
-
     # Make sure we can read/write generated files
     chmod_tree( "$APPROOT/var" );
     chmod_tree( "$APPROOT/topic",
@@ -111,7 +110,7 @@ use Para::Member;
 
     # Define TT filters
     #
-    Para::Frame->add_tt_filters('html', {
+    $Para::Frame::CFG->{'th'}{'html'}->add_filters({
 	'html_psi' => \&Para::Widget::html_psi,
 	'html_psi_nolinks' => sub{ Para::Widget::html_psi($_[0], 1) },
     });

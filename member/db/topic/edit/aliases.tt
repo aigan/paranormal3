@@ -28,10 +28,14 @@
    <th>Behåll
    [% '<th>S' IF u.level>10 %]
    <th>Alias
-   <th>Autolänka
-   <th>Index
+   <th>A
+   <th>I
    <th>Språk
-   [% '<th>Skapad av <th>Datum' IF u.level>10 %]
+   [% IF u.level>10 %]
+      <th>urlpart
+      <th>Skapad av
+      <th>Datum
+   [% END %]
 [% FOREACH a IN t.aliases(tfilter).values %]
    <tr>
       [% IF a.active %]
@@ -54,6 +58,7 @@
       </select>
       </td>
       [% IF u.level>10 %]
+         <td>[% a.urlpart %]</td>
          <td>[% a.created_by.link %]</td>
          <td>[% a.created %]</td>
       [% END %]

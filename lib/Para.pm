@@ -100,6 +100,16 @@ sub clear_caches
 
 	%Para::Alias::CACHE = ();
 
+	# Reinit guest
+	my $rec = 
+	{
+	    'member'        => 0,
+	    'nickname'      => 'guest',
+	    'member_level'  => 0,
+	    'name_given'    => 'Gäst',
+	};
+	$Para::Member::CACHE->{0} = bless($rec, "Para::Member");
+
 	$CLEAR_CACHE = 0;
     }
 }

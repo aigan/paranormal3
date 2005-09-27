@@ -22,6 +22,8 @@ use Template 2;
 use Data::Dumper;
 use Text::ParagraphDiff;
 
+use locale;
+
 BEGIN
 {
     our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);

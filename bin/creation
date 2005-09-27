@@ -36,6 +36,7 @@ our $SITE_CFG;  # Hashref with rest of config
 
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
+use lib "/var/www/webbadresser.se/lib";
 
 use Para::Frame;
 use Para::Frame::DBIx;
@@ -48,6 +49,8 @@ use Para::Frame::Site;
 
 use Para;
 use Para::Member;
+
+use WA::Domains;
 
 {
     # Do not daemonize if run with cmdline argument
@@ -67,6 +70,16 @@ use Para::Member;
 	'static_ttc' => "$APPROOT/var/ttc/static",
 	'backup_host'=> $SITE_CFG->{'backup_host'},
     });
+
+    Para::Frame::Site->add({
+	# Path in  URL to website
+	'webhome'    => '',
+	'webhost'    => "webbadresser.se",
+	'last_step'  => "/",
+	'appfmly'    => ["WA"],
+    });
+
+
 
     my $cfg =
     {
@@ -216,6 +229,11 @@ use Para::Member;
      'favicon'           => "/favicon.ico",
      'body_class'        => "meta",
      'motd'              => sub{ $Para::MOTD },
+
+     ### WA Domains
+     'wa_domains'        => WA::Domains->new,
+
+
     };
     Para::Frame->add_global_tt_params( $global_params );
 

@@ -20,7 +20,6 @@ use strict;
 use Data::Dumper;
 use Carp qw(cluck);
 use locale;
-use Date::Manip;
 
 BEGIN
 {
@@ -30,10 +29,30 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( trim throw uri );
+use Para::Frame::Time qw( date now );
 
 use Para::Arcs;
 use Para::Member;
 use Para::Topic;
+
+our %FIELDMAP =
+    (
+     belief      => 'belief',
+     knowledge   => 'knowledge',
+     theory      => 'theory',
+     skill       => 'skill',
+     experience  => 'experience',
+     practice    => 'practice',
+     editor      => 'editor',
+     helper      => 'helper',
+     meeter      => 'meeter',
+     bookmark    => 'bookmark',
+     interest    => 'intrest',
+     connected   => 'intrest_connected',
+     description => 'intrest_description',
+     defined     => 'intrest_defined',
+     updated     => 'intrest_updated',
+     );
 
 ######## Constructor
 
@@ -61,7 +80,7 @@ sub _new
 
 sub get
 {
-    my( $this, $m, $t, $rec ) = @_;
+    my( $this, $m, $t, $rec, $nocache ) = @_;
 
     unless( ref $m )
     {
@@ -76,7 +95,7 @@ sub get
     my $ins_db = $m->interests->{'db'};
     my $tid = $t->id;
 
-    unless($ins_db->{$tid})
+    if( not $ins_db->{$tid} or $nocache )
     {
 	warn "  get interest $tid\n";
 
@@ -87,6 +106,8 @@ sub get
 
 	$rec->{'member'} = $m;
 	$rec->{'topic'} = $t;
+
+	return $this->_new( $rec ) if $nocache;
 
 	$ins_db->{$tid} = $this->_new( $rec );
     }
@@ -215,6 +236,11 @@ sub t
     return $i->{'topic'};
 }
 
+sub tid
+{
+    return $_[0]->{'intrest_topic'};
+}
+
 sub member
 {
     return shift->m(@_);
@@ -229,6 +255,11 @@ sub m
 	$i->{'member'} = Para::Member->get( $i->{'intrest_member'} );
     }
     return $i->{'member'};
+}
+
+sub mid
+{
+    return $_[0]->{'intrest_member'};
 }
 
 sub general
@@ -386,109 +417,53 @@ sub update
 {
     my( $i, $rec ) = @_;
 
-    my @fields = ();
-    my @values = ();
-
-    my $m = $i->member;
+    my $m = $i->m;
 
     $rec->{'defined'} || 0; # TODO: Allow lowering the value
     if( $rec->{'defined'} > $i->defined )
     {
 	warn "  Changing interest_defined to $rec->{'defined'}\n";
-	push @fields, 'intrest_defined';
-	push @values, int $rec->{'defined'};
+	$rec->{'intrest_defined'} = int $rec->{'defined'};
     }
 
     $rec->{'connected'} || 0;; # TODO: Allow lowering the value
     if( $rec->{'connected'} > $i->connected )
     {
 	warn "  Changing interest_connected to $rec->{'connected'}\n";
-	push @fields, 'intrest_connected';
-	push @values, int $rec->{'connected'};
+	$rec->{'intrest_connected'} = int $rec->{'connected'};
     }
 
-    if( $rec->{'belief'} )
+    foreach my $key ( keys %$rec )
     {
-	push @fields, 'belief';
-	push @values, int $rec->{'belief'};
+	$i->{$key} = $rec->{$key};
     }
-
-    if( $rec->{'practice'} )
-    {
-	push @fields, 'practice';
-	push @values, int $rec->{'practice'};
-    }
-
-    if( $rec->{'theory'} )
-    {
-	push @fields, 'theory';
-	push @values, int $rec->{'theory'};
-    }
-
-    if( $rec->{'knowledge'} )
-    {
-	push @fields, 'knowledge';
-	push @values, int $rec->{'knowledge'};
-    }
-
-    if( $rec->{'editor'} )
-    {
-	push @fields, 'editor';
-	push @values, int $rec->{'editor'};
-    }
-
-    if( $rec->{'helper'} )
-    {
-	push @fields, 'helper';
-	push @values, int $rec->{'helper'};
-    }
-
-    if( $rec->{'meeter'} )
-    {
-	push @fields, 'meeter';
-	push @values, int $rec->{'meeter'};
-    }
-
-    if( $rec->{'bookmark'} )
-    {
-	push @fields, 'bookmark';
-	push @values, int $rec->{'bookmark'};
-    }
-
-    if( $rec->{'interest'} )
-    {
-	push @fields, 'intrest';
-	push @values, $rec->{'interest'};
-    }
-
-    if( $rec->{'description'} )
-    {
-	push @fields, 'intrest_description';
-	push @values, $rec->{'description'};
-    }
-
-    # Nothing changed
-    return 0 unless @values;
-
-    # Update timestamp
-    push @fields, 'intrest_updated';
-    push @values, now();
 
     my $tid = $i->topic->id;
     my $mid = $m->id;
 
-    my $statement = "update intrest set ".
-	join( ', ', map("$_=?", @fields)) .
-	"where intrest_topic=? and intrest_member=?";
-    my $sth = $Para::dbh->prepare( $statement );
-    $sth->execute( @values, $tid, $mid ) or die;
-
-    ### Change thic object
-    #
-    for( my $pos=0; $pos<= $#fields; $pos++ )
-    {
-	$i->{$fields[$pos]} = $values[$pos];
-    }
+    my $changes = $Para::dbix->update_wrapper({
+	rec => $i,
+	rec_old => $i->get( $m, $i->t, undef, 1 ),
+	types =>
+	{
+	    intrest_updated => 'date',
+	},
+	table => 'intrest',
+	key =>
+	{
+	    intrest_topic => $tid,
+	    intrest_member => $mid,
+	},
+	on_update =>
+	{
+	    intrest_updated => now(),
+	},
+	fields_to_check => [values %FIELDMAP],
+	map => \%FIELDMAP,
+    });
+					      
+    # Nothing changed?
+    return 0 unless $changes;
 
     $m->score_change( 'intrest_stated', 1 );
 
@@ -496,7 +471,7 @@ sub update
     #
     $m->interests->change_in_list( $i );
 
-    return 1;
+    return $changes;
 }
 
 sub next_step

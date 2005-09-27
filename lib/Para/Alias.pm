@@ -220,6 +220,11 @@ sub updated
     return Para::Time->get( shift->{'talias_updated'} );
 }
 
+sub urlpart
+{
+    return $_[0]->{'talias_urlpart'};
+}
+
 ### Methods
 
 sub activate
@@ -559,6 +564,22 @@ sub vacuum
     my( $a ) = @_;
 
     $a->reset;
+
+    my $talias = $a->name;
+    my $talias_tid = $a->tid;
+    my $urlpart_in  = $a->urlpart;  
+    my $urlpart_out = title2url($talias);
+    if( $urlpart_in ne $urlpart_out )
+    {
+	$a->{'talias_urlpart'} = $urlpart_out;
+	debug "Correcting urlpart for alias $talias in t $talias_tid";
+	my $st = "update talias set talias_urlpart=?
+                  where talias_t=? and talias=?";
+	my $sth = $Para::dbh->prepare( $st );
+	$sth->execute( $urlpart_out, $talias_tid, $talias );
+    }
+
+    return $a;
 }
 
 1;

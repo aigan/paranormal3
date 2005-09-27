@@ -11,6 +11,8 @@
    PROCESS buttons.tt;
 #   PROCESS edit_menu.tt edit_arcs=1;
 
+   PROCESS person_view_menu.tt;
+
    i = m.interest(t);
    UNLESS i;
      THROW validation "$m.desig är inte intresserad av $t.desig";

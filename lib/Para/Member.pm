@@ -2091,6 +2091,7 @@ sub payment_total
 sub payment_rate
 {
     my( $m ) = @_;
+    return undef unless $m->{'member_payment_period_length'};
     return sprintf('%.2f', $m->{'member_payment_period_cost'} * (ONE_MONTH/ONE_DAY) / $m->{'member_payment_period_length'} );
 }
 
@@ -2098,6 +2099,7 @@ sub payment_total_rate
 {
     my( $m ) = @_;
     my $months = now()->delta_md( $m->created )->delta_months;
+    return undef unless $months;
     return sprintf('%.2f', $m->{'member_payment_total'} / $months );
 }
 

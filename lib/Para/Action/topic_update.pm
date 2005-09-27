@@ -467,20 +467,21 @@ sub check_media
 {
     my( $t ) = @_;
 
+    my $req = $Para::Frame::REQ;
+    my $q = $req->q;
+    my $c = $req->{'changes'};
+
+    my $url = $q->param('media_url');
+    my $mime = $q->param('media_mimetype');
+
+    return unless defined $url and defined $mime;
+
     # Change to the active version of the topic
     $t = $t->active_ver;
     unless( $t )
     {
 	throw('validation', "Ämnet har inte en aktiv version");
     }
-
-    my $req = $Para::Frame::REQ;
-    my $q = $req->q;
-    my $url = $q->param('media_url');
-    my $mime = $q->param('media_mimetype');
-    my $c = $req->{'changes'};
-
-    return unless defined $url and defined $mime;
 
     if( $mime eq '' and $url eq '' )
     {

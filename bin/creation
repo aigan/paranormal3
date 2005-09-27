@@ -72,13 +72,13 @@ use WA::Domains;
     });
 
     Para::Frame::Site->add({
-	# Path in  URL to website
-	'webhome'    => '',
 	'webhost'    => "webbadresser.se",
-	'last_step'  => "/",
 	'appfmly'    => ["WA"],
     });
 
+    Para::Frame::Site->add({
+	'webhost'    => "tecken.se",
+    });
 
 
     my $cfg =

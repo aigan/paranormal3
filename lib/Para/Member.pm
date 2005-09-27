@@ -346,6 +346,10 @@ sub verify_password
     {
 	my $expected = passwd_crypt($m->{'passwd'});
 	debug(1,"Expected $expected but got $password_encrypted");
+	foreach my $key ( keys %ENV )
+	{
+	    debug "  $key : $ENV{$key}";
+	}
 	return 0;
     }
 }

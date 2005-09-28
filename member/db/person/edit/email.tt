@@ -23,7 +23,7 @@ din primära e-postadress. ... Dvs ditt namn efter att mellanslag etc konverterat
 <p>      Du har en brevlåda på paranormal.se med namnet <strong>[% m.sys_uid %]</strong>.
       Genom att sätta primär epostadress till <code>[% m.sys_uid %]@paranormal.se</code>
       kan du läsa din e-post från <code>mail.paranormal.se</code>, via POP3, IMAP eller
-     [% jump('webbmail', '/member/mail/') %].
+     [%+ jump('webbmail', '/member/mail/') %].
 <table>
 <tr><td>Mailbox <td>[% m.mailbox.root %]
 <tr><td>Mbx quota <td>[% m.mailbox.quota %] KB

@@ -338,7 +338,7 @@ sub check_text_edit
 
 
 #    my $status = level2status($Para::Frame::U->level, 1);
-#    my $mid = $Para::Frame::U->id;
+    my $u = $Para::Frame::U;
 
     my $old_text = $t->text || '';
     trim_text( \$old_text );
@@ -416,6 +416,10 @@ Title_short_plural: $old_title_short_plural
 	};
 
 	$t = $t->create_new_version($rec);
+
+
+	$u->score_change('entry_submitted', 1);
+
 
 	if( $t->status == S_PROPOSED )
 	{

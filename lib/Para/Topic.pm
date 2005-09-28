@@ -26,7 +26,6 @@ use IO::LockedFile;
 use Template::Context;
 use Sys::CpuLoad;
 use Image::Size;
-use Clone qw( clone );
 use File::Path;
 
 BEGIN
@@ -3227,6 +3226,7 @@ sub publish
 
     debug(1,"Publish tid $tid");
 
+
     if( $t->file ) # Will generate_url on demand
     {
    	my $params = $t->publish_params;
@@ -3473,12 +3473,12 @@ sub publish_params
 {
     my( $t, $extra ) = @_;
 
-    my $params = clone($Para::Frame::PARAMS);
+    my %params = %$Para::Frame::PARAMS;
     my $site = Para::Frame::Site->get();
 
-    $params->{'site'} = $site;
-    $params->{'home'} = $site->webhome;
-    return $params;
+    $params{'site'} = $site;
+    $params{'home'} = $site->webhome;
+    return \%params;
 }
 
 sub remove_page

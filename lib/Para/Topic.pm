@@ -166,6 +166,47 @@ sub create
     return $t;
 }
 
+sub create_entry
+{
+    my( $this, $parent, $textref ) = @_;
+    my $class = ref($this) || $this;
+    my $m = $Para::Frame::U;
+
+    if( $m->level < 5 )
+    {
+	throw('denied', "Du måste bli medborgare för att få skapa nya texter");
+    }
+
+    trim( $textref );
+    length( $$textref ) or throw('incomplete', "No text given");
+    $parent or throw('incomplete', "parent not given");
+
+    $parent = Para::Topic->get_by_id($parent) unless ref $parent;
+    my $pid = $parent->id;
+
+    # Do not allow duplicated
+    if( $Para::dbix->select_possible_record('from t where t_entry_parent=? and t_text=?', $pid, $$textref) )
+    {
+	throw('validation', "Denna text finns redan kopplad till detta ämne");
+    }
+
+    my $tid = $Para::dbix->get_nextval( "t_seq" );
+
+    my $sth = $Para::dbh->prepare(
+	  "insert into t ( t, t_text, t_created, t_updated, t_createdby,
+                           t_changedby, t_status, t_active, t_entry,
+                           t_entry_parent, t_entry_imported )
+           values ( ?, ?, now(), now(), ?, ?, ?, 't', 't', ?, 1)");
+    $sth->execute( $tid, $$textref, $m->id, $m->id, $m->new_status, $pid );
+
+    my $t = Para::Topic->get_by_id( $tid );
+    $parent->register_child( $t );
+
+    $m->score_change('entry_submitted', 1);
+
+    return $t;
+}
+
 ###################  Class static methods
 
 sub find_urlpart
@@ -483,7 +524,6 @@ sub discard_changes  # Topic changed. Refresh from DB
 	$t->{$key} = $rec->{$key};
     }
     $rec->{'maby_loopy'} = 1;
-
 
     return $t;
 }
@@ -2671,11 +2711,13 @@ sub vacuum
 
     $req->yield unless $BATCHCOUNT++ % BATCH;
 
+    $t->discard_changes;
+
     # Vacuum all other versions
     #
     unless( $args->{'one_version'} )
     {
-	foreach my $v ( reverse @{$t->versions} )
+	foreach my $v ( reverse @{$t->versions(1)} )
 	{
 	    next if $v->ver == $t->ver;
 
@@ -2769,6 +2811,7 @@ sub vacuum
 	$t->title2aliases( $t->real_short );
 	$t->title2aliases( $t->real_plural );
 	$t->generate_url;
+
     }
 
     unless( $args->{'one_version'} )
@@ -2821,6 +2864,7 @@ sub vacuum
 
     # Vacuum entries
     #
+    $t->{'childs'} = undef;
     foreach my $e (@{ $t->childs({include_inactive=>1}) })
     {
 	$req->yield unless $BATCHCOUNT++ % BATCH;

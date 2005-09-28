@@ -197,7 +197,7 @@ use Ekoby::Ekonomi;
     Para::Frame->add_hook('on_startup', sub
 			  {
 			      $Para::dbix->connect;
-			      $Ekoby::dbix->connect,
+			      $Ekoby::dbix->connect;
 
 			      # Take shortcut...
 			      return unless $SITE_CFG->{'do_bgjob'};

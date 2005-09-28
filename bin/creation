@@ -37,6 +37,7 @@ our $SITE_CFG;  # Hashref with rest of config
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
 use lib "/var/www/webbadresser.se/lib";
+use lib "/var/www/ekoby.paranormal.se/lib";
 
 use Para::Frame;
 use Para::Frame::DBIx;
@@ -51,6 +52,7 @@ use Para;
 use Para::Member;
 
 use WA::Domains;
+use Ekoby::Ekonomi;
 
 {
     # Do not daemonize if run with cmdline argument
@@ -78,6 +80,31 @@ use WA::Domains;
 
     Para::Frame::Site->add({
 	'webhost'    => "tecken.se",
+    });
+
+    Para::Frame::Site->add({
+	'webhost'    => "ekoby.paranormal.se",
+	'params' =>
+	{
+	    'css'               =>
+	    {
+		alternate =>
+		{
+		    Default => ["/style/main.css"],
+		    Sara => ["/style/sara.css"],
+		},
+		default => 'Default',
+	    },
+	    'ekonomi' => \&Ekoby::Ekonomi::ekonomi,
+	    'hyra' => \&Ekoby::Ekonomi::hyra,
+	    'transtypnamn' => \&Ekoby::Ekonomi::transtypnamn,
+	    'levnamn' => \&Ekoby::Ekonomi::levnamn,
+	    'kontonamn' => \&Ekoby::Ekonomi::kontonamn,
+	    'kontolista' => \&Ekoby::Ekonomi::kontolista,
+	    'lista_belopp' => \&Ekoby::Ekonomi::lista_belopp,
+	    'lista_tillgangar' => \&Ekoby::Ekonomi::lista_tillgangar,
+	    'authorized_level' => \&Ekoby::Ekonomi::authorized_level,
+	},
     });
 
 
@@ -119,8 +146,16 @@ use WA::Domains;
 	new({
 	    connect => $SITE_CFG->{'dbconnect'},
 	    bind_dbh => \ $Para::dbh,
+	    import_tt_params => 1,
 	});
 
+
+    # Configure Ekoby database
+    #
+    $Ekoby::dbix = Para::Frame::DBIx ->
+	new({
+	    connect => ["DBI:Pg:dbname=ekoby"],
+	});
 
     # Define TT filters
     #
@@ -162,6 +197,7 @@ use WA::Domains;
     Para::Frame->add_hook('on_startup', sub
 			  {
 			      $Para::dbix->connect;
+			      $Ekoby::dbix->connect,
 
 			      # Take shortcut...
 			      return unless $SITE_CFG->{'do_bgjob'};

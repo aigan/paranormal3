@@ -31,7 +31,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Time;
+use Para::Frame::Time qw( now );
 use Para::Frame::Utils qw( maxof debug get_from_fork minof);
 
 use Para::Constants qw( :all );

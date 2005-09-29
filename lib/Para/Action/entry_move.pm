@@ -20,13 +20,15 @@ sub handler
 	throw('denied', "Du måste bli väktare för att få flytta texter");
     }
 
-    #Move tid to t2_id
+    # Moves tid --> t2_id
 
     my $tid1 = $q->param('tid') or die "Param tid missing";
     my $tid2 = $q->param('t2_id') or throw('incomplete', "Du har inte markerat vart du vill flytta texten");
 
     my $t1 = Para::Topic->get_by_id($tid1); # Should be entry
     my $t2 = Para::Topic->get_by_id($tid2);
+
+    # Moves t1 --> t2
 
     # Check things
     unless( $t1->entry )
@@ -37,17 +39,22 @@ sub handler
     # Returns the new version
     $t1 = $t1->create_new_version unless $q->param('keep_version');
 
-    $t1->previous and $t1->previous->set_next( undef );
-    $t1->set_parent( $t2 );
+    my $result = "";
+
+    if( $q->param('move_node') )
+    {
+	$result .= $t1->move_node( $t2 );
+    }
+    else
+    {
+	$result .= $t1->move_branch( $t2 );
+    }
+
     $t1->generate_url;
 
-    $t1->mark_publish;
-    $t2->mark_publish;
+    $q->param('tid', $tid2);
 
-    clear_params('tid', 't2_id');
-
-    $q->param('tid', $tid1);
-    return "Text flyttad";
+    return $result;
 }
 
 1;

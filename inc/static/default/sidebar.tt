@@ -36,6 +36,9 @@
 [% INCLUDE present_rev_links type=37 %]
 [% INCLUDE present_rev_links type=39 present='plural' %]
 [% INCLUDE present_rev_links type=40 present='plural' %]
+[% INCLUDE present_rel_links type=44 %]
+[% INCLUDE present_rev_links type=44 %]
+[% INCLUDE present_rev_links type=45 %]
 
 <h2>Personer</h2>
 

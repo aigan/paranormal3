@@ -39,4 +39,9 @@
 <p>[% checkbox('keep_version',1) %] Flytta denna version (skapa ej ny version)</p>
 [% END %]
 
+<p>
+[% radio('move_node',1,1) %] Flytta enbart denna text<br>
+[% radio('move_node',0) %] Flytta denna gren
+</p>
+
 <p>[% step('Flytta') %]

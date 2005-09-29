@@ -1273,6 +1273,10 @@ sub set_parent
 
     $t->{'t_entry_parent'} = $parent_id;
     $t->{'parent'} = $parent;
+
+    $t->{'topic'} = undef;
+    $t->{'top_entry'} = undef;
+
     $parent->register_child( $t ) if $parent;
     $t->mark_updated;
 
@@ -1343,6 +1347,10 @@ sub set_next
 	}
 
 	$next->{'previous'} = $t;
+
+	$next->{'topic'} = undef;
+	$next->{'top_entry'} = undef;
+
 	$next->mark_updated;
     }
     else
@@ -1782,9 +1790,9 @@ sub create_new_version
 
 
     # Republish topics linking to/from if titles changed
-    if( $t->title ne $ot->title or
-	$t->short ne $ot->short or
-	$t->plural ne $ot->plural )
+    if( (($t->title||'') ne ($ot->title||'')) or
+	(($t->short||'') ne ($ot->short||'')) or
+	(($t->plural||'') ne ($ot->plural||'')) )
     {
 	my $ctid; # Current tid (optimization)
 	if( my $q = $Para::Frame::REQ->q )
@@ -1811,6 +1819,229 @@ sub create_new_version
 
     return $t;
 }
+
+=head2 move_branch
+
+  $e->move_branch($d, $follows, $before_child)
+
+Moves the entry $e to destination $d, including all its childrens and
+followers.
+
+If $follows is true, it place $e following $d; otherwise, it
+places $e as a child of $d
+
+I $before_child is true, and $follows is false; $e will become a child
+of $d, but the first child of $d will follow $e.
+
+Returns a formatted diagnostic report of what was done
+
+=cut
+
+sub move_branch
+{
+    my( $e, $d, $follows ) = @_;
+
+    my $p; # parameters
+    if( ref $d eq 'HASH' )
+    {
+	$p = $d;
+    }
+    elsif( ref $follows )
+    {
+	$p = $follows;
+	$p->{'dest'} = $d;
+    }
+    else
+    {
+	$p =
+	{
+	    'dest' => $d,
+	    'follows' => $follows,
+	}
+    }
+
+    $d = $p->{'dest'};
+    $follows = $p->{'follows'} || 0;
+    my $before_child = $p->{'before_child'} || 0;
+    my $crits = $p->{'crits'} || {};
+
+    my $eid = $e->id;
+    my $did = $d->id; # Destination topic id
+    my $result = "";
+
+    if( $d->child_of( $e ) )
+    {
+	return "Kan inte flytta grenen $eid till en del av sig själv\n";
+    }
+
+    if( $follows )
+    {
+	$result .= "* move $eid -> after $did\n";
+	debug(1,"move $eid -> after $did");
+
+	# If dest already has a "next", move that "next" to the end of
+	# the string of $e
+	if( my $old_next = $d->next )
+	{
+	    $result .= "  move $old_next->{t} after $eid\n";
+	    $result .= $d->set_next(undef);
+	    $result .= $e->last_entry->set_next($old_next);
+	}
+
+	$result .= $d->set_next($e);
+
+	# We now transform childs of dest to childs of e, if e are
+	# placed above the childs in the matrix
+	#
+	# Going through all the c below the dest in the matrix
+	#
+	foreach my $c (@{ $d->childs($crits) })
+	{
+	    my $cid = $c->id;
+
+	    # We found a c that has dest as parent
+	    #
+	    $result .= "  Placing $cid under $eid\n";
+	    debug(1,"  Placing $cid under $eid");
+	    $result .= $c->set_parent( $e );
+	}
+    }
+
+    if( not $follows )
+    {
+	$result .= "* move $eid -> child of $did\n";
+	debug(1,"move $eid -> child of $did");
+
+	# decoupeling before movement
+	$result .= $e->set_parent( undef );
+	if( my $e_previous = $e->previous )
+	{
+	    $result .= $e_previous->set_next( undef );
+	}
+
+	# If there are an entry just below dest in the matrix, that
+	# has the dest as a parent; place that entry as following e,
+	# unless e should be placed separately ($mod='s')
+
+	if( my $b = $d->childs($crits)->[0] )
+	{
+	    if( $before_child and my $bp = $b->parent )
+	    {
+		my $bid = $b->id;
+		my $bpid = $bp->id;
+		if( $bpid == $did )
+		{
+		    debug(1,"  $bid are a child of $did");
+		    debug(1,"  place $eid before $bid");
+		    $result .= $b->set_parent(undef);
+		    $result .= $e->set_next($b);
+		}
+	    }
+	}
+
+	debug(1,"  Under: Set parent");
+	$result .= $e->set_parent( $d );
+	debug(1,"  Under: Done");
+    }
+    return $result;
+}
+
+
+=head2 move_node
+
+  $e->move_branch($d, $follows)
+
+Moves the entry $e to destination $d, leaving children and followers
+behind.
+
+If $follows is true, it place $e following $d; otherwise, it
+places $e as a child of $d.
+
+Returns a formatted diagnostic report of what was done
+
+=cut
+
+sub move_node
+{
+    my( $e, $d, $follows ) = @_;
+
+    my $p; # parameters
+    if( ref $d eq 'HASH' )
+    {
+	$p = $d;
+    }
+    elsif( ref $follows )
+    {
+	$p = $follows;
+	$p->{'dest'} = $d;
+    }
+    else
+    {
+	$p =
+	{
+	    'dest' => $d,
+	    'follows' => $follows,
+	}
+    }
+
+    $d = $p->{'dest'};
+    $follows = $p->{'follows'} || 0;
+    my $before_child = $p->{'before_child'} || 0;
+    my $crits = $p->{'crits'} || {};
+
+    my $eid = $e->id;
+    my $did = $d->id; # Destination topic id
+
+
+    my $result = "Kopplar loss $eid\n";
+    debug(1,"Kopplar loss $eid");
+
+    my $e_subst = undef;
+    if( $e->previous )
+    {
+	$e_subst = $e->previous;
+	$result .= $e_subst->set_next(undef );
+    }
+    elsif( $e->parent )
+    {
+	$e_subst = $e->parent;
+	$result .= $e->set_parent(undef);
+    }
+    else
+    {
+	die "No subst";
+    }
+
+    $result .= "  Flyttar barn till $e_subst->{t}\n";
+
+    # Move childs to substitute
+    my $childs = $e->childs;
+    foreach my $child ( @$childs )
+    {
+	$result .= "  make $child->{t} child to $e_subst->{t}\n";
+	$result .= $child->set_parent($e_subst);
+    }
+
+    # Move next to substitute
+    if( my $e_next = $e->next )
+    {
+	if( $e_subst->is_topic )
+	{
+	    $result .= "  make $e_next->{t} child to $e_subst->{t}\n";
+	    $result .= $e_next->set_parent($e_subst);
+	}
+	else
+	{
+	    $result .= "  make $e_next->{t} follow $e_subst->{t}\n";
+	    $result .= $e_subst->set_next( $e_next );
+	}
+	$result .= "  make $e_next->{t} no longer follow $eid\n";
+	$result .= $e->set_next( undef );
+    }
+
+    return $result . $e->move_branch( $p );
+}
+
 
 sub set_status
 {

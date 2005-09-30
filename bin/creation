@@ -241,13 +241,11 @@ use Ekoby::Ekonomi;
 
      'getpayment'        => sub{ Para::Payment->new( @_ ) },
 
-     'age'               => sub{ localtime->year - $_[0]->{'bdate_ymd_year'} },
-     'year'              => sub{ localtime->year },
-     'now'               => sub{ scalar localtime },
-     'date'              => sub{ Para::Frame::Time->get(@_) },
-     'elapsed_time'      => sub{ Para::Frame::Utils::elapsed_time(@_) },
+     'year'              => sub{ now->year },
+     'now'               => \&Para::Frame::Time::now,
+     'date'              => \&Para::Frame::Time::date,
+     'elapsed_time'      => \&Para::Frame::Utils::elapsed_time,
 
-     'delay'             => sub{ sleep(@_) },
      'uc'                => sub{ "\U$_[0]" },
      'lc'                => sub{ "\L$_[0]" },
 

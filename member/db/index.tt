@@ -42,7 +42,7 @@
    [% t_cnt = select_record('select count(t) as cnt from t where (t_status=2 or t_status=3) and t_entry is false') %]
    <li>[% jump("$t_cnt.cnt ämnen", 'topic/list/unchecked_topics.tt') %]
    [% e_cnt = select_record('select count(t) as cnt from t where (t_status=2 or t_status=3) and t_entry is true') %]
-   <li>[% jump("$e_cnt.cnt texter", 'entry/list/unchecked_entries.tt') %]
+   <li>[% jump("$e_cnt.cnt texter", 'topic/list/unchecked_entries.tt') %]
    [% r_cnt = select_record('select count(rel) as cnt from rel where (rel_status=2 or rel_status=3) and rel_indirect is false') %]
    <li>[% jump("$r_cnt.cnt relationer", 'topic/list/unchecked_rels.tt') %]
    [% a_cnt = select_record('select count(talias) as cnt from talias where talias_status=2 or talias_status=3') %]

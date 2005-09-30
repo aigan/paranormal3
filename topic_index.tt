@@ -4,16 +4,19 @@
 %]
 [%
    subpart = {};
-   offset = q.param('offset');
-   DEFAULT offset=1;
-   part_offset = offset - 1;
-
    part = q.param('part');
+
+   THROW notfound "Can't find the page $me?part=$part" IF q.param('no_robots');
+
    IF part;
       sel = "like '$part%'";
    ELSE;
       sel = "< 'a'";
    END;
+
+   offset = q.param('offset');
+   DEFAULT offset=1;
+   part_offset = offset - 1;
 %]
 
 [% IF part %]

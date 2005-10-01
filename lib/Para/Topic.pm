@@ -910,7 +910,7 @@ sub sysdesig
 {
     my( $t ) = @_;
 
-    return sprintf "%d: %s", $t->id, $t->desig;
+    return sprintf "%d: v%d %s", $t->id, $t->ver, $t->desig;
 }
 
 sub desig
@@ -2054,6 +2054,14 @@ sub set_status
 
     my $new_active = $status < S_PENDING ? 0 : 1;
     my $ver = $t->ver;
+    my $tid = $t->id;
+
+    # Reset parent childs
+    if( my $p = $t->parent )
+    {
+	debug "reset parent childs for ".$t->sysdesig;
+	undef $p->{'childs'};
+    }
 
     if( $new_active and not $t->active )
     {
@@ -2061,25 +2069,34 @@ sub set_status
 	foreach my $tv (@{ $t->versions })
 	{
 	    next if $tv->ver == $ver;
-	    $tv->{'t_active'} = undef;
-	    $tv->mark_unsaved;
+	    if( $tv->status == S_PENDING )
+	    {
+		$tv->set_status( S_PROPOSED );
+	    }
+	    elsif( $tv->status > S_PENDING )
+	    {
+		$tv->set_status( S_REPLACED );
+	    }
 	}
 
 	$m->score_change('accepted_thing');
 	$t->created_by->score_change('thing_accepted');
+	$Para::Topic::CACHE->{"$tid-"} = $t;
     }
 
     if( $t->active and not $new_active )
     {
+	
 	$m->score_change('rejected_thing');
 	$t->created_by->score_change('thing_rejected');
+	delete $Para::Topic::CACHE->{"$tid-"} ;
     }
 
     $t->{'t_status'} = $status;
     $t->{'t_active'} = $new_active;
     $t->mark_updated;
 
-    debug(sprintf "Status for %d v%d changed to %d activation %d\n", $t->id, $t->ver, $status, $new_active);
+    debug(sprintf "Status for %d v%d changed to %d activation %d\n", $tid, $ver, $status, $new_active);
     return $status;
 }
 
@@ -3675,6 +3692,21 @@ sub published
     my( $t ) = @_;
 
     return $t->{'t_published'};
+}
+
+sub in_publish_queue
+{
+    my( $t ) = @_;
+    my $tid = $t->id;
+
+    if( $TO_PUBLISH_NOW->{$tid} or $TO_PUBLISH->{$tid} )
+    {
+	return 1;
+    }
+    else
+    {
+	return 0;
+    }
 }
 
 sub write_page

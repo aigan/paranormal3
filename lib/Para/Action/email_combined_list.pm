@@ -47,7 +47,9 @@ sub send_to_list
 	foreach my $rec ( @$list )
 	{
 	    my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
-	    $e->send({ m => $m }) or throw('email', $e->error_msg);
+	    $e->send({ m => $m }); # Ignoring errors
+	    # ... or throw('email', $e->error_msg);
+	    # TODO: Report errors to sending member
 	}
 	$fork->return('Sent e-mail to all of list');
     }

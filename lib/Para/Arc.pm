@@ -426,7 +426,7 @@ sub create
     {
 	$obj = Para::Topic->find_one($obj_name);
 
-	if( $subj->equals( $obj ) )
+	if( $subj->has_same_id_as( $obj ) )
 	{
 	    cluck "Cyclic relation about to be created";
 	    throw('denied', "Inga cykliska relationer tillåtna");
@@ -1478,7 +1478,7 @@ sub create_infere_rev
 	    $strength = int((0.9 * ($strength - TRUE_MIN))+TRUE_MIN);
 	    my $status = minof( $arc->status, $arc2->status );
 
-	    if( $arc2->subj->equals( $obj ) )
+	    if( $arc2->subj->has_same_id_as( $obj ) )
 	    {
 		debug "Will not create cyclic reference for ".
 		  $obj->desig;
@@ -1535,7 +1535,7 @@ sub create_infere_rel
 	    $strength = int((0.9 * ($strength - TRUE_MIN))+TRUE_MIN);
 	    my $status = minof( $arc->status, $arc2->status );
 
-	    if( $subj->equals( $arc2->obj ) )
+	    if( $subj->has_same_id_as( $arc2->obj ) )
 	    {
 		debug "Will not create cyclic reference for ".
 		  $subj->desig;
@@ -1575,7 +1575,7 @@ sub create_reflexive
 	my $strength = $arc->strength;
 	my $status = $arc->status;
 
-	if( $subj->equals( $obj ) )
+	if( $subj->has_same_id_as( $obj ) )
 	{
 	    debug(sprintf("Will not create cyclic reference for %s\n",
 			  $obj->desig));

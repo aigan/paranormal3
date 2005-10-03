@@ -108,6 +108,24 @@ use Ekoby::Ekonomi;
     });
 
 
+    Para::Frame::Site->add({
+	'webhost'    => "frame.para.se",
+	'params' =>
+	{
+	    'css'               =>
+	    {
+		persistent => [ "/css/default.css" ],
+		alternate =>
+		{
+		    light => [ "/css/light.css" ],
+		    blue => [ "/css/blue.css" ],
+		},
+		default => 'light',
+	    },
+	},
+    });
+
+
     my $cfg =
     {
 	'paraframe' => $PARAFRAME,

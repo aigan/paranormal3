@@ -69,12 +69,6 @@ sub handler
 	$q->delete($thing);
     }
 
-    ## Go to the parent of the text!
-    if( my $top = $t->topic )
-    {
-	$tid = $top->id;
-	$ver = undef;
-    }
 
     $q->param('tid', $tid);
 #    $q->param('step_replace_params', 'tid'); #use new tid

@@ -1,7 +1,6 @@
 [% META
 	otitle = 'Ämne'
         level = 0
-	next_template = '../view/'
 %]
 
 [%
@@ -130,6 +129,7 @@
    [% END %]
 [% END %]
 
+<p>[% nostep %]
 
 [% BLOCK subentry %]
    [% DEFAULT level=3 %]

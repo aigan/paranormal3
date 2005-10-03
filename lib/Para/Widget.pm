@@ -1117,7 +1117,7 @@ sub insert_explicit_links
 		{
 		    foreach my $tt ( @$targettopics )
 		    {
-			if( $nt->equals( $tt ) )
+			if( $nt->has_same_id_as( $tt ) )
 			{
 			    push @topics, $nt;
 			    debug(3,sprintf "    Specified topic added to primary: %s", $nt->desig);

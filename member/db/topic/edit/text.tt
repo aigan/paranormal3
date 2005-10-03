@@ -2,7 +2,7 @@
 	otitle = 'Redigera text'
 	next_action = 'topic_update'
 	focus = 't_text'
-	default_template = 'text.tt'
+	next_template = '/member/db/topic/view/'
 	level = 5
 %]
 

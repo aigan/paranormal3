@@ -54,6 +54,31 @@ our %FIELDMAP =
      updated     => 'intrest_updated',
      );
 
+our %FIELDTYPE =
+    (
+     intrest_updated     => 'date',
+
+     intrest_member      => 'integer',
+     intrest_topic       => 'integer',
+     belief              => 'integer',
+     knowledge           => 'integer',
+     theory              => 'integer',
+     skill               => 'integer',
+     practice            => 'integer',
+     editor              => 'integer',
+     helper              => 'integer',
+     meeter              => 'integer',
+     bookmark            => 'integer',
+     visit_latest        => 'date',
+     visit_version       => 'integer',
+     intrest_updated     => 'date',
+     experience          => 'integer',
+     intrest_description => 'string',
+     intrest_defined     => 'integer',
+     intrest_connected   => 'integer',
+     intrest             => 'integer',
+     );
+
 ######## Constructor
 
 =head2 _new
@@ -407,7 +432,9 @@ sub update_by_query
 			 practice editor helper meeter bookmark
 			 interest connected description defined ))
     {
-	$rec->{$key} = $q->param( $key );
+	my $val = $q->param( $key );
+	next unless defined $val;
+	$rec->{$key} = $val;
     }
 
     return $i->update( $rec );
@@ -419,35 +446,27 @@ sub update
 
     my $m = $i->m;
 
-    $rec->{'defined'} || 0; # TODO: Allow lowering the value
+    $rec->{'defined'} ||= 0; # TODO: Allow lowering the value
     if( $rec->{'defined'} > $i->defined )
     {
 	warn "  Changing interest_defined to $rec->{'defined'}\n";
 	$rec->{'intrest_defined'} = int $rec->{'defined'};
     }
 
-    $rec->{'connected'} || 0;; # TODO: Allow lowering the value
+    $rec->{'connected'} ||= 0; # TODO: Allow lowering the value
     if( $rec->{'connected'} > $i->connected )
     {
 	warn "  Changing interest_connected to $rec->{'connected'}\n";
 	$rec->{'intrest_connected'} = int $rec->{'connected'};
     }
 
-    foreach my $key ( keys %$rec )
-    {
-	$i->{$key} = $rec->{$key};
-    }
-
     my $tid = $i->topic->id;
     my $mid = $m->id;
 
     my $changes = $Para::dbix->update_wrapper({
-	rec => $i,
+	rec => $rec,
 	rec_old => $i->get( $m, $i->t, undef, 1 ),
-	types =>
-	{
-	    intrest_updated => 'date',
-	},
+	types => \%FIELDTYPE,
 	table => 'intrest',
 	key =>
 	{
@@ -460,6 +479,7 @@ sub update
 	},
 	fields_to_check => [values %FIELDMAP],
 	map => \%FIELDMAP,
+	copy_data => $i,
     });
 					      
     # Nothing changed?
@@ -482,6 +502,7 @@ sub next_step
 
     my $defined = $args->{'defined'} || 0;
     my $redefine = $args->{'redefine'} || 0;
+    my $interest = $in->interest || 0;
 
     # 1. Define relations 1-10
     # 2. Specify intrest
@@ -497,7 +518,7 @@ sub next_step
     {
 	$tmpl = $base.'/specify.tt';
     }
-    elsif( $in->interest > 50 and $defined < 90 )
+    elsif( $defined < 90 and ( not $interest or $interest > 30 ) )
     {
 	$tmpl = $base.'/specify_related.tt';
     }

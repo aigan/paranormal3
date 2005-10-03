@@ -37,6 +37,8 @@ sub handler
 
     $req->{'changes'}->note("Ändringen kommer att kontrolleras\n");
 
+    $q->param('tid', $t->id);
+
     return "Ny text skapad";
 }
 

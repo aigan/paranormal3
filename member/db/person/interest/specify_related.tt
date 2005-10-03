@@ -9,6 +9,7 @@
    tid = q.param('tid');
    hidden('tid', tid);
    hidden('defined', 90);
+   hidden('connected', 30);
    t=topic(tid);
    i=m.interest(t);
 %]

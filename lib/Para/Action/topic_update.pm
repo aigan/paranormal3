@@ -460,10 +460,6 @@ sub check_status
 
     $t->set_status( $new_status );
 
-#    if( $t->status <= S_REPLACED )
-#    {
-#    }
-
     push @Para::clear_fields, 't_status';
 }
 

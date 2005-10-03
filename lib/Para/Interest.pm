@@ -142,7 +142,7 @@ sub get
 
 sub getset
 {
-    my( $this, $m, $t ) = @_;
+    my( $this, $m, $t, $rec, $nocache ) = @_;
 
     unless( ref $m )
     {
@@ -156,7 +156,7 @@ sub getset
 
 #    warn "  getset interest ".$t->id."\n";
 
-    my $i = $this->get( $m, $t );
+    my $i = $this->get( $m, $t, $rec, $nocache );
 
     $i ||= $this->create( $m, $t, 1);
 
@@ -465,7 +465,7 @@ sub update
 
     my $changes = $Para::dbix->update_wrapper({
 	rec => $rec,
-	rec_old => $i->get( $m, $i->t, undef, 1 ),
+	rec_old => $i->getset( $m, $i->t, undef, 1 ),
 	types => \%FIELDTYPE,
 	table => 'intrest',
 	key =>

@@ -1563,7 +1563,7 @@ sub break_topic_loop
 	    if( my $obj = $arc->obj )
 	    {
 		# Remove all self-referencing arcs
-		if( $t->equals( $obj ) )
+		if( $t->has_same_id_as( $obj ) )
 		{
 		    $arc->remove('force');
 		}
@@ -2053,17 +2053,16 @@ sub set_status
     $m = Para::Member->get($m) unless ref $m;
 
     my $new_active = $status < S_PENDING ? 0 : 1;
+    my $old_active = $t->active;
     my $ver = $t->ver;
     my $tid = $t->id;
 
-    # Reset parent childs
-    if( my $p = $t->parent )
-    {
-	debug "reset parent childs for ".$t->sysdesig;
-	undef $p->{'childs'};
-    }
-
-    if( $new_active and not $t->active )
+    $t->{'t_status'} = $status;
+    $t->{'t_active'} = $new_active;
+    
+    debug(sprintf "Status for %d v%d changed to %d activation %d", $tid, $ver, $status, $new_active);
+ 
+    if( $new_active and not $old_active )
     {
 	# Inactivate all other
 	foreach my $tv (@{ $t->versions })
@@ -2082,21 +2081,31 @@ sub set_status
 	$m->score_change('accepted_thing');
 	$t->created_by->score_change('thing_accepted');
 	$Para::Topic::CACHE->{"$tid-"} = $t;
+	
+	if( my $p = $t->parent )
+	{
+	    $p->register_child( $t );
+	}
     }
 
-    if( $t->active and not $new_active )
+    if( $old_active and not $new_active )
     {
 	
 	$m->score_change('rejected_thing');
 	$t->created_by->score_change('thing_rejected');
 	delete $Para::Topic::CACHE->{"$tid-"} ;
+
+	if( my $p = $t->parent )
+	{
+	    # This will update parent childs to the corect version of t
+	    my $t_def = $t->get_by_id( $t->id );
+	    $p->register_child( $t_def );
+	}
     }
 
-    $t->{'t_status'} = $status;
-    $t->{'t_active'} = $new_active;
     $t->mark_updated;
 
-    debug(sprintf "Status for %d v%d changed to %d activation %d\n", $tid, $ver, $status, $new_active);
+    debug(sprintf "Status for %d v%d changed to %d activation %d - DONE", $tid, $ver, $status, $new_active);
     return $status;
 }
 
@@ -2435,7 +2444,7 @@ sub entry_list
 	    # It may not be the active child that's a child of $t
 	    #
 	    my $child_parent = $child->parent or next;
-	    next unless $child_parent->equals( $t );
+	    next unless $child_parent->has_same_id_as( $t );
 
 	    push @list, $child;
 	}
@@ -2450,10 +2459,15 @@ sub unregister_child
     #
     # Remove $old_child from $t->{childs}
 
+    debug sprintf "Removing %s as child of %s", $old_child->sysdesig, $t->sysdesig;
+
     my @new_childs;
     foreach my $child (@{ $t->childs })
     {
-	next if $child->equals( $old_child );
+	if( $child->has_same_ver_as( $old_child ) )
+	{
+	    next;
+	}
 	push @new_childs, $child;
     }
     $t->{'childs'} = \@new_childs;
@@ -2470,6 +2484,9 @@ sub register_child
 
     my $new_status     = $new_child->status;
     my $new_id         = $new_child->id;
+    my $new_ver        = $new_child->ver;
+
+    debug(1,"Registring new child $new_id v$new_ver (status $new_status) for $t->{t}");
 
     my $childs = $t->childs;
 
@@ -2478,33 +2495,37 @@ sub register_child
     
     foreach my $child ( @$childs )
     {
-	if( $child->equals( $new_child ) )
+	if( $child->has_same_id_as( $new_child ) )
 	{
 	    if( $child->status <= $new_status )
 	    {
 		$t->unregister_child( $child );
-		last;
+		next; # could use last, but this will clean up misses
 	    }
 	    # else, use the exisitng child
+	    debug 1, "  useing existing child";
 	    return $t->{'childs'};
 	}
     }
+
+    # Get changes made
+    $childs = $t->childs;
 
   CHECK:
     {
 	for( my $i=0; $i<= $#$childs; $i++ )
 	{
-	    my $child = $childs->[0];
+	    my $child = $childs->[$i];
 	    if( $new_status >= $child->status and
 		$new_id     <  $child->id )
 	    {
 		# insert $new_child before 
 		splice @$childs, $i, 0, $new_child;
-		debug(1,"placed $new_id as child $i of $t->{t}");
+		debug(1,"placed $new_id v$new_ver as child $i of $t->{t}");
 		last CHECK;
 	    }
 	}
-	debug(1,"placed $new_id as last child of $t->{t}");
+	debug(1,"placed $new_id v$new_ver as last child of $t->{t}");
 	push @$childs, $new_child;
     }
     
@@ -3324,19 +3345,44 @@ sub set_oldfile
     }
 }
 
+sub has_same_id_as
+{
+    return undef unless ref $_[1];
+    if( $_[0]->id == $_[1]->id )
+    {
+	    return 1;
+    }
+
+    return 0;
+}
+
+sub has_same_ver_as
+{
+    return undef unless ref $_[1];
+    if( $_[0]->id == $_[1]->id )
+    {
+	if( $_[0]->ver == $_[1]->ver )
+	{
+	    return 1;
+	}
+    }
+
+    return 0;
+}
+
 sub equals
 {
     my( $t1, $t2 ) = @_;
+
+    cluck "DEPRECATED!!!";
 
     return undef unless ref $t2;
     if( $t1->id == $t2->id )
     {
 	return 1;
     }
-    else
-    {
-	return 0;
-    }
+
+    return 0;
 }
 
 sub generate_url

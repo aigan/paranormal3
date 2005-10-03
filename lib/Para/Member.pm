@@ -636,14 +636,14 @@ sub topic
 
 sub interests
 {
-    my( $member ) = @_;
+    my( $m ) = @_;
 
-    unless( $member->{'interests'} )
+    unless( $m->{'interests'} )
     {
 	# This will set upp all defined interests of the member
-	$member->{'interests'} = Para::Interests->new( $member );
+	$m->{'interests'} = Para::Interests->new( $m );
     }
-    return $member->{'interests'};
+    return $m->{'interests'};
 }
 
 sub interest

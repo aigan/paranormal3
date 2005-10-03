@@ -20,6 +20,7 @@
 </tr>
 [% FOREACH rec = recs %]
    [% m = getmember(rec.member, rec) %]
+   [% NEXT IF m.level != 3; # DB may not be synced %]
    [% tr2 %]<td>$m.id</td><td>[% jump(m.nickname, "/member/db/person/edit/check_presentation.tt", mid=m.id) %]</td>
 <td>[% m.created %]</td>
 <td>[% m.updated %]</td>

@@ -9,7 +9,7 @@
 
 <table><tr><th>Nivå</th><th>Antal</th></tr>
 [% FOREACH select_list("select member_level, count(member) as cnt from member where member_level > 0 group by member_level order by member_level") %]
-<tr><td>[% jump(member_level, '/member/db/person/find/advanced_result', _like_member_level=member_level) %]</td><td>$cnt</td></tr>
+<tr><td>[% jump(member_level, '/member/db/person/find/result.tt', _level_min=member_level, _level_max=member_level) %]</td><td>$cnt</td></tr>
 [% END %]
 </table>
 

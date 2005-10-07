@@ -35,7 +35,7 @@ BEGIN
 
 use Para::Frame::Reload;
 
-use Para::Frame::Utils qw( debug );
+use Para::Frame::Utils qw( debug in );
 
 use base 'Para::Frame::Email';
 
@@ -47,8 +47,13 @@ sub set
 
     $p = $e->SUPER::set( $p );
 
-    $p->{'from'} ||= '"Paranormal.se" <info@paranormal.se>';
+    my $from = $p->{'from'} ||= '"Paranormal.se" <info@paranormal.se>';
     $p->{'subject'} ||= 'Info från Paranormal.se';
+
+    unless( ref $from )
+    {
+	$from = Para::Email::Address->parse( $from );
+    }
 
     if( $p->{'m'} )
     {
@@ -71,6 +76,20 @@ sub set
 	    $p->{'to'} = \@try;
 	}
     }
+
+    # If the sender isn't one of our authorative domains..:
+    my @domains = qw( paranormal.se para.se );
+    my $host = $from->host;
+    unless( in $host, @domains )
+    {
+	debug "$host is not one of @domains";
+
+	$p->{'Reply-To'} = $from;
+	my $desig = $from->desig;
+	$from = "\"$desig via paranormal.se\" <bounce\@paranormal.se>";
+    }
+
+    $p->{'from'} = $from;
 
     return $p;
 }

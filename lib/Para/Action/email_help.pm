@@ -21,7 +21,7 @@ sub handler
 
     my $fork = Para::Email->send_in_fork({
 	subject => $subject,
-	to => 'helpers@paranormal.se',
+	to => 'help@paranormal.se',
 	template => 'custom.tt',
 	from => $from,
     });

@@ -9,7 +9,7 @@ jump('den här webbplatsen', '/topic/paranormalse.html') %].</p>
 %] är fria för alla.  Du behöver inte [% jump('logga in',
 '/member/db/member_login') %] för att läsa dem.</p>
 
-<p>[% jump('Medlemskap', '/topic/medlemskap_i_paranormalse.html') %]
+<p>[% jump('Medlemskap', '/topic/medlemskap_i_paranormalse.html') +%]
 är till för de som aktivt vill delta med att förbättra denna
 webbplats.</p>
 

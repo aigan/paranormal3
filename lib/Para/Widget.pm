@@ -21,6 +21,7 @@ use Carp;
 use Template 2;
 use Data::Dumper;
 use Text::ParagraphDiff;
+use List::Util qw( max min );
 
 use locale;
 
@@ -32,7 +33,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time qw( now );
-use Para::Frame::Utils qw( maxof debug get_from_fork minof);
+use Para::Frame::Utils qw( debug get_from_fork );
 
 use Para::Constants qw( :all );
 use Para::Topic;
@@ -112,7 +113,7 @@ sub interest_next_step
 
 
 
-    my $next_vault = maxof($t_con, $i_con) + 1;
+    my $next_vault = max($t_con, $i_con) + 1;
 
     ## Only do step one if the text doesn't exist
     if( $next_vault == 1 )
@@ -157,7 +158,7 @@ sub select_persons
     my $offset = $q->param('offset')||1;
     my $pagesize = $q->param('pagesize')||50;
 
-    $pagesize = minof($pagesize,50) if $Para::Frame::U->level < 11;
+    $pagesize = min($pagesize,50) if $Para::Frame::U->level < 11;
 
     $q->param('offset', $offset);
     $q->param('pagesize', $pagesize);

@@ -1217,7 +1217,7 @@ sub validate_nick
     trim_name(\$nick);
     my $uid = name2nick($nick);
 
-    if( $uid =~ /guest|admin|sysadm|root|master|skapelse|system|vaktare|guard|member|-bot|visit|temp|test|spam|skugga|ghost|serv|list|mail/ )
+    if( $uid =~ /guest|admin|sysadm|root|master|skapelse|system|vaktare|guard|member|-bot|visit|temp|test|spam|skugga|ghost|serv|list|mail|bounce/ )
     {
 	throw('validation', "Det här namnet är reserverat. Välj ett annat\n");
     }

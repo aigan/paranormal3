@@ -18,6 +18,7 @@ package Para::Alias;
 
 use strict;
 use Data::Dumper;
+use List::Util qw( min );
 
 BEGIN
 {
@@ -26,7 +27,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( minof throw debug trim reset_hashref );
+use Para::Frame::Utils qw( throw debug trim reset_hashref );
 use Para::Frame::DBIx qw( pgbool );
 use Para::Frame::Time qw( date );
 
@@ -271,7 +272,7 @@ sub add
     my $talias_urlpart   = title2url($talias);
     my $talias_createdby = $m->id;
     my $talias_changedby = $m->id;
-    my $talias_status    = minof( $m->new_status, $props->{'status'});
+    my $talias_status    = min( $m->new_status, $props->{'status'});
     my $talias_autolink  = defined $props->{'autolink'} ? $props->{'autolink'} : 1;
     my $talias_index     = defined $props->{'index'} ? $props->{'index'} : 1;
     my $talias_language  = $props->{'language'} || undef;

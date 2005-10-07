@@ -19,6 +19,7 @@ package Para::Arc;
 use strict;
 use Data::Dumper;
 use Carp qw( cluck carp croak confess );
+use List::Util qw( min );
 
 BEGIN
 {
@@ -28,7 +29,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time qw( date now );
-use Para::Frame::Utils qw( maxof minof throw debug );
+use Para::Frame::Utils qw( throw debug );
 use Para::Frame::DBIx qw( pgbool );
 
 use Para::Topic;
@@ -1474,9 +1475,9 @@ sub create_infere_rev
 	my $arc3 = Para::Arc->find( $p3, $arc2->subj, $obj);
 	unless( $arc3 )
 	{
-	    my $strength = minof( $arc->strength, $arc2->strength );
+	    my $strength = min( $arc->strength, $arc2->strength );
 	    $strength = int((0.9 * ($strength - TRUE_MIN))+TRUE_MIN);
-	    my $status = minof( $arc->status, $arc2->status );
+	    my $status = min( $arc->status, $arc2->status );
 
 	    if( $arc2->subj->has_same_id_as( $obj ) )
 	    {
@@ -1531,9 +1532,9 @@ sub create_infere_rel
 	}
 	else
 	{
-	    my $strength = minof( $arc->strength, $arc2->strength );
+	    my $strength = min( $arc->strength, $arc2->strength );
 	    $strength = int((0.9 * ($strength - TRUE_MIN))+TRUE_MIN);
-	    my $status = minof( $arc->status, $arc2->status );
+	    my $status = min( $arc->status, $arc2->status );
 
 	    if( $subj->has_same_id_as( $arc2->obj ) )
 	    {

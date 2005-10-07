@@ -25,8 +25,9 @@ use Date::Manip;
 use IO::LockedFile;
 use Template::Context;
 use Sys::CpuLoad;
-use Image::Size;
+use Image::Size; #exports imgsize
 use File::Path;
+use List::Util qw( min );
 
 BEGIN
 {
@@ -37,7 +38,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::DBIx qw( pgbool );
-use Para::Frame::Utils qw( deunicode trim throw minof debug create_file );
+use Para::Frame::Utils qw( deunicode trim throw debug create_file );
 use Para::Frame::Time qw( now date );
 use Para::Frame::Widget;
 
@@ -861,7 +862,7 @@ sub outline
 	    my $body =  substr( $ttext, 0, ($min_length - length($text)));
 
 	    # Find good place to breake text
-	    my $startpos = minof(($min_length - length($text)), length($ttext) );
+	    my $startpos = min(($min_length - length($text)), length($ttext) );
 #	    warn sprintf("Length of ttext is %d and startpos is %d\n", length($ttext), $startpos);
 #	    warn "Constructing tail from pos $startpos to ($max_length - $min_length)\nfrom string '$ttext'\n";
 	    my $tail = substr( $ttext, $startpos,

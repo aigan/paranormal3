@@ -18,6 +18,7 @@ package Para::TS;
 
 use strict;
 use Data::Dumper;
+use List::Util qw( max );
 
 BEGIN
 {
@@ -26,7 +27,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( debug maxof );
+use Para::Frame::Utils qw( debug );
 use Para::Frame::DBIx qw( pgbool );
 
 use Para::Topic;
@@ -161,7 +162,7 @@ sub set
     my $new_status;
     if( $ts )
     {
-	$new_status = maxof( $m->new_status, $ts->status );
+	$new_status = max( $m->new_status, $ts->status );
     }
     else
     {

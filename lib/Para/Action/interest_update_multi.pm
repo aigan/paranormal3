@@ -3,8 +3,9 @@ package Para::Action::interest_update_multi;
 
 use strict;
 use Data::Dumper;
+use List::Util qw( max );
 
-use Para::Frame::Utils qw( throw maxof );
+use Para::Frame::Utils qw( throw );
 
 use Para::Member;
 
@@ -72,7 +73,7 @@ sub handler
 		meeter => $meeter * $interest,
 		bookmark => $bookmark * $interest,
 		interest => $q->param($field),
-		defined => maxof($i->defined, 10),
+		defined => max($i->defined, 10),
 	    };
 
 	    $i->update($rec);

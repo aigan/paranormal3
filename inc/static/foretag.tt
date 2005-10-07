@@ -4,7 +4,7 @@
    [% PROCESS head_meta.tt %]
    <title>[% t.title | html %]</title>
 </head>
-<body>
+<body class="with_sidebar">
    [% PROCESS body_top.tt %]
 
    [% eng = t.has_rel(33, 396598); # English %]

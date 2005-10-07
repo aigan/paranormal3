@@ -4,7 +4,7 @@
    [% PROCESS head_meta.tt %]
    <title>[% t.title | html %]</title>
 </head>
-<body>
+<body class="with_sidebar">
    [% m = t.member %]
    [% PROCESS body_top.tt %]
    [% UNLESS m.id %]

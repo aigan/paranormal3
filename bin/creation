@@ -234,6 +234,7 @@ use Ekoby::Ekonomi;
      'select_persons'    => \&Para::Widget::select_persons,
      'diff'              => \&Para::Widget::diff,
      'tfilter_init'      => \&Para::Widget::tfilter_init,
+     'new_entry'         => \&Para::Widget::new_entry,
 
      'select_persons_by_name' => sub{ Para::Member->by_name( @_ ) },
      'getmember'         => sub{ Para::Member->get_by_id( @_ ) },

@@ -50,6 +50,5 @@ kom från en tredje part.  Men detta bör enbart göras i undantag.</p>
 <p>Ska vi börja?</p>
 
 [% hr %]
-[% title = q.escape('Varför inte?') %]
-<p>[% go('Vänd och fly i panik', "/member/mail.cgi?$title") %]
-[% submit('Godkänn villkoren') %]</p>
+<p>[% go('Vänd och fly i panik', uri("/contact/", subject="Varför inte?", to='"Redaktionen" <red@paranormal.se>')) %]
+[%+ submit('Godkänn villkoren') %]</p>

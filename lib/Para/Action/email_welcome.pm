@@ -22,15 +22,13 @@ sub handler
 	subject => "Välkommen till Paranormal.se",
 	m => $m,
 	template => 'welcome.tt',
-	from => "devel\@paranormal.se",
+	from => '"Paranormal.se" <memadmin@paranormal.se>',
     });
 
     my $fork = $req->create_fork;
     if( $fork->in_child )
     {
-	warn "-- SEND email\n";
 	$e->send or throw('email', $e->error_msg);
-	warn "-- RETURN\n";
 	$fork->return("E-post har nu skickats till $m->{'sys_email'} med ditt lösenord.\n");
     }
 

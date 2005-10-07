@@ -1,0 +1,43 @@
+[% META
+	otitle = 'Kontakta oss'
+	next_action = 'email'
+	default_template = 'thanks.tt'
+	focus = 'body'
+%]
+
+[% PROCESS load_member.tt %]
+
+[%
+   subject = q.param('subject');
+    
+   IF u.level;
+      from = "\"$m.name\" <$m.sys_email>";
+   END;
+   DEFAULT from = q.param('from');
+   to_str = q.param('to');
+   DEFAULT to_str = "Redaktionen <red@paranormal.se>";
+   to = email(to_str);
+%]
+
+
+<h1>Kontakta $to.name</h1>
+
+[% UNLESS subject %]
+<p>Fundera på om du har valt rätt mottagare för ditt brev.
+<ul>
+<li>Vill du veta mer om [% jump("den här webbplatsen","/topic/paranormalse.html") %]?
+<li>Är du på jakt efter kunskap eller information om något bör du istället fråga någon av de enskilda hjälparna under hjälpare [% jump('under respektive uppslagsord', '/index.tt') %]. Dessa frågor är för många för att vi ska kunna ta hand om dem här.</li>
+<li>Har du andra typer av frågor eller annan anledning att kontakta oss, se [% jump('våra kontaktuppgifter', '/topic/kontaktuppgifter_for_paranormalse.html') %].</li>
+</ul>
+[% END %]
+<table>
+<tr><td>Från <td>: [% input('from', from, size=50) %]
+<tr><td>Till <td>: <big><a href="mailto:$to.address">[% to.format_human | html %]</a></big>[% hidden('to', to.format) %]
+<tr><td>Rubrik <td>: [% input('subject', subject, size=50) %]
+</table>
+
+<p>[% textarea('body','' ) %]
+
+[% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
+
+<p>[% step('Skicka brevet') %]

@@ -41,6 +41,7 @@
 
 [% helplist = BLOCK %]
 
+[% WRAPPER instruction %]
 <p>Detta är andra medlemmar som sagt sig vara intresserad av detta
 ämne och har lust att hjälpa.  Vi har ingen kontroll på att detta är
 bra personer att kontakta för vissa frågor, eller att de har de
@@ -63,8 +64,8 @@ H = Lust att hjälpa.
 [% 'U = Upplevt. ' IF upplevbart %]
 K = Kunskap.
 [% 'P = Praktiserat. ' IF praktiserbart %]
-
 </p>
+[% END %]
 
 <div class="entry">
 <table>

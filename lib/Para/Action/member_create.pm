@@ -3,7 +3,7 @@ package Para::Action::member_create;
 
 use strict;
 
-use Para::Frame::Utils qw( throw );
+use Para::Frame::Utils qw( throw debug );
 
 use Para::Member qw( name2nick name2chat_nick trim_name );
 
@@ -69,11 +69,11 @@ sub handler
     or do
     {
 	#PQresultStatus PQerrorMessage PGresult (Where is the error code docs?)
-	if( $Para::dbh->errstr =~ /duplicate key/ )
+	if( $Para::dbh->errstr =~ /nick_pkey/ )
 	{
 	    $Para::dbh->rollback;
 
-	    warn "Kollar om nick $nick finns";
+	    debug "Kollar om nick $nick finns";
 	    my $rec = $Para::dbix->select_record("from member, nick where member=nick_member and uid=?", $nick);
 	    if( $rec->{'member_level'} > 1 )
 	    {

@@ -3,7 +3,7 @@
 <p>Ändra status för version $t.ver<br>
 [%
 IF u.level > 11;
-   radio('t_status', '', 1); 'Ingen ändring<br>';
+   radio('t_status', '', ''); 'Ingen ändring<br>';
    SWITCH t_status;
       CASE 0; radio('t_status', 4); 'Återaktivera<br>';
       CASE 1; radio('t_status', 4); 'Återaktivera<br>';

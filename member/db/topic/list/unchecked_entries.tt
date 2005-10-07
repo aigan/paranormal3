@@ -29,9 +29,7 @@
 [% END %]
 </table>
 </div>
-
-<h2>Instruktioner</h2>
-
+[% WRAPPER instruction %]
 <p>Se [% jump("hur väktare bedömer ämnen och texter", "/hur_vaktare_bedomer_amnen_och_texter.html" ) %]</p>
 
 <p>Denna funktion är preliminär.</p>
@@ -39,4 +37,6 @@
 <p>När systemet är mer utvecklat kommer redaktörerna på gesällnivå för respektive ämne få i uppdrag att kontrollera ändrade och nya texter.  Men tills vidare vill vi bara se att texterna är vettiga.</p>
 
 <p>Se det här som en grovsollning.</p>
+[% END %]
 
+<p>[% nostep %]

@@ -44,8 +44,7 @@
 [% INCLUDE subentry e=t %]
 </table>
 
-[% hr %]
-
+[% WRAPPER instruction %]
 <p>Kryssa i den/de texter du vill flytta.  Pricka i den plats dit du vill flytta texten.</p>
 
 <p>En gren innefattar alla följande och undervarande texter. (Fram
@@ -64,6 +63,7 @@ texterna är undertext till samma övertext, men de har inte en
 innebördes ordning.  Det skulle exempelvis kunna röra sig om två
 kommentarer till samma text, snarare än en kommentar som fortsätter
 med ny rubrik.</p>
+[% END %]
 
 
 [% BLOCK subentry %]

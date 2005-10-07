@@ -41,8 +41,7 @@ END;
 <p>Fler ämnen, ett per rad:<br>
 <textarea cols="30" rows="5" name="_meta_talias">[% list2block('_meta_talias') %]</textarea>
 
-<p>[% step('Ändra') %]
-
+[% WRAPPER instruction %]
 <p>Det här ska vara en lista om vad detta objekt behandlar.  Objektet
 måste vara media, så som en bok, tidskrift, diskussioninlägg eller
 liknande.  Det kan vara en artikel, en text i databasen, en grupp
@@ -50,3 +49,6 @@ eller föredrag.  Dvs något som talar om ett ämne.  Här beskriver vi
 vad ämnet talar om.</p>
 
 <p>Listan bör vara kort men fullständig.</p>
+[% END %]
+
+<p>[% step('Ändra') %]

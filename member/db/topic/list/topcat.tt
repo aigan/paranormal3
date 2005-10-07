@@ -14,6 +14,7 @@
 </table>
 </div>
 
+[% WRAPPER instruction %]
 <p>Dessa kategorier är tänkt att utgöra basen för ett träd av ämnen.
 Man ska kunna klicka sig fram till intressanta ämnen ungefär som i <a
 href="http://directory.google.com/" target="google">Google Web
@@ -30,4 +31,4 @@ böcker, filmer, etc.
 Dvs sådant som folk utan "seriöst intresse" kan tycka är
 underhållande.  Vad vill en person läsa om hon/han är ung och gillar
 skräckfilmer?
-
+[% END %]

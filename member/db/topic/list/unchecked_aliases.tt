@@ -56,8 +56,6 @@
 </table>
 </div>
 
-<p>[% submit %]
-
 
 [%
    prev_from = offset - 15;
@@ -67,7 +65,6 @@
    next_from = offset + 15;
    next_to = offset + 29;
 %]
-
 
 <p>
 [% IF offset > 15 %]
@@ -79,8 +76,13 @@ $this_from - $this_to
 [% END %]
 </p>
 
-
+[% WRAPPER instruction %]
 <ul>
 <li><em>Antal</em> anger hur många ämnen som har detta alias
 <li>Skapa gärna ämnet om ett alias bör höra till eget ämne
 </ul>
+[% END %]
+
+<p>[% step %]
+
+

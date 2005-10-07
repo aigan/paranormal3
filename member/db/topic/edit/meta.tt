@@ -313,7 +313,7 @@ END;
 </p>
 [% END %]
 
-
+[% WRAPPER instruction %]
 <p>Ange namn/alias eller nummer.  Existerande relationer visar nummer och namn.
 
 <p>Exempel: Om ämnet är "ljusfenomen" kan du vilja säga att
@@ -324,6 +324,7 @@ END;
 fält och ett av aliasen till det relaterade ämnet i höger fält.</p>
 
 <p>Klicka på rubriker "Relation" för att se relationstyperna.</p>
+[% END %]
 
 <p>[% step('Ändra') %]
    [%+ go('Radera', '/member/db/topic/', 'topic_delete') %]

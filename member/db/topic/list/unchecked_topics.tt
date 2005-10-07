@@ -27,6 +27,8 @@
 </table>
 </div>
 
-<h2>Instruktioner</h2>
-
+[% WRAPPER instruction %]
 <p>Se [% jump("hur väktare bedömer ämnen och texter", "/topic/hur_vaktare_bedommer_amnen_och_texter.html" ) %]</p>
+[% END %]
+
+<p>[% nostep %]

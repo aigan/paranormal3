@@ -50,5 +50,5 @@ kom från en tredje part.  Men detta bör enbart göras i undantag.</p>
 <p>Ska vi börja?</p>
 
 [% hr %]
-<p>[% go('Vänd och fly i panik', uri("/contact/", subject="Varför inte?", to='"Redaktionen" <red@paranormal.se>')) %]
+<p>[% go('Vänd och fly i panik', uri("/contact/", subject="Varför inte?", to='"Redaktionen" <red@paranormal.se>')) +%]
 [%+ submit('Godkänn villkoren') %]</p>

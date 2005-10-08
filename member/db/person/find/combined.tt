@@ -158,4 +158,4 @@ träffar
 </td></tr>
 </table>
 
-<p>[% step('Sök') %]
+<p>[% search %]

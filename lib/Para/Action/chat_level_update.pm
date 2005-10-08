@@ -42,7 +42,7 @@ sub handler
 
     if( my $new = $q->param('new') )
     {
-	my $member = Para::Member->by_nickname( $new );
+	my $member = Para::Member->get_by_nickname( $new );
 	$member or throw('validate',"Hittar inte medlem $new");
 	my $level = $q->param('chat_level');
 	if( $level != $member->chat_level )

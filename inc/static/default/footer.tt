@@ -6,12 +6,12 @@ Materialet kommer från flera olika författare och medarbetare.  Du kan
 <a href="/member/db/quest_level_00/">vara en del av denna
 webbplats</a>.</p>
 
-<p><a href="/index.html">Hem</a> |
-<a href="/member/db/member_login">Logga in</a> |
+<p><a href="/">Hem</a> |
+<a href="/login.tt">Logga in</a> |
 <a href="/topic/">Index</a> |
 <a href="/search/">Sök</a> |
 <a href="/member/payment/">Gåvor</a> |
-<a href="/member/db/get_help[% IF tid; "?tid=$tid"; END %]">Hjälp</a>
+<a href="[% uri("/contact/", subject=t.desig) %]">Hjälp</a>
 </p>
 
 <p id="pi"><a href="[% IF tid; "/member/db/topic/view/?tid=$tid"; ELSE; "/admin/update/update.cgi$me"; END %]"><img

@@ -264,12 +264,12 @@ TEXTAREA.big_input
 
 TR.even
 {
-	BACKGROUND: #eeeeee
+	BACKGROUND: #00355D
 }
 
 TR.odd
 {
-	BACKGROUND: #dddddd
+	BACKGROUND: #002948
 }
 
 .entry TR.even

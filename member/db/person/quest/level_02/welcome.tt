@@ -1,5 +1,6 @@
 [% META title = 'Välkommen till nivå 2'
         level = 2
+	next_template = "privacy.tt"
 %]
 
 <p>Grattis, novis [% u.nickname %]!</p>
@@ -33,4 +34,4 @@ medmänniskor.</p>
 
 <p>Tag ett djupt andetag.</p>
 
-<p>När du är redo; [% jump('gå vidare','privacy.tt') %]</p>
+<p>När du är redo; [% submit('gå vidare') %]</p>

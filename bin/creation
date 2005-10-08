@@ -39,6 +39,8 @@ use lib "$APPROOT/lib";
 use lib "/var/www/webbadresser.se/lib";
 use lib "/var/www/ekoby.paranormal.se/lib";
 
+use locale;
+
 use Para::Frame;
 use Para::Frame::DBIx;
 use Para::Frame::Time qw( now );

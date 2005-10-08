@@ -54,5 +54,5 @@
 <p>[% go('Radera brevlåda', me, 'member_delete_sysuid') %]
 [% ELSE %]
 <p>[% go('Skapa brevlåda', me, 'member_create_sysuid') %]
-[% END %]
-[% step %]
+[% END +%]
+[%+ step %]

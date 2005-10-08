@@ -31,11 +31,11 @@ sub handler
 
     return "" unless length( $new_text );
 
-    my $changes = $req->{'changes'} ||= Para::Change->new;
+    my $changes = $req->change;
 
     my $t = Para::Topic->create_entry($parent, \$new_text);
 
-    $req->{'changes'}->note("Ändringen kommer att kontrolleras\n");
+    $changes->note("Ändringen kommer att kontrolleras\n");
 
     $q->param('tid', $t->id);
 

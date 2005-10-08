@@ -32,9 +32,9 @@ use Para::Frame::Reload;
 use Para::Frame::Time qw( now date );
 use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd debug uri );
 use Para::Frame::Email;
+use Para::Frame::Change;
 
 use Para::Topic;
-use Para::Change;
 use Para::Interests;
 use Para::Interest;
 use Para::Constants qw( :all );
@@ -2550,8 +2550,8 @@ sub discard_changes  # Member changed. Refresh from DB
     return $m;
 }
 
-sub change { shift->{'changes'}  ||= new Para::Change }
-sub changes { shift->{'changes'} ||= new Para::Change }
+sub change { $Para::Frame::REQ->change }
+sub changes { $Para::Frame::REQ->change }
 
 sub zip2city
 {

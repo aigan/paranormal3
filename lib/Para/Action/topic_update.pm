@@ -5,8 +5,9 @@ use strict;
 use Data::Dumper;
 
 use Para::Frame::Utils qw( throw trim debug );
-use Para::Constants qw( S_PROPOSED S_PENDING );
+use Para::Frame::Change;
 
+use Para::Constants qw( S_PROPOSED S_PENDING );
 use Para::Utils qw( trim_text );
 use Para::Topic qw( title2url );
 
@@ -36,7 +37,7 @@ sub handler
     $ver ||= $t->ver;
 
     # Create a changes obj
-    my $changes = $req->{'changes'} ||= Para::Change->new;
+    my $changes = $req->change;
 
 
     Para::History->begin();
@@ -54,10 +55,12 @@ sub handler
 
     if( my $cnt = $t->save )
     {
+	debug "$cnt changes found";
 	# Changes in $t obj
     }
     else
     {
+	debug "No changes found";
 	# No changes in $t obj, but maby in other places
     }
 

@@ -41,7 +41,7 @@ BEGIN
 sub cache_update
 {
     ### TODO: Fix real caching
-    $Psi::Cache::Changed = time;
+    $Para::Cache::Changed = time;
 }
 
 sub trim_text

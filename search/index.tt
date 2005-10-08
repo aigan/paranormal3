@@ -1,0 +1,39 @@
+[% META title="Sök efter ord, var som helst"
+	next_template="/cgi-bin/htsearch"
+	form_enctype="application/x-www-form-urlencoded"
+	body_class="search_result"
+%]
+
+<div id="main">
+
+<p>Det här är fritextsökning.  Sökning sker efter orden i texterna för
+alla uppslagsord, samt i FAQs, speciella samlingar och e-postlistor.
+</p>
+
+<p>
+Sök efter: <select name="method">
+<option value="and">All
+<option value="or">Any
+<option value="boolean">Boolean
+</select>
+Format: <select name="format">
+<option value="builtin-long">Long
+<option value="builtin-short">Short
+</select>
+Sortera på: <select name="sort">
+<option value="score">Score
+<option value="time">Time
+<option value="title">Title
+<option value="revscore">Reverse Score
+<option value="revtime">Reverse Time
+<option value="revtitle">Reverse Title
+</select>
+<input type="hidden" name="config" value="htdig">
+<input type="hidden" name="restrict" value="">
+<input type="hidden" name="exclude" value="">
+<br>
+Sökord:
+<input type="text" size="30" name="words" value="">
+<input type="submit" value="Sök">
+
+</div>

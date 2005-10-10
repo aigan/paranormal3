@@ -47,6 +47,9 @@
 
 
   [%#### Behandlar ####%]
+  [% IF t.ts_list.size > 25 %]
+      <li>Behandlar <strong>för många för att listas! [% jump("$t.ts_list.size stycken", "/member/db/topic/edit/topicstatements.tt", tid=t.id) %].</strong>
+     [% ELSE %]
   [% FOREACH ts = t.ts_list;
     IF loop.first; '<li>Behandlar '; END;
     IF loop.first; ELSIF loop.last; ' och '; ELSE; ', '; END;
@@ -55,6 +58,7 @@
     IF ts.comment; ' ('; ts.comment | html; ') '; END;
   END;
   %]
+  [% END %]
 
   [%#### Har URL ####%]
   [% IF t.media_url %]

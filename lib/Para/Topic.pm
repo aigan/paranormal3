@@ -3790,7 +3790,7 @@ sub write_page
 	 FILTERS      =>
 	 {
 	     'uri' => sub { CGI::escape($_[0]) },
-	     'html_psi' => \&Para::Widget::html_psi,
+	     'html_psi' => [\&Para::Widget::html_psi_factory, 1],
 	 }
 	 );
 

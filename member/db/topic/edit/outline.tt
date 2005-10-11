@@ -116,7 +116,7 @@ med ny rubrik.</p>
    [% UNLESS e.active %]
       <em class="highlight">inactive</em>
    [% END %]
-   [% IF parent and not parent.equals( e.parent ) %]
+   [% IF parent and not parent.has_same_id_as( e.parent ) %]
       [% IF e.parent %]
          <em class="highlight">child to [% e.parent.id %]</em>
       [% ELSIF e.previous %]
@@ -125,7 +125,7 @@ med ny rubrik.</p>
          <em class="highlight">lost entry</em>
       [% END %]
    [% END %]
-   [% IF previous and not previous.equals( e.previous ) %]
+   [% IF previous and not previous.has_same_id_as( e.previous ) %]
       [% IF e.previous %]
          <em class="highlight">follows [% e.previous.id %]</em>
       [% ELSIF e.parent %]

@@ -180,9 +180,9 @@ use Ekoby::Ekonomi;
     # Define TT filters
     #
     $Para::Frame::CFG->{'th'}{'html'}->add_filters({
-	'html_psi' => \&Para::Widget::html_psi,
-	'html_psi_nolinks' => sub{ Para::Widget::html_psi($_[0], 1) },
-    });
+	'html_psi' => \&Para::Widget::html_psi_factory,
+	'html_psi_nolinks' => \&Para::Widget::html_psi_nolinks_factory,
+    }, 1);
 
 
     # Attatch code to hooks

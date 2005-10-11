@@ -9,7 +9,7 @@ APPROOT=/var/www/test.paranormal.se
 #   paranormal - start the server
 #
 # Copy this file to /etc/init.d and run the command:
-#   update-rc.d paranormal defaults
+#   update-rc.d paranormal defaults 99
 #
 # Configure the APPROOT...
 #

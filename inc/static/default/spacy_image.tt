@@ -4,9 +4,9 @@
                       src="[% t.media_url | html %]"></td></tr>
          <tr><td class=details>[% t.text | html %]</td></tr>
          <tr><td class="details">
-            [% INCLUDE static/part/rel_list reltype=6 prefix="Ur " suffix=", "%]
-            [% INCLUDE static/part/rel_list reltype=23 prefix="&copy; " suffix=" - " %]
-            <em>[% INCLUDE static/part/rel_list reltype=22 %]</em>
+            [% INCLUDE rel_list.tt reltype=6 prefix="Ur " suffix=", "%]
+            [% INCLUDE rel_list.tt reltype=23 prefix="&copy; " suffix=" - " %]
+            <em>[% INCLUDE rel_list.tt reltype=22 %]</em>
             <em>([% jump('detaljer', t.file, tid=t.id) %])</em>
          </td></tr>
       </table>

@@ -420,11 +420,11 @@ Title_short_plural: $old_title_short_plural
 
 	if( $t->status == S_PROPOSED )
 	{
-	    $req->{'changes'}->note("Den nya versionen väntar på godkännande");
+	    $req->change->note("Den nya versionen väntar på godkännande");
 	}
 	elsif( $t->status == S_PENDING )
 	{
-	    $req->{'changes'}->note("Ändringen kommer att kontrolleras\n");
+	    $req->change->note("Ändringen kommer att kontrolleras\n");
 	}
 
 	# Focus on new version
@@ -466,7 +466,7 @@ sub check_media
 
     my $req = $Para::Frame::REQ;
     my $q = $req->q;
-    my $c = $req->{'changes'};
+    my $c = $req->change;
 
     my $url = $q->param('media_url');
     my $mime = $q->param('media_mimetype');

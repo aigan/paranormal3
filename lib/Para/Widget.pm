@@ -463,17 +463,30 @@ sub select_persons
     return $persons;
 }
 
+sub html_psi_factory
+{
+    my( $context ) = @_;
+    return sub{ html_psi(shift, 0, $context) };    
+}
+
+sub html_psi_nolinks_factory
+{
+    my( $context ) = @_;
+    return sub{ html_psi(shift, 1, $context) };
+}
+
 sub html_psi
 {
     # text in $_[0]
     my $nolinks = $_[1];
+    my $context = $_[2];
 
     # locale should have been set previously!
 
 
 #    warn ". . . .\n";
 
-    my( $intext, $links ) = insert_autolinks( \$_[0], $nolinks );
+    my( $intext, $links ) = insert_autolinks( \$_[0], $nolinks, $context );
 #    warn "Raw text is now:\n$intext\n";
     $intext = CGI::escapeHTML( $intext );
 
@@ -834,7 +847,7 @@ sub new_entry
 
 sub insert_autolinks
 {
-    my( $textref, $nolinks ) = @_;
+    my( $textref, $nolinks, $context ) = @_;
 
     # locale should have been set previously!
 
@@ -851,7 +864,7 @@ sub insert_autolinks
 
     # Insert explicit links
     #
-    insert_explicit_links( $textref, \@links );
+    insert_explicit_links( $textref, \@links, $context );
 
     # Link e-mail addresses
     #
@@ -1079,7 +1092,7 @@ sub insert_web_links
 
 sub insert_explicit_links
 {
-    my( $textref, $linkref ) = @_;
+    my( $textref, $linkref, $context ) = @_;
 
     my $newtext = "";
     my( $pos );
@@ -1211,11 +1224,13 @@ sub insert_explicit_links
 			}
 			else # Image to be put on separate row
 			{
-			    my $burner = $Para::Frame::th->{'html'};
-			    my $context = $burner->context;
-			    my $params = clone($Para::Frame::PARAMS);
-			    $params->{'t'} = $t;
-			    my $block = $context->process("/static/default/spacy_image.tt", $params);
+			    my %params = %$Para::Frame::PARAMS;
+			    $params{'t'} = $t;
+			    unless( $context )
+			    {
+				confess "Called without context";
+			    }
+			    my $block = $context->process("static/default/spacy_image.tt", \%params);
 			    push @$linkref, $block;
 			}
 			$newtext .= "¤$#$linkref¤";

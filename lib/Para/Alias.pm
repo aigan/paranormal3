@@ -246,13 +246,17 @@ sub add
     my( $this, $t, $name, $props ) = @_;
     my $class = ref($this) || $this;
 
+    my $change = $Para::Frame::REQ->change;
+
     $name = lc trim $name;
 
     debug(4,"Adding alias $name");
 
     if( my $a = $t->alias( $name ) )
     {
-	debug(4,"  Already exists. Updating");
+	$change->note("Alias '$name' existerar redan");
+
+	$props->{'active'} = 1 unless defined $props->{'active'};
 	return $a->update( $props );
     }
 
@@ -301,6 +305,7 @@ sub add
     delete $Para::Topic::ALIASES{$t->id};
     $t->mark_publish;
 
+    $change->success("Alias '$name' skapad");
     return $t->alias( $name );
 }
 
@@ -309,6 +314,7 @@ sub update
     my( $a, $props ) = @_;
 
     my $m = $Para::Frame::U;
+    my $change = $Para::Frame::REQ->change;
 
     # The props hash:
     #
@@ -540,6 +546,7 @@ sub update
     $a->reset;
     $a->topic->mark_publish;
 
+    $change->success("Alias '$talias' uppdaterad");
     return $a;
 }
 

@@ -3762,6 +3762,7 @@ sub publish
     }
 
     $t->write_page( $template, $params );
+    $t->success("Publicerade ".$t->desig);
     return $t->set_published;
 }
 

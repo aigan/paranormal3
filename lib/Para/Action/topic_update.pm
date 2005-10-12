@@ -53,16 +53,6 @@ sub handler
     check_oldfile($t);
     check_media($t);
 
-    if( my $cnt = $t->save )
-    {
-	debug "$cnt changes found";
-	# Changes in $t obj
-    }
-    else
-    {
-	debug "No changes found";
-	# No changes in $t obj, but maby in other places
-    }
 
     $u->interest( $t ); # Mark interest
 

@@ -102,7 +102,7 @@ sub _new
     }
     else
     {
-	$rec = $Para::dbix->select_possible_record("from t LEFT JOIN media on t=media where t=? order by t_active desc, t_status desc, t_ver desc", $tid);
+	$rec = $Para::dbix->select_possible_record("from t LEFT JOIN media on t=media where t=? order by t_active desc, t_ver desc", $tid);
 	$v = $rec->{'t_ver'};
     }
 
@@ -456,6 +456,22 @@ sub rollback
     %UNSAVED = ();
 }
 
+sub success
+{
+    return $Para::Frame::REQ->change->success($_[1]);
+}
+
+sub fail
+{
+    return $Para::Frame::REQ->change->fail($_[1]);
+}
+
+sub note
+{
+    return $Para::Frame::REQ->change->note($_[1]);
+}
+
+
 
 
 ####################################################################
@@ -797,24 +813,14 @@ sub file
 
     if( defined $file )
     {
-	if( length $file )
+	# Check if there is a change
+	if(  $t->{'t_file'} and ($file eq $t->{'t_file'}) )
 	{
-	    if(  $t->{'t_file'} and ($file eq $t->{'t_file'}) )
-	    {
-		return $file;
-	    }
+	    # No change
+	    return $file;
 	}
-	else # make filename undef
-	{
-	    $file = undef;
 
-	    # If topic already has an undefined filename, we are done
-	    #
-	    unless( defined $t->{'t_file'} )
-	    {
-		return undef;
-	    }
-	}
+#	debug "Setting file to '' for for $t->{t} v$t->{t_ver}: $t";
 
 	# Remove the old page
 	#
@@ -822,15 +828,18 @@ sub file
 
 	$t->{'t_file'} = $file;
 	$t->mark_unsaved;
-	$t->publish; # Publish right now since the page got deleted
+	$t->mark_publish_now;
 
-	return $t->{'t_file'}; # Could be undef
+	return $t->{'t_file'}; # Could be ''
     }
 
     unless( defined $t->{'t_file'} )
     {
 	$t->generate_url;
     }
+
+#    debug "Getting file for $t->{t} v$t->{t_ver}: $t";
+
     return $t->{'t_file'};
 }
 
@@ -2087,6 +2096,8 @@ sub set_status
 	{
 	    $p->register_child( $t );
 	}
+
+	$t->generate_url; # Generate page url
     }
 
     if( $old_active and not $new_active )
@@ -2094,7 +2105,10 @@ sub set_status
 	
 	$m->score_change('rejected_thing');
 	$t->created_by->score_change('thing_rejected');
-	delete $Para::Topic::CACHE->{"$tid-"} ;
+
+	$Para::Topic::CACHE->{"$tid-"} = $t->last_ver;
+
+	$t->generate_url; # remove page url
 
 	if( my $p = $t->parent )
 	{
@@ -2866,6 +2880,9 @@ sub mark_publish
 {
     my( $t, $ctid ) = @_;
 
+    return unless $t->file;
+
+    # Also for deleting published pages
     my $req = $Para::Frame::REQ;
     if( not $ctid and $req->is_from_client ) #To optimize
     {
@@ -2887,11 +2904,13 @@ sub mark_publish_now
 {
     my( $t ) = @_;
 
-    return unless $t->active;
+    # Also for deleting published pages
     if( $t->topic )
     {
 	$t = $t->topic;
     }
+
+    return unless $t->file;
 
     debug "---> Set to_publish_now $t->{t}";
     $TO_PUBLISH_NOW->{$t->id} = $t;
@@ -3390,11 +3409,18 @@ sub generate_url
 {
     my( $t, $exception ) = @_;
 
-    debug(1,sprintf "Generating url for %s", $t->sysdesig);
-
     # Supported old calling with tid
     $t = Para::Topic->get_by_id( $t ) unless ref $t eq 'Para::Topic';
 
+    unless( $t->active )
+    {
+	$t->file('');
+	return [];
+    }
+
+    debug(1,sprintf "Generating url for %s", $t->sysdesig);
+
+    my $tid = $t->id;
     $exception ||= {};
     my @handled = ();
 
@@ -3410,7 +3436,7 @@ sub generate_url
 	    $t->file( $url );
 	    return [$entry_id];
 	}
-	debug(1,"*** entry $t->{t} has no topic");
+	debug(1,"*** entry $tid has no topic");
 	return []; # Rouge entry
     }
 
@@ -3438,8 +3464,12 @@ sub generate_url
     # Make up a list of all topics with the same title
     #
     my $alts = {};
-    foreach my $rec ( @{$Para::dbix->select_list("from t where t_active is true and t_urlpart = ? and t_entry is false", title2url( $t->title )) } )
+    foreach my $rec ( @{$Para::dbix->select_list("select t, t_ver from t where t_urlpart = ? and t_entry is false", title2url( $t->title ) ) } )
     {
+	# Uses info from memory, not DB
+	my $alt = $t->get_by_id( $rec->{t}, $rec->{t_ver} ) or next;
+	$alt->active or next;
+
 	debug(1,"Found topic $rec->{t} with this title");
 	my $prop = {};
 	foreach my $rel ( @{$Para::dbix->select_list("from rel where rev=? and rel_type<4 and rel_type>0 and rel_active is true and rel_status >= ? and rel_strength >= ?", $rec->{'t'}, S_NORMAL, TRUE_MIN)} )
@@ -3453,10 +3483,12 @@ sub generate_url
 	$alts->{$rec->{'t'}}{'primary'} = $prop;
     }
 
+
+
     my @altkeys = keys %$alts;
 
     debug(1,sprintf "  Got %d altkeys\n", scalar(@altkeys));
-    return [$t->id] unless @altkeys;
+    return [$tid] unless @altkeys;
 
 
     # Remove non unique props
@@ -3483,67 +3515,66 @@ sub generate_url
     my $url = "";
     if( @altkeys > 1 )
     {
-	foreach my $alt ( @altkeys )
+	foreach my $altid ( @altkeys )
 	{
-	    next if $exception->{$alt};
+	    next if $exception->{$altid};
+
+	    my $alt = $t->get_by_id($altid);
+	    my $alt_part = title2url( $alt->title );
 
 	    #Use the most general alternative
-	    my $prophash = $alts->{$alt}{'primary'};
+	    my $prophash = $alts->{$altid}{'primary'};
 	    my @props = sort{ $prophash->{$a} <=> $prophash->{$b} } keys %{$prophash};
 
 	    if( @props )
 	    {
-		my $prop = $props[-1];
+		my $propid = $props[-1];
 
-		my $prop_rec = $Para::dbix->select_record("from t where t_active is true and t=?", $prop);
-		my $alt_rec = $Para::dbix->select_record("from t where t_active is true and t=?", $alt);
-		my $prop_part = title2url( $prop_rec->{'t_title'} );
-		my $alt_part = title2url( $alt_rec->{'t_title'} );
+		my $prop = $t->get_by_id($propid);
+		my $prop_part = title2url( $prop->title );
+
 		$url = "/$prop_part/$alt_part";
 	    }
 	    else
 	    {
-		$prophash = $alts->{$alt}{'secondary'};
+		$prophash = $alts->{$altid}{'secondary'};
 		@props = sort{ $prophash->{$a} <=> $prophash->{$b} } keys %{$prophash};
-
-		my $alt_rec = $Para::dbix->select_record("from t where t_active is true and t=?", $alt);
-		my $alt_part = title2url( $alt_rec->{'t_title'} );
 
 		if( @props )
 		{
-		    my $prop = $props[-1];
+		    my $propid = $props[-1];
 
-		    my $prop_rec = $Para::dbix->select_record("from t where t_active is true and t=?", $prop);
-		    my $prop_part = title2url( $prop_rec->{'t_title'} );
-		    $url = "/$prop_part/$alt_part/$alt_rec->{'t'}";
+		    my $prop = $t->get_by_id( $propid );
+		    my $prop_part = title2url( $prop->title );
+		    $url = "/$prop_part/$alt_part/$altid";
 		}
 		else
 		{
-		    $url = "/$alt_part/$alt_rec->{'t'}";
-		    debug(1,"Can't find deliminating prop for $alt\n".Dumper($alts));
+		    $url = "/$alt_part/$altid";
+		    debug(1,"Can't find deliminating prop for $altid\n".Dumper($alts));
 		}
 	    }
 
 	    $url = "/topic$url.html";
-	    debug(1,"$alt  $url");
+	    debug(1,"$altid  $url");
 
-	    Para::Topic->get_by_id( $alt )->file( $url );
+	    $alt->file( $url );
 
 	    push @handled, $alt;
 	}
     }
     elsif( @altkeys )
     {
-	my $alt = $altkeys[0];
-	return([]) if $exception->{$alt};
+	my $altid = $altkeys[0];
+	return([]) if $exception->{$altid};
 
-	my $alt_rec = $Para::dbix->select_record("from t where t_active is true and t=?", $alt);
-	my $alt_part = title2url( $alt_rec->{'t_title'} );
+	my $alt = $t->get_by_id( $altid );
+	my $alt_part = title2url( $alt->title );
 	$url = "/topic/$alt_part.html";
-	debug(1,"$alt  $url");
-	Para::Topic->get_by_id( $alt )->file( $url );
+	debug(1,"$altid  $url");
+	$alt->file( $url );
 
-	push @handled, $alt;
+	push @handled, $altid;
     }
     else
     {
@@ -3559,178 +3590,178 @@ sub publish
 
     $t = Para::Topic->get_by_id( $t ) unless ref $t eq 'Para::Topic';
     $t = $t->topic if $t->entry;
-    return undef unless $t;
+
+    unless( $t )
+    {
+	debug("Topic undef");
+	return undef;
+    }
 
     my $tid = $t->id;
 
+    unless( $t->file )
+    {
+	debug(1,"Topic $tid has no URL");
+	return 0;
+    }
+	
     debug(1,"Publish tid $tid");
 
+    my $params = $t->publish_params;
+    $params->{'tid'} = $tid;
+    $params->{'t'} = $t;
 
-    if( $t->file ) # Will generate_url on demand
+    my $docroot = $Para::Frame::CFG->{'approot'};
+    my $template_base = $docroot."/inc/static/";
+    my $template;
+    if( $t->member and $t->member->id > 0 )
     {
-   	my $params = $t->publish_params;
-	$params->{'tid'} = $tid;
-	$params->{'t'} = $t;
-
-	my $docroot = $Para::Frame::CFG->{'approot'};
-	my $template_base = $docroot."/inc/static/";
-	my $template;
-	if( $t->member and $t->member->id > 0 )
-	{
-	    $template='paranormalse';
-	}
-	unless( $template )
-	{
-	    foreach my $arc ( @{$t->arcs({pred=>[1,7], true=>1, active=>1})} )
-	    {
-		my $name = title2url( $arc->obj->title );
-		debug(2,"Looking for $name template");
-		if( -e $template_base . $name . ".tt" )
-		{
-		    $template = $name;
-		}
-	    }
-	}
-
-	$template ||= "default";
-	debug(1,"Using template $template");
-
-	# Is this a mass member topic?
-	#
-	my $multi;
-      MULTISELECT:
-	{
-	    $multi = $t->rev({type => 7})->topics;
-	    if( @$multi > 20 )
-	    {
-		$params->{'multi'} = 'rev_7';
-		$params->{'multi_sub'} = 'rev_29'; # har medlemskap
-		$params->{'multi_plural'} = "medlemmar";
-		last;
-	    }
-
-	    $multi = $t->rev({type => 1})->topics;
-	    if( @$multi > 20 )
-	    {
-		$params->{'multi'} = 'rev_1';
-		$params->{'multi_sub'} = 'rev_2'; # innefattar
-		my $plural = $t->plural;
-		$params->{'multi_plural'} = "\L$plural";
-		last;
-	    }
-
-	    $multi = [ map $_->entry, @{$t->ts_revlist} ];
-	    if( @$multi > 50 )
-	    {
-		$params->{'multi'} = 'rev_ts';
-		$params->{'multi_plural'} = "media";
-		last;
-	    }
-	}
-
-	# Diffrent formats for diffrent sizes...
-	my $cnt = @$multi;
-	$params->{'multi_cnt'} = $cnt;
-
-	if( $cnt > 2000 )
-	{
-	    # Too many to list
-	}
-	elsif($params->{'multi'})
-	{
-	    my %content; # $content{'a'} = [@sorted_content]
-
-	    foreach my $mt ( @$multi )
-	    {
-		next unless $mt->file;
-
-		foreach my $alias (values %{ $mt->aliases({active=>1}) })
-		{
-		    next unless $alias->index;
-
-		    my $letter;
-		    my $name = lc( $alias->name );
-
-		    my $first = substr( $name, 0, 1);
-		    if( $first =~ /^[a-zедц]$/i )
-		    {
-			$letter = $first;
-		    }
-		    else
-		    {
-			$letter = '-';
-		    }
-
-		    $content{$letter} ||= [];
-		    push @{$content{$letter}}, [ $name, $mt ];
-		    debug(3,"Inserting $mt to content of $letter");
-		}
-	    }
-
-	    my $urldir = $t->{'t_file'};
-	    $urldir =~ s/\.html$//;
-	    $params->{'multi_dir'} = $urldir;
-
-	    my $letters = ['-','a'..'z','е','д','ц'];
-
-	    if( $cnt < 200 )
-	    {
-		my $newletters = ['-'];
-		my $last = 'a';
-		foreach my $i (1..$#$letters)
-		{
-		    if( not $i % 6 )
-		    {
-			my $part = $last.'-'.$letters->[$i-1];
-			push @$newletters, $part;
-			$content{$part} = $content{$last};
-			debug(2,"Associate the content of $last to $part");
-			$last = $letters->[$i];
-		    }
-
-		    my $this = $letters->[$i];
-		    $content{$this} ||=[];
-		    unless( $this eq $last )
-		    {
-			push @{$content{$last}}, @{$content{$this}};
-		    }
-		}
-		my $part = $last.'-'.$letters->[$#$letters];
-		push @$newletters, $part;
-		$content{$part} = $content{$last};
-		debug(2,"Associate the content of $last to $part");
-
-		$letters = $newletters;
-		$params->{'multi_separator'} = ' | ';
-	    }
-
-	    $params->{'multi_letters'} = $letters;
-	    $params->{'multi_content'} = [];
-	    foreach my $letter ( @$letters )
-	    {
-		debug(1,"Letter $letter");
-		$params->{'multi_letter'} = $letter;
-		$content{$letter} ||=[];
-		debug(3,"Content: @{$content{$letter}}");
-		@{$params->{'multi_content'}} =
-		    sort {$a->[0] cmp $b->[0] } @{$content{$letter}};
-
-		
-
-		my $file = "$urldir/$letter.html";
-		$t->write_page('multi', $params, $file);
-	    }
-	    undef $params->{'multi_letter'};
-	    undef $params->{'multi_content'};
-	}
-
-	$t->write_page( $template, $params );
+	$template='paranormalse';
     }
-    else
+    unless( $template )
     {
-	debug(1,"  Topic $tid has no URL");
+	foreach my $arc ( @{$t->arcs({pred=>[1,7], true=>1, active=>1})} )
+	{
+	    my $name = title2url( $arc->obj->title );
+	    debug(2,"Looking for $name template");
+	    if( -e $template_base . $name . ".tt" )
+	    {
+		$template = $name;
+	    }
+	}
     }
 
+    $template ||= "default";
+    debug(1,"Using template $template");
+    
+    # Is this a mass member topic?
+    #
+    my $multi;
+  MULTISELECT:
+    {
+	$multi = $t->rev({type => 7})->topics;
+	if( @$multi > 20 )
+	{
+	    $params->{'multi'} = 'rev_7';
+	    $params->{'multi_sub'} = 'rev_29'; # har medlemskap
+	    $params->{'multi_plural'} = "medlemmar";
+	    last;
+	}
+
+	$multi = $t->rev({type => 1})->topics;
+	if( @$multi > 20 )
+	{
+	    $params->{'multi'} = 'rev_1';
+	    $params->{'multi_sub'} = 'rev_2'; # innefattar
+	    my $plural = $t->plural;
+	    $params->{'multi_plural'} = "\L$plural";
+	    last;
+	}
+
+	$multi = [ map $_->entry, @{$t->ts_revlist} ];
+	if( @$multi > 50 )
+	{
+	    $params->{'multi'} = 'rev_ts';
+	    $params->{'multi_plural'} = "media";
+	    last;
+	}
+    }
+
+    # Diffrent formats for diffrent sizes...
+    my $cnt = @$multi;
+    $params->{'multi_cnt'} = $cnt;
+
+    if( $cnt > 2000 )
+    {
+	# Too many to list
+    }
+    elsif($params->{'multi'})
+    {
+	my %content; # $content{'a'} = [@sorted_content]
+
+	foreach my $mt ( @$multi )
+	{
+	    next unless $mt->file;
+
+	    foreach my $alias (values %{ $mt->aliases({active=>1}) })
+	    {
+		next unless $alias->index;
+
+		my $letter;
+		my $name = lc( $alias->name );
+
+		my $first = substr( $name, 0, 1);
+		if( $first =~ /^[a-zедц]$/i )
+		{
+		    $letter = $first;
+		}
+		else
+		{
+		    $letter = '-';
+		}
+
+		$content{$letter} ||= [];
+		push @{$content{$letter}}, [ $name, $mt ];
+		debug(3,"Inserting $mt to content of $letter");
+	    }
+	}
+
+	my $urldir = $t->{'t_file'};
+	$urldir =~ s/\.html$//;
+	$params->{'multi_dir'} = $urldir;
+
+	my $letters = ['-','a'..'z','е','д','ц'];
+
+	if( $cnt < 200 )
+	{
+	    my $newletters = ['-'];
+	    my $last = 'a';
+	    foreach my $i (1..$#$letters)
+	    {
+		if( not $i % 6 )
+		{
+		    my $part = $last.'-'.$letters->[$i-1];
+		    push @$newletters, $part;
+		    $content{$part} = $content{$last};
+		    debug(2,"Associate the content of $last to $part");
+		    $last = $letters->[$i];
+		}
+
+		my $this = $letters->[$i];
+		$content{$this} ||=[];
+		unless( $this eq $last )
+		{
+		    push @{$content{$last}}, @{$content{$this}};
+		}
+	    }
+	    my $part = $last.'-'.$letters->[$#$letters];
+	    push @$newletters, $part;
+	    $content{$part} = $content{$last};
+	    debug(2,"Associate the content of $last to $part");
+
+	    $letters = $newletters;
+	    $params->{'multi_separator'} = ' | ';
+	}
+
+	$params->{'multi_letters'} = $letters;
+	$params->{'multi_content'} = [];
+	foreach my $letter ( @$letters )
+	{
+	    debug(1,"Letter $letter");
+	    $params->{'multi_letter'} = $letter;
+	    $content{$letter} ||=[];
+	    debug(3,"Content: @{$content{$letter}}");
+	    @{$params->{'multi_content'}} =
+		sort {$a->[0] cmp $b->[0] } @{$content{$letter}};
+
+	    my $file = "$urldir/$letter.html";
+	    $t->write_page('multi', $params, $file);
+	}
+	undef $params->{'multi_letter'};
+	undef $params->{'multi_content'};
+    }
+
+    $t->write_page( $template, $params );
     return $t->set_published;
 }
 
@@ -3845,8 +3876,13 @@ sub remove_page
 
     if( -e $sysfile )
     {
-#	warn "$$: Removing file $sysfile\n";  ### DEBUG
+	$t->note("Removing page $file");
+	debug "Removing file $sysfile";
+
 	unlink $sysfile or die $!;
+
+	$t->{'t_published'} = 0;
+	$t->mark_unsaved;
     }
 }
 

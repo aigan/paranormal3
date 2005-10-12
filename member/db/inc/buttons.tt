@@ -1,6 +1,7 @@
+[% DEFAULT t = topic(tid) %]
+[% UNLESS t; THROW incomplete "Ämnes-id (tid) saknas"; END %]
 [% UNLESS t.entry %]
 [% DEFAULT m = u %]
-[% DEFAULT t = topic(tid) %]
 [% IF m.complexity >= 10 %]
 [% jump('Visa ditt intresse', m.interest(t).next_step(redefine=1).template, tid=tid, mid=m.id class='link_button') %]
 [% jump('Navigera', "/member/db/topic/view/tree.tt", tid=tid class='link_button') %]

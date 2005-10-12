@@ -186,7 +186,7 @@ sub fix_zipcodes
 	unless( exist_zip( $zip ) )
 	{
 	    debug "\tImporting $zip";
-	    import_zip( $zip ) or remove_zip( $zip ) and next;
+	    import_zip( $zip ) or remove_zip( $zip ) and return;
 	}
 
 	my( $x, $y ) = get_coord_zip( $zip );

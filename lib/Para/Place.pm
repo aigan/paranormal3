@@ -185,7 +185,7 @@ sub fix_zipcodes
 	#### Is the zipcode imported?
 	unless( exist_zip( $zip ) )
 	{
-	    debug "\tImporting $zip";
+	    debug "Importing $zip";
 	    import_zip( $zip ) or remove_zip( $zip ) and return;
 	}
 
@@ -216,6 +216,8 @@ sub remove_zip
 	my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
 	$m->set_home_postal_code('');
     }
+
+    return 1;
 }
 
 sub store_coord_zip

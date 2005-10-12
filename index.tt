@@ -1,6 +1,6 @@
 [% META
 	otitle = "Paranormal.se - Index"
-        next_handler='/search/alternatives.tt'
+        next_template='/search/alternatives.tt'
 	next_action = "topic_search_published"
 %]
     <div align="right"><a href="/welcome.en.html">Get this page in english</a></div>
@@ -15,7 +15,6 @@
 
 
     </center>
-  </form> <!-- end from meta search-form -->
 
 [% IF u.level %]
 <center class="notice">
@@ -25,6 +24,7 @@
 [% ELSE %]
   <br/>
 
+  </form>
   <form method="post" action="[% site.login_page %]">
     [% hidden('previous', previous) %]
     [% hidden('run', 'user_login') %]

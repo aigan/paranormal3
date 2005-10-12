@@ -26,7 +26,7 @@ sub handler
     my $t = Para::Topic->get_by_id( $tid );
 
     $t->publish;
-    return "Sidan publicerad\n";
+    return $req->change->report;
 }
 
 1;

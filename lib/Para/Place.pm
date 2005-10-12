@@ -337,9 +337,10 @@ sub get_coord_zip
     my( $zip ) = @_;
 
 
-    my( $city ) = get_city_zip( $zip );
+    my( $city ) = get_city_zip( $zip ) or return;
     my( $x, $y, $page, $url );
  
+    debug "Getting coordinates for $zip";
     my $streetlist = $Para::dbix->select_list("select street_name, address_nr_from, address_nr_to from street, address where address_street=street and address_zip=?", $zip);
 
   STREET:

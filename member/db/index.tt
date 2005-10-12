@@ -64,7 +64,7 @@
   <li>[% jump('Chatta', '/member/chat/login.tt') %]
   <li>[% jump('Chat-admin', '/member/chat/admin/') %]
   [% IF u.level > 10 %]
-     <li>[% jump('Skicka lösen', '/member/db/member_forgot_pwd') %]
+     <li>[% jump('Skicka lösen', '/member/db/person/find/password.tt') %]
      <li>[% jump('RT', 'http://rt.paranormal.se/') %]
      <li>[% jump('motd', 'motd.tt') %]
      <li>[% jump('events', 'calendar/') %]

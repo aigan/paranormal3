@@ -140,11 +140,13 @@
 
 
    <table>
+   <tr><th>Användarnamn <th>Namn <th>Uppslagsord <th>Senast sedd
    [% FOREACH m = members %]
-      <tr><td>[% jump(m.nickname, me, mid=m.id) %]
-      [% IF m.name_given %]
-         <td>$m.name
-      [% END %]
+      [% tr2 %]
+      <td>[% jump(m.nickname, me, mid=m.id, class='msg') %]
+      <td>$m.name
+      <td align="center">[% IF m.topic; jump('visa', m.file, class='link_button'); END %]
+      <td>$m.latest_seen
    [% END %]
    </table>
 [% END %]

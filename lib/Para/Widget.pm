@@ -34,6 +34,7 @@ BEGIN
 use Para::Frame::Reload;
 use Para::Frame::Time qw( now );
 use Para::Frame::Utils qw( debug get_from_fork );
+use Para::Frame::Widget qw( rowlist jump );
 
 use Para::Constants qw( :all );
 use Para::Topic;
@@ -154,7 +155,8 @@ sub select_persons
     my $all = 0;
     $all = 1 if $crits->{'all'};
 
-    my $q = $Para::Frame::REQ->q;
+    my $req = $Para::Frame::REQ;
+    my $q = $req->q;
     my $offset = $q->param('offset')||1;
     my $pagesize = $q->param('pagesize')||50;
 
@@ -168,9 +170,6 @@ sub select_persons
 	$offset = 1;
 	$pagesize = 100000;
     }
-
-
-
 
     my $belief     = $q->param('_belief')||0;
     my $knowledge  = $q->param('_knowledge');
@@ -199,10 +198,10 @@ sub select_persons
     my $presentation  = $q->param('_presentation');
     my $order      = $q->param('order') || 'dist';
 
+    my $interest_words = rowlist('interest');
+    my( $interest_part,  @where_data, @where_part, @select );
 
-
-    my $intrest_words = Para::Frame::Widget::rowlist('intrest');
-    my( $intrest_part,  @where_data, @where_part, @select );
+    debug "Interest words: @$interest_words";
 
     if( $sex_m and $sex_f )
     {
@@ -210,21 +209,71 @@ sub select_persons
 	$sex_f = 0;
     }
 
-
-    if( @$intrest_words )
+    if( @$interest_words )
     {
-	my( @intrest, @intrest_part );
-	foreach my $word ( @$intrest_words )
+	my( @interest, @interest_part );
+	foreach my $word ( @$interest_words )
 	{
 	    warn "Add $word to spec\n";
-	    my $topic = Para::Topic->find_one( $word );
+
+	    my $topic;
+	    eval
+	    {
+		$topic = Para::Topic->find_one( $word );
+	    };
+	    if( $@ )
+	    {
+		if( ref $@ and $@->[0] eq 'alternatives' )
+		{
+		    my $res = $req->result;
+		    my $alt = $res->{'info'}{'alternatives'} ||= {};
+
+		    my $block;
+		    foreach my $oldword ( @$interest_words )
+		    {
+			if( $word ne $oldword )
+			{
+			    $block .= $oldword."\n";
+			}
+		    }
+
+		    $alt->{'rowformat'} = sub
+		    {
+			my( $t ) = @_;
+			
+			my $tid = $t->id;
+			my $ver = $t->ver;
+
+			my $val = $block . $tid ." ".$t->desig;
+
+			my $replace = $alt->{'replace'} || 'interest';
+			my $view = $alt->{'view'} || $req->template_uri;
+			
+			return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
+					jump('välj',
+					     $view,
+					     {
+						 step_replace_params => $replace,
+						 $replace => $val,
+						 run => 'next_step',
+						 class => 'link_button',
+					     }),
+					$t->id,
+					$ver,
+					$t->link,
+					$t->type_list_string,
+					);
+		    };
+		}
+		die $@; # Propagate error
+	    }
 
 	    my $part =
 	    {
 		id => $topic->id,
-		intrest => "intrest > 30",
+		interest => "intrest > 30",
 	    };
-	    push @intrest, $part;
+	    push @interest, $part;
 
 	    $part->{belief} = "belief > 30" if $belief > 0;
 	    $part->{belief} = "belief < -30" if $belief < 0;
@@ -239,29 +288,29 @@ sub select_persons
 	    $part->{meeter} = "meeter > 50" if $meeter;
 	}
 
-	foreach my $intrest ( @intrest )
+	foreach my $interest ( @interest )
 	{
 	    my $cond = "";
-	    foreach my $key ( keys %$intrest )
+	    foreach my $key ( keys %$interest )
 	    {
 		next if $key eq 'id';
-		$cond .= "and $intrest->{$key} ";
+		$cond .= "and $interest->{$key} ";
 	    }
 
-	    push @intrest_part, "member in (select intrest_member ".
+	    push @interest_part, "member in (select intrest_member ".
 	      "from intrest where intrest_topic=? $cond)";
-	    push @where_data,  $intrest->{'id'};
+	    push @where_data,  $interest->{'id'};
 	}
 
 	if( $union )
 	{
-	    $intrest_part = join " or ", @intrest_part;
-	    push @where_part, "( $intrest_part )" if  $intrest_part;
+	    $interest_part = join " or ", @interest_part;
+	    push @where_part, "( $interest_part )" if  $interest_part;
 	}
 	else
 	{
-	    $intrest_part = join " and ", @intrest_part;
-	    push @where_part, $intrest_part if  $intrest_part;
+	    $interest_part = join " and ", @interest_part;
+	    push @where_part, $interest_part if  $interest_part;
 	}
     }
     else

@@ -5,11 +5,16 @@
 	level = 5
 %]
 [%
+	title = q.param('title');
         preserve_data;
 	found = 0;     #Hittat ett redan kopplat ämne
 %]
 
 <h2>[% title | html %]</h2>
+
+[% aliaslist = rowlist('_aliases') %]
+
+[% IF aliaslist.size %]
 
 <p>Här undersöker vi om någon av dessa alias redan existerar i
 databasen.  Om så är fallet kanske du vill använda det existerande
@@ -39,7 +44,7 @@ databasen.  Om så är fallet kanske du vill använda det existerande
 
 <div class="entry">
 <table>
-[% FOREACH row = rowlist('_aliases') %]
+[% FOREACH row =aliaslist %]
    [% aliases = getalias_list(row, active=1) %]
    [% IF aliases.size %]
       [% found = 1 %]
@@ -61,7 +66,15 @@ databasen.  Om så är fallet kanske du vill använda det existerande
 </table>
 </div>
 
-<p>[% step('Skapa ämnet') %]</p>
+[% ELSE %]
+
+<p>Du har inte skrivit in några alias för ämnet. Det var ju inte så bra. Jag föreslår att du [% forward('går tillbaka', 'maby.tt') %] och lägger till några.
+
+[% END %]
+
+<p>[% step('Skapa ämnet') +%]
+[%+ go('Backa', 'maby.tt') %]
+
 
 [% IF found %]
    <p>De alternativa ämnena ovan har bokmärkats åt dig</p>

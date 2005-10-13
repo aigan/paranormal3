@@ -112,7 +112,7 @@ från
 [% radio('union', 0, 0) %] Med alla dessa intressen<br>
 
 
-[% textarea('intrest','' rows=5 cols=20) %]<br>
+[% textarea('interest','' rows=5 cols=20) %]<br>
 <em>Ett intresse per rad</em>
 
 </td><td valign="top">

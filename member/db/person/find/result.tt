@@ -84,18 +84,14 @@ $this_from - $this_to
 [% END %]
 
 
-[% CATCH; CLEAR %]
-   [% warn("-----------\nerror during process of template:") %]
-   [% warn(error) %]
-
-   [% CALL result.exception(error) %]
-   [% FOREACH part = result.parts; box(part); END %]
-
-[% IF result.info.alternatives;
-   alts = result.info.alternatives;
-   PROCESS topic_list.tt list=alts.list replace=alts.replace run=alts.run;
+[% CATCH alternatives;
+   CLEAR;
+   PROCESS alternatives_box.tt;
+   req.s.route.bookmark;
    RETURN;
-END;
+CATCH notfound;
+   req.set_error_template('/member/db/person/find/combined.tt');
+   THROW notfound error.info;
 %]
 [% END %]
 

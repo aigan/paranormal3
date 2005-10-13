@@ -191,12 +191,17 @@ div#topic_header
 
 a { text-decoration: none }
 
+#topic_header a.link_button
+{
+	FLOAT: right;
+}
+
+
 a.link_button
 {
 	padding: 0.2em 0.5em 0.1em 0.4em;
 	border: 0.2em outset;
 	margin: 0 0.1em;
-	FLOAT: right;
 }
 
 a.link_button:visited

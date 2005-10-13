@@ -40,7 +40,7 @@ use Para::Frame::Reload;
 use Para::Frame::DBIx qw( pgbool );
 use Para::Frame::Utils qw( deunicode trim throw debug create_file );
 use Para::Frame::Time qw( now date );
-use Para::Frame::Widget;
+use Para::Frame::Widget qw( jump forward );
 
 use Para::Arcs;
 use Para::Arc;
@@ -368,9 +368,39 @@ sub find_one
 
     if( $topics->[1] )
     {
-	my $res = $Para::Frame::REQ->result;
-	$res->{'info'}{'alternatives'}{'list'} = $topics;
-	$res->{'info'}{'alternatives'}{'name'} = $name;
+	my $req = $Para::Frame::REQ;
+	my $res = $req->result;
+	my $alt = $res->{'info'}{'alternatives'} ||= {};
+	$alt->{'list'} = $topics;
+	$alt->{'rowformat'} = sub
+	{
+	    my( $t ) = @_;
+
+	    my $tid = $t->id;
+	    my $ver = $t->ver;
+
+	    my $replace = $alt->{'replace'} || 'tid';
+	    my $view = $alt->{'view'} || $req->template_uri;
+
+	    return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
+			    jump('välj',
+				 $view,
+				 {
+				     step_replace_params => $replace,
+				     $replace => $tid,
+				     run => 'next_step',
+				     class => 'link_button',
+				 }),
+			    $t->id,
+			    $ver,
+			    $t->link,
+			    $t->type_list_string,
+			    );
+	};
+	$alt->{'title'} = "Flera alternativ";
+#	$req->set_error_template('/alternatives.tt');
+#	$req->s->route->bookmark;
+
 	throw('alternatives', "Välj ett av dessa alternativ för ämnet '$name'");
     }
     unless( $topics->[0] )
@@ -2190,7 +2220,7 @@ sub link
 {
     my( $t ) = @_;
 
-    return &Para::Frame::Widget::jump( $t->desig, $t->file );
+    return jump( $t->desig, $t->file );
 }
 
 sub created_by

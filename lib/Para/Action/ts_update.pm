@@ -5,6 +5,7 @@ use strict;
 use Data::Dumper;
 
 use Para::Frame::Utils qw( throw debug trim clear_params );
+use Para::Frame::Widget qw( jump rowlist );
 
 use Para::TS;
 use Para::Topic;
@@ -67,17 +68,68 @@ sub check_ts_create
     my $q = $req->q;
     my $change = 0;
 
-    if( my $val = $q->param('_meta_talias') )
+    my $tswords = rowlist('_meta_talias');
+    if( @$tswords )
     {
-	$q->delete('_meta_talias');
 	debug "Found topicalias list";
 	my $new = {};
-	foreach my $row ( split /\n/, $val )
+	foreach my $row ( @$tswords )
 	{
-	    trim(\$row);
-	    next unless length($row);
+	    my $t;
+	    eval
+	    {
+		$t = Para::Topic->find_one( $row );
+	    };
+	    if( $@ )
+	    {
+		if( ref $@ and $@->[0] eq 'alternatives' )
+		{
+		    my $res = $req->result;
+		    my $alt = $res->{'info'}{'alternatives'} ||= {};
 
-	    my $t = Para::Topic->find_one( $row );
+		    my $block;
+		    foreach my $oldrow ( @$tswords )
+		    {
+			if( $row ne $oldrow )
+			{
+			    $block .= $oldrow."\n";
+			}
+		    }
+
+		    $alt->{'rowformat'} = sub
+		    {
+			my( $t ) = @_;
+			
+			my $tid = $t->id;
+			my $ver = $t->ver;
+
+			my $val = $block . $tid ." ".$t->desig;
+
+			my $replace = $alt->{'replace'} || '_meta_talias';
+			my $view = $alt->{'view'} || '/member/db/topic/edit/topicstatements.tt';
+			
+			return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
+					jump('välj',
+					     $view,
+					     {
+						 step_replace_params => $replace,
+						 $replace => $val,
+						 run => 'next_step',
+						 class => 'link_button',
+					     }),
+					$t->id,
+					$ver,
+					$t->link,
+					$t->type_list_string,
+					);
+		    };
+
+		    $req->set_error_template('/alternatives.tt');
+		    $req->s->route->bookmark;
+		}
+		die $@; # Propagate error
+	    }
+
 	    $new->{$t->id} ++;
 	}
 

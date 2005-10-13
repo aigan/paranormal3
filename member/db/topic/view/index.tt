@@ -11,9 +11,10 @@
       TRY;
          t = find_one_topic( talias );
       CATCH alternatives;
-         alts = result.info.alternatives;
-	 preserve_data;
-         PROCESS topic_list.tt list=alts.list;
+	 result.info.alternatives.replace = 'search';
+	 result.info.alternatives.view='/member/db/topic/';
+	 PROCESS alternatives_box.tt;
+	 req.s.route.bookmark;
          RETURN;
       CATCH notfound;
          PROCESS new.tt;

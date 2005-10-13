@@ -301,10 +301,11 @@ sub check_rel_create
 		if( ref $@ and $@->[0] eq 'alternatives' )
 		{
 		    my $res = $req->result;
-		    $res->{'info'}{'alternatives'}{'talias'} = $rel_name;
 		    $res->{'info'}{'alternatives'}{'replace'} = "_rel__n_${row}_rel";
-		    $res->{'info'}{'alternatives'}{'run'} = 'topic_update';
-		    throw('confirm', $@->[1]);
+		    $res->{'info'}{'alternatives'}{'view'} = "/member/db/topic/edit/meta.tt";
+
+		    $req->set_error_template('/alternatives.tt');
+		    $req->s->route->bookmark;
 		}
 		die $@; # Propagate error
 	    }

@@ -3,7 +3,9 @@
 [% UNLESS t.entry %]
 [% DEFAULT m = u %]
 [% IF m.complexity >= 10 %]
+<span style="float: right">
 [% jump('Visa ditt intresse', m.interest(t).next_step(redefine=1).template, tid=tid, mid=m.id class='link_button') %]
 [% jump('Navigera', "/member/db/topic/view/tree.tt", tid=tid class='link_button') %]
+</span>
 [% END %]
 [% END %]

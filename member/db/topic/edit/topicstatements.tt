@@ -4,12 +4,6 @@
 	next_action = 'ts_update'
 %]
 
-[% IF result.info.alternatives;
-   PROCESS topic_list.tt list=result.info.alternatives.list replace='_meta_talias' run='ts_update';
-   RETURN;
-END;
-%]
-
 [%
    tid = q.param('tid');
    hidden('tid', tid);

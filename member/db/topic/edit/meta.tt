@@ -4,19 +4,6 @@
 	next_action = 'topic_update'
 %]
 
-
-[% IF result.info.alternatives;
-   alts = result.info.alternatives;
-   PROCESS topic_list.tt list=alts.list replace=alts.replace run=alts.run;
-   RETURN;
-END;
-%]
-[% IF result.info.create_confirm;
-   RETURN;
-END;
-%]
-
-
 [%
    tid = q.param('tid');
    t   = topic(tid, v);

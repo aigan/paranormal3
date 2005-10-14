@@ -50,7 +50,7 @@
          [% IF eng %]
             <p>This is the listing of <em>[% t.title %]</em> from the <a href="/">Paranormal.se encyclopedia</a>. This is an unofficial web page. <strong>Paranormal.se doesn not represent this group.</strong></p>
          [% ELSE %]
-            <p>Detta är uppslagsordet för <em>[% t.title %]</em>. <strong><a href="/">Paranormal.se</a> representerar inte denna grupp.</strong></p>
+            <p>Detta är uppslagsordet för <em>[% t.title %]</em>. <strong><a href="/">Paranormal.se</a> representerar inte denna grupp / [% t.type_list.first.link %].</strong></p>
          [% END %]
       </div>
       [% END %]

@@ -8,7 +8,6 @@ use Para::Frame::Utils qw( throw clear_params );
 
 use Para::Topic;
 use Para::Constants qw( S_DENIED );
-use Para::Change;
 
 sub handler
 {

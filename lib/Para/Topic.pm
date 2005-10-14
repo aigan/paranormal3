@@ -3972,11 +3972,7 @@ sub type_list_string
 
     my $listref = $t->type_list;
     return "" unless @$listref;
-    my $res = '<span class="typelist">';
-#    warn @$listref;
-    $res .= join ", ", map $_->title, @$listref;
-    $res .= '</span>';
-    return $res;
+    return join ", ", map $_->title, @$listref;
 }
 
 

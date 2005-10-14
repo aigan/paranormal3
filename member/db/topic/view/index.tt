@@ -117,7 +117,7 @@
       <li>[% jump(tse.desig, me, tid=tse.id) %]
    [% END %]
 
-   [% tse.type_list_string %]
+   <span class="typelist">[% tse.type_list_string %]</span>
 
    [% IF ts.comment %]
       - [% ts.comment | html %]

@@ -6,4 +6,4 @@
    <code>[% t.desig | html %]</code>
 [%- END %],
 v[% t.ver %]
-[%+ t.type_list_string %]
+<span class="typelist">[%+ t.type_list_string %]</span>

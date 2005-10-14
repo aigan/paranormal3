@@ -145,7 +145,7 @@
       [% tr2 %]
       <td>[% jump(m.nickname, me, mid=m.id, class='msg') %]
       <td>$m.name
-      <td align="center">[% IF m.topic; jump('visa', m.file, class='link_button'); END %]
+      <td align="center">[% IF m.topic; jump(m.topic.type_list_string, m.file); END %]
       <td>$m.latest_seen
    [% END %]
    </table>

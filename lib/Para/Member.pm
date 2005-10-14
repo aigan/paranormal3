@@ -29,7 +29,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Time qw( now date );
+use Para::Frame::Time qw( now date duration );
 use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passwd debug uri );
 use Para::Frame::Email;
 use Para::Frame::Change;
@@ -2726,10 +2726,10 @@ sub reset_payment_stats
     debug(0,"Resetting payment stats");
 
     my $period_length = 30;
-    my $expire = $m->created + ONE_DAY*7;
+    my $expire = $m->created + duration( weeks => 1 );
 
     $m->{'member_payment_period_length'} = 30;
-    $m->{'member_payment_period_expire'} = $expire->cdate;
+    $m->{'member_payment_period_expire'} = $expire;
     $m->{'member_payment_period_cost'}   = 0;
     $m->{'member_payment_total'}         = 0;
 

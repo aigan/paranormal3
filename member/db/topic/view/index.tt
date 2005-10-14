@@ -48,7 +48,7 @@
 [% ELSE %]
 
    <p>Alias:
-   [% FOREACH alias = t.aliases.values %]
+   [% FOREACH alias = t.aliases(active=1).values %]
       [%- IF loop.first %]
       [% ELSIF loop.last %] och
       [% ELSE %],

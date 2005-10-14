@@ -1,7 +1,5 @@
 [% META
 	otitle = 'Kontakta oss'
-	next_action = 'email'
-	default_template = 'thanks.tt'
 	focus = 'body'
 %]
 
@@ -40,4 +38,4 @@
 
 [% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
 
-<p>[% step('Skicka brevet') %]
+<p>[% step('Skicka brevet', "thanks.tt", "email") %]

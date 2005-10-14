@@ -1,0 +1,112 @@
+[% PROCESS doctype.tt %]
+<html>
+<head>
+   [% PROCESS head_meta.tt %]
+   <title>[% t.title | html %]</title>
+</head>
+<body class="with_sidebar">
+   [% PROCESS body_top.tt %]
+
+   [% eng = t.has_rel(33, 396598); # English %]
+
+   [% ### From topic/media ### %]
+   [% media_rec = select_possible_record("from media where media=?", t.id) %]
+   [% IF media_rec.media == t.id %]
+      [% IF media_rec.media_mimetype == 'text/html' %]
+         [% url =  media_rec.media_url %]
+      [% END %]
+   [% END %]
+
+   [% IF t.title.search('^Paranormal.se') %]
+      <h1>
+         [% t.title | html %]
+         [% IF t.arc('start') or t.arc('slut') %]
+         <span class="living_years">
+         (
+            [% t.arc('start').value %]
+            -
+            [% t.arc('slut').value %]
+         )
+         </span>
+         [% END %]
+         [% INCLUDE typelist.tt %]
+      </h1>
+   [% ELSE %]
+      [% IF eng %]
+         <h1><a href="/">Paranormal.se</a></h1>
+         <p class="slogan">A Swedish encyclopedia about Paranormal Phenomena</p>
+      [% ELSE %]
+         <h1><a href="/">Paranormal.se</a></h1>
+         <p class="slogan">Uppslagsverk för paranormala fenomen</p>
+      [% END %]
+
+      <hr>
+      <h2 class="contained">
+         [% jump(t.title, url) %]
+         [% IF t.arc('start') or t.arc('slut') %]
+         <span class="living_years">
+         (
+            [% t.arc('start').value %]
+            -
+            [% t.arc('slut').value %]
+         )
+         </span>
+         [% END %]
+         [% INCLUDE typelist.tt %]
+         [% IF eng %]
+            [% jump('Go to site »', url) %]
+         [% ELSE %]
+            [% jump('Gå till webbsidan', url) %]
+         [% END %]
+      </h2>
+   [% END %]
+
+   <h2 class="contained">[% jump(url, url) %]</h2>
+
+
+   [% PROCESS setup.tt %]
+
+   <div id="main">
+      <div id="topic_header">
+         [% INCLUDE meta.tt entry=t %]
+
+         [% IF t.text %]
+            <p id="description">[% t.text | html %]</p>
+         [% END %]
+
+         [% PROCESS alias_list.tt %]
+      </div>
+
+   [% IF url AND NOT t.title.search('^Paranormal.se') %]
+   <div class="entry">
+      [% UNLESS t.has_rel(28); # Tillåtelse %]
+         [% IF eng %]
+            <p>This page is a reference to [% jump(url, url) %]. It exists because we want to say something <strong>about</strong> the site. It may have been used as a source of an article, citation or may just be recommended for it's content regarding a specific topic. <strong>Paranormal.se is not behind that site.</strong></p>
+         [% ELSE %]
+            <p>Denna sida är en referens till [% jump(url, url) %]. <strong>Paranormal.se står inte bakom webbsidan.</strong></p>
+         [% END %]
+      [% END %]
+
+      [% IF eng %]
+         <p align="center">Follow the link to go to the site:</p>
+      [% ELSE %]
+         <p align="center">Följ länken för att gå till webbsidan:</p>
+      [% END %]
+
+      <h2 align="center">[% jump(media_rec.media_url, media_rec.media_url, target='external') %]</h2>
+   </div>
+   <br clear="all">
+   [% END %]
+
+      [% IF multi %]
+         [% PROCESS multi/main.tt %]
+      [% END %]
+
+      [% PROCESS entry_list.tt %]
+      <br clear="all">
+   </div>
+
+   [% PROCESS sidebar.tt %]
+   [% PROCESS footer.tt %]
+</body>
+</html>

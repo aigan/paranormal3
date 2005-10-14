@@ -93,7 +93,11 @@
          <p align="center">Följ länken för att gå till webbsidan:</p>
       [% END %]
 
-      <h2 align="center">[% jump(media_rec.media_url, media_rec.media_url, target='external') %]</h2>
+      <h2 align="center">[% jump(url, url, target='external') %]</h2>
+   </div>
+
+   <div class="entry">
+      <p>Se [% jump("arkivet hos WayBack Machine för denna webbplats", "http://web.archive.org/web/*/$url") %]
    </div>
    <br clear="all">
    [% END %]

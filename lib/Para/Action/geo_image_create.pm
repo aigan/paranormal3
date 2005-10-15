@@ -35,6 +35,24 @@ sub handler
 {
     my( $req ) = @_;
 
+    my $fork = $req->create_fork;
+    if( $fork->in_child )
+    {
+	&do_job($req);
+	$fork->return("done");
+    }
+
+    debug "Waiting on fork";
+    $fork->yield; # Wait for result
+    debug "Waiting on fork - done";
+    return "Image written to /images/temp/map.png";
+}
+
+
+sub do_job
+{
+    my( $req ) = @_;
+
     my $q = $req->q;
 
     my $precs;
@@ -54,9 +72,6 @@ sub handler
     };
 
 
-    my $fork = $req->create_fork;
-    if( $fork->in_child )
-    {
 	if( $q->param('fastsearch') )
 	{
 	    my $st = "select geo_x, geo_y from member where geo_x is not null";
@@ -78,14 +93,6 @@ sub handler
 		plot_point( $m );
 	    }
 	}
-	$fork->return("done");
-    }
-
-    debug "Waiting on fork";
-
-    $fork->yield; # Wait for result
-
-    debug "Waiting on fork - done";
 
     my $blue = Imager::Color->new("#0000FF");
     $img->box(color=> $blue, xmin=> 0, ymin=>0,
@@ -109,7 +116,7 @@ sub handler
     $img->write(file=>"/var/www/paranormal.se/images/temp/map.png")
       or die $img->errstr;
 
-    return "Image written to /images/temp/map.png";
+    return;
 }
 
 sub plot_point
@@ -118,6 +125,7 @@ sub plot_point
 
     my $gx = $m->geo_x;
     my $gy = $m->geo_y;
+    return unless $gx;
 
     my( $ix, $iy ) = icord( $gx, $gy );
     return unless $ix;

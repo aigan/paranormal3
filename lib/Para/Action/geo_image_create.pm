@@ -54,28 +54,38 @@ sub handler
     };
 
 
-    if( $q->param('fastsearch') )
+    my $fork = $req->create_fork;
+    if( $fork->in_child )
     {
-	my $st = "select geo_x, geo_y from member where geo_x is not null";
-	my $sth = $Para::dbh->prepare_cached( $st );
-	$sth->execute();
-	while( my $prec = $sth->fetchrow_hashref )
+	if( $q->param('fastsearch') )
 	{
-	    my $m = Para::Member->get_by_id( $prec->{'member'} );
-	    plot_point( $prec );
+	    my $st = "select geo_x, geo_y from member where geo_x is not null";
+	    my $sth = $Para::dbh->prepare_cached( $st );
+	    $sth->execute();
+	    while( my $prec = $sth->fetchrow_hashref )
+	    {
+		my $m = Para::Member->get_by_id( $prec->{'member'} );
+		plot_point( $prec );
+	    }
+	    $sth->finish;
 	}
-	$sth->finish;
+	else
+	{
+	    $precs = Para::Widget::select_persons();
+	    foreach my $prec ( @$precs )
+	    {
+		my $m = Para::Member->get_by_id( $prec->{'member'} );
+		plot_point( $m );
+	    }
+	}
+	$fork->return("done");
+    }
 
-    }
-    else
-    {
-	$precs = Para::Widget::select_persons();
-	foreach my $prec ( @$precs )
-	{
-	    my $m = Para::Member->get_by_id( $prec->{'member'} );
-	    plot_point( $m );
-	}
-    }
+    debug "Waiting on fork";
+
+    $fork->yield; # Wait for result
+
+    debug "Waiting on fork - done";
 
     my $blue = Imager::Color->new("#0000FF");
     $img->box(color=> $blue, xmin=> 0, ymin=>0,

@@ -15,7 +15,7 @@
 [ [% jump('Ny sökning', 'combined.tt') +%]
 | [% forward('Bokmärka sökningen') +%]
 | [% forward('Ändra sökbegrepp', 'combined.tt') +%]
-[% #  go("Karta", 'map', 'geo_image_create', offset = 0, pagesize=1000) +%]
+[% go("Karta", 'map.tt', 'geo_image_create', offset = 0, pagesize=10000) +%]
 ]</p>
 
 

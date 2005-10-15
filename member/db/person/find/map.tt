@@ -1,0 +1,10 @@
+[% META title="Resultat"
+        level = 5
+	title = "Karta"
+%]
+
+[% PROCESS person_find_menu.tt %]
+[% PROCESS load_member.tt %]
+
+<p>Plottningen är klar. Se kartan här:
+[% jump("/images/temp/map.png", "http://paranormal.se/images/temp/map.png") %]

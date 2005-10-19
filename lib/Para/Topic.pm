@@ -2097,13 +2097,14 @@ sub set_status
     my $ver = $t->ver;
     my $tid = $t->id;
 
-    $t->{'t_status'} = $status;
     $t->{'t_active'} = $new_active;
     
     debug(sprintf "Status for %d v%d changed to %d activation %d", $tid, $ver, $status, $new_active);
  
     if( $new_active and not $old_active )
     {
+	$t->{'t_status'} = $status;
+
 	# Inactivate all other
 	foreach my $tv (@{ $t->versions })
 	{
@@ -2129,9 +2130,9 @@ sub set_status
 
 	$t->generate_url; # Generate page url
     }
-
-    if( $old_active and not $new_active )
+    elsif( $old_active and not $new_active )
     {
+	$t->{'t_status'} = $status;
 	
 	$m->score_change('rejected_thing');
 	$t->created_by->score_change('thing_rejected');
@@ -2147,6 +2148,16 @@ sub set_status
 	    $p->register_child( $t_def );
 	}
     }
+    elsif( $t->{'t_status'} != $status )
+    {
+	$t->{'t_status'} = $status;
+
+	if( my $p = $t->parent )
+	{
+	    $p->register_child( $t );
+	}
+    }
+
 
     $t->mark_updated;
 
@@ -2561,7 +2572,8 @@ sub register_child
 	for( my $i=0; $i<= $#$childs; $i++ )
 	{
 	    my $child = $childs->[$i];
-	    if( $new_status >= $child->status and
+
+	    if( $new_status > $child->status or
 		$new_id     <  $child->id )
 	    {
 		# insert $new_child before 

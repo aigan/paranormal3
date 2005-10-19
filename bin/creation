@@ -66,6 +66,23 @@ use Ekoby::Ekonomi;
 	die "Site configuration missing";
     }
 
+    # Configure database
+    #
+    $Para::dbix = Para::Frame::DBIx ->
+	new({
+	    connect => $SITE_CFG->{'dbconnect'},
+	    bind_dbh => \ $Para::dbh,
+	    import_tt_params => 1,
+	});
+
+
+    # Configure Ekoby database
+    #
+    $Ekoby::dbix = Para::Frame::DBIx ->
+	new({
+	    connect => ["DBI:Pg:dbname=ekoby"],
+	});
+
     Para::Frame::Site->add({
 	# Path in  URL to website
 	'webhome'    => '',
@@ -106,6 +123,7 @@ use Ekoby::Ekonomi;
 	    'lista_belopp' => \&Ekoby::Ekonomi::lista_belopp,
 	    'lista_tillgangar' => \&Ekoby::Ekonomi::lista_tillgangar,
 	    'authorized_level' => \&Ekoby::Ekonomi::authorized_level,
+	    'ekodbix'          => $Ekoby::dbix,
 	},
     });
 
@@ -160,22 +178,6 @@ use Ekoby::Ekonomi;
 #		    filemode => 0664,
 #		});
 
-    # Configure database
-    #
-    $Para::dbix = Para::Frame::DBIx ->
-	new({
-	    connect => $SITE_CFG->{'dbconnect'},
-	    bind_dbh => \ $Para::dbh,
-	    import_tt_params => 1,
-	});
-
-
-    # Configure Ekoby database
-    #
-    $Ekoby::dbix = Para::Frame::DBIx ->
-	new({
-	    connect => ["DBI:Pg:dbname=ekoby"],
-	});
 
     # Define TT filters
     #

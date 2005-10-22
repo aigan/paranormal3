@@ -15,7 +15,9 @@
 [ [% jump('Ny sökning', 'combined.tt') +%]
 | [% forward('Bokmärka sökningen') +%]
 | [% forward('Ändra sökbegrepp', 'combined.tt') +%]
-[% go("Karta", 'map.tt', 'geo_image_create', offset = 0, pagesize=10000) +%]
+[% IF u.level > 10 +%]
+| [% forward("Karta", 'map.tt', run='geo_image_create', offset = 0, pagesize=10000) +%]
+[% END +%]
 ]</p>
 
 
@@ -23,7 +25,7 @@
 
 <div class="entry">
 <table>
-<tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th><th>Senast inne</th>
+<tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th><th>Senast sedd</th>
 </tr>
 
 [% FOREACH select_persons() %]
@@ -36,7 +38,7 @@
        <td>[% m.name %]</td>
        <td>[% IF dist.length; dist / 1000 | format('%d km'); END %]</td>
        <td>[% m.home_postal_city %]</td>
-       <td>[% m.latest_in %]</td>
+       <td>[% m.latest_seen %]</td>
    </tr>
    [% subpart.shown = loop.size %]
 [% END %]
@@ -70,7 +72,7 @@ $this_from - $this_to
 
 [% hr %]
 
-<h2>Skicka e-post till personerna ovan</h2>
+<h2>Skicka e-post till alla i sökresultatet</h2>
 
 <p>Rubrik: [% input('subject') %]
 

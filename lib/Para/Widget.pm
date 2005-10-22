@@ -366,13 +366,13 @@ sub select_persons
 
     if( $age_min )
     {
-	push @where_part, "bdate_ymd_year < ?";
+	push @where_part, "bdate_ymd_year <= ?";
  	push @where_data,  now()->year - $age_min;
     }
 
     if( $age_max )
     {
-	push @where_part, "bdate_ymd_year > ?";
+	push @where_part, "bdate_ymd_year >= ?";
  	push @where_data,  now()->year - $age_max;
     }
 

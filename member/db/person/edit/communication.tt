@@ -29,6 +29,11 @@ AOL-adress
 [% END %]
 
 
+[% WRAPPER draw_string title='Skype' field='home_online_skype' size=18 maxlength=36 %]
+Skype-namn
+[% END %]
+
+
 [% WRAPPER draw_string title='MSN' field='home_online_msn' size=18 maxlength=36 %]
 MSN-adress
 [% END %]

@@ -534,7 +534,7 @@ sub update_by_query
 			    home_tele_fax_comment statement
 			    home_online_email presentation
 			    member_comment_admin show_style
-
+			    home_online_skype
 			    ) )
     {
 	if( defined $q->param($field) )
@@ -1029,6 +1029,20 @@ sub home_online_icq
 	$m->equals( $Para::Frame::U ) )
     {
 	return $m->{'home_online_icq'};
+    }
+
+    return undef;
+}
+
+sub home_online_skype
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 5) or ($publ and
+	$m->present_contact_public >= 5) or $Para::Frame::U->level >= 41 or
+	$m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_online_skype'};
     }
 
     return undef;
@@ -2451,6 +2465,7 @@ sub save
 	home_tele_fax_comment        => 'string',
 	home_online_msn              => 'email',
 	home_online_icq              => 'integer',
+	home_online_skype            => 'string',
 	home_online_aol              => 'integer',
 	home_online_uri              => 'string',
 	home_online_email            => 'email',

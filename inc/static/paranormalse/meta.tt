@@ -70,6 +70,14 @@
    </a>
    [%- contact = 1 -%]
 [%- END -%]
+[%- IF m.home_online_skype(1) -%]
+   [%- ', ' IF contact %]
+   <a href="callto:[% m.home_online_skype | html %]">
+   Skype
+   <img src="/images/icon/skype.gif" width="16" height="16" alt="" border="0">
+   </a>
+   [%- contact = 1 -%]
+[%- END -%]
 [%- IF m.home_online_msn(1) -%]
    [%- ', ' IF contact %]
    <a href="http://members.msn.com/$m.home_online_msn" target="_blank">

@@ -7,43 +7,52 @@
 [% PROCESS person_find_menu.tt %]
 [% PROCESS load_member.tt %]
 
-<table>
-<tr>
-<td>
+[% BLOCK viewbox %]
+   <div class="ydsf viewbox">
+   <div class="inner">
+      [% IF label %]
+         <h3>[% label %]</h3>
+      [% END %]
+      [% content %]
+   </div>
+   </div>
+[% END %]
 
-<table border>
-<tr><td>[% radio('_belief', -1) %] Skeptiker</td>
-<td>[% radio('_belief') %] --</td>
-<td>[% radio('_belief', 1) %] Troende</td></tr>
 
-<tr bgcolor="#73A4A7">
-<th align="right">Teori</th>
-<td>[% checkbox('_knowledge', 1) %] Kan</td>
-<td>[% checkbox('_theory', 1) %] Vill lära</td>
-</tr>
+[% WRAPPER viewbox label='Tro' %]
+<p>
+[% radio('_belief', -1) %] Skeptiker<br>
+[% radio('_belief') %] Både och<br>
+[% radio('_belief', 1) %] Troende<br>
+</p>
+[% END %]
 
-<tr bgcolor="#73A4A7">
-<th align="right">Praktik</th>
-<td>[% checkbox('_skill', 1) %] Kan</td>
-<td>[% checkbox('_practice', 1) %] Vill lära</td>
-</tr>
+[% WRAPPER viewbox label='Teori' %]
+<p>
+[% checkbox('_knowledge', 1) %] Kan<br>
+[% checkbox('_theory', 1) %] Vill lära<br>
+</p>
+[% END %]
 
-<tr>
-<td>[% checkbox('_bookmark', 1) %] Vill läsa</td>
-<td>[% checkbox('_editor', 1) %] Redaktör</td>
-<td>[% checkbox('_discussion', 1) %] Vill diskutera</td></tr>
+[% WRAPPER viewbox label="Praktik" %]
+<p>
+[% checkbox('_skill', 1) %] Kan<br>
+[% checkbox('_practice', 1) %] Vill lära<br>
+</p>
+[% END %]
 
-<tr>
-<td>[% checkbox('_meeter', 1) %] Vill mötas</td>
-<td>[% checkbox('_experience', 1) %] har upplevt</td>
-<td>[% checkbox('_helper', 1) %] Vill hjälpa</td></tr>
+[% WRAPPER viewbox %]
+<p>
+[% checkbox('_bookmark', 1) %] Vill läsa<br>
+[% checkbox('_editor', 1) %] Redaktör<br>
+[% checkbox('_discussion', 1) %] Vill diskutera<br>
+[% checkbox('_meeter', 1) %] Vill mötas<br>
+[% checkbox('_experience', 1) %] har upplevt<br>
+[% checkbox('_helper', 1) %] Vill hjälpa<br>
+</p>
+[% END %]
 
-</table>
-
-</td>
-</tr>
-</table>
-
+[% WRAPPER viewbox %]
 <p>Vill ha brev [% select("_newsmail", 2,
 {
 	'1' = "ett par gånger om året",
@@ -54,7 +63,9 @@
 	'6' = "hela tiden",
 }) %] eller mer
 </p>
+[% END %]
 
+[% WRAPPER viewbox %]
 <p>Bor inom 
 [% select("dist", "",
 {
@@ -81,56 +92,57 @@ från
 [% input("place", "mig", size=20) %]
 <br><small>(Ange person eller ort)</small>
 </p>
+[% END %]
 
-<table cellpadding="10">
-<tr><td>
-
+[% WRAPPER viewbox %]
 <table>
 <tr><td>Mer än      <td>[% input("_age_min", "", size="3") %] år    
 <tr><td>Mindre än   <td>[% input("_age_max", "" size="3") %] år
 <tr><td>Lägst nivå  <td>[% input("_level_min", "" size="3") %]
 <tr><td>Högsta nivå <td>[% input("_level_max", "" size="3") %]
 </table>
-<br>
-[% checkbox("_phone", 1) %] Har telefon<br>
+[% END %]
 
-
-<td>
+[% WRAPPER viewbox label="Kön" %]
+<p>
 [% checkbox("_sex_m", 1) %] män<br>
 [% checkbox("_sex_f", 1) %] kvinnor<br>
-<br>
+</p>
+[% END %]
+
+[% WRAPPER viewbox %]
+<p>
+[% checkbox("_phone", 1) %] Har telefon<br>
 [% checkbox("_uri", 1) %] Har hemsida<br>
 [% checkbox("_icq", 1) %] Har ICQ<br>
-</td>
-</tr></table>
+</p>
+[% END %]
 
-<p>Presentation innehåller: [% input('_presentation') %]
+[% WRAPPER viewbox label="Presentationen innehåller" %]
+<p>[% input('_presentation') %]</p>
+[% END %]
 
-<table cellpadding="10">
-<tr><td>
+
+[% WRAPPER viewbox label="Intressen" %]
+<p>
 [% radio('union', 1, 1) %] Med minst ett av intressena<br>
 [% radio('union', 0, 0) %] Med alla dessa intressen<br>
-
-
 [% textarea('interest','' rows=5 cols=20) %]<br>
 <em>Ett intresse per rad</em>
+</p>
+[% END %]
 
-</td><td valign="top">
-
+[% WRAPPER viewbox label="Sortera på" %]
 <p>
-
-Sortera på:<br>
-
 [% radio("order", "dist", 'dist') %] Avstånd<br>
 [% radio("order", "latest_in desc") %] Senast inloggad<br>
 [% radio("order", "member_level desc") %] Nivå<br>
 [% radio("order", "nickname") %] Namn<br>
 [% radio("order", "member") %] Mnr<br>
+[% END %]
 
-<br>
-
-
-Visa
+[% WRAPPER viewbox %]
+<p>Visa
 [% IF u.level > 7 %]
 [% select("pagesize", '00030',
 {
@@ -150,12 +162,10 @@ Visa
 	'00030' = 30,
 	'00050' = 50,
 }) %]	
-[% END %]
+[% END +%]
 träffar
-
 </p>
-
-</td></tr>
-</table>
+[% END %]
+<br clear="all">
 
 <p>[% search %]

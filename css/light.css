@@ -293,3 +293,13 @@ abbr, acronym
 {
 	COLOR: black;
 }
+
+.viewbox .inner
+{
+	BACKGROUND-COLOR: #EFE;
+}
+
+.viewbox h3
+{
+	BACKGROUND-COLOR: #AFA;
+}

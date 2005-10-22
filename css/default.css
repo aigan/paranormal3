@@ -1,5 +1,69 @@
 /* Learned and inspired from http://www.meyerweb.com/eric/css/ */
 
+
+/*
+	yDSF (ydnar Drop-Shadow-Fu)
+	ydnar@sixapart.com - http://www.sixapart.com
+*/
+
+.ydsf {
+	display: block;
+	position: relative;
+/*	margin: 4px -4px -4px 4px;*/
+	margin: 0.5em;
+	background: url(/images/icon/shadow-grid.gif) repeat;
+}
+
+/* ie6 ignores this selector */
+html>body .ydsf {
+/*	margin: 10px -10px -10px 10px;*/
+	background: url(/images/icon/shadow.png) right bottom no-repeat;
+}
+
+/* shadow corners */
+.ydsf:before,
+.ydsf:after {
+	content: " ";
+	display: block;
+	width: 0.75em;
+	height: 0.75em;
+	background: inherit;	
+}
+
+.ydsf:before {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin-top: -0.75em;
+	margin-left: auto;
+	background-position: right top;
+}
+
+.ydsf:after {
+	margin: -0.75em 0 0 -0.75em;
+	background-position: left bottom;
+}
+
+.ydsf .inner {
+	display: block;
+	position: relative;
+	overflow: hidden; /* prevents margin leakage from child elements */
+	left: -0.3em;
+	top: -0.3em;
+}
+
+/* ie6 ignores this selector */
+html>body .ydsf .inner {
+	left: -0.75em;
+	top: -0.75em;
+	margin: 0;
+}
+
+
+
+
+/*******************************************************/
+
 html
 {
 	margin: 0;
@@ -637,4 +701,29 @@ TR.odd
 	margin: 0.0em;
 	letter-spacing: 0.5em;
 	font-size: 1.3em;
+}
+
+.viewbox
+{
+	float: left;
+	padding: 0.0em;
+}
+
+.viewbox .inner
+{
+	border: 1px solid;
+}
+
+.viewbox h3
+{
+	font-size: 1.0em;
+	display: block;
+	padding: 0.2em;
+	margin: 0.0em;
+}
+
+.viewbox p
+{
+	padding: 0.2em;
+	margin: 0.0em;
 }

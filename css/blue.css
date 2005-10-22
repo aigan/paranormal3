@@ -338,3 +338,32 @@ TR.odd
 {
 	border-color: #f9b782;
 }
+
+
+.viewbox .inner
+{
+	BACKGROUND-COLOR: #EFE;
+	color:	black;
+}
+
+.viewbox h3
+{
+	BACKGROUND-COLOR: #AFA;
+	COLOR: black;
+}
+
+
+.viewbox TH
+{
+	COLOR: black;
+}
+
+.viewbox TD
+{
+	COLOR: black;
+}
+
+.viewbox H2
+{
+	COLOR: black;
+}

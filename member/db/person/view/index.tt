@@ -1,6 +1,5 @@
 [% META
 	otitle = 'Presentation'
-        next_template = '-me'
 	level = 5
 %]
 [% IF q.param('nick');

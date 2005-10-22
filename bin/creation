@@ -66,6 +66,28 @@ use Ekoby::Ekonomi;
 	die "Site configuration missing";
     }
 
+    my $cfg =
+    {
+	'paraframe' => $PARAFRAME,
+	'ttcdir'    => "$APPROOT/var/ttc",
+	'paraframe_group' => 'psi_cgi',
+
+	'appbase'      => 'Para',
+	'approot'      => $APPROOT,
+
+	'user_class'   => 'Para::Member',
+	'bg_user_code' => sub{ Para::Member->skapelsen },
+	'logfile'      => "$APPROOT/logs/creation.log",
+	'pidfile'      => "$APPROOT/var/creation.pid",
+
+	'port'         => $SITE_CFG->{'port'},
+	'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
+	'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
+	'umask'        => 0007,
+    };
+    Para::Frame->configure( $cfg );
+
+
     # Configure database
     #
     $Para::dbix = Para::Frame::DBIx ->
@@ -144,28 +166,6 @@ use Ekoby::Ekonomi;
 	    },
 	},
     });
-
-
-    my $cfg =
-    {
-	'paraframe' => $PARAFRAME,
-	'ttcdir'    => "$APPROOT/var/ttc",
-	'paraframe_group' => 'psi_cgi',
-
-	'appbase'      => 'Para',
-	'approot'      => $APPROOT,
-
-	'user_class'   => 'Para::Member',
-	'bg_user_code' => sub{ Para::Member->skapelsen },
-	'logfile'      => "$APPROOT/logs/creation.log",
-	'pidfile'      => "$APPROOT/var/creation.pid",
-
-	'port'         => $SITE_CFG->{'port'},
-	'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
-	'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
-	'umask'        => 0007,
-    };
-    Para::Frame->configure( $cfg );
 
 
     # Make sure we can read/write generated files

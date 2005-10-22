@@ -1,6 +1,4 @@
-[% META otitle = 'Statistik' %]
-
-<h1 align="center">Statistik</h1>
+[% META title = 'Statistik: Ålder' %]
 
 [% PROCESS stats_menu.tt %]
 
@@ -27,8 +25,9 @@
 [% END %]
 
 <tr>
-   <td>$bdate_ymd_year</td>
-   <td>[% year - bdate_ymd_year %]</td>
+   [% age = year - bdate_ymd_year %]
+   <td>[% jump(bdate_ymd_year, '/member/db/person/find/result.tt', _age_min=age, _age_max=age) %]</td>
+   <td>[% jump(age, '/member/db/person/find/result.tt', _age_min=age, _age_max=age) %]</td>
    <td>$cnt</td>
    <td><img src="/images/bar/roed.gif" width="[% 100 * cnt / maxcount | format('%d%%') %]" height="14"></td>
 </tr>
@@ -48,8 +47,8 @@
 
 <div class="entry">
 <table>
-<tr><td>Hanar <td>[% tm.cnt %]  <td>[% tm.cnt * 100 / total  | format('%d %%'); %]
-<tr><td>Honor <td>[% tf.cnt %]  <td>[% tf.cnt * 100 / total  | format('%d %%'); %]
+<tr><td>[% jump("Hanar", '/member/db/person/find/result.tt', _sex_m=1) %]<td>[% tm.cnt %]  <td>[% tm.cnt * 100 / total  | format('%d %%'); %]
+<tr><td>[% jump("Honor", '/member/db/person/find/result.tt', _sex_f=1) %]<td>[% tf.cnt %]  <td>[% tf.cnt * 100 / total  | format('%d %%'); %]
 <tr><td>Övriga <td>[% to.cnt %] <td>&nbsp;
 </table>
 </div>

@@ -4,7 +4,7 @@
 [% END %]
 
 [% IF multi_letters %]
-<p>Här listas alla [% multi_plural %]</p>
+<p>Här listas de [% multi_plural %] som finns i uppslagsverket</p>
 <p>[
 [% IF multi_letter %]
    [% jump('Hem', t.file) %]

@@ -166,10 +166,18 @@ sub handler
 
 	    if( $rest )
 	    {
-		$res->{'info'}{'notfound'}{'uri'} = deunicode($uri);
-		my $name = url2title( $uri );
-		$res->{'info'}{'notfound'}{'name'} = $name;
-		throw('notfound', "Adressen är för lång för att vi ska kunna använda den för att hitta motsvarande ord i uppslagsverket.");
+		if( $rest =~ /^(\d+)$/ )
+		{
+		    debug "Lookig for tid $second";
+		    push @possible, $rest; # The tid
+		}
+		else
+		{
+		    $res->{'info'}{'notfound'}{'uri'} = deunicode($uri);
+		    my $name = url2title( $uri );
+		    $res->{'info'}{'notfound'}{'name'} = $name;
+		    throw('notfound', "Adressen är för lång för att vi ska kunna använda den för att hitta motsvarande ord i uppslagsverket.");
+		}
 	    }
 	    elsif( $second )
 	    {

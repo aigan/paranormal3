@@ -96,8 +96,8 @@ från
 
 [% WRAPPER viewbox %]
 <table>
-<tr><td>Mer än      <td>[% input("_age_min", "", size="3") %] år    
-<tr><td>Mindre än   <td>[% input("_age_max", "" size="3") %] år
+<tr><td>Som minst   <td>[% input("_age_min", "", size="3") %] år    
+<tr><td>Som mest    <td>[% input("_age_max", "" size="3") %] år
 <tr><td>Lägst nivå  <td>[% input("_level_min", "" size="3") %]
 <tr><td>Högsta nivå <td>[% input("_level_max", "" size="3") %]
 </table>

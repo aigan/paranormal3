@@ -4,4 +4,4 @@
 [% ELSE %]
    <code>[% t.desig | html %]</code>
 [% END +%]
-<span class="typelist">[%+ t.type_list_string %]</span>
+[% PROCESS typelist.tt %]

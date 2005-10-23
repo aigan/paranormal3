@@ -54,7 +54,7 @@
     IF loop.first; '<li>Behandlar '; END;
     IF loop.first; ELSIF loop.last; ' och '; ELSE; ', '; END;
     jump(ts.topic.desig, me, tid=ts.topic.id); ' ';
-    INCLUDE typelist.tt rel=ts.topic.id;
+    INCLUDE typelist.tt t=ts.topic;
     IF ts.comment; ' ('; ts.comment | html; ') '; END;
   END;
   %]

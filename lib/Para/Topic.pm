@@ -773,8 +773,6 @@ sub previous
 	# First try sorting out the official connection
 	if( @$recs > 1 )
 	{
-	    confess "FIXME"; ## DEBUG
-
 	    my $active = [];
 	    my $proposed = [];
 	    foreach my $rec ( @$recs )

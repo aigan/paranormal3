@@ -3715,6 +3715,15 @@ sub publish
     {
 	# Too many to list
     }
+    elsif( $cnt < 100 )
+    {
+	my $content = [];
+	foreach my $mt ( @$multi )
+	{
+	    push @$content, [$mt->desig, $mt];
+	}
+	$params->{'multi_content'} = $content;
+    }
     elsif($params->{'multi'})
     {
 	my %content; # $content{'a'} = [@sorted_content]
@@ -3752,7 +3761,7 @@ sub publish
 
 	my $letters = ['-','a'..'z','å','ä','ö'];
 
-	if( $cnt < 200 )
+	if( $cnt < 300 )
 	{
 	    my $newletters = ['-'];
 	    my $last = 'a';

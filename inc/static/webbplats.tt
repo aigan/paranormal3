@@ -103,7 +103,9 @@
    <br clear="all">
    [% END %]
 
-      [% IF multi %]
+      [% IF multi_content %]
+         [% PROCESS multi/list.tt %]
+      [% ELSIF multi %]
          [% PROCESS multi/main.tt %]
       [% END %]
 

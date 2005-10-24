@@ -3715,7 +3715,7 @@ sub publish
     {
 	# Too many to list
     }
-    elsif( $cnt < 100 )
+    elsif( $params->{'multi'} and $cnt < 100 )
     {
 	my $content = [];
 	foreach my $mt ( @$multi )

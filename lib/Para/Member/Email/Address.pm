@@ -52,7 +52,19 @@ sub new
     {
 	$rec = $Para::dbix->select_possible_record('from mailalias where mailalias_member=? and mailalias=?', $m->id, $ea->as_string );
 
-	$rec or croak "Email $email_str is not coupled to member ".$m->id."\n";
+	unless( $rec )
+	{
+	    # Is this an initiation of sys_email?
+	    if( $m->{'sys_email'} eq $email_str )
+	    {
+		# Add the address
+		$this->add( $m, $ea );
+	    }
+	    else
+	    {
+		croak "Email $email_str is not coupled to member ".$m->id."\n";
+	    }
+	}
     }
 
     # Copy to Para::Email::Address object

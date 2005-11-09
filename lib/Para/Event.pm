@@ -204,7 +204,7 @@ sub sample_interval
     return $e->{'sample_interval'};
 }
 
-sub dts
+sub dts # DateTime Set
 {
     my( $e ) = @_;
 

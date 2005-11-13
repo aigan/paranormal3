@@ -12,10 +12,7 @@
 
 [% PROCESS person_view_menu.tt %]
 
-<p>Nivå [% m.level %]
-
-
-<p>
+<p>Nivå [% m.level %].
 Medlemsnummer [% m.member %].
 Skapad [% m.created.ymd %].
 Uppgifter uppdaterade [% m.updated.ymd %].
@@ -23,8 +20,12 @@ Uppgifter uppdaterade [% m.updated.ymd %].
 
 <p>
 Loggat in [% m.visits %] gång[% 'er' IF m.visits > 1 %].
-Spenderat [% elapsed_time(m.total_time_online) %] online
-<em>(sedan 2003-10-26)</em>
+Spenderat [% elapsed_time(m.total_time_online) %] online.
+[% IF m.online %]
+   <span class="highlight">Inloggad</span> sedan [% m.latest_in %].
+[% ELSIF m.latest_seen %]
+   Senast inne [% m.latest_seen %].
+[% END %]
 </p>
 
 <ul>

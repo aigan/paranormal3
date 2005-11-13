@@ -1279,7 +1279,7 @@ sub insert_explicit_links
 			    {
 				confess "Called without context";
 			    }
-			    my $block = $context->process("static/default/spacy_image.tt", \%params);
+			    my $block = $context->include("static/default/spacy_image.tt", \%params);
 			    push @$linkref, $block;
 			}
 			$newtext .= "¤$#$linkref¤";

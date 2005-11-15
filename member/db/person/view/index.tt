@@ -158,7 +158,7 @@
 
 [% BLOCK member_not_found %]
    <h1>Jag hittar ingen <code>[% nick %]</code></h1>
-   <p>Sök igen: [% input('nick') %] [% submit('Sök') %]</p>
+   <p>Sök igen: [% input('nick') %] [% go('Sök', me) %]</p>
 [% END %]
 
 <p>[% step %]

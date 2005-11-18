@@ -367,3 +367,9 @@ TR.odd
 {
 	COLOR: black;
 }
+
+.highlight
+{
+	COLOR: black;
+	BACKGROUND-COLOR: #ffff00
+}

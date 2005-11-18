@@ -196,11 +196,6 @@ input
         background: #FFFFFF;    
 }
 
-strong.highlight
-{
-	background: yellow;
-}
-
 /* acronyms are not styled per default in Internet Explorer */
 abbr, acronym
 {

@@ -33,7 +33,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time qw( now );
-use Para::Frame::Utils qw( debug get_from_fork );
+use Para::Frame::Utils qw( debug get_from_fork throw );
 use Para::Frame::Widget qw( rowlist jump );
 
 use Para::Constants qw( :all );

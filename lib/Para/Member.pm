@@ -1691,10 +1691,18 @@ sub set_home_postal_code
     return if $zip eq ($m->{'home_postal_code'}||'');
     if( length $zip )
     {
-	$zip =~ m/^([A-Z]+-)?([\d ]+)$/;
-	my $prefix = $1 || 'S-';
+	$zip =~ m/^([A-Z]{1,2}-)?([\d ]+)$/i or
+	    $m->change->fail("Det där ser inte ut som ett riktigt postnummer\n".
+			     "Det är okej att lämna fältet tomt");
+	my $prefix = uc($1) || 'S-';
 	my $number = $2 || '';
 	$number =~ s/ //g;
+
+
+	if( $prefix eq 'SE-' )
+	{
+	    $prefix = 'S-';
+	}
 
 	if( $prefix eq 'S-' )
 	{

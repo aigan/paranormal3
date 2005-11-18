@@ -33,10 +33,10 @@ laddats ned.</p>
 
 <tr><td>Gatuadress / Postlåda <td>[% input('home_postal_street', m.home_postal_street) %]
 
-<tr><td>Besöksadress <td>[% input('home_postal_visiting', m.home_postal_visiting) %]
+<tr><td>Besöksadress <td>[% input('home_postal_visiting', m.home_postal_visiting) %] <td> (Om den skiljer sig från gatuadressen)
 
 <tr><td>Postadress <td>[% input('home_postal_code', m.home_postal_code, size=8) %]
-                        &nbsp; <code><strong>$m.home_postal_city</strong></code>
+                        &nbsp; <code><strong>$m.home_postal_city</strong></code> <td>Ange postnummer!
 
 </table>
 

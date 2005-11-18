@@ -1728,6 +1728,10 @@ sub set_home_postal_code
     {
 	return $m->change->success("Postnummer ändrat. Jag gissar att du bor i $city");
     }
+    elsif( not $zip )
+    {
+	return $m->change->success("Postnummer raderat.");
+    }
     else
     {
 	return $m->change->success("Postnummer ändrat. Fortsätt medan jag slår upp din ort...");

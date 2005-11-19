@@ -34,7 +34,7 @@
 
 
 <p>Texthantering
-[ [% jump('Lägg till en ny text', 'new_entry.tt' parent=tid run='mark' ) %]
+[ [% jump('Lägg till en ny text', 'new_entry.tt' tid=tid run='mark' ) %]
    [% IF u.level > 10 +%]
 |      [% jump('Ändra redaktörskommentar', 'text_admin.tt' tid=tid ) %]
    [% END %]
@@ -90,6 +90,6 @@
 [% hr %]
 
 [% IF not t.entry %]
-   <p>Kortbeskrivningen ska vara kort. Vill du skriva något om detta ämnet; [% jump('Lägg till en ny text', 'new_entry.tt' parent=tid run='mark' ) %]</p>
+   <p>Kortbeskrivningen ska vara kort. Vill du skriva något om detta ämnet; [% jump('Lägg till en ny text', 'new_entry.tt' tid=tid run='mark' ) %]</p>
 [% END %]
 <p>Se [% jump("instruktion för att formatera texten", "/topic/instruktion_for_att_formatera_text_i_paranormalse.html", target='published') %]</p>

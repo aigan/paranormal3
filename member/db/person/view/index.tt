@@ -4,7 +4,11 @@
 %]
 [% IF q.param('nick');
       nick = q.param('nick');
-      members = select_persons_by_name(nick, 1, 1);
+      complete = 1;
+      IF q.param('one');
+         complete=0;
+      END;
+      members = select_persons_by_name(nick, complete, 1);
       IF members.size == 0;
          PROCESS member_not_found;
          RETURN;

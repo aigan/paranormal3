@@ -10,6 +10,6 @@
 
 <p align="center"><input type='checkbox' name="remember_login" value="1"> Kom ihåg inloggningen</p>
 
-<p align="center">[% jump('Skriv in dig','/member/db/quest_level_00/') %] om du är nykomling</p>
+<p align="center">[% jump('Skriv in dig','/member/db/person/quest/level_00/') %] om du är nykomling</p>
 
 <p align="center"><a href="/member/db/person/find/password.tt">E-posta lösenord</a> som påminnelse</p>

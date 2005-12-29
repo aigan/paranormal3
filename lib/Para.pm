@@ -73,9 +73,9 @@ sub clear_caches
     if( $CLEAR_CACHE )
     {
 	$CLEAR_CACHE = 0;
+	debug "NOT Clearing caches";
 	return; # Skip this for now...
 
-	debug "Clearing caches";
 	foreach my $tkey ( keys %{$Para::Topic::CACHE} )
 	{
 	    my $t = $Para::Topic::CACHE->{$tkey};

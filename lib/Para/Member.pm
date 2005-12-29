@@ -3037,6 +3037,7 @@ sub currently_online
     # mode 1 = anonymous
     # mode 2 = both
 
+    $mode ||= 0;
     my $db = paraframe_dbm_open( DB_ONLINE );
     my @list;
     if( $mode == 1 and $Para::Frame::U->level >= 41 )

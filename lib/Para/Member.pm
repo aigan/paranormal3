@@ -21,6 +21,7 @@ use Data::Dumper;
 use Mail::Address;
 use Carp;
 use Time::Seconds;
+use locale;
 
 BEGIN
 {

@@ -58,6 +58,7 @@
 
 
 [%
+   DEFAULT subpart.shown = 0;
    prev_from = offset - 15;
    prev_to = offset - 1;
    this_from = offset;

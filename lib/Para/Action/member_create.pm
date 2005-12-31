@@ -35,7 +35,7 @@ sub handler
     if( $chat_nick ne $name and $chat_nick ne $q->param('confirmed_chat_nick')  )
     {
 	$q->param('confirmed_chat_nick', $chat_nick);
-	throw('confirm',"När du chattar kommer du att använda \"$chat_nick\" som namn.  Fortsätt, eller ändra ditt namn.");
+	throw('confirm',"När du chattar kommer du att använda \"$chat_nick\" som namn.\nFortsätt, eller ändra ditt namn.");
     }
 
 
@@ -43,13 +43,9 @@ sub handler
     {
 	my $m = Para::Member->create( $name );
 
-	my $remote = $ENV{'REMOTE_HOST'} || $ENV{'REMOTE_ADDR'};
-	if( my $host_pattern = '*@'.$remote )
+	if( my $remote = $ENV{'REMOTE_HOST'} || $ENV{'REMOTE_ADDR'} )
 	{
-	    my $sth_host = $Para::dbh->prepare("insert into memberhost
-               ( memberhost_member, memberhost_pattern, memberhost_status, memberhost_updated )
-               values ( ?, ?, 1, now() )");
-	    $sth_host->execute($m->id, $host_pattern);
+	    $m->add_host_pattern( $remote );
 	}
 
 	# Created by another user
@@ -77,7 +73,7 @@ sub handler
 	    my $rec = $Para::dbix->select_record("from member, nick where member=nick_member and uid=?", $nick);
 	    if( $rec->{'member_level'} > 1 )
 	    {
-		throw('update', "Någon annan använder redan detta namn.  Välj ett annat\n");
+		throw('validation', "Någon annan använder redan detta namn.  Välj ett annat\n");
 	    }
 	    else
 	    {

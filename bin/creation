@@ -281,7 +281,7 @@ use Ekoby::Ekonomi;
        light => [ "/css/light.css" ],
        blue => [ "/css/blue.css" ],
       },
-      default => 'blue',
+      default => 'light',
      },
      'favicon'           => "/favicon.ico",
      'body_class'        => "meta",

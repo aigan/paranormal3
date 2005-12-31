@@ -1,3 +1,4 @@
+</div>
 [% PROCESS border_bottom.tt %]
 </form>
 [% IF u.complexity > 15 %]

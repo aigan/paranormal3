@@ -57,8 +57,5 @@
 <p>
  [% go("Uppdatera", me, 'member_update') %]
  [%+ go("Städa", me, 'member_vacuum') %]
+ [%+ go("Radera", '/member/db/person/find/', 'member_delete') %]
  [%+ step %]
-
-<p align="right">[% jump('radera...','remove_confirm.tt', mid=mid, run='mark') %]
-
-<br clear="all">

@@ -2,25 +2,26 @@
 	otitle = "Paranormal.se - Index"
         next_template='/search/alternatives.tt'
 	next_action = "topic_search_published"
+	body_class = "frontpage"
 %]
-    <div align="right"><a href="/welcome.en.html">Get this page in english</a></div>
+
+    <div align="right"><a href="/welcome.en.html">Site in english</a></div>
     <br clear="right" />
-    <center>
-        <p>
-          <font size="-1"><strong>S &Ouml; K &nbsp; I &nbsp; P A R A N O R M A L . S E</strong>
-          <br />tusentals uppslagsord <br /></font>
+
+    <div id="frontpage">
+
+	<h1>S&Ouml;K I PARANORMAL.SE</h1>
+	<p>tusentals uppslagsord <br />
 	  <input size="40" name="talias" />
         </p>
-<p style="font-size: xx-small"> <a href="/topic/?part=">0-9</a> <a href="/topic/?part=a">A</a> <a href="/topic/?part=b">B</a> <a href="/topic/?part=c">C</a> <a href="/topic/?part=d">D</a> <a href="/topic/?part=e">E</a> <a href="/topic/?part=f">F</a> <a href="/topic/?part=g">G</a> <a href="/topic/?part=h">H</a> <a href="/topic/?part=i">I</a> <a href="/topic/?part=j">J</a> <a href="/topic/?part=k">K</a> <a href="/topic/?part=l">L</a> <a href="/topic/?part=m">M</a> <a href="/topic/?part=n">N</a> <a href="/topic/?part=o">O</a> <a href="/topic/?part=p">P</a> <a href="/topic/?part=q">Q</a> <a href="/topic/?part=r">R</a> <a href="/topic/?part=s">S</a> <a href="/topic/?part=t">T</a> <a href="/topic/?part=u">U</a> <a href="/topic/?part=v">V</a> <a href="/topic/?part=w">W</a> <a href="/topic/?part=x">X</a> <a href="/topic/?part=y">Y</a> <a href="/topic/?part=z">Z</a> <a href="/topic/?part=å">Å</a> <a href="/topic/?part=ä">Ä</a> <a href="/topic/?part=ö">Ö</a></p>
-
-
-    </center>
+<p class="alfalist"> <a href="/topic/?part=">0-9</a> <a href="/topic/?part=a">A</a> <a href="/topic/?part=b">B</a> <a href="/topic/?part=c">C</a> <a href="/topic/?part=d">D</a> <a href="/topic/?part=e">E</a> <a href="/topic/?part=f">F</a> <a href="/topic/?part=g">G</a> <a href="/topic/?part=h">H</a> <a href="/topic/?part=i">I</a> <a href="/topic/?part=j">J</a> <a href="/topic/?part=k">K</a> <a href="/topic/?part=l">L</a> <a href="/topic/?part=m">M</a> <a href="/topic/?part=n">N</a> <a href="/topic/?part=o">O</a> <a href="/topic/?part=p">P</a> <a href="/topic/?part=q">Q</a> <a href="/topic/?part=r">R</a> <a href="/topic/?part=s">S</a> <a href="/topic/?part=t">T</a> <a href="/topic/?part=u">U</a> <a href="/topic/?part=v">V</a> <a href="/topic/?part=w">W</a> <a href="/topic/?part=x">X</a> <a href="/topic/?part=y">Y</a> <a href="/topic/?part=z">Z</a> <a href="/topic/?part=å">Å</a> <a href="/topic/?part=ä">Ä</a> <a href="/topic/?part=ö">Ö</a></p>
+    </div>
 
 [% IF u.level %]
-<center class="notice">
+<div class="notice">
 <h2>NYHETER</h2>
 [% motd %]
-</center>
+</div>
 [% ELSE %]
   <br/>
 
@@ -28,7 +29,7 @@
   <form method="post" action="[% site.login_page %]">
     [% hidden('previous', previous) %]
     [% hidden('run', 'user_login') %]
-    <center>
+    <div align="center">
 
     <p>
       <span class="subdued">------------</span>
@@ -42,15 +43,15 @@
       <span class="subdued">---------</span>
       Sök bland tusentals medlemmar <span class="subdued">---------</span>
     </p>
-  </center>
+  </div>
 [% END %]
-<center>
+
+<div id="frontbox">
 
       <table cellpadding="10">
 	<tr>
-	  <td><p>
-	      <font size="-2"><strong>O M R Å D E N :</strong></font>
-	    </p>
+	  <td><h2>OMRÅDEN:</h2>
+
 	    <span class="indent"><a href="/topic/kategori_magi.html">Magi</a>
 	      <br /></span>
 	    <span class="indent"><a href="/topic/kategori_halsa.html">Hälsa</a>
@@ -64,9 +65,7 @@
 	  
 	  <td></td>
 	  
-	  <td><p>
-	      <font size="-2"><strong>S O R T E R :</strong></font>
-	    </p>
+	  <td><h2>SORTER:</h2>
 	    
 	    <span class="indent"><a href="/topic/person.html">Personer</a>
 	      <br /></span>
@@ -83,12 +82,7 @@
 	    <table>
 	      <tr>
 		<td>
-		  <p>
-		    <font size="-2"><strong>B E S Ö K A R E
-			:</strong></font>
-		  </p>
-		  <span class="indent"><a href="/member/payment/">
-		      Gåvor</a><br /></span>
+		<h2>DITT KONTAKTNÄT:</h2>
 		  <span class="indent"><a href= 
 					  "/help/">Hjälp-linjen</a>
 		  <br /><span class="indent"><a href= 
@@ -105,10 +99,8 @@
 	  </td>
 	</tr>
 	<tr>
-	  <td><p>
-	  	<font size="-2"><strong>L &Auml; N K A R
-	  	    :</strong></font>
-	    </p>
+	  <td>
+		<h2>LÄNKAR:</h2>
 	    <span class="indent"><a href=
 	  			      "/meta/banners.html">Banners</a>
 	  	<br /></span>
@@ -121,12 +113,12 @@
 	    </span>
 	  </td>
 	  <td></td>
-	  <td><p>
-	  	<font size="-2"><strong>O M &nbsp; W E B B P L A
-	  	    T S E N :</strong></font>
-	    </p>
+	  <td>
+		<h2>OM WEBBPLATSEN:</h2>
 	    <span class="indent"><a href= "/topic/paranormalse.html">Paranormal.se</a>
 	  	<br /></span>
+		  <span class="indent"><a href="/member/payment/">
+		      Gåvor</a><br /></span>
 		  <span class="indent"><a href="/topic/kontaktuppgifter_for_paranormalse.html">
 		      Kontaktuppgifter</a><br /></span>
             <span class="indent"><a href= "/topic/malsattningen_med_paranormalse.html">M&aring;ls&auml;ttning</a>
@@ -136,11 +128,11 @@
           </td>
 	</tr>
       </table>
-    </center>
+    </div>
 
 
-    <center>
-      <p><font size="-2">
+    <div class="center">
+      <p class="small">
        <span class="subdued">------------</span>
         <a href="/member/db/topic/list/latest_texts.tt">Senast ändrade texter</a>
         <span class="subdued">------------</span><br/>
@@ -149,5 +141,5 @@
           [% t = topic(rec.t) %]
           [% PROCESS tlink.tt %]<br/>
         [% END %]
-      </font></p>
-    </center>
+      </p>
+    </div>

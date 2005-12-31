@@ -77,12 +77,6 @@ body
 	padding: 0;
 }
 
-body.meta
-{
-	MARGIN-LEFT: 5%;
-	MARGIN-RIGHT: 5%;
-}
-
 .with_sidebar h1
 {
 	margin: 0.5em 7em 0.0em 0.5em;
@@ -127,7 +121,7 @@ div#search_field
 	right: 1%;
 }
 
-body div#main
+#main
 {
 	margin: 0 1em 0 1em;
 	padding: 0.0em 0.0em 1em 0em;
@@ -442,8 +436,8 @@ body.with_sidebar div#footer p
 #admin_menu
 {
 	font-size: 80%;
-	margin-top: 0.0em;
-	padding: 0.0em 0.0em;
+	margin: 0 0 1em;
+	padding: 0 0 0.1em;
 	border: 1px solid;
 	border-width: 0 0 1px;
 }
@@ -629,6 +623,11 @@ hr.subdivider
 	FONT-SIZE: 80%
 }
 
+.center
+{
+	text-align: center;
+}
+
 .indent
 {
 	MARGIN-LEFT: 1.2em
@@ -676,28 +675,6 @@ TR.odd
 }
 
 
-.notice
-{
-	font-size: 80%;
-	border: thin solid;
-	padding: 0.5em;
-}
-
-.notice p
-{
-	padding-bottom: 0.5em;
-	margin: 0.0em;
-	text-align: left;
-}
-
-.notice h2
-{
-	padding: 0.0em;
-	margin: 0.0em;
-	letter-spacing: 0.5em;
-	font-size: 1.3em;
-}
-
 .viewbox
 {
 	float: left;
@@ -721,4 +698,94 @@ TR.odd
 {
 	padding: 0.2em;
 	margin: 0.0em;
+}
+
+.front h2
+{
+	font-size: 0.7em;
+	letter-spacing:	0.3em;
+	margin: 0;
+	padding-top: 1em;
+	text-align: left;
+}
+
+.front table
+{
+	border-collapse: collapse;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.front table.login
+{
+	width: auto;
+}
+
+table.login
+{
+	margin: 0 auto;
+}
+
+.front h1
+{
+	margin: 0;
+	padding: 0;
+}
+
+.front .slogan
+{
+	font-style: italic;
+	margin: 0;
+}
+
+.front td
+{
+	padding: 0;
+	vertical-align: top;
+}
+
+.front img
+{
+	display: block;
+	padding-right: 0.2em;
+}
+
+body.front #main, body.meta #main
+{
+	margin: 0 5%;
+	padding: 0;
+	border: 0;
+}
+
+.notice
+{
+	border: thin solid;
+	padding: 0.5em;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+.notice h2
+{
+	text-align: center;
+}
+
+.notice p
+{
+	font-size: 80%;
+	padding-bottom: 0.5em;
+	margin: 0.0em;
+	text-align: left;
+}
+
+input
+{
+	padding: 0;
+	margin: 0;
+}
+
+form
+{
+	margin: 0;
 }

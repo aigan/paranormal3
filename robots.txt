@@ -54,3 +54,4 @@ Disallow: /topic/index.tt
 Disallow: /help/
 Disallow: /contact/
 Disallow: /doc/
+Disallow: /cgi-bin/

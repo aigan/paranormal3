@@ -4,8 +4,6 @@
 	body_class="search_result"
 %]
 
-<div id="main">
-
 <p>Det här är fritextsökning.  Sökning sker efter orden i texterna för
 alla uppslagsord, samt i FAQs, speciella samlingar och e-postlistor.
 </p>
@@ -36,4 +34,3 @@ Sökord:
 <input type="text" size="30" name="words" value="">
 <input type="submit" value="Sök">
 
-</div>

@@ -3,13 +3,13 @@
    hide='notfound'
    next_template = '/search/alternatives.tt'
    next_action = "topic_search_published"
+   body_class="default"
 %]
 
 [% IF result.info.alternatives;
    alts = result.info.alternatives;
 %]
 
-<div id="main">
 [% string = q.param('talias') %]
 <div id="topic_header">
    [% IF string %]
@@ -29,13 +29,11 @@
    </table>
 </div>
 
-</div>
 [% ELSIF result.parts.0.type == 'notfound' %]
    [% info = result.info.notfound %]
    [% CALL req.set_http_status(404) %]
 <h1 align="center">404 - Vilse i det okända</h1>
 
-<div id="main">
 <div id="topic_header">
 [% IF info.uri %]
    Hittar inte adressen <code>[% info.uri | html %]</code><br>
@@ -112,7 +110,6 @@ document.f.talias.focus();
 </tr></table>
 
 </div>
-</div>
 [% END %]
 
 
@@ -120,7 +117,3 @@ document.f.talias.focus();
    RETURN;
 END;
 %]
-
-</form>
-[% PROCESS static/default/footer.tt %]
-<form>

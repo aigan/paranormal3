@@ -36,7 +36,7 @@ our $SITE_CFG;  # Hashref with rest of config
 
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
-use lib "/var/www/webbadresser.se/lib";
+use lib "$WA::APPROOT/lib";
 use lib "/var/www/ekoby.paranormal.se/lib";
 
 use locale;
@@ -115,8 +115,8 @@ use Ekoby::Ekonomi;
     });
 
     Para::Frame::Site->add({
-	'webhost'    => "webbadresser.se",
-	'appfmly'    => ["WA"],
+	'webhost'    => $WA::HOST,
+	'appbase'    => "WA",
     });
 
     Para::Frame::Site->add({

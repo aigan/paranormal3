@@ -65,5 +65,3 @@ $this_from - $this_to
    | [% forward("$next_from - $next_to", '/topic/' offset = next_from) %]
 [% END %]
 </p>
-
-[% PROCESS static/default/footer.tt %]

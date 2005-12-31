@@ -1,6 +1,9 @@
+<div id="admin_menu">
+<div style="float: right"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published"/>Sök <input size="10" name="talias"/></form></div>
+
 <form action="/member/db/topic/view/">
-<p id="admin_menu">
  [ [% u.level +%] [%+ jump('Hem', '/') %]
+ | [%+ jump('Index', '/topic/') %]
 [% IF u.level >= 2 %]
   |  [% jump('Torget', '/member/db/') %]
   [% IF u.level >= 5 %]
@@ -11,17 +14,15 @@
  |  [% jump('Inställningar', '/member/db/person/edit/') %]
  |  [% jump('Logga ut', '/', run='user_logout', class="") %]
  ]
-</p>
 [% ELSE %]
  |  [% jump('Logga in','/login.tt') %]
- |  [% jump('Registrera dig','/member/db/person/quest/level_00/') %]
+ |  [% jump('Bli medlem','/member/db/person/quest/level_00/') %]
  ]
-</p>
 [% END %]
 </form>
-
-<div id="search_field"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published">Sök <input size="10" name="talias"></form></div>
+</div>
 
 [% PROCESS form_start.tt %]
 [% PROCESS headline.tt %]
 [% PROCESS info_box.tt %]
+<div id="main">

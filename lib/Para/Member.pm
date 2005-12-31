@@ -376,7 +376,7 @@ sub on_logout
     my( $u, $time ) = @_;
 
     $time ||= now();
-    $u->latest_out( $time );
+    $u->latest_out( $time ) if $u->level > 0; # In case user deleted
     my $db = paraframe_dbm_open( DB_ONLINE );
     delete $db->{$u->id};
 }
@@ -1270,7 +1270,7 @@ sub validate_nick
 	debug(3,sprintf("  Are %s a person?", $t->desig));
 	if( $Para::Frame::U->level < 41 and  $t->has_rel( 1, $person ) )
 	{
-	    throw('validation', "Det finns en person i uppslagsverket med detta namn.\nOm detta verkligen är ditt namn, hör av dig till red\@paranormal.se\n");
+	    throw('validation', "Det finns en person i uppslagsverket med detta namn.\nOm detta verkligen är ditt medlemsnamn,\nhör av dig till memadmin\@paranormal.se\n");
 	}
     }
 
@@ -1462,6 +1462,25 @@ sub set_sys_email
     }
 
     return $m->change->success("Ändrade primär e-postadress till '$ea_str'");
+}
+
+sub add_host_pattern
+{
+    my( $m, $pattern ) = @_;
+
+    unless( $pattern =~ /\@/ )
+    {
+	$pattern = '*@'.$pattern;
+    }
+
+    unless( $Para::dbix->select_possible_record("from memberhost where memberhost_member=? and memberhost_pattern=?", $m->id, $pattern) )
+    {
+	my $sth_host = $Para::dbh->prepare("insert into memberhost
+               ( memberhost_member, memberhost_pattern, memberhost_status, memberhost_updated )
+               values ( ?, ?, 1, now() )");
+	$sth_host->execute($m->id, $pattern);
+    }
+    return $pattern;
 }
 
 sub set_bdate_ymd_year

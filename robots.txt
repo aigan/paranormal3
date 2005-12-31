@@ -51,3 +51,5 @@ Disallow: /search/
 Disallow: /test/
 Disallow: /webalizer/
 Disallow: /topic/index.tt
+Disallow: /help/
+Disallow: /contact/

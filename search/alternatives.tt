@@ -32,6 +32,7 @@
 </div>
 [% ELSIF result.parts.0.type == 'notfound' %]
    [% info = result.info.notfound %]
+   [% CALL req.set_http_status(404) %]
 <h1 align="center">404 - Vilse i det okända</h1>
 
 <div id="main">

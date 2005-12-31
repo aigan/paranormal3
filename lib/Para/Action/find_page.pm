@@ -113,12 +113,13 @@ sub handler
     }
 
     my @possible = ();
+    my $type;
 
     if( $section =~ /^(psi|person|group|periodica|book)$/ )
     {
-	my $type = $oldtypes->{$section};
+	$type = $oldtypes->{$section};
 
-	# Special hndling of 'psi' section
+	# Special handling of 'psi' section
 	$type = 'psi' if $section eq 'psi';
 
 	foreach my $variant ( variations_slash($path) )
@@ -128,81 +129,73 @@ sub handler
 		push @possible, [ title2url($subvariant), $type ];
 	    }
 	}
+	$section = "topic";
     }
-    else
-    {
+
     # 3. If this is one of the new sections, the section will be set.
     #    Mostly only handle the topic section
     #
-	my $type;
-	if( $section =~ /^(topic|old)$/ )
+    if( $section =~ /^(topic|old)$/ )
+    {
+	$section = 'topic';
+    }
+    else
+    {
+	$type = $section;
+	$section = 'topic';
+    }
+
+    if( debug )
+    {
+	debug "Path: $path";
+	debug "Section: $section";
+	debug "Type: $type" if $type;
+	debug "Format: $format";
+    }
+
+    my($first, $second, $rest) = split '/', $path, 3;
+	
+    if( debug )
+    {
+	debug "First: $first";
+	debug "Second: $second" if $second;
+	debug "Rest: $rest" if $rest;
+    }
+	
+    if( $rest )
+    {
+	if( $rest =~ /^(\d+)$/ )
 	{
-	    $section = 'topic';
+	    debug "Lookig for tid $second";
+	    push @possible, $rest; # The tid
 	}
 	else
 	{
-	    $type = $section;
-	    $section = 'topic';
-	}
-
-	if( debug )
-	{
-	    debug "Path: $path";
-	    debug "Section: $section";
-	    debug "Type: $type" if $type;
-	    debug "Format: $format";
-	}
-
-	if( $section eq 'topic' )
-	{
-	    my($first, $second, $rest) = split '/', $path, 3;
-
-	    if( debug )
-	    {
-		debug "First: $first";
-		debug "Second: $second" if $second;
-		debug "Rest: $rest" if $rest;
-	    }
-
-	    if( $rest )
-	    {
-		if( $rest =~ /^(\d+)$/ )
-		{
-		    debug "Lookig for tid $second";
-		    push @possible, $rest; # The tid
-		}
-		else
-		{
-		    $res->{'info'}{'notfound'}{'uri'} = deunicode($uri);
-		    my $name = url2title( $uri );
-		    $res->{'info'}{'notfound'}{'name'} = $name;
-		    throw('notfound', "Adressen är för lång för att vi ska kunna använda den för att hitta motsvarande ord i uppslagsverket.");
-		}
-	    }
-	    elsif( $second )
-	    {
-		$type = $first;
-		$path = $second;
-	    }
-
-	    if( $second and $second =~ /^\d+$/ )
-	    {
-		debug "Lookig for tid $second";
-		push @possible, $second; # The tid
-	    }
-	    else
-	    {
-		foreach my $variant ( variations_oe($path) )
-		{
-		    push @possible, [ title2url($variant), $type ];
-		}
-	    }
-	}
-	else
-	{
-	    throw('notfound',"");
+	    $res->{'info'}{'notfound'}{'uri'} = deunicode($uri);
+	    my $name = url2title( $uri );
+	    $res->{'info'}{'notfound'}{'name'} = $name;
+	    throw('notfound', "Adressen är för lång för att vi ska kunna använda den för att hitta motsvarande ord i uppslagsverket.");
 	}
     }
+    elsif( $second )
+    {
+	$type = $first;
+	$path = $second;
+    }
+	
+    if( $second and $second =~ /^\d+$/ )
+    {
+	debug "Lookig for tid $second";
+	push @possible, $second; # The tid
+    }
+    else
+    {
+	foreach my $variant ( variations_oe($path) )
+	{
+	    push @possible, [ title2url($variant), $type ];
+	}
+    }
+
 
     # 4. Other path parts is taken as qualifiers
     #

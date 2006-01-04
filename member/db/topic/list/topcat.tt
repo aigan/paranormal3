@@ -8,7 +8,7 @@
 [% FOREACH select_list("from t, rel where rev=t and rel=1 and rel_type=1 and rel_active is true and t_active is true order by t") %]
    [% tr2 %]
       <td>$t</td>
-      <td>[% jump(t_title, 'view/', tid=t) %]</td>
+      <td>[% jump(t_title, '../view/', tid=t) %]</td>
    </tr>
 [% END %]
 </table>

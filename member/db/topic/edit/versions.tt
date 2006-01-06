@@ -1,7 +1,7 @@
 [% META
 	otitle = 'Versioner'
 	next_action = 'topic_update'
-	next_template = '/member/db/topic/view/'
+	default_template = '/member/db/topic/view/'
 %]
 
 [%

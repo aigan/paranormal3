@@ -2,7 +2,7 @@
 	otitle = 'Editera text'
 	next_action = 'topic_update'
 	focus = 't_text'
-	default_template = 'outline.tt'
+	next_template = '/member/db/topic/view/'
 	level = 11
 %]
 

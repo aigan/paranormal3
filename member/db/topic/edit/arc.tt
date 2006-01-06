@@ -1,6 +1,6 @@
 [% META
 	otitle = 'Editera arc'
-	default_template = 'arc.tt'
+	next_template = '/member/db/topic/edit/meta.tt'
 	next_action = 'arc_update'
 %]
 

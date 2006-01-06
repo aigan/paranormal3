@@ -1,7 +1,7 @@
 [% META
 	otitle = 'Editera metadata'
-	default_template = 'meta.tt'
 	next_action = 'topic_update'
+	next_template = '/member/db/topic/view/'
 %]
 
 [%

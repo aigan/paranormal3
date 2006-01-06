@@ -1,7 +1,7 @@
 [% META
 	otitle = 'Disposition'
         level = 5
-	default_template = 'outline.tt'
+	next_template = 'outline.tt'
 	next_action  = 'outline_update'
 %]
 [%

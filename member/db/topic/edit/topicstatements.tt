@@ -1,6 +1,6 @@
 [% META
 	otitle = 'Editera ämnesuttalanden'
-	default_template = 'topicstatements.tt'
+	next_template = '/member/db/topic/view/'
 	next_action = 'ts_update'
 %]
 

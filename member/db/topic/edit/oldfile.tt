@@ -2,7 +2,7 @@
 	otitle = 'Editera gammal URL'
 	next_action = 'topic_update'
 	focus = 't_text'
-	default_template = '../view/'
+	next_template = '/member/db/topic/view/'
 %]
 
 [%

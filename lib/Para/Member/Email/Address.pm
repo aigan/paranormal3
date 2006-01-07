@@ -28,6 +28,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
+use Para::Frame::Utils qw( throw );
 
 use Para::Member;
 

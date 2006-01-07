@@ -44,6 +44,7 @@ use Para::Arc;
 use Para::Payment;
 use Para::Email::Address;
 use Para::Member::Email::Address;
+use Para::Place;
 
 use base qw( Para::Frame::User );
 use base qw( Exporter );
@@ -305,7 +306,10 @@ sub create
                values ( ?, ?, now(), -1 )");
     $sth_passwd->execute($mid, $passwd);
 	
-    return $this->get_by_id( $mid );
+    my $m = $this->get_by_id( $mid );
+    $m->change->success("Medlemskap registrerat");
+
+    return $m;
 }
 
 ##################################################
@@ -960,6 +964,71 @@ sub home_postal_name
 	    $m->equals( $Para::Frame::U ) )
     {
 	return $m->{'home_postal_name'};
+    }
+
+    return undef;
+}
+
+sub home_postal_street
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 20) or ($publ and
+	    $m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	return $m->{'home_postal_street'};
+    }
+
+    return undef;
+}
+
+sub home_postal_street_best_guess
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 20) or ($publ and
+	    $m->present_contact_public >= 20) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	my $street = $m->{'home_postal_visiting'} ||
+	    $m->{'home_postal_street'};
+	my $code = $m->{'home_postal_code'};
+	if( $code and not $street )
+	{
+	    $street = Para::Place->by_zip($code)->aproximate_street->name;
+	}
+	return $street;
+    }
+
+    return undef;
+}
+
+sub home_postal_county
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 15) or ($publ and
+	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	my $code = $m->{'home_postal_code'} or return undef;
+	return Para::Place->by_zip($code)->county->name;
+    }
+
+    return undef;
+}
+
+sub home_postal_municipality
+{
+    my( $m, $publ ) = @_;
+
+    if( (not $publ and $m->present_contact >= 15) or ($publ and
+	    $m->present_contact_public >= 15) or $Para::Frame::U->level >= 41 or
+	    $m->equals( $Para::Frame::U ) )
+    {
+	my $code = $m->{'home_postal_code'} or return undef;
+	return Para::Place->by_zip($code)->municipality->name;
     }
 
     return undef;
@@ -2178,6 +2247,8 @@ sub update_mail_forward
     my $address = $m->sys_email;
     my $sys_uid = $m->sys_uid || '';
     my $nicks = $m->nicks;
+
+    # TODO: Do not forward to our domains
 
     # Special handling for local e-mail
     #

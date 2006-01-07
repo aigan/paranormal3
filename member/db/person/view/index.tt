@@ -49,8 +49,7 @@
 [% END %]
 [% IF m.home_postal_city %]
    <tr><td>Bor i <td>
-<a href="http://www.sna.se/bin/ort.cgi?LANG='SE'&S='E'&O=$m.home_postal_city" target="_blank">$m.home_postal_city</a>
-   [%- IF u.dist(m); u.dist(m) | format(', %s km bort'); END %]
+<a href="http://kartor.eniro.se/query?what=map&asearch=1&streetname=[% m.home_postal_street_best_guess | html %]+[% m.home_postal_city %]" target="_blank">$m.home_postal_city</a>[%- IF u.dist(m); u.dist(m) | format(', %s km bort'); END %]
 [% END %]
 
 [% IF m.bdate_ymd_year %]

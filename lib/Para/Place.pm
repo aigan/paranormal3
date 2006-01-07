@@ -74,20 +74,30 @@ sub new
 
     $p->{'geo_x'} = $p->{$type.'_x'};
     $p->{'geo_y'} = $p->{$type.'_y'};
+    $p->{'type'}  = $type;
+    $p->{'name'} = $p->{$type.'_name'};
+    $p->{'l'}    = $p->{$type.'_l'};        # County
+    $p->{'lk'}   = $p->{$type.'_lk'};       # Municipality
 
     return $p;
 }
 
+sub type
+{
+    my( $p ) = @_;
+    return $p->{'type'};
+}
+
 sub geo_x
 {
-    my( $m ) = @_;
-    return $m->{'geo_x'};
+    my( $p ) = @_;
+    return $p->{'geo_x'};
 }
 
 sub geo_y
 {
-    my( $m ) = @_;
-    return $m->{'geo_y'};
+    my( $p ) = @_;
+    return $p->{'geo_y'};
 }
 
 sub equals
@@ -107,6 +117,63 @@ sub equals
     }
 }
 
+sub county
+{
+    my( $p ) = @_;
+
+    unless( $p->{'county'} )
+    {
+	if( my $l = $p->{'l'} )
+	{
+	    $p->{'county'} = $p->new('county', $l);
+	}
+	else
+	{
+	    $p->{'county'} = $p->municipality->county;
+	}
+    }
+
+    return $p->{'county'};
+}
+
+sub municipality
+{
+    my( $p ) = @_;
+
+    unless( $p->{'municipality'} )
+    {
+	if( my $lk = $p->{'lk'} )
+	{
+	    $p->{'municipality'} = $p->new('municipality', $lk);
+	}
+	else
+	{
+	    $p->{'municipality'} = $p->zip->municipality;
+	}
+    }
+
+    return $p->{'municipality'};
+}
+
+sub zip
+{
+    my( $p ) = @_;
+
+    unless( $p->{'zipobj'} )
+    {
+	if( my $code = $p->{'address_zip'} )
+	{
+	    $p->{'zipobj'} = $p->new('zip', $code);
+	}
+	else
+	{
+	    throw('notfound', "Hittar inte adressen");
+	}
+    }
+
+    return $p->{'zipobj'};
+}
+
 sub desig
 {
     my( $p ) = @_;
@@ -121,7 +188,59 @@ sub name
     return $p->{'name'};
 }
 
+sub aproximate_street
+{
+    my( $p ) = @_;
+
+    unless( $p->{'aprox_street'} )
+    {
+	if( $p->{'address_street'} )
+	{
+	    $p->{'aprox_street'} =
+		$p->new('street', $p->{'address_street'});
+	}
+	elsif( $p->{'street'} )
+	{
+	    return $p;
+	}
+	elsif( $p->{'zip'} )
+	{
+	    my $streetlist = $Para::dbix->select_list("select street, street_name, address_nr_from, address_nr_to from street, address where address_street=street and address_zip=?", $p->{'zip'});
+	    $p->{'aprox_street'} = $p->new('street', $streetlist->[0]{'street'});
+	}
+	else
+	{
+	    $p->{'aprox_street'} = $p->aproximate_zip->aproximate_street;
+	}
+    }
+
+    return $p->{'aprox_street'};
+}
+
+sub aproximate_zip
+{
+    die "not implemented";
+}
+
 #################################################################
+
+sub by_zip ## Returns zip place object
+{
+    my( $this, $code ) = @_;
+
+    return unless $code;
+
+    warn "Looking up zip $code\n";
+
+    if( $code =~ m/^(se?-)?[\d\s]+$/i ) # Zip code
+    {
+	$code =~ s/\D//g;
+	warn "Returning zip object\n";
+	return $this->new('zip', $code);
+    }
+
+    return undef;
+}
 
 sub by_name  ## LIST CONSTRUCTOR
 {
@@ -140,7 +259,7 @@ sub by_name  ## LIST CONSTRUCTOR
 	$identity = $Para::Frame::U->home_postal_code;
     }
 
-    if( $identity =~ m/^(s-)?[\d\s]+$/i ) # Zip code
+    if( $identity =~ m/^(se?-)?[\d\s]+$/i ) # Zip code
     {
 	$identity =~ s/\D//g;
 	push @places, $this->new('zip', $identity);

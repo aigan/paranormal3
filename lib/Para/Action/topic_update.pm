@@ -271,6 +271,7 @@ sub check_rel_create
     my $ver = $t->ver;
     my $req = $Para::Frame::REQ;
     my $q = $req->q;
+    my $site = $req->site;
 
     foreach my $row (1..5)
     {
@@ -304,7 +305,7 @@ sub check_rel_create
 		    $res->{'info'}{'alternatives'}{'replace'} = "_rel__n_${row}_rel";
 		    $res->{'info'}{'alternatives'}{'view'} = "/member/db/topic/edit/meta.tt";
 
-		    $req->set_error_template('/alternatives.tt');
+		    $req->set_error_template($site->home.'/alternatives.tt');
 		    $req->s->route->bookmark;
 		}
 		die $@; # Propagate error

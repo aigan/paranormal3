@@ -314,18 +314,18 @@ sub create
 
 ##################################################
 
-sub verify_user
-{
-    my( $this, $username, $password ) = @_;
-
-    my $m = $this->get_by_nickname( $username );
-    unless( $m )
-    {
-	debug(0,"Medlemmen $username existerar inte");
-	return $this->identify_user('guest');
-    }
-    return $m->verify_password( $password );
-}
+# sub verify_user
+# {
+#     my( $this, $username, $password ) = @_;
+#
+#     my $m = $this->get_by_nickname( $username );
+#     unless( $m )
+#     {
+# 	debug(0,"Medlemmen $username existerar inte");
+# 	return $this->identify_user('guest');
+#     }
+#     return $m->verify_password( $password );
+# }
 
 sub verify_password
 {

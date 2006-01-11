@@ -398,8 +398,6 @@ sub find_one
 			    );
 	};
 	$alt->{'title'} = "Flera alternativ";
-#	$req->set_error_template('/alternatives.tt');
-#	$req->s->route->bookmark;
 
 	throw('alternatives', "Välj ett av dessa alternativ för ämnet '$name'");
     }

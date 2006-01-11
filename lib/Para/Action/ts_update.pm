@@ -67,6 +67,7 @@ sub check_ts_create
     my $req = $Para::Frame::REQ;
     my $q = $req->q;
     my $change = 0;
+    my $site = $req->site;
 
     my $tswords = rowlist('_meta_talias');
     if( @$tswords )
@@ -124,7 +125,7 @@ sub check_ts_create
 					);
 		    };
 
-		    $req->set_error_template('/alternatives.tt');
+		    $req->set_error_template($site->home.'/alternatives.tt');
 		    $req->s->route->bookmark;
 		}
 		die $@; # Propagate error

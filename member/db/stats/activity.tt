@@ -18,7 +18,7 @@
 
 [% FOREACH select_list("from member, score where score_member=member and (topic_submitted>0 or entry_submitted>0) order by $order $direction limit 30") %]
 
-[% tr2 %]<td>[% jump(nickname, '/member/db/person/view/', member=member) %] <td>$member_level <td>$topic_submitted <td>$entry_submitted <td>$topic_connected
+[% tr2 %]<td>[% jump(nickname, '/member/db/person/view/', mid=member) %] <td>$member_level <td>$topic_submitted <td>$entry_submitted <td>$topic_connected
 
 [% END %]
 </table>

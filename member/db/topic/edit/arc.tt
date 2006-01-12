@@ -61,8 +61,8 @@
 
       <ol>
       [% FOREACH part =  arc.explain %]
-         <li>a) [% part.a1.desig %]<br>
-             b) [% part.a2.desig %]<br>
+         <li>a) [% jump(part.a1.desig, 'arc.tt', tid=part.a1.subj.id, rel_topic=part.a1.id) %]<br>
+             b) [% jump(part.a2.desig, 'arc.tt', tid=part.a2.subj.id, rel_topic=part.a2.id) %]<br>
              => [% part.a3.desig %]</li>
       [% END %]
       </ol>

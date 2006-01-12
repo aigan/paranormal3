@@ -68,13 +68,12 @@
       </ol>
 [% END %]
 
-<p>[% IF u.level > 11 %]<p align="right">[% go('Radera', 'meta', 'rel_delete') %]</p>[% END %]
+<p>[% IF u.level > 11 %][% go('Radera', 'meta', 'rel_delete') %][% END %]
 [%+ backstep %]
 [%+ regret %]
 </p>
 
-<h2>Information</h2>
-
+[% WRAPPER instruction %]
 <p>Just denna relation kan ha ersätt tidigare relationer med delvis
 liknande egenskaper.  Vi har inte uttryckligen versionsnummer på
 relationerna.  Vi visar en specifik relaion här, men alla ändringar
@@ -84,7 +83,7 @@ inaktiv relation men det finns aktiva versioner av samma REV TYPE REL,
 kommer du återgå till denna tidigare version.</p>
 
 <p>Vi kompletterar formuläret med fler funktioner senare...</p>
-
+[% END %]
 
 
 [% BLOCK status %]
@@ -96,5 +95,4 @@ kommer du återgå till denna tidigare version.</p>
      >[% row.$tagkey %]</option>
   [% END %]
   </select>
-
 [% END %]

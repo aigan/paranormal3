@@ -26,12 +26,12 @@
 <table>
 <tr>
    <th>Behåll
-   [% '<th>S' IF u.level>10 %]
+   [% '<th>S' IF u.complexity > 10 %]
    <th>Alias
    <th>A
    <th>I
    <th>Språk
-   [% IF u.level>10 %]
+   [% IF u.complexity>10 %]
       <th>urlpart
       <th>Skapad av
       <th>Datum
@@ -43,7 +43,7 @@
       [% ELSE %]
          <td>[% checkbox("_talias__${loop.count}_activate", 't', a.active) %]</td>
       [% END %]
-      [% IF u.level>10 %]<td>[% a.status %]</td>[% END %]
+      [% IF u.complexity>10 %]<td>[% a.status %]</td>[% END %]
       <td>$a.name [% hidden("_talias__${loop.count}_talias", a.name) %]</td>
       <td>[% checkbox("_talias__${loop.count}_talias_autolink", 1, a.autolink ) %]</td>
       <td>[% checkbox("_talias__${loop.count}_talias_index", 1, a.index ) %]</td>
@@ -57,7 +57,7 @@
          [% END %]
       </select>
       </td>
-      [% IF u.level>10 %]
+      [% IF u.complexity>10 %]
          <td>[% a.urlpart %]</td>
          <td>[% a.created_by.link %]</td>
          <td>[% a.created %]</td>

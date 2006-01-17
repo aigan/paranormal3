@@ -151,7 +151,7 @@
    <tr><th>Användarnamn <th>Namn <th>Uppslagsord <th>Senast sedd
    [% FOREACH m = members %]
       [% tr2 %]
-      <td>[% jump(m.nickname, me, mid=m.id, class='msg') %]
+      <td>[% jump(m.nickname, me, mid=m.id, href_class='msg') %]
       <td>$m.name
       <td align="center">[% IF m.topic; jump(m.topic.type_list_string, m.file); END %]
       <td>$m.latest_seen

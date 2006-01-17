@@ -11,7 +11,7 @@ tidigare villkor", "terms_old,tt") %].</p>
 förbehåller oss rätten att bestämma hur uppgifterna kommer att
 användas.</p>
 
-<p>Se [% jump('Anonymitet', '/topic/anonymitet_pa_paranormalse.html', target='info') %]</p>
+<p>Se [% jump('Anonymitet', '/topic/anonymitet_pa_paranormalse.html', href_target='info') %]</p>
 
 <p>När du godkänner dessa villkor godkänner du att [% jump('Paranormal
 Sweden', "/topic/paranormal_sweden.html") %] erhåller upphovsrätt till

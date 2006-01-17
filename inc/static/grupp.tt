@@ -60,8 +60,8 @@
          <div class="entry">
             <h2>Besök</h2>
          [% END %]
-         <h2>[% jump(ts.t_title, ts.media_url, target="media") %]</h2>
-	 <p class="attatched">[% jump(ts.media_url, ts.media_url, target="media") %]</p>
+         <h2>[% jump(ts.t_title, ts.media_url, href_target="media") %]</h2>
+	 <p class="attatched">[% jump(ts.media_url, ts.media_url, href_target="media") %]</p>
          [% IF ts.ts_comment %]
             <p><em>[% ts.ts_comment | html %]</em></p>
          [% END %]

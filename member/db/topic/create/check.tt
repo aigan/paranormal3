@@ -25,7 +25,7 @@ databasen.  Om så är fallet kanske du vill använda det existerande
    <p>Titeln [% title | html %] är redan knuten till annat ämne:
       <ul>
       [% FOREACH a IN title_aliases %]
-         <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, target='info') %]
+         <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, href_target='info') %]
              [% INCLUDE typelist.tt t=a.topic %]
              <em>[% a.t.text | html %]</em>
 	     [% CALL u.interest(a.t) %]
@@ -52,7 +52,7 @@ databasen.  Om så är fallet kanske du vill använda det existerande
       <td>[% row | html %] <td>finns redan, kopplad till ämnet:
       <ul>
       [% FOREACH a IN aliases %]
-         <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, target='info') %]
+         <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, href_target='info') %]
              [% INCLUDE typelist.tt t=a.topic %]
              <em>[% a.t.text | html %]</em>
 	     [% CALL u.interest(a.t) %]

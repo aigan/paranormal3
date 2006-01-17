@@ -93,7 +93,7 @@
          <p align="center">Följ länken för att gå till webbplatsen:</p>
       [% END %]
 
-      <h2 align="center">[% jump(url, url, target='external') %]</h2>
+      <h2 align="center">[% jump(url, url, href_target='external') %]</h2>
    </div>
 
    <div class="entry">

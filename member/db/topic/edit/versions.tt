@@ -165,7 +165,7 @@ Vers. uppd. av [% t.updated_by.link %] [%+ t.updated %]
      <td><input type="button" class="togglep" value="visa/göm nytt" onclick="toggle_plus(); return false;" /></td><td width="10">&nbsp;</td>
      <td><input type="button" class="togglem" value="visa/göm gammalt" onclick="toggle_minus(); return false;" /></td><td width="10">&nbsp;</td>
      <td>Jämförelse med [% jump("version $cv.ver", me, tid=tid, v=cv.ver) %]</td>
-     <td>[% jump('Redigera', "/member/db/topic/edit/text.tt",  tid=tid, v=t.ver, class='link_button') %]</td>
+     <td>[% jump('Redigera', "/member/db/topic/edit/text.tt",  tid=tid, v=t.ver, href_class='link_button') %]</td>
    </table>
 
    <div class="diff">
@@ -174,7 +174,7 @@ Vers. uppd. av [% t.updated_by.link %] [%+ t.updated %]
    [% diff(cv.text, t.text)  %]
    </div>
 [% ELSE %]
-   <p align="right">[% jump('Redigera', "/member/db/topic/edit/text.tt",  tid=tid, v=t.ver, class='link_button') %]</p>
+   <p align="right">[% jump('Redigera', "/member/db/topic/edit/text.tt",  tid=tid, v=t.ver, href_class='link_button') %]</p>
    <div class="diff">
    [% t.text | html_break %]
    </div>

@@ -1,6 +1,6 @@
 [% FOREACH ts = select_list("from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'application/pdf' order by t_title", t.id) %]
    [% IF loop.first %]<h2>PDF-dokument</h2>[% END %]
-   <span class="link">[% jump(ts.t_title, ts.media_url, target="media") %]
+   <span class="link">[% jump(ts.t_title, ts.media_url, href_target="media") %]
    [% IF ts.ts_comment %]
       - [% ts.ts_comment | html %]
    [% END %]<br></span>

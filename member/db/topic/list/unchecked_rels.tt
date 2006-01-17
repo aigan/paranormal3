@@ -21,11 +21,11 @@
       <td>[% radio("relrev_${reltype}_${rel}_${rev}", '', 1 ) %]
       <td>[% radio("relrev_${reltype}_${rel}_${rev}", 'f' ) %]
 
-      <td>[% jump(a.revt.desig, '/member/db/topic/view/', tid=rev target='info') %]
+      <td>[% jump(a.revt.desig, '/member/db/topic/view/', tid=rev href_target='info') %]
           [% INCLUDE typelist.tt rel=rev %]
       </td>
       <td>$rel_name</td>
-      <td>[% jump(a.relt.desig, '/member/db/topic/view/', tid=rel target='info') %]
+      <td>[% jump(a.relt.desig, '/member/db/topic/view/', tid=rel href_target='info') %]
           [% INCLUDE typelist.tt rel=rel %]
       </td>
    </tr>

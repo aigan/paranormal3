@@ -36,25 +36,25 @@ Visa även
 [ 
 [%
 IF tfilter.include_inactive;
-   jump('inaktiva', me, keep_params=keep, class='selected', include_inactive=0);
+   jump('inaktiva', me, keep_params=keep, href_class='selected', include_inactive=0);
 ELSE;
    jump('inaktiva', me, keep_params=keep, include_inactive=1);
 END;
 ' | ';
 IF tfilter.include_false;
-   jump('falska', me, keep_params=keep, class='selected', include_false=0);
+   jump('falska', me, keep_params=keep, href_class='selected', include_false=0);
 ELSE;
    jump('falska', me, keep_params=keep, include_false=1);
 END;
 ' | ';
 IF tfilter.include_indirect;
-   jump('indirekta', me, keep_params=keep, class='selected', include_indirect=0);
+   jump('indirekta', me, keep_params=keep, href_class='selected', include_indirect=0);
 ELSE;
    jump('indirekta', me, keep_params=keep, include_indirect=1);
 END;
 ' | ';
 IF tfilter.include_rev;
-   jump('omvända', me, keep_params=keep, class='selected', include_rev=0);
+   jump('omvända', me, keep_params=keep, href_class='selected', include_rev=0);
 ELSE;
    jump('omvända', me, keep_params=keep, include_rev=1);
 END;

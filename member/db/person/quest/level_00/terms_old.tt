@@ -11,7 +11,7 @@ kommer att användas.</p>
 frågor om dig själv och dina intressen. Du får när som helst välja att
 inte svara på en fråga.</p>
 
-<p>Se [% jump('Anonymitet', '../doc/privacy', target='info') %]</p>
+<p>Se [% jump('Anonymitet', '../doc/privacy', href_target='info') %]</p>
 
 <p>Svaren används för att sätta dig i relation till de ämnen
 webbplatsen behandlar.  Du kommer att få speciellt anpassade nyheter.

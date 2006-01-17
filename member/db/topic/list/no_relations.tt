@@ -15,7 +15,7 @@
    [% t = topic(rec.t) %]
    [% tr2 %]
       <td>[% t.status %]</td>
-      <td>[% jump(t.desig, '/member/db/topic/view/', tid=t.id, target='info') %]</td>
+      <td>[% jump(t.desig, '/member/db/topic/view/', tid=t.id, href_target='info') %]</td>
       <td>[% t.created %]</td>
   </tr>
 [% END %]

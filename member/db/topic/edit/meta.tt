@@ -270,7 +270,7 @@
 <h3>Skapa nya relationer</h3>
 
 <table>
-<tr><th>[% jump('Relation', '/member/db/arctype/list.tt' target='arctype') %] <th>Till 
+<tr><th>[% jump('Relation', '/member/db/arctype/list.tt' href_target='arctype') %] <th>Till 
    <th>Kommentar
 
 [% FOREACH [1..5] %]

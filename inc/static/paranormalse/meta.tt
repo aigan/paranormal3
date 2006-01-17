@@ -1,6 +1,6 @@
 [% PROCESS topic/button_update.tt %]
 
-[% jump('Detaljer','/member/db/person/view/', mid=m.id, class='link_button' id='member_details') %]
+[% jump('Detaljer','/member/db/person/view/', mid=m.id, href_class='link_button' href_id='member_details') %]
 
 <table align="left">
  
@@ -25,7 +25,7 @@
                          'http://www.sna.se/bin/ort.cgi',
                          LANG='SE', S='E',
                          O=m.home_postal_city,
-                         target="external"
+                         href_target="external"
                        ) %]
    [% END %]
 [% ELSE %]
@@ -44,7 +44,7 @@
                'http://www.sna.se/bin/ort.cgi',
                LANG='SE', S='E',
                O=m.home_postal_city,
-	       target="external"
+	       href_target="external"
              ) %]
    [% END %]
 
@@ -54,7 +54,7 @@
 [% contact = 0 %]
 [%- IF m.home_online_uri(1) -%]
    [%- ', ' IF contact %]
-   [% jump('Hemsida', m.home_online_uri, target='external') %]
+   [% jump('Hemsida', m.home_online_uri, href_target='external') %]
    [%- contact = 1 -%]
 [%- END -%]
 [%- IF m.newsmail > 2 -%]
@@ -80,7 +80,7 @@
 [%- END -%]
 [%- IF m.home_online_msn(1) -%]
    [%- ', ' IF contact %]
-   <a href="http://members.msn.com/$m.home_online_msn" target="_blank">
+   <a href="http://members.msn.com/$m.home_online_msn" href_target="_blank">
    MSN
    <img src="/images/icon/msn.gif" width="15" height="13" alt="" border="0">
    </a>

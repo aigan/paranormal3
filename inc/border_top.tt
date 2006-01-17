@@ -12,7 +12,7 @@
      |  <input name="search" size="10">
   [% END %]
  |  [% jump('Inställningar', '/member/db/person/edit/') %]
- |  [% jump('Logga ut', '/', run='user_logout', class="") %]
+ |  [% jump('Logga ut', '/', run='user_logout', href_class="") %]
  ]
 [% ELSE %]
  |  [% jump('Logga in','/login.tt') %]

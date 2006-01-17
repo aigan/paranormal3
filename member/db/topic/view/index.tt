@@ -109,10 +109,10 @@
       [% IF tse.media_type.search('image') %]
          <li><img alt="[% tse.desig | html %]" src="[% tse.media_url %]"> 
       [% ELSE %]
-         <li>[% jump(tse.desig, tse.media_url, target="media") %]
+         <li>[% jump(tse.desig, tse.media_url, href_target="media") %]
       [% END %]
    [% ELSIF tse.file %]
-      <li>[% jump(tse.desig, tse.file, target="media") %] (file ts)
+      <li>[% jump(tse.desig, tse.file, href_target="media") %] (file ts)
    [% ELSE %]
       <li>[% jump(tse.desig, me, tid=tse.id) %]
    [% END %]

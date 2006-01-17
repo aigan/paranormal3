@@ -1,1 +1,1 @@
-[% jump('Ändra sidan','/member/db/topic/view/', tid=entry.id, class='link_button' id='topic_change') %]
+[% jump('Ändra sidan','/member/db/topic/view/', tid=entry.id, href_class='link_button' href_id='topic_change') %]

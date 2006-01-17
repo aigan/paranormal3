@@ -9,7 +9,7 @@
 
   version $t.ver
   [% IF t.file %]
-      ([% jump(t.file, t.file, target='published') %])
+      ([% jump(t.file, t.file, href_target='published') %])
   [% END %]
 
   - Status: $t.status - [% PROCESS topic_status.tt %]
@@ -63,13 +63,13 @@
   [%#### Har URL ####%]
   [% IF t.media_url %]
      [% IF t.media_type == 'text/html' %]
-        <li>Representerar webbsidan [% jump(t.media_url, t.media_url, target='external') %]
+        <li>Representerar webbsidan [% jump(t.media_url, t.media_url, href_target='external') %]
      [% ELSIF t.media_type.search('^image/') %]
-        <li>Representerar bilden [% jump(t.media_url, t.media_url, target='external') %]
+        <li>Representerar bilden [% jump(t.media_url, t.media_url, href_target='external') %]
      [% ELSIF t.media_type == 'email' %]
         <li>Representerar e-postadressen [% jump(t.media_url, t.media_url) %]
      [% ELSE %]
-        <li>Representerar det av typ [% t.media_type %] som har adressen [% jump(t.media_url, t.media_url, target='external') %]
+        <li>Representerar det av typ [% t.media_type %] som har adressen [% jump(t.media_url, t.media_url, href_target='external') %]
      [% END %]
      ([% forward('Ändra', '/member/db/topic/edit/media.tt') %])</li>
   [% END %]

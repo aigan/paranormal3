@@ -55,7 +55,7 @@
 som helst avbryta för att fortsätta vid ett senare tillfälle.  Allt du
 gjort hittills kommer att finnas kvar.
 
-<p>Frågor kan ställas i kanalen #devel på [% jump('chatten', '/member/chat/login.tt', target='chat') %].
+<p>Frågor kan ställas i kanalen #devel på [% jump('chatten', '/member/chat/login.tt', href_target='chat') %].
 
 <p>[% step('Påbörja resan', intr.next_step.template) %]
 

@@ -40,7 +40,7 @@
 [% INCLUDE present_rev_links type=44 %]
 [% INCLUDE present_rev_links type=45 %]
 
-<h2>Personer</h2>
+<h2>Ditt kontaktnät</h2>
 
    <span class="link">[% jump('Hjälpare', "/member/db/topic/view/helpers.tt" tid=t.id) %]<br></span>
    <span class="link">[% jump('Diskutanter', "/member/db/topic/view/discussors.tt" tid=t.id) %]<br></span>

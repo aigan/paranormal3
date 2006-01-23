@@ -3855,7 +3855,7 @@ sub write_page
     {
 	push @incpath, "$approot/inc/static/default";
     }
-    push @incpath, "$approot/inc", "$pfroot/inc";
+    push @incpath, "$approot/inc", "$pfroot/html/inc";
 
     my $th = Template::Context->new
 	(

@@ -77,9 +77,8 @@
 <h3>Att läsa</h3>
 <ul>
   <li>[% jump('Om Paranormal.se', '/topic/paranormalse.html') %]
-   [% IF u.level > 10 %]
+   [% IF u.complexity > 10 %]
      <li>[% jump('TODO', '/topic/todo_for_paranormalse.html') %]
-     <li>[% jump('Dokumentation', '/member/db/doc/') %]
   [% END %]
   <li>[% jump('E-postlistor', '/cgi-bin/mailman/listinfo') %]
   <li> [% jump('Statistik', '/member/db/stats/') %]

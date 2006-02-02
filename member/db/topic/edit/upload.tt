@@ -1,0 +1,14 @@
+[% META
+	title = 'Ladda upp bild'
+	next_action = 'upload_image'
+%]
+
+[%
+   tid = q.param('tid');
+   hidden('tid', tid);
+   t = topic(tid);
+%]
+
+<p>Filnamn: <input type="file" name="file_name">
+
+<p>[% step %]

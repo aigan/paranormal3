@@ -5,6 +5,8 @@ use Imager 0.41;
 use File::Temp qw( tempfile );
 use Image::Info qw( image_info);
 use File::stat;
+use IO::File;
+use Data::Dumper;
 
 use constant SIZESCALE => 200;
 use constant SIZETHUMB => 60;
@@ -13,51 +15,51 @@ use constant MEDIATYPE => 'image/png';
 use LWP::MediaTypes qw( media_suffix read_media_types guess_media_type );
 read_media_types("/etc/mime.types");
 
+use Para::Frame::Utils qw( debug throw create_dir chmod_file );
+
 sub handler
 {
     my( $req ) = @_;
 
     if( $req->user->level < 10 )
     {
-        die ['denied', "Du har inte access."];
+        throw('denied', "Du har inte access.");
     }
 
     my $q = $req->q;
-    my $dbh = $req->app->dbix->dbh;
 
     my $tid = $q->param('tid') || die "tid missing";
 
 
     my $filename =  $q->param('file_name')
-        or die ['incomplete', "Filnamn saknas"];
-    my $fh =  $q->upload('file_name')
-        or die "No file handler\n";
+        or throw('incomplete', "Filnamn saknas");
 
+    my $infile = $req->env->{'paraframe-upload-file_name'} or
+	die "No file handler\n".Dumper($req->env);
 
-    my $dataref = read_all( $fh );
-
-#    my $suffix = media_suffix( MEDIATYPE );
+    my $dataref = read_all( $infile );
 
     my $img = {};
 
     $img->{'orig'}   = get_image($dataref);
-    $img->{'scaled'} = $img->scale(xpixels=>SIZESCALE);
-    $img->{'thumb'}  = $img->scale(ypixels=>SIZETHUMB);
+    $img->{'scaled'} = $img->{'orig'}->scale(xpixels=>SIZESCALE);
+    $img->{'thumb'}  = $img->{'scaled'}->scale(ypixels=>SIZETHUMB);
 
     my $dir_base = "/var/www/paranormal.se/images/db";
     my $dir = $dir_base.'/'.$tid.'/';
-    create_dir( $dir );
+    create_dir( $dir, {umask=>0});
 
     foreach my $variant ( keys %$img )
     {
 	my $file_out = $dir.$variant.'.png';
 	debug "Storing image as: $file_out\n";
-	$img->{'variant'}->write(file=>$file_out) or
-	    die $img->{'variant'}->errstr;
-	chmod_file( $variant );
+	$img->{$variant}->write(file=>$file_out) or
+	    die $img->{$variant}->errstr;
+	chmod_file( $file_out, {umask=>0});
     }
 
 
+#    my $dbh = $req->app->dbix->dbh;
 #    my $code = $q->param('image_code') or die ['validate', "Code missing\n"];
 #    my( $scaled_oid, $scaled_size ) = create_blob( $req, $scaled, $suffix );
 #    my( $thumb_oid, $thumb_size ) = create_blob( $req, $thumb, $suffix );
@@ -84,7 +86,10 @@ sub handler
 
 sub read_all
 {
-    my( $fh ) = @_;
+    my( $fh_in ) = @_;
+
+    my $fh = new IO::File $fh_in, "r"
+	or die "Could not read from $fh_in: $!";
 
     my $buf;
     my $fname; ## Temporary filenames

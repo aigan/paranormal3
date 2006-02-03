@@ -109,33 +109,35 @@ sub handler
 	    $t = Para::Topic->find_one($talias);
 	}
 
-	my $filename = uri2file( $t->file );
+	my $path = $t->file or
+	    throw('notfound', "Detta uppslagsord finns i databasen, men är hemligt.");
+	my $filename = uri2file( $path );
 	debug "Trying $filename";
 	if( -r $filename ) # Realy existing?
 	{
-	    $req->redirect($t->file);
+	    $req->redirect($path);
 	    my $title = $t->title;
 	    return "Found $title";
 	}
 	else
 	{
-	    $result->{'info'}{'notfound'}{'uri'} = $t->file;
+	    $result->{'info'}{'notfound'}{'uri'} = $path;
 	    $result->{'info'}{'notfound'}{'tid'} = $t->id;
 	    $result->{'info'}{'notfound'}{'name'} = $talias;
 
 	    # Try publish right now
 	    $t->publish;
-	    my $filename = uri2file( $t->file );
+	    my $filename = uri2file( $path );
 	    debug "Trying $filename again";
 	    if( -r $filename ) # Realy existing?
 	    {
-		$req->redirect($t->file);
+		$req->redirect($path);
 		my $title = $t->title;
 		return "Found $title";
 	    }
 	    else
 	    {
-		throw('notfound', "Detta uppslagsord finns i databasen, men är inte publicerat.");
+		throw('notfound', "Detta uppslagsord finns i databasen, men är hemligt.");
 	    }
 	}
 	return 0;

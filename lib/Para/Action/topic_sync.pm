@@ -6,7 +6,7 @@ use Data::Dumper;
 use File::Find;
 use IO::LockedFile;
 
-use Para::Frame::Utils qw( throw debug uri2file );
+use Para::Frame::Utils qw( throw debug );
 use Para::Frame::Time qw( date );
 
 use Para::Topic;
@@ -28,7 +28,7 @@ sub handler
 
     $pcnt = 0;
     $rcnt = 0;
-    $base = uri2file('/');
+    $base = $req->uri2file('/');
 
 
     # Active files

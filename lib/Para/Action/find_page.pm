@@ -4,7 +4,7 @@ package Para::Action::find_page;
 use strict;
 use Data::Dumper;
 
-use Para::Frame::Utils qw( throw deunicode catch uri2file debug );
+use Para::Frame::Utils qw( throw deunicode catch debug );
 use Para::Frame::DBIx;
 
 use Para::Topic qw( title2url );
@@ -71,7 +71,7 @@ sub handler
 	debug "Translating file to $uri";
 
 	# Lookup corresponding filename
-	my $filename = uri2file( $uri );
+	my $filename = $req->uri2file( $uri );
 	if( -r $filename ) # Realy existing?
 	{
 	    $req->redirect($uri, 1);
@@ -89,7 +89,7 @@ sub handler
 	my $newuri = $rec->{'t_file'};
 
 	# Lookup corresponding filename
-	my $filename =  uri2file( $newuri );
+	my $filename =  $req->uri2file( $newuri );
 	if( -r $filename ) # Realy existing?
 	{
 	    $req->redirect( $newuri, 1 );
@@ -302,7 +302,7 @@ sub handler
     }
 
     # Lookup corresponding filename
-    my $filename = uri2file( $newuri );
+    my $filename = $req->uri2file( $newuri );
     debug "Trying $filename";
     if( -r $filename ) # Realy existing?
     {

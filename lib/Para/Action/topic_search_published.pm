@@ -5,7 +5,7 @@ use strict;
 use Data::Dumper;
 use CGI;
 
-use Para::Frame::Utils qw( throw catch uri2file debug );
+use Para::Frame::Utils qw( throw catch debug );
 
 use Para::Topic;
 
@@ -111,7 +111,7 @@ sub handler
 
 	my $path = $t->file or
 	    throw('notfound', "Detta uppslagsord finns i databasen, men är hemligt.");
-	my $filename = uri2file( $path );
+	my $filename = $req->uri2file( $path );
 	debug "Trying $filename";
 	if( -r $filename ) # Realy existing?
 	{
@@ -127,7 +127,7 @@ sub handler
 
 	    # Try publish right now
 	    $t->publish;
-	    my $filename = uri2file( $path );
+	    my $filename = $req->uri2file( $path );
 	    debug "Trying $filename again";
 	    if( -r $filename ) # Realy existing?
 	    {

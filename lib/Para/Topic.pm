@@ -96,6 +96,7 @@ sub _new
 	}
     }
 
+    my $is_default_version;
     if( $v )
     {
 	$rec = $Para::dbix->select_possible_record("from t LEFT JOIN media on t=media where t=? and t_ver=?", $tid, $v);
@@ -104,6 +105,7 @@ sub _new
     {
 	$rec = $Para::dbix->select_possible_record("from t LEFT JOIN media on t=media where t=? order by t_active desc, t_ver desc", $tid);
 	$v = $rec->{'t_ver'};
+	$is_default_version = 1;
     }
 
     if( $rec )
@@ -116,11 +118,11 @@ sub _new
 	unless( $nocache ) # Do not replace cache
 	{
 	    $Para::Topic::CACHE->{"$tid-$v"} = $t;
-	    if( $t->active )
+	    if( $t->active or $is_default_version)
 	    {
 		$Para::Topic::CACHE->{"$tid-"} = $t;
 	    }
-	    debug(2,"Initialized topic $tid-$v");
+	    debug(2,"Initialized topic $tid-$v ($t)");
 	}
 	return $t;
     }
@@ -445,6 +447,7 @@ sub publish_from_queue
     {
 	my $tid = $rec->{'t'};
 	my $t = Para::Topic->get_by_id( $tid );
+#	debug "Adding publish from queue for $t->{t} ($t)";
 	$req->add_job('run_code', sub
 		      {
 			  $t->publish;
@@ -866,7 +869,7 @@ sub file
 	$t->generate_url;
     }
 
-    debug "Getting file for $t->{t} v$t->{t_ver}: $t->{'t_file'}";
+#    debug "Getting file for $t->{t} v$t->{t_ver}: ($t) $t->{'t_file'}";
 
     return $t->{'t_file'};
 }

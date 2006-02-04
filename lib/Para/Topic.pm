@@ -839,6 +839,8 @@ sub file
 
     if( defined $file )
     {
+	debug "Setting file to $file";
+
 	# Check if there is a change
 	if(  $t->{'t_file'} and ($file eq $t->{'t_file'}) )
 	{
@@ -864,7 +866,7 @@ sub file
 	$t->generate_url;
     }
 
-#    debug "Getting file for $t->{t} v$t->{t_ver}: $t";
+    debug "Getting file for $t->{t} v$t->{t_ver}: $t->{'t_file'}";
 
     return $t->{'t_file'};
 }
@@ -3452,6 +3454,7 @@ sub generate_url
 
     unless( $t->active )
     {
+	debug "Topic is not active";
 	$t->file('');
 	return [];
     }

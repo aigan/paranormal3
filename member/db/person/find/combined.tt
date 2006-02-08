@@ -168,4 +168,4 @@ träffar
 [% END %]
 <br clear="all">
 
-<p>[% search %]
+<p>[% searchstep %]

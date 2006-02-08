@@ -21,4 +21,4 @@
    <p>[% jump("Skapa ny medlem", "/member/db/person/create/") %]</p>
 [% END %]
 
-[% search %]
+[% searchstep %]

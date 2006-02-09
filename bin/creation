@@ -125,6 +125,9 @@ use Ekoby::Ekonomi;
 
     Para::Frame::Site->add({
 	'webhost'    => $Ekoby::HOST,
+	'aliases'    => ['ekoby'],
+	'code'       => 'eboby',
+	'name'       => 'Ekobyn',
 	'params' =>
 	{
 	    'css'               =>

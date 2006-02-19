@@ -2,18 +2,21 @@
 %]
 
 [% 
-   subpart = {};
-   offset = q.param('offset');
-   DEFAULT offset=1;
    step = q.param('step');
    DEFAULT step=25;
-   part_offset = offset - 1;
 %]
 
 <p>
 [ [% jump('Ladda om sidan', me) +%]
 ]</p>
 
+
+[% USE Sorted_table %]
+[% recs = select_list("select t FROM t WHERE t_status=4 AND t_entry IS TRUE AND t_published IS TRUE ORDER BY t_updated DESC limit 100") %]
+[% recs.set_page_size(step) %]
+
+<p align="center">[% recs.size %] träffar</p>
+<p align="center">[%recs.pagelist %]</p>
 
 <div class="entry">
 <table>
@@ -25,7 +28,7 @@
       <th>Text</th>
       <th>Skapad av</th>
    </tr>
-[% FOREACH rec IN select_list("select t FROM t WHERE t_status=4 AND t_entry IS TRUE AND t_published IS TRUE ORDER BY t_updated DESC LIMIT $step OFFSET $part_offset") %]
+[% FOREACH rec IN recs.from_page %]
    [% tr2 %]
       [% e = topic( rec.t ) %]
       <td>[% e.updated %]</td>
@@ -35,28 +38,8 @@
       <td>[% e.link %]</td>
       <td>[% e.first_ver.created_by.link; ' '; e.first_ver.created %]</td>
    </tr>
-   [% subpart.shown = loop.size %]
 [% END %]
 </table>
 </div>
 
-[%
-   DEFAULT subpart.shown = 0;
-
-   prev_from = offset - step;
-   prev_to = offset - 1;
-   this_to = offset + subpart.shown - 1;
-   this_from = this_to ? offset : 0;
-   next_from = offset + step;
-   next_to = offset + step + step - 1;
-%]
-
-<p align="center">
-[% IF offset > step %]
-   [% forward("$prev_from - $prev_to", me, offset = prev_from) %] | 
-[% END %]
-$this_from - $this_to
-[% IF subpart.shown == step %]
-   | [% forward("$next_from - $next_to", me, offset = next_from) %]
-[% END %]
-</p>
+<p align="center">[%recs.pagelist %]</p>

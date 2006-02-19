@@ -33,7 +33,7 @@ BEGIN
 
 use Para::Frame::Reload;
 use Para::Frame::Time qw( now );
-use Para::Frame::Utils qw( debug get_from_fork throw );
+use Para::Frame::Utils qw( debug throw );
 use Para::Frame::Widget qw( rowlist jump );
 
 use Para::Constants qw( :all );
@@ -157,19 +157,6 @@ sub select_persons
 
     my $req = $Para::Frame::REQ;
     my $q = $req->q;
-    my $offset = $q->param('offset')||1;
-    my $pagesize = $q->param('pagesize')||50;
-
-    $pagesize = min($pagesize,50) if $Para::Frame::U->level < 11;
-
-    $q->param('offset', $offset);
-    $q->param('pagesize', $pagesize);
-
-    if( $all )
-    {
-	$offset = 1;
-	$pagesize = 100000;
-    }
 
     my $belief     = $q->param('_belief')||0;
     my $knowledge  = $q->param('_knowledge');
@@ -201,7 +188,7 @@ sub select_persons
     my $interest_words = rowlist('interest');
     my( $interest_part,  @where_data, @where_part, @select );
 
-    debug "Interest words: @$interest_words";
+    debug 3, "Interest words: @$interest_words";
 
     if( $sex_m and $sex_f )
     {
@@ -349,7 +336,7 @@ sub select_persons
 
     if( $newsmail )
     {
-	warn "newsmail: $newsmail\n";
+	debug 3, "newsmail: $newsmail";
 	push @where_part, "newsmail >= ?";
 	push @where_data,  $newsmail;
     }
@@ -445,7 +432,7 @@ sub select_persons
 	    {
 		throw('notfound', "Vi vet inte var $place är någonstans\n");
 	    }
-	    warn "Hittade platsen $place\n";
+	    debug 3, "Hittade platsen $place\n";
 	}
 	else
 	{
@@ -465,7 +452,7 @@ sub select_persons
 		}
 
 		my $nickname = $m->nickname;
-		warn "Hittade person $nickname\n";
+		debug 3, "Hittade person $nickname\n";
 	    }
 	    else
 	    {
@@ -501,14 +488,18 @@ sub select_persons
 
     my $part_select = join ", ", 'member', @select;
     my $sql = 'select '.$part_select.' from member where '.$where_string.
-	" order by $order limit ? offset ?";
-    my(@data) = ($sql, @where_data, int($pagesize), int($offset-1));
+	" order by $order";
+    my(@data) = ($sql, @where_data);
 
 
     my $values = join ", ",map defined($_)?"'$_'":'<undef>', @data;
     debug "SQL: $values";
 
-    my $persons = get_from_fork(sub{$Para::dbix->select_list(@data)});
+    # Remember to recrate the List object returned
+    my $persons = $Para::dbix->cached_select_list(@data);
+
+    $persons->set_page_size( $q->param('pagesize') || 20 );
+
     return $persons;
 }
 

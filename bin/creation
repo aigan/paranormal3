@@ -36,7 +36,7 @@ our $SITE_CFG;  # Hashref with rest of config
 
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
-#use lib "$WA::APPROOT/lib";
+use lib "$WA::APPROOT/lib";
 use lib "$Ekoby::APPROOT/lib";
 
 use locale;
@@ -53,7 +53,7 @@ use Para::Frame::Site;
 use Para;
 use Para::Member;
 
-#use WA::Domains;
+use WA::Domains;
 use Ekoby::Ekonomi;
 
 {
@@ -114,10 +114,10 @@ use Ekoby::Ekonomi;
 	'backup_host'=> $SITE_CFG->{'backup_host'},
     });
 
-#    Para::Frame::Site->add({
-#	'webhost'    => $WA::HOST,
-#	'appbase'    => "WA",
-#    });
+    Para::Frame::Site->add({
+	'webhost'    => $WA::HOST,
+	'appbase'    => "WA",
+    });
 
     Para::Frame::Site->add({
 	'webhost'    => "tecken.se",
@@ -292,7 +292,7 @@ use Ekoby::Ekonomi;
      'motd'              => sub{ $Para::MOTD },
 
      ### WA Domains
-#     'wa_domains'        => WA::Domains->new,
+     'wa_domains'        => WA::Domains->new,
 
 
     };

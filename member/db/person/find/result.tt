@@ -2,13 +2,12 @@
         level = 5
 %]
 
+[% USE Sorted_table %]
 [% PROCESS person_find_menu.tt %]
 [% PROCESS load_member.tt %]
 
 [% 
-   subpart = {};
-   preserve_data('body','subject', 'offset', 'mid');
-   hidden('offset');
+   preserve_data('body','subject', 'mid');
 %]
 
 <p>
@@ -23,12 +22,19 @@
 
 [% TRY %]
 
+[% members = select_persons() %]
+
+<div align="center">
+<p>[% members.size %] träffar
+<p>[% members.pagelist %]
+</div>
+
 <div class="entry">
 <table>
 <tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th><th>Senast sedd</th>
 </tr>
 
-[% FOREACH select_persons() %]
+[% FOREACH members.from_page %]
    [% m = getmember( member ) %]
 
   [% tr2 %]
@@ -40,32 +46,11 @@
        <td>[% m.home_postal_city %]</td>
        <td>[% m.latest_seen %]</td>
    </tr>
-   [% subpart.shown = loop.size %]
 [% END %]
 </table>
 </div>
 
-[% 
-   offset = q.param('offset');
-   pagesize = q.param('pagesize') + 0;
-
-   prev_from = offset - pagesize;
-   prev_to = offset - 1;
-   this_from = offset;
-   this_to = offset + subpart.shown - 1;
-   next_from = offset + pagesize;
-   next_to = offset + pagesize + pagesize - 1;
-%]
-
-<p>
-[% IF offset > pagesize %]
-   [% go("$prev_from - $prev_to", 'result.tt', 'nop' offset = prev_from) %] | 
-[% END %]
-$this_from - $this_to
-[% IF subpart.shown == pagesize %]
-   | [% go("$next_from - $next_to", 'result.tt', 'nop' offset = next_from) %]
-[% END %]
-</p>
+<p align="center">[% members.pagelist %]</p>
 
 
 [% IF u.level > 6 %]

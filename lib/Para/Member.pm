@@ -370,7 +370,7 @@ sub on_login
 	my $sys = Para::Member->get(-1);
 	$u->level( 2, $sys );
 	my $req = $Para::Frame::REQ;
-	$req->set_template("/member/db/person/quest/level_02/welcome.tt");
+	$req->page->set_template("/member/db/person/quest/level_02/welcome.tt");
 	$u->changes->report;
     }
 }

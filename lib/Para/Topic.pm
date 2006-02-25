@@ -1185,41 +1185,44 @@ sub has_rel
 
     unless( ref $rel )
     {
-	if( $rel =~ /^\d+$/ )
+	if( $rel )
 	{
-	    @rels = $t->get_by_id( $rel );
-	}
-	elsif( $rel )
-	{
-	    debug(2,"Looking for related topic $rel");
-	    my $rels_in = $t->find_urlpart( $rel );
-	    if( @$rels_in == 1 )
+	    if( $rel =~ /^\d+$/ )
 	    {
-		@rels = @$rels_in;
-	    }
-	    elsif( @$rels_in > 1 )
-	    {
-		# Exclude media, order by oldes
-		my $media = Para::Topic->get_by_id( T_MEDIA );
-		foreach my $rel2 ( sort { $a->{'t'} <=> $b->{'t'} } @$rels_in )
-		{
-		    debug(2,"  Consider ".$rel2->sysdesig);
-		    next if $rel2->media;
-		    next if $rel2->has_rel(1, $media);
-		    push @rels, $rel2;
-		}
+		@rels = $t->get_by_id( $rel );
 	    }
 	    else
 	    {
-		warn "  Related topic $rel not found\n";
-		return 0;
-	    }
-
-	    if( debug > 1 )
-	    {
-		foreach my $rel2 ( @rels )
+		debug(2,"Looking for related topic $rel");
+		my $rels_in = $t->find_urlpart( $rel );
+		if( @$rels_in == 1 )
 		{
-		    debug "    Using ".$rel2->sysdesig."\n";
+		    @rels = @$rels_in;
+		}
+		elsif( @$rels_in > 1 )
+		{
+		    # Exclude media, order by oldes
+		    my $media = Para::Topic->get_by_id( T_MEDIA );
+		    foreach my $rel2 ( sort { $a->{'t'} <=> $b->{'t'} } @$rels_in )
+		    {
+			debug(2,"  Consider ".$rel2->sysdesig);
+			next if $rel2->media;
+			next if $rel2->has_rel(1, $media);
+			push @rels, $rel2;
+		    }
+		}
+		else
+		{
+		    warn "  Related topic $rel not found\n";
+		    return 0;
+		}
+
+		if( debug > 1 )
+		{
+		    foreach my $rel2 ( @rels )
+		    {
+			debug "    Using ".$rel2->sysdesig."\n";
+		    }
 		}
 	    }
 	}
@@ -3491,7 +3494,7 @@ sub generate_url
 	if( $m->present_contact_public < 5 )
 	{
 	    $t->file(''); # This will make filename undef
-	    debug(1,sprintf "%s is a anonumous user", $m->desig);
+	    debug(1,sprintf "That is a anonumous user");
 	    return [];
 	}
 

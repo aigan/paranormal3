@@ -105,7 +105,7 @@ sub handler
 	$q->param('_name', ucfirst $alias);
 	delete $news->{$alias};
 
-	$req->set_template('/member/db/topic/create/maby.tt');
+	$req->page->set_template('/member/db/topic/create/maby.tt');
     }
     else
     {

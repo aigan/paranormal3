@@ -167,8 +167,9 @@ sub handler
 
     if( length($session_key) == 37 )
     {
-	$req->{'redirect'} = $paynova_server_url
-	  . "/wallet/default.asp?sessionKey=" . $session_key;
+	$req->page->redirect($paynova_server_url
+			     . "/wallet/default.asp?sessionKey="
+			     . $session_key);
     }
     else
     {

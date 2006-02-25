@@ -163,7 +163,7 @@ sub handler
 	}
 
 	$q->param('tid', $eid);
-	$req->set_template( "/member/db/topic/edit/text.tt" );
+	$req->page->set_template( "/member/db/topic/edit/text.tt" );
     }
 
 

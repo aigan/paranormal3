@@ -13,6 +13,7 @@ sub handler
 {
     my( $req ) = @_;
 
+    my $page = $req->page;
     my $q = $req->q;
     my $u = $req->s->u;
     my $result = $req->result;
@@ -115,7 +116,7 @@ sub handler
 	debug "Trying $filename";
 	if( -r $filename ) # Realy existing?
 	{
-	    $req->redirect($path);
+	    $page->redirect($path);
 	    my $title = $t->title;
 	    return "Found $title";
 	}
@@ -131,7 +132,7 @@ sub handler
 	    debug "Trying $filename again";
 	    if( -r $filename ) # Realy existing?
 	    {
-		$req->redirect($path);
+		$page->redirect($path);
 		my $title = $t->title;
 		return "Found $title";
 	    }
@@ -152,7 +153,7 @@ sub handler
 	if( $err->type eq 'notfound' )
 	{
 	    my $query = $q->escapeHTML($talias);
-	    $req->redirect("/cgi-bin/htsearch?config=htdig&words=$query");
+	    $page->redirect("/cgi-bin/htsearch?config=htdig&words=$query");
 	    return "$talias Not found";
 	}
 	elsif( $err->type eq 'alternatives' )
@@ -167,7 +168,7 @@ sub handler
 	if( $m->present_contact_public < 1 )
 	{
 	    my $query = $q->escapeHTML($talias);
-	    $req->redirect("/cgi-bin/htsearch?config=htdig&words=$query");
+	    $page->redirect("/cgi-bin/htsearch?config=htdig&words=$query");
 	    return "$talias Not found";
 	}
 	else

@@ -2116,14 +2116,15 @@ sub latest_seen
 
 sub online
 {
-    if( $_[0]->latest_in >= $_[0]->latest_out )
+    if( $_[0]->latest_in )
     {
-	return 1;
+	if( $_[0]->latest_in >= $_[0]->latest_out )
+	{
+	    return 1;
+	}
     }
-    else
-    {
-	return 0;
-    }
+
+    return 0;
 }
 
 sub offline
@@ -2631,8 +2632,8 @@ sub save_scores
     my $m_old_scores = $m_old->score_hash;
 
     return $Para::dbix->save_record({
-	rec_new => $m->score_hash,
-	rec_old => $m_old->score_hash,
+	rec_new => $m_scores,
+	rec_old => $m_old_scores,
 	table   => 'score',
 	key     => 'score_member',
 	keyval  => $mid,
@@ -2811,6 +2812,9 @@ sub publish
 sub vacuum
 {
     my( $m ) = @_;
+
+    # Clear out the cache
+    $m->discard_changes;
 
     # Fix mailbox data
     $m->update_mail_forward;

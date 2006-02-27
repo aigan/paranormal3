@@ -373,7 +373,7 @@ sub find_one
 	my $req = $Para::Frame::REQ;
 	my $res = $req->result;
 	my $alt = $res->{'info'}{'alternatives'} ||= {};
-	$alt->{'list'} = $topics;
+	$alt->{'alts'} = $topics;
 	$alt->{'rowformat'} = sub
 	{
 	    my( $t ) = @_;

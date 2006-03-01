@@ -23,8 +23,8 @@
 <h2>Graderat intresse: [% gi = select_record("select count(intrest) as cnt from intrest where intrest_topic=? and intrest_defined>1",tid); gi.cnt %]</h2>
 
 
+[% IF gi.cnt %]
 <table>
-
 <tr>
   <th class="colheader">Ointresserad
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>1 and intrest < 30 ",tid); s.cnt %]
@@ -42,16 +42,15 @@
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>1 and intrest >= 70 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  gi.cnt | format('%d') %]%
 </tr>
-
 </table>
-
+[% END %]
 
 
 
 <h2>Specificerat intresse: [% si = select_record("select count(intrest) as cnt from intrest where intrest_topic=? and intrest_defined>10",tid); si.cnt %]</h2>
 
+[% IF si.cnt %]
 <table>
-
 <tr><th colspan="3">Intresse</th></tr>
 
 <tr>
@@ -71,9 +70,7 @@
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and intrest >= 70 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
-
 </table>
-
 
 
 [% IF select_possible_record('from rel where rev=? and rel_type=1 and rel=10 and rel_active is true and rel_strength >= 30', tid) %]
@@ -184,10 +181,8 @@
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and intrest_description is not null",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
-
 </table>
-
-
+[% END %]
 
 
 

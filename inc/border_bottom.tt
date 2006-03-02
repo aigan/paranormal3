@@ -1,3 +1,4 @@
+</div>
 <div id="footer">
 [% UNLESS u.level %]
 <p>Detta är en sida från webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.
@@ -13,3 +14,12 @@ webbplats</a>.</p>
 </p>
 
 </div>
+
+</form>
+
+[% IF u.complexity > 15 %]
+[% PROCESS menu_admin_pf.tt %]
+[% IF debug %]
+   [% PROCESS debug.tt %]
+[% END %]
+[% END %]

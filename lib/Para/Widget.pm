@@ -846,7 +846,7 @@ sub new_entry
 #		sleep 5;
 #	    }
 
-	    debug(6,"W0 $words[0] A $alias T $tid F $file");
+#	    debug(6,"W0 $words[0] A $alias T $tid F $file");
 	    unless( length($words[0]) and length($alias) )
 	    {
 		warn "STRANGE ALIAS: W0 $words[0] A $alias T $tid F $file";
@@ -945,7 +945,7 @@ sub insert_autolinks
 		  $debug_ra_text .= "Analyze '$match' followed by '$middle'\n" if debug;
 		  if( my $try = $Para::link_db->[$size]{lc($match)} )
 		  {
-		      debug(3,"$debug_ra_text  Checking $match");
+#		      debug(3,"$debug_ra_text  Checking $match");
 		      my $pos = pos($text);
 		      #		warn " - perform matching on '$text'\n";
 		      if( $size and $text =~ /((?:\w+(?:\W+|$)){$size})/gc )
@@ -963,7 +963,7 @@ sub insert_autolinks
 			{
 			    while(1)
 			    {
-				debug(3,"  looking for $looking");
+#				debug(3,"  looking for $looking");
 				if( my $rec = $try->{lc($looking)} )
 				{
 				    if( $rec->{'tid'} and $Para::entry_links->{$rec->{'tid'}} ++ )
@@ -974,7 +974,7 @@ sub insert_autolinks
 				    }
 				    else
 				    {
-					debug(3,"    Matched $looking!");
+#					debug(3,"    Matched $looking!");
 					push @links, set_autolink( $rec, $looking );
 					$newtext .= "¤$#links¤$last";
 				    }

@@ -115,11 +115,11 @@ sub handler
 
     }
 
-    $req->{'renderer'} = sub
-    {
-	$req->{'page'} = \$out;
-	$req->{'page_sender'} = 'bytes';
-    };
+    $req->page->set_renderer(sub {
+	my $page = shift->page;
+	$page->{'page_content'} = \$out;
+	$page->{'page_sender'} = 'bytes';
+    });
 
 #    $r->status(200);
 #    $r->header_out( 'Connection', 'close' );

@@ -426,7 +426,7 @@ sub presentation
 	#
 	# $other = $group_a;
 
-	if( debug 3 )
+	if( debug >= 3 )
 	{
 	    warn "\n";
 	    warn "Relation: $title\n";
@@ -547,7 +547,7 @@ sub presentation
 		    {
 			my $t = Para::Topic->get_by_id($tid);
 			my $title = $t->desig;
-			if( debug( 3 ) )
+			if( debug >= 3 )
 			{
 			    debug "\t$title has no other belongings";
 			    foreach my $relt ( values %{$placements{$tid}} )
@@ -626,7 +626,7 @@ sub presentation
 	    if( $points{ $group_id } > NORMSIZE*2 )
 	    {
 		$other = {};
-		if( debug 3 )
+		if( debug >= 3 )
 		{
 		    warn "    Moving topics from group $gname to others\n";
 		}
@@ -684,7 +684,7 @@ sub presentation
 	    {
 		if( scalar( keys %{$placements{$tid}} ) == 1 )
 		{
-		    if( debug 3 )
+		    if( debug >= 3 )
 		    {
 			my $title = Para::Topic->get_by_id($tid)->desig;
 			debug "\t$title has no other place";

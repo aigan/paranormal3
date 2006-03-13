@@ -237,4 +237,35 @@ sub clear_tempfiles
     close TMP;
 }
 
+sub display_slogan
+{
+    unless( @Para::slogans )
+    {
+	open FILE, "/var/www/old.paranormal.se/cgi/slogans.txt";
+	@Para::slogans = <FILE>;
+	close FILE;
+
+	my $sth = $Para::dbh->prepare("insert into slogan (slogan, slogan_text) values (?,?)");
+
+	foreach my $slogan (@Para::slogans )
+	{
+	    my $id = $Para::dbix->get_nextval( "slogan_seq" );
+	    $sth->execute($id, $slogan);
+	}
+	$Para::dbh->commit;
+
+#
+#	my $recs = $Para::dbix->select_list('from slogans');
+#	foreach my $rec (@$recs )
+#	{
+#	    push @Para::slogans, $rec->{'slogan_text'};
+#	}
+    }
+
+    srand();
+    my $rand = int(rand(@Para::slogans));
+    return $Para::slogans[$rand];
+}
+
+
 1;

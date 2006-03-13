@@ -38,6 +38,8 @@ use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
 use lib "$WA::APPROOT/lib";
 use lib "$Ekoby::APPROOT/lib";
+use lib "$Para::Healing::APPROOT/lib";
+
 
 use locale;
 use Data::Dumper;
@@ -106,6 +108,13 @@ use Ekoby::Ekonomi;
 	    connect => ["DBI:Pg:dbname=ekoby"],
 	});
 
+    $Para::Healing::dbix = Para::Frame::DBIx ->
+	new({
+	     connect            =>  ["dbi:Pg:dbname=healing;port=5433"],
+	     datetime_formatter => 'DateTime::Format::Pg',
+	});
+
+
     Para::Frame::Site->add({
 	# Path in  URL to website
 	'webhome'    => '',
@@ -114,6 +123,26 @@ use Ekoby::Ekonomi;
 	'static_ttc' => "$APPROOT/var/ttc/static",
 	'backup_host'=> $SITE_CFG->{'backup_host'},
     });
+
+    Para::Frame::Site->add({
+			    'aliases'     => ['healing'],
+			    'code'        => 'healing',
+			    'name'        => 'Healing',
+			    'webhome'     => $Para::Healing::WEBHOME,
+			    'webhost'     => $Para::Healing::WEBHOST,
+			    'appbase'     => 'Para::Healing',
+			    'is_compiled' => 0,
+			    'time_format' => "%Y-%m-%d kl %H:%M:%S",
+			    'params' 	  =>
+			    {
+		             'hdb'        => $Para::Healing::dbix,
+			     'css'	  => 'style.css',
+			     'favicon'    => 'images/hjarta2c.ico',
+			     'description' => 'Hemsidan om olika healing-stilar såsom Reiki, Kundalini Reiki, Imara Reiki m.fl samt Indigo och
+			     en avdelning för personlig/andlig utveckling. Vi har även ett forum som behandlar ett flertal ämnen.',
+			     'keywords'    => 'reiki, taz, usui reiki, meditation, energi, manual, reiki manual, reiki forum, forum, reiki sweden, reiki sverige, indigo, nordisk reiki/indigo, nordisk reiki indigo, the-taz.net, hikkei, initieringar, indigobarn, indigovuxna, chakra, chakras, själsfärg, balansera, balans, universell energi, ki, chi, qi, livsenergi, indigoväg, indigovägen, indigovuxen, spirituell utveckling, personlig utveckling, meditation, mikao usui, dr usui, healing, självhealing, distanshealing, andlig utveckling, andlig, spirituell, kundalini reiki, tacyon reiki, past life reiki, birth trauma reiki, dna reiki, indigo reiki, diamond reiki, eteriska kristaller, location reiki, crystalline reiki, ethereal crystals, gold reiki, guld reiki, andlighet, bates metod, kärlek, nionde chakra, tionde chakra, åttonde chakra, jorda sig, jord, balansera aura, mental sköld, mental skydd, tam a ra sha, tamarasha, tars, chokurei, cho ku rei, ckr, dai ko myo, daikomyo, dkm, hon sha ze sho nen, honshazeshonen, hszsn, sei he ki, seiheki, shk, reiki dummies',
+			    }
+			   });
 
     Para::Frame::Site->add({
 	'webhost'    => $WA::HOST,
@@ -191,6 +220,9 @@ use Ekoby::Ekonomi;
 	'html_psi_nolinks' => \&Para::Widget::html_psi_nolinks_factory,
     }, 1);
 
+    Para::Frame::Burner->get_by_type('html')->add_filters({
+	'alink' => \&Para::Widget::autolink,
+     });
 
     # Attatch code to hooks
     #
@@ -225,9 +257,10 @@ use Ekoby::Ekonomi;
 			  {
 			      $Para::dbix->connect;
 			      $Ekoby::dbix->connect;
+			      $Para::Healing::dbix->connect;
 
-			      # Take shortcut...
-			      return unless $SITE_CFG->{'do_bgjob'};
+#			      # Take shortcut...
+#			      return unless $SITE_CFG->{'do_bgjob'};
 
 			      # Setup MOTD
 			      Para::Widget::new_entry(undef, 'static');
@@ -291,6 +324,7 @@ use Ekoby::Ekonomi;
      'favicon'           => "/favicon.ico",
      'body_class'        => "meta",
      'motd'              => sub{ $Para::MOTD },
+     'display_slogan'    => \&Para::display_slogan,
 
      ### WA Domains
      'wa_domains'        => WA::Domains->new,

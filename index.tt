@@ -7,7 +7,7 @@
 <table>
 <tr><td width="75"><img src="/images/icon/paranormala_fenomen_icon.jpg" alt="" /></td><td style="vertical-align: bottom">
 <h1><a href="/">Paranormal.se</a></h1>
-<p class="slogan">Uppslagsverk för paranormala fenomen</p>
+<p class="slogan">[% display_slogan %]</p>
 
 </td><td style="font-size: 0.7em; text-align: right">
 
@@ -17,10 +17,6 @@
 </table>
 
 [% IF u.level %]
-   <div class="notice">
-      <h2>NYHETER</h2>
-      [% motd %]
-   </div>
 [% ELSE %]
    <p>Här finns tusentals uppslagsord. Sök med sökrutan uppe till höger. Du kan också bläddra i [% jump("indexet", "/topic") %]. Eller klicka dig fram bland korshänvisningarna i uppslagsorden.</p>
 

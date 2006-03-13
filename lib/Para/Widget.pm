@@ -9,7 +9,7 @@ package Para::Widget;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2006 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -1128,6 +1128,17 @@ sub insert_web_links
     }
     $newtext .= substr( $$textref, pos($$textref)||0);
     $$textref = $newtext;
+}
+
+sub autolink {
+    my $text = shift;
+    # search for http:// anything html|htm|php|tt|/
+    $text =~ s/(http:.+(html|htm|php|\/|tt))/<a href="$1" target="_blank">$1<\/a>/gi;
+
+    # search for www. anything .se  etc
+    $text =~ s/(www.+.(se|net|org|com|nu|tk|co.uk|dk))/<a href="http:\/\/$1" target="_blank">$1<\/a>/gi;
+    
+    return $text;
 }
 
 sub insert_explicit_links

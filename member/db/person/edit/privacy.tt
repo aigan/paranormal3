@@ -136,4 +136,17 @@ gåvorna anonymt så är det också okej.
 
 [% END %]
 
+[% WRAPPER draw_alt title='Visa dagbok/BLOG' field='present_blog' min='MIN' max='MAX'
+   values = 
+   {
+	'0' => '0. Visa inget'
+	'1' => '1. Endast medlemmar'
+	'2' => '2. Öppen'
+   }
+%]
+
+Visar din dagbok.
+
+[% END %]
+
 [% step %]

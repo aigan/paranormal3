@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Editera metadata'
+	otitle = 'Redigera metadata'
 	next_action = 'topic_update'
 	next_template = '/member/db/topic/view/'
 %]

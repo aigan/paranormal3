@@ -85,9 +85,9 @@ på en undersida.
 %]
 
 Ju högre värde, desto enklare har du att ändra uppgifter du ser.
-Detta anger bara huruvida du vill se editeringsknappar överallt för
-att direkt editera en viss detalj, eller ifall du vill gå via
-editeringsläge för att ändra en uppgift.
+Detta anger bara huruvida du vill se redigeringsknappar överallt för
+att direkt redigera en viss detalj, eller ifall du vill gå via
+redigeringsläge för att ändra en uppgift.
 
 [% END %]
 

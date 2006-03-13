@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Editera arc'
+	otitle = 'Redigera arc'
 	next_template = '/member/db/topic/edit/meta.tt'
 	next_action = 'arc_update'
 %]
@@ -20,7 +20,7 @@
    PROCESS buttons.tt;
 %]
 
-<h1>[% arc.id %]: Editera relation</h1>
+<h1>[% arc.id %]: Redigera relation</h1>
 
 [% PROCESS edit_menu.tt %]
 

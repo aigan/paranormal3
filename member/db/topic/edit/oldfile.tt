@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Editera gammal URL'
+	otitle = 'Redigera gammal URL'
 	next_action = 'topic_update'
 	focus = 't_text'
 	next_template = '/member/db/topic/view/'

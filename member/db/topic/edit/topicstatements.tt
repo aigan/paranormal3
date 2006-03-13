@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Editera ämnesuttalanden'
+	otitle = 'Redigera ämnesuttalanden'
 	next_template = '/member/db/topic/view/'
 	next_action = 'ts_update'
 %]

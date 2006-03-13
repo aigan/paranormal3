@@ -91,9 +91,17 @@
 
 <br clear="all">
 
+<div class="notice">
+<h2>Just nu</h2>
+
+[% motd %]
+
+<p>Det är just nu [% jump(inflect(count_online, '1 medlem inloggad', '%d medlemmar inloggade'), "person/find/online.tt") %] här</p>
+</div>
+
+
 [% IF route.size %]
 <p>[% step %]
 </p>
 [% END %]
 
-<p>Det är just nu [% jump(inflect(count_online, '1 medlem inloggad', '%d medlemmar inloggade'), "person/find/online.tt") %] här</p>

@@ -115,6 +115,21 @@ use Ekoby::Ekonomi;
 	});
 
 
+
+
+    my $para_css =
+    {
+	persistent => [ "/css/default.css" ],
+	alternate =>
+	{
+	    light => [ "/css/light.css" ],
+	    blue => [ "/css/blue.css" ],
+	},
+	default => 'light',
+    };
+
+
+
     Para::Frame::Site->add({
 	# Path in  URL to website
 	'webhome'    => '',
@@ -122,6 +137,10 @@ use Ekoby::Ekonomi;
 	'last_step'  => "/member/db/",
 	'static_ttc' => "$APPROOT/var/ttc/static",
 	'backup_host'=> $SITE_CFG->{'backup_host'},
+	'params'     =>
+	{
+	    'css'        => $para_css,
+	},
     });
 
     Para::Frame::Site->add({
@@ -147,10 +166,18 @@ use Ekoby::Ekonomi;
     Para::Frame::Site->add({
 	'webhost'    => $WA::HOST,
 	'appbase'    => "WA",
+	'params'     =>
+	{
+	    'css'        => $para_css,
+	},
     });
 
     Para::Frame::Site->add({
 	'webhost'    => "tecken.se",
+	'params'     =>
+	{
+	    'css'        => $para_css,
+	},
     });
 
     Para::Frame::Site->add({
@@ -188,16 +215,6 @@ use Ekoby::Ekonomi;
 	'webhost'    => "frame.para.se",
 	'params' =>
 	{
-	    'css'               =>
-	    {
-		persistent => [ "/css/default.css" ],
-		alternate =>
-		{
-		    light => [ "/css/light.css" ],
-		    blue => [ "/css/blue.css" ],
-		},
-		default => 'light',
-	    },
 	},
     });
 
@@ -311,16 +328,6 @@ use Ekoby::Ekonomi;
      'lc'                => sub{ "\L$_[0]" },
 
      'timediff'          => \&Para::Frame::Utils::timediff,
-     'css'               =>
-     {
-      persistent => [ "/css/default.css" ],
-      alternate =>
-      {
-       light => [ "/css/light.css" ],
-       blue => [ "/css/blue.css" ],
-      },
-      default => 'light',
-     },
      'favicon'           => "/favicon.ico",
      'body_class'        => "meta",
      'motd'              => sub{ $Para::MOTD },

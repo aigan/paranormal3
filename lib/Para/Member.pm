@@ -550,13 +550,14 @@ sub update_by_query
 
     foreach my $field ( qw( home_online_icq home_online_aol
 				 sys_logging present_intrests
-				 present_activity present_gifts general_belief
+				 present_activity present_gifts
+				 present_blog general_belief
 				 general_theory general_practice
 				 general_editor general_helper
 				 general_meeter general_bookmark
 				 general_discussion show_complexity
-				 show_detail show_edit show_level newsmail
-				 member_topic chat_level ) )
+				 show_detail show_edit show_level
+				 newsmail member_topic chat_level ) )
 
     {
 	if( defined $q->param($field) )
@@ -628,6 +629,7 @@ sub present_contact_public { shift->{'present_contact_public'} ||0 }
 sub present_activity  { shift->{'present_activity'} ||0 }
 sub present_interests { shift->{'present_intrests'} ||0  }
 sub present_gifts { shift->{'present_gifts'} ||0 }
+sub present_blog { shift->{'present_blog'} ||0 }
 
 sub topic
 {

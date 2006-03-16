@@ -105,7 +105,7 @@ use Ekoby::Ekonomi;
     #
     $Ekoby::dbix = Para::Frame::DBIx ->
 	new({
-	    connect => ["DBI:Pg:dbname=ekoby"],
+	    connect => ["DBI:Pg:dbname=ekoby;port=5433"],
 	});
 
     $Para::Healing::dbix = Para::Frame::DBIx ->

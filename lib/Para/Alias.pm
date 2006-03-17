@@ -226,6 +226,18 @@ sub urlpart
     return $_[0]->{'talias_urlpart'};
 }
 
+sub equals
+{
+    if( ($_[0]->{'talias_t'} == $_[1]->{'talias_t'} ) and
+	($_[0]->{'talias'} eq $_[1]->{'talias'} ) )
+    {
+	return 1;
+    }
+
+    return 0;
+}
+
+
 ### Methods
 
 sub activate
@@ -552,15 +564,42 @@ sub update
 
 sub remove
 {
-    die 'not implemented';
+    my( $a, $reason ) = @_;
+
+    my $name = $a->name;
+    my $tid = $a->tid;
+
+    die "No reason given for removing $name" unless $reason;
+
+    my $change = $Para::Frame::REQ->change;
+
+    my $st = "delete from talias where talias_t=? and talias=?";
+    my $sth = $Para::dbh->prepare( $st );
+    $sth->execute( $tid, $name );
+
+    # Reset cache
+    delete $Para::Topic::ALIASES{$tid};
+    $a->find_by_tid( $tid );
+
+    return $change->success("Removed alias '$name': $reason");
 }
+
+=head2 reset
+
+Returns the cleaned alias if still existing.
+
+Returns undef if this alias has been deleted.
+
+=cut
 
 sub reset
 {
     my( $a ) = @_;
 
-    my $rec = $Para::dbix->select_record("from talias where talias_t=? and talias=?",
-			    $a->topic->id, $a->name);
+    my $rec = $Para::dbix->select_possible_record("from talias where talias_t=? and talias=?",
+						  $a->tid, $a->name);
+
+    return undef unless $rec;
 
     reset_hashref( $a, $rec );
 
@@ -571,23 +610,63 @@ sub vacuum
 {
     my( $a ) = @_;
 
-    $a->reset;
+    $a->reset or return undef;
 
-    my $talias = $a->name;
+    $a->remove_duplicate;
+
+    my $talias_in = $a->name;
+    my $talias_out = lc trim $talias_in;
     my $talias_tid = $a->tid;
     my $urlpart_in  = $a->urlpart;  
-    my $urlpart_out = title2url($talias);
-    if( $urlpart_in ne $urlpart_out )
+    my $urlpart_out = title2url($talias_out);
+    if( ($urlpart_in ne $urlpart_out) or ($talias_in ne $talias_out) )
     {
 	$a->{'talias_urlpart'} = $urlpart_out;
-	debug "Correcting urlpart for alias $talias in t $talias_tid";
-	my $st = "update talias set talias_urlpart=?
+	debug "Correcting urlpart for alias $talias_out in t $talias_tid";
+	my $st = "update talias set talias_urlpart=?, talias=?
                   where talias_t=? and talias=?";
 	my $sth = $Para::dbh->prepare( $st );
-	$sth->execute( $urlpart_out, $talias_tid, $talias );
+	$sth->execute( $urlpart_out, $talias_out, $talias_tid, $talias_in );
     }
 
     return $a;
+}
+
+sub remove_duplicate
+{
+    my( $a ) = @_;
+
+    # Fixes cases then the alias string not been normalized
+
+    my $t = $a->topic;
+    my $name = lc trim $a->name;
+    my $change = $Para::Frame::REQ->change;
+
+    my @duplicates = ();
+    my $best = $a;
+
+    foreach my $oa ( values %{ $Para::Topic::ALIASES{$t->id} } )
+    {
+	if( $name eq lc trim $oa->name )
+	{
+	    push @duplicates, $oa;
+	    if( $oa->status > $best->status )
+	    {
+		if( $oa->active or !$best->activ )
+		{
+		    $best = $oa;
+		}
+	    }
+	}
+    }
+
+    foreach my $oa ( @duplicates )
+    {
+	next if $oa->equals( $best );
+	$oa->remove("duplicate");
+    }
+
+    return;
 }
 
 1;

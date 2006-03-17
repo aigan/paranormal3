@@ -2410,6 +2410,14 @@ sub aliases
 
 	foreach my $a ( values %{ $Para::Topic::ALIASES{$t->id} } )
 	{
+	    # Remove duplicates if existing
+	    if( $res{$a->name} )
+	    {
+		$a->remove_duplicate();
+		return $t->aliases($crits);
+	    }
+
+
 	    if( $crit_active )
 	    {
 		next unless $a->active;

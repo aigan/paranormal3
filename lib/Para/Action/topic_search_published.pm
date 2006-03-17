@@ -41,7 +41,7 @@ sub handler
 		    push @$topics, Para::Topic->get_by_id( $tid );
 		}
 
-		$result->{'info'}{'alternatives'}{'list'} = $topics;
+		$result->{'info'}{'alternatives'}{'alts'} = $topics;
 		throw 'alternatives', "Välj en av dessa";
 	    }
 	    else
@@ -91,7 +91,8 @@ sub handler
 
 	    if( @$topics_out > 1 )
 	    {
-		$result->{'info'}{'alternatives'}{'list'} = $topics_out;
+		$result->{'info'}{'alternatives'}{'alts'} = $topics_out;
+		warn Dumper($result->{'info'});
 		throw('alternatives', "Välj ett av dessa alternativ för ämnet '$talias'");
 	    }
 	    elsif( @$topics_out < 1 )

@@ -6,8 +6,8 @@
    body_class="default"
 %]
 
-[% IF result.info.alternatives;
-   alts = result.info.alternatives;
+[% IF req.result.info.alternatives;
+   a = req.result.info.alternatives;
 %]
 
 [% string = q.param('talias') %]
@@ -15,13 +15,13 @@
    [% IF string %]
       Flera ämnen har aliaset <code>[% string | html %]</code>
    [% ELSE %]
-      [% result.parts.0.message %]
+      [% req.result.parts.0.message %]
    [% END %]
 </div>
 
 <div class="entry">
    <table cellpadding="10">
-   [% FOREACH t = alts.list %]
+   [% FOREACH t IN a.alts %]
       [% tr2 %]
          <td valign="top">[% jump(t.desig, me, tid=t.id, run='topic_search_published') %] [% PROCESS typelist.tt %]</td><td valign="top">[% t.text | html %]</td>
       </tr>
@@ -29,7 +29,7 @@
    </table>
 </div>
 
-[% ELSIF result.parts.0.type == 'notfound' %]
+[% ELSIF req.result.parts.0.type == 'notfound' %]
    [% info = result.info.notfound %]
    [% CALL req.set_http_status(404) %]
 <h1 align="center">404 - Vilse i det okända</h1>
@@ -40,7 +40,7 @@
 [% ELSE %]
    Hittar inte <code>[% info.name %]</code><br>
 [% END %]
-[% result.parts.0.message | html %]
+[% req.result.parts.0.message | html %]
 </div>
 <div class="entry">
 
@@ -113,7 +113,7 @@ document.f.talias.focus();
 [% END %]
 
 
-[% IF result.info.create_confirm;
+[% IF req.result.info.create_confirm;
    RETURN;
 END;
 %]

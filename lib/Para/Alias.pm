@@ -279,7 +279,7 @@ sub add
                             talias_status, talias_autolink,
                             talias_index, talias_language,
                             talias_active )
-              values ( ?, lower(?), ?, ?, ?, ?, ?, ?, ?, ? )";
+              values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
     my $sth_alias_add = $Para::dbh->prepare( $st_alias_add );
 
     my $talias_t         = $t->id or die;
@@ -577,8 +577,10 @@ sub remove
     my $sth = $Para::dbh->prepare( $st );
     $sth->execute( $tid, $name );
 
-    # Reset cache
+    ### Sync
+    #
     delete $Para::Topic::ALIASES{$tid};
+    delete $Para::Alias::CACHE{$name};
     $a->find_by_tid( $tid );
 
     return $change->success("Removed alias '$name': $reason");
@@ -622,11 +624,21 @@ sub vacuum
     if( ($urlpart_in ne $urlpart_out) or ($talias_in ne $talias_out) )
     {
 	$a->{'talias_urlpart'} = $urlpart_out;
-	debug "Correcting urlpart for alias $talias_out in t $talias_tid";
+	debug "Correcting alias $talias_in in t $talias_tid";
 	my $st = "update talias set talias_urlpart=?, talias=?
                   where talias_t=? and talias=?";
 	my $sth = $Para::dbh->prepare( $st );
 	$sth->execute( $urlpart_out, $talias_out, $talias_tid, $talias_in );
+
+	$a->{'talias_urlpart'} = $urlpart_out;
+	if( $talias_in ne $talias_out )
+	{
+	    delete $Para::Alias::CACHE{$talias_in};
+	    $a->find_by_name( $talias_out );
+	    $a->find_by_name( $talias_in );
+	    delete $Para::Topic::ALIASES{$talias_tid};
+	    $a->find_by_tid( $talias_tid );
+	}
     }
 
     return $a;
@@ -663,6 +675,7 @@ sub remove_duplicate
     foreach my $oa ( @duplicates )
     {
 	next if $oa->equals( $best );
+	debug "About to remove an alias $name";
 	$oa->remove("duplicate");
     }
 

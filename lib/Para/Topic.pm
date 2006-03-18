@@ -2393,10 +2393,13 @@ sub aliases
 
 #    warn Dumper $Para::Topic::ALIASES{$t->id};
 
+    my $tid = $t->id;
+
     # Shared by all versions of topic
-    unless( $Para::Topic::ALIASES{$t->id} )
+    unless( $Para::Topic::ALIASES{$tid} )
     {
-	return Para::Alias->find_by_tid( $t->id );
+	# Initiating cache
+	Para::Alias->find_by_tid( $tid );
     }
 
     # Filter out used crits
@@ -2408,7 +2411,7 @@ sub aliases
     {
 	my %res = ();
 
-	foreach my $a ( values %{ $Para::Topic::ALIASES{$t->id} } )
+	foreach my $a ( values %{ $Para::Topic::ALIASES{$tid} } )
 	{
 	    # Remove duplicates if existing
 	    if( $res{$a->name} )
@@ -2431,7 +2434,7 @@ sub aliases
 	return \%res;
     }
 
-    return $Para::Topic::ALIASES{$t->id};
+    return $Para::Topic::ALIASES{$tid};
 }
 
 

@@ -5,7 +5,7 @@
 	body_class = "front"
 %]
 <table>
-<tr><td width="75"><img src="/images/icon/paranormala_fenomen_icon.jpg" alt="" /></td><td style="vertical-align: bottom">
+<tr><td width="75"><a href="/topic/bilden_pa_boken.html"><img src="/images/icon/paranormala_fenomen_icon.jpg" alt="" border="0" /></a></td><td style="vertical-align: bottom">
 <h1><a href="/">Paranormal.se</a></h1>
 <p class="slogan">[% display_slogan %]</p>
 

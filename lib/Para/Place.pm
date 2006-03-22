@@ -27,7 +27,6 @@ BEGIN
 }
 
 use Para::Frame::Utils qw( trim throw debug retrieve_from_url );
-use Para::Constants qw( :all );
 
 sub new
 {

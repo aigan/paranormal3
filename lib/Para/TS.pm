@@ -31,7 +31,7 @@ use Para::Frame::Utils qw( debug );
 use Para::Frame::DBIx qw( pgbool );
 
 use Para::Topic;
-use Para::Constants qw( S_REPLACED );
+use Para::Constants qw( $C_S_REPLACED );
 
 #
 # "entry" is a media that says something about "topic" 
@@ -170,7 +170,7 @@ sub set
     }
     if( not $active )
     {
-	$new_status = S_REPLACED;
+	$new_status = $C_S_REPLACED;
     }
 
     my $change = 0;

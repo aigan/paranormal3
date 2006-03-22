@@ -8,7 +8,7 @@ use List::Util qw( min );
 use Para::Frame::Utils qw( throw );
 
 use Para::Member;
-use Para::Constants qw( C_OP );
+use Para::Constants qw( $C_C_OP );
 
 sub handler
 {
@@ -17,7 +17,7 @@ sub handler
     my $q = $req->q;
     my $u = $req->s->u;
 
-    if( $u->chat_level < C_OP )
+    if( $u->chat_level < $C_C_OP )
     {
 	throw('denied', "Endast för ops");
     }

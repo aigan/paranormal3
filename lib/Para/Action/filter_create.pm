@@ -4,7 +4,6 @@ use strict;
 
 use Para::Frame::Time qw( date now );
 use Para::Frame::Utils qw( throw trim );
-use Para::Constants qw( MONTH_LENGTH T_PRENUMERATION T_PARANORMAL_SWEDEN );
 
 sub handler
 {

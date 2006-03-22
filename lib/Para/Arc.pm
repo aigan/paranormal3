@@ -32,10 +32,10 @@ use Para::Frame::Time qw( date now );
 use Para::Frame::Utils qw( throw debug );
 use Para::Frame::DBIx qw( pgbool );
 
+use Para::Constants qw( :all );
 use Para::Topic;
 use Para::Arctype;
 use Para::Utils qw( cache_update );
-use Para::Constants qw( :all );
 
 # This will make "if($arc)" false if the arc is 'removed'
 #
@@ -241,11 +241,11 @@ sub find
     {
 	if( $true_versions )
 	{
-	    push @parts, "rel_strength >= ".TRUE_MIN;
+	    push @parts, "rel_strength >= ".$C_TRUE_MIN;
 	}
 	if( $false_versions )
 	{
-	    push @parts, "rel_strength < ".TRUE_MIN;
+	    push @parts, "rel_strength < ".$C_TRUE_MIN;
 	}
 	if( $active_versions )
 	{
@@ -259,7 +259,7 @@ sub find
     else
     {
 	push @parts, "rel_active is true";
-	push @parts, "rel_strength >= ".TRUE_MIN;
+	push @parts, "rel_strength >= ".$C_TRUE_MIN;
     }
 
     my $extra = join " and ", @parts;
@@ -303,7 +303,7 @@ sub create
     my $status = defined $props->{'status'} ? $props->{'status'} :
       $active ? $Para::Frame::U->new_status : 0;
     my $by = defined $props->{'by'} ? $props->{'by'} : $Para::Frame::U;
-    my $strength = defined $props->{'strength'} ? $props->{'strength'} : $true ? TRUE_NORM : 0;
+    my $strength = defined $props->{'strength'} ? $props->{'strength'} : $true ? $C_TRUE_NORM : 0;
     my $comment = defined $props->{'comment'} ? $props->{'comment'} : undef;
     my $implicit = defined $props->{'implicit'} ? $props->{'implicit'} : 0;
     my $indirect = defined $props->{'indirect'} ? $props->{'indirect'} : 0;
@@ -311,7 +311,7 @@ sub create
     my $now = now();
     my $u = $Para::Frame::U;
 
-    $true = ( $strength >= TRUE_MIN ? 1 : 0 );
+    $true = ( $strength >= $C_TRUE_MIN ? 1 : 0 );
     $pred = Para::Arctype->new($pred) unless ref $pred;
     $subj = Para::Topic->get_by_id($subj) unless ref $subj;
     $by   = Para::Member->get($by) unless ref $by;
@@ -360,7 +360,7 @@ sub create
 	if( $arc->active and not $active )
 	{
 	    debug(4,"Found active, want inactive\n");
-	    unless( $u->status >= S_NORMAL )
+	    unless( $u->status >= $C_S_NORMAL )
 	    {
 		throw( 'denied', "Du har för låg nivå" );
 	    }
@@ -389,7 +389,7 @@ sub create
 	       $arc->status != $status )
 	{
 	    debug(4,"Found inactive, want inactive with other status");
-	    unless( $u->status >= S_NORMAL )
+	    unless( $u->status >= $C_S_NORMAL )
 	    {
 		throw( 'denied', "Du har för låg nivå" );
 	    }
@@ -458,7 +458,7 @@ sub create
     $subj->reset_rel;
 
     my $arc = Para::Arc->get( $rid );
-    if( $active and $strength >= TRUE_MIN )
+    if( $active and $strength >= $C_TRUE_MIN )
     {
 	$arc->reject_other_versions;
     }
@@ -561,8 +561,8 @@ sub updated
 }
 sub strength { shift->{'rel_strength'} }
 
-sub true { shift->strength >= TRUE_MIN ? 1 : 0 }
-sub false { shift->strength >= TRUE_MIN ? 0 : 1 }
+sub true { shift->strength >= $C_TRUE_MIN ? 1 : 0 }
+sub false { shift->strength >= $C_TRUE_MIN ? 0 : 1 }
 
 sub desig
 {
@@ -716,7 +716,7 @@ sub replace
 
     unless( $arc->equals( $arc2 ) )
     {
-	$arc->deactivate( S_REPLACED );
+	$arc->deactivate( $C_S_REPLACED );
     }
     return $arc2;
 }
@@ -730,7 +730,7 @@ sub activate
     my $now       = now();
     my $mid       = $Para::Frame::U->id;
 
-    confess sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= S_PROPOSED;
+    confess sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= $C_S_PROPOSED;
 #    throw 'action', sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= S_PROPOSED;
 
     if( $arc->status > $m->status )
@@ -772,7 +772,7 @@ sub activate
 
     if( $status > $arc->status )
     {
-	my $chart = ($status == S_FINAL ? 'thing_finalised' : 'thing_accepted');
+	my $chart = ($status == $C_S_FINAL ? 'thing_finalised' : 'thing_accepted');
 	$arc->created_by->score_change($chart, 1);
 	$Para::Frame::U->score_change('accepted_thing', 1);
     }
@@ -798,7 +798,7 @@ sub reject_other_versions
     {
 #	warn sprintf " --   Deactivating %d?\n", $arcv->id;
 	next if $arcv->equals( $arc );
-	next if $arcv->status <= S_REPLACED and $arcv->inactive;
+	next if $arcv->status <= $C_S_REPLACED and $arcv->inactive;
 
 	## Check if we have authority to deactivate
 	if( $arcv->status > $Para::Frame::U->status )
@@ -808,7 +808,7 @@ sub reject_other_versions
 	}
 
 #	warn " --     yes\n";
-	$arcv->deactivate( S_REPLACED );
+	$arcv->deactivate( $C_S_REPLACED );
     }
 }
 
@@ -820,11 +820,11 @@ sub deactivate
 {
     my( $arc, $status ) = @_;
 
-    $status ||= S_DENIED;
+    $status ||= $C_S_DENIED;
     my $now       = now();
     my $mid       = $Para::Frame::U->id;
 
-    die "Wrong status" if $status >= S_PENDING;
+    die "Wrong status" if $status >= $C_S_PENDING;
 
     # Authorization should be checked BEFORE we call deactivate!!!
 
@@ -921,16 +921,16 @@ sub vacuum
     # Only fixes THIS arc.  This method is called by Topic->vacuum()
     return if $arc->{'disregard'};
 
-    if( $arc->active and  $arc->status < S_PENDING)
+    if( $arc->active and  $arc->status < $C_S_PENDING)
     {
 	# Before this, we made the topic PENDING. Now we deactivate
 	debug sprintf "arc %s has the wrong status", $arc->desig;
 	$arc->deactivate;
     }
-    elsif( $arc->inactive and $arc->status >= S_PENDING )
+    elsif( $arc->inactive and $arc->status >= $C_S_PENDING )
     {
 	debug sprintf "arc %s has the wrong status", $arc->desig;
-	$arc->deactivate( S_REPLACED );
+	$arc->deactivate( $C_S_REPLACED );
     }
 
     $arc->deactivate_implicit; ## Only removes if not valid
@@ -1183,7 +1183,7 @@ sub create_check
     return unless $arc->active;
     return unless $arc->true;
 
-    if( $arc->status < S_PENDING )
+    if( $arc->status < $C_S_PENDING )
     {
 	confess "create_check for arc with to low status: ".$arc->desig;
     }
@@ -1396,12 +1396,12 @@ sub validate_infere
     {
 	next if disregard $arc2;
 	next if $arc2->id == $arc->id;
-	next unless $arc2->status >= S_NORMAL;
+	next unless $arc2->status >= $C_S_NORMAL;
 
 	foreach my $arc3 (@{  $arc2->obj->rel({type => $p2 })->arcs })
 	{
 	    next if disregard $arc3;
-	    next unless $arc3->status >= S_NORMAL;
+	    next unless $arc3->status >= $C_S_NORMAL;
 
 	    $Para::Frame::REQ->yield unless
 		$Para::Topic::BATCHCOUNT++ % &Para::Topic::BATCH;
@@ -1438,7 +1438,7 @@ sub validate_reflexive
     foreach my $arc2 (@{ $obj->rel({type => $p})->arcs })
     {
 	next if disregard $arc2;
-	next unless $arc2->status >= S_NORMAL;
+	next unless $arc2->status >= $C_S_NORMAL;
 
 	return 1 if $arc2->obj->id == $subj->id;
     }
@@ -1455,17 +1455,17 @@ sub create_infere_rev
     my $obj  = $arc->obj;
     return 0 unless $obj;
 
-    return 0 unless $arc->status >= S_NORMAL;
+    return 0 unless $arc->status >= $C_S_NORMAL;
 
     foreach my $arc2 (@{  $subj->rev({type => $p1})->arcs })
     {
-	next unless $arc2->status >= S_NORMAL;
+	next unless $arc2->status >= $C_S_NORMAL;
 
 	$Para::Frame::REQ->yield unless
 	    $Para::Topic::BATCHCOUNT++ % &Para::Topic::BATCH;
 
 	debug(4, sprintf "arc2 %s, activation %d\n ", $arc2->desig, $arc2->active);
-	if( $arc2->status < S_PENDING )
+	if( $arc2->status < $C_S_PENDING )
 	{
 	    debug "Found an arc with wrong status during inference. Vacuuming!";
 	    confess;  ### DEBUG
@@ -1476,7 +1476,7 @@ sub create_infere_rev
 	unless( $arc3 )
 	{
 	    my $strength = min( $arc->strength, $arc2->strength );
-	    $strength = int((0.9 * ($strength - TRUE_MIN))+TRUE_MIN);
+	    $strength = int((0.9 * ($strength - $C_TRUE_MIN))+$C_TRUE_MIN);
 	    my $status = min( $arc->status, $arc2->status );
 
 	    if( $arc2->subj->has_same_id_as( $obj ) )
@@ -1509,17 +1509,17 @@ sub create_infere_rel
     my $obj  = $arc->obj;
     return 0 unless $obj;
 
-    return 0 unless $arc->status >= S_NORMAL;
+    return 0 unless $arc->status >= $C_S_NORMAL;
 
     foreach my $arc2 (@{  $obj->rel({type => $p2})->arcs })
     {
-	next unless $arc2->status >= S_NORMAL;
+	next unless $arc2->status >= $C_S_NORMAL;
 
 	$Para::Frame::REQ->yield unless
 	    $Para::Topic::BATCHCOUNT++ % &Para::Topic::BATCH;
 
 	debug(4,sprintf "arc2 %d: %s, activation %d\n", $arc2->id, $arc2->desig, $arc2->active);
-	if( $arc2->status < S_PENDING )
+	if( $arc2->status < $C_S_PENDING )
 	{
 	    debug "Found an arc with wrong status during inference. Vacuuming!";
 	    $arc2->subj->vacuum;
@@ -1533,7 +1533,7 @@ sub create_infere_rel
 	else
 	{
 	    my $strength = min( $arc->strength, $arc2->strength );
-	    $strength = int((0.9 * ($strength - TRUE_MIN))+TRUE_MIN);
+	    $strength = int((0.9 * ($strength - $C_TRUE_MIN))+$C_TRUE_MIN);
 	    my $status = min( $arc->status, $arc2->status );
 
 	    if( $subj->has_same_id_as( $arc2->obj ) )
@@ -1566,7 +1566,7 @@ sub create_reflexive
     my $obj  = $arc->obj;
     return 0 unless $obj;
     return 1 if $arc->implicit; # Prevent infinite loop
-    return 0 unless $arc->status >= S_NORMAL;
+    return 0 unless $arc->status >= $C_S_NORMAL;
 
     my $m = Para::Member->get(-1);
 

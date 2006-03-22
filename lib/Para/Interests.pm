@@ -33,7 +33,7 @@ use Para::Frame::DBIx;
 use Para::Frame::Utils qw( throw debug );
 
 use Para::Interest;
-use Para::Constants qw( :all );
+use Para::Constants qw( $C_TRUE_MIN );
 
 ###################  Class static methods
 
@@ -139,7 +139,7 @@ sub summary
 	my $in = $ins->list_item( $i ) or last;
 	my $topic = $in->topic;
 
-	last if $in->general < TRUE_MIN;
+	last if $in->general < $C_TRUE_MIN;
 	next unless $topic->active;
 	next if $in->defined < $definedness_limit;
 

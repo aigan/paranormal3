@@ -7,7 +7,7 @@ use Data::Dumper;
 use Para::Frame::Utils qw( throw trim debug );
 use Para::Frame::Change;
 
-use Para::Constants qw( S_PROPOSED S_PENDING );
+use Para::Constants qw( $C_S_PROPOSED $C_S_PENDING );
 use Para::Utils qw( trim_text );
 use Para::Topic qw( title2url );
 
@@ -410,11 +410,11 @@ Title_short_plural: $old_title_short_plural
 	$u->score_change('entry_submitted', 1);
 
 
-	if( $t->status == S_PROPOSED )
+	if( $t->status == $C_S_PROPOSED )
 	{
 	    $req->change->note("Den nya versionen väntar på godkännande");
 	}
-	elsif( $t->status == S_PENDING )
+	elsif( $t->status == $C_S_PENDING )
 	{
 	    $req->change->note("Ändringen kommer att kontrolleras\n");
 	}
@@ -437,7 +437,7 @@ sub check_status
     return unless defined $new_status;
     return if $new_status eq '';
 
-    if( $m->status < S_PENDING )
+    if( $m->status < $C_S_PENDING )
     {
 	throw('denied', "Du kan inte ändra status på en text\n");
     }

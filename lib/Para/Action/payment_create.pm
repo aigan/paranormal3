@@ -7,7 +7,6 @@ use Data::Dumper;
 use Para::Frame::Utils qw( throw trim );
 use Para::Frame::Time qw( date );
 
-use Para::Constants qw( MONTH_LENGTH T_PRENUMERATION T_PARANORMAL_SWEDEN );
 use Para::Topic;
 
 sub handler

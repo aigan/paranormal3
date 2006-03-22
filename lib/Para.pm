@@ -31,7 +31,7 @@ use Para::Frame::Reload;
 use Para::Frame::Utils qw( debug paraframe_dbm_open );
 use Para::Frame::Time qw( now duration );
 
-use Para::Constants qw( DB_ONLINE );
+use Para::Constants qw( $C_DB_ONLINE );
 use Para::Member;
 use Para::Topic;
 use Para::Widget;
@@ -197,7 +197,7 @@ sub timeout_login
 	unless( $latest_in and $latest_seen )
 	{
 	    debug "$mid: ".$m->desig." should never have been set as online";
-	    my $db = paraframe_dbm_open( DB_ONLINE );
+	    my $db = paraframe_dbm_open( $C_DB_ONLINE );
 	    delete $db->{$mid};
 	    next;
 	}

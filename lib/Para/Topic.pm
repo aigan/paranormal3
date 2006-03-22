@@ -763,7 +763,7 @@ sub previous
     unless( exists $t->{'previous'} )
     {
 	debug(2,"getting previous of $t->{t} from db");
-	my $recs = $Para::dbix->select_list("from t where t_entry_next=? and t_status>=?", $t->id, S_PROPOSED );
+	my $recs = $Para::dbix->select_list("from t where t_entry_next=? and t_status>=?", $t->id, $C_S_PROPOSED );
 	if( @$recs == 0 )
 	{
 	    return $t->{'previous'} = undef;
@@ -1202,7 +1202,7 @@ sub has_rel
 		elsif( @$rels_in > 1 )
 		{
 		    # Exclude media, order by oldes
-		    my $media = Para::Topic->get_by_id( T_MEDIA );
+		    my $media = Para::Topic->get_by_id( $C_T_MEDIA );
 		    foreach my $rel2 ( sort { $a->{'t'} <=> $b->{'t'} } @$rels_in )
 		    {
 			debug(2,"  Consider ".$rel2->sysdesig);
@@ -1423,7 +1423,7 @@ sub break_previous
     confess; ### FIXME
 
     my $cnt = 0;
-    my $recs = $Para::dbix->select_list("select t from t where t_entry_next=? and t_status>=? order by t_active desc, t_status desc, t desc, t_ver desc", $t->id, S_PROPOSED );
+    my $recs = $Para::dbix->select_list("select t from t where t_entry_next=? and t_status>=? order by t_active desc, t_status desc, t desc, t_ver desc", $t->id, $C_S_PROPOSED );
     # Sorted such that the first rec should keep t_entry_next
 
     my $rec = shift @$recs;
@@ -1673,7 +1673,7 @@ sub break_topic_loop
 
 		debug(1, sprintf " Deactivating the arc %s in order to break loop", $arc->as_string);
 
-		$arc->deactivate( S_DENIED );
+		$arc->deactivate( $C_S_DENIED );
 		$removed ++;
 
 		# Ee only want to deactivate the latest added arc
@@ -1731,7 +1731,7 @@ sub create_new_version
 
     # We should replace the active/current version. not necessary this version
     my $current_t = $t->get_by_id($t->id);
-    my $old_status = $current_t->status || S_PROPOSED;
+    my $old_status = $current_t->status || $C_S_PROPOSED;
 
     # Wanted result
     my $new_status = $m->new_status;
@@ -1753,14 +1753,14 @@ sub create_new_version
 
     if( $m_status < $old_status ) # New version is proposed
     {
-	$new_status = S_PROPOSED;
+	$new_status = $C_S_PROPOSED;
 	$new_active = 'f';
     }
     else # Old version is replaced
     {
 	if( $current_t->active )
 	{
-	    $current_t->set_status( S_REPLACED );
+	    $current_t->set_status( $C_S_REPLACED );
 	}
     }
 
@@ -2096,7 +2096,7 @@ sub set_status
     $m ||= $Para::Frame::U;
     $m = Para::Member->get($m) unless ref $m;
 
-    my $new_active = $status < S_PENDING ? 0 : 1;
+    my $new_active = $status < $C_S_PENDING ? 0 : 1;
     my $old_active = $t->active;
     my $ver = $t->ver;
     my $tid = $t->id;
@@ -2113,13 +2113,13 @@ sub set_status
 	foreach my $tv (@{ $t->versions })
 	{
 	    next if $tv->ver == $ver;
-	    if( $tv->status == S_PENDING )
+	    if( $tv->status == $C_S_PENDING )
 	    {
-		$tv->set_status( S_PROPOSED );
+		$tv->set_status( $C_S_PROPOSED );
 	    }
-	    elsif( $tv->status > S_PENDING )
+	    elsif( $tv->status > $C_S_PENDING )
 	    {
-		$tv->set_status( S_REPLACED );
+		$tv->set_status( $C_S_REPLACED );
 	    }
 	}
 
@@ -2851,7 +2851,7 @@ sub delete_cascade
       my $st = "update t set t_status=?,
                  t_active='f' where t=? and t_active is true";
       my $sth = $Para::dbh->prepare( $st );
-      $sth->execute( S_DENIED, $tid);
+      $sth->execute( $C_S_DENIED, $tid);
   }
 
     ### Aliases
@@ -2859,7 +2859,7 @@ sub delete_cascade
       my $st = "update talias set talias_status=?,
                  talias_active='f' where talias_t=?";
       my $sth = $Para::dbh->prepare( $st );
-      $sth->execute( S_DENIED, $tid );
+      $sth->execute( $C_S_DENIED, $tid );
   }
 
     ### Intrest
@@ -2888,12 +2888,12 @@ sub delete_cascade
       my $st1 = "update rel set rel_status=?,
                  rel_active='f' where rev=?";
       my $sth1 = $Para::dbh->prepare( $st1 );
-      $sth1->execute( S_DENIED, $tid );
+      $sth1->execute( $C_S_DENIED, $tid );
 
       my $st2 = "update rel set rel_status=?,
                  rel_active='f' where rel=?";
       my $sth2 = $Para::dbh->prepare( $st2 );
-      $sth2->execute( S_DENIED, $tid );
+      $sth2->execute( $C_S_DENIED, $tid );
   }
 
     ### t.t_entry_parent
@@ -2920,12 +2920,12 @@ sub delete_cascade
       my $st1 = "update ts set ts_status=?,
                  ts_active='f' where ts_entry=? and ts_active is true";
       my $sth1 = $Para::dbh->prepare( $st1 );
-      $sth1->execute( S_DENIED, $tid );
+      $sth1->execute( $C_S_DENIED, $tid );
 
       my $st2 = "update ts set ts_status=?,
                  ts_active='f' where ts_topic=? and ts_active is true";
       my $sth2 = $Para::dbh->prepare( $st2 );
-      $sth2->execute( S_DENIED, $tid );
+      $sth2->execute( $C_S_DENIED, $tid );
   }
 
     $t->remove_page;
@@ -3179,7 +3179,7 @@ sub vacuum
 		{
 		    if( $active_ver != $v->ver )
 		    {
-			$v->set_status( S_REPLACED, -1 );
+			$v->set_status( $C_S_REPLACED, -1 );
 		    }
 		}
 		else
@@ -3190,9 +3190,9 @@ sub vacuum
 	    else
 	    {
 		# Make sure status is right value
-		if( $v->status >= S_PENDING )
+		if( $v->status >= $C_S_PENDING )
 		{
-		    $v->set_status( S_REPLACED, -1 );
+		    $v->set_status( $C_S_REPLACED, -1 );
 		}
 	    }
 	}
@@ -3201,9 +3201,9 @@ sub vacuum
 	{
 	    # Active version should have the right status
 	    my $t_a = Para::Topic->get_by_id( $t->id, $active_ver );
-	    if( $t_a->status < S_PROPOSED )
+	    if( $t_a->status < $C_S_PROPOSED )
 	    {
-		$t_a->set_status( S_PROPOSED, -1 );
+		$t_a->set_status( $C_S_PROPOSED, -1 );
 	    }
 	}
     }
@@ -3298,7 +3298,7 @@ sub merge
 	oldfile => $t1->{'t_oldfile'}||$t2->{'t_oldfile'},
 	replace => $tid2,
     });
-    $t2->set_status( S_REPLACED, $u);
+    $t2->set_status( $C_S_REPLACED, $u);
 
     ### talias
     foreach my $a (values %{$t2->aliases})
@@ -3530,11 +3530,11 @@ sub generate_url
 
 	debug(1,"Found topic $rec->{t} with this title");
 	my $prop = {};
-	foreach my $rel ( @{$Para::dbix->select_list("from rel where rev=? and rel_type<4 and rel_type>0 and rel_active is true and rel_status >= ? and rel_strength >= ?", $rec->{'t'}, S_NORMAL, TRUE_MIN)} )
+	foreach my $rel ( @{$Para::dbix->select_list("from rel where rev=? and rel_type<4 and rel_type>0 and rel_active is true and rel_status >= ? and rel_strength >= ?", $rec->{'t'}, $C_S_NORMAL, $C_TRUE_MIN)} )
 	{
 	    $rel->{'rel'} or next;
 	    # Lower cnt is less connected and thus higher in the heiarchy
-	    my $wrec = $Para::dbix->select_record("select count(rev)+1 as cnt from rel where rev=? and rel_active is true and rel_status >= ? and rel_strength >= ?", $rel->{'rel'}, S_NORMAL, TRUE_MIN);
+	    my $wrec = $Para::dbix->select_record("select count(rev)+1 as cnt from rel where rev=? and rel_active is true and rel_status >= ? and rel_strength >= ?", $rel->{'rel'}, $C_S_NORMAL, $C_TRUE_MIN);
 
 	    $prop->{$rel->{'rel'}} = $wrec->{'cnt'}||1;
 	}

@@ -6,7 +6,7 @@ use Data::Dumper;
 
 use Para::Frame::Utils qw( throw debug get_from_fork );
 
-use Para::Constants qw( M_VIP );
+use Para::Constants qw( $C_M_VIP );
 use Para::Member;
 
 sub handler
@@ -39,7 +39,7 @@ sub remove_member_level1
     ### Remove persons that never logged in
     debug "* remove_member_level1";
 
-    my $recs = $Para::dbix->select_list("select member from member where member_level = 1 and member > ? and age(member_created) > '14 days' and member_comment_admin is null", M_VIP);
+    my $recs = $Para::dbix->select_list("select member from member where member_level = 1 and member > ? and age(member_created) > '14 days' and member_comment_admin is null", $C_M_VIP);
 
     foreach my $rec (@$recs)
     {
@@ -56,10 +56,10 @@ sub remove_member_level2
     # Members on level 2
 
     # takers: Not logged in in 6 months
-    my $recs1 = $Para::dbix->select_list("select member from member where member_level = 2 and member > ? and age(latest_in) > '182 days' and member_comment_admin is null and member_payment_total = 0", M_VIP);
+    my $recs1 = $Para::dbix->select_list("select member from member where member_level = 2 and member > ? and age(latest_in) > '182 days' and member_comment_admin is null and member_payment_total = 0", $C_M_VIP);
 
     # givers: Not logged in in 2 years
-    my $recs2 = $Para::dbix->select_list("select member from member where member_level = 2 and member > ? and age(latest_in) > '730 days' and member_comment_admin is null and member_payment_total > 0", M_VIP);
+    my $recs2 = $Para::dbix->select_list("select member from member where member_level = 2 and member > ? and age(latest_in) > '730 days' and member_comment_admin is null and member_payment_total > 0", $C_M_VIP);
 
     foreach my $rec (@$recs1, @$recs2)
     {

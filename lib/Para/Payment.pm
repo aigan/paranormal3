@@ -33,7 +33,7 @@ use Para::Frame::Utils qw( debug );
 
 use Para::Topic;
 use Para::Member;
-use Para::Constants qw( MONTH_LENGTH T_PRENUMERATION T_PARANORMAL_SWEDEN );
+use Para::Constants qw( $C_T_PRENUMERATION $C_T_PARANORMAL_SWEDEN );
 
 sub new
 {
@@ -165,7 +165,7 @@ sub add_to_member_stats
 {
     my( $p ) = @_;
 
-    if( $p->product->id == T_PRENUMERATION and $p->receiver->id == T_PARANORMAL_SWEDEN )
+    if( $p->product->id == $C_T_PRENUMERATION and $p->receiver->id == $C_T_PARANORMAL_SWEDEN )
     {
 	my $m = $p->member;
 

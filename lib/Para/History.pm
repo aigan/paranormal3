@@ -30,7 +30,7 @@ use Para::Frame::DBIx;
 use Para::Frame::Time qw( now );
 
 use Para::Topic;
-use Para::Constants qw( :all );
+use Para::Constants qw( $C_HS_CREATED );
 
 sub begin
 {
@@ -42,7 +42,7 @@ sub add
     my( $this, $hclass, $action, $args ) = @_;
 
     my $id = $Para::dbix->get_nextval('history_seq');
-    my $status = $args->{status} || HS_CREATED;
+    my $status = $args->{status} || $C_HS_CREATED;
     my $created = now();
     my $createdby = $args->{createdby} || $Para::Frame::U;
     my $secret = $args->{secret} || 0;

@@ -7,7 +7,7 @@ use Data::Dumper;
 use Para::Frame::Utils qw( throw clear_params );
 
 use Para::Topic;
-use Para::Constants qw( S_DENIED );
+use Para::Constants qw( $C_S_DENIED );
 
 sub handler
 {
@@ -55,7 +55,7 @@ sub handler
 	elsif( $verdict eq 'f' )
 	{
 	    $a->update({
-			status => S_DENIED,
+			status => $C_S_DENIED,
 		       });
 	    warn "  remove\n";
 	    $changed ++;

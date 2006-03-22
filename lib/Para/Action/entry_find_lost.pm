@@ -6,7 +6,7 @@ use Data::Dumper;
 
 use Para::Frame::Utils qw( throw );
 
-use Para::Constants qw( T_LOST_ENTRY );
+use Para::Constants qw( $C_T_LOST_ENTRY );
 use Para::Topic;
 
 sub handler
@@ -25,7 +25,7 @@ sub handler
 
     my $cnt = 0;
     my $result = "";
-    my $lost = Para::Topic->get_by_id( T_LOST_ENTRY );
+    my $lost = Para::Topic->get_by_id( $C_T_LOST_ENTRY );
     foreach my $rec ( @$recs )
     {
 	$cnt++;

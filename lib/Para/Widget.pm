@@ -36,7 +36,7 @@ use Para::Frame::Time qw( now );
 use Para::Frame::Utils qw( debug throw );
 use Para::Frame::Widget qw( rowlist jump );
 
-use Para::Constants qw( :all );
+use Para::Constants qw( $C_T_MEDIA );
 use Para::Topic;
 use Para::Member;
 use Para::Place;
@@ -1378,7 +1378,7 @@ sub primary_choice
     # 1. include non-media
     # 2. include non-url-media
 
-    my $media = Para::Topic->get_by_id( T_MEDIA );
+    my $media = Para::Topic->get_by_id( $C_T_MEDIA );
 
     foreach my $t ( @$topics )
     {

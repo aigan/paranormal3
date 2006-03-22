@@ -294,7 +294,7 @@ sub add
     my $talias_language  = $props->{'language'} || undef;
     $talias_language = $talias_language->id if ref $talias_language;
     $talias_language = undef unless $talias_language;
-    my $talias_active = $talias_status >= S_PENDING ? 1 : 0;
+    my $talias_active = $talias_status >= $C_S_PENDING ? 1 : 0;
 
     $sth_alias_add->execute( $talias_t, $talias, $talias_urlpart,
 			     $talias_createdby, $talias_changedby,
@@ -302,7 +302,7 @@ sub add
 			     pgbool($talias_index), $talias_language,
 			     pgbool($talias_active) );
 
-    Para::History->add('talias', HA_CREATE,
+    Para::History->add('talias', $C_HA_CREATE,
 		      {
 			  topic => $t,
 			  skey  => $name,
@@ -371,7 +371,7 @@ sub update
 	    warn sprintf( "  Autolink changed; %d -> %d\n",
 			  $a->autolink, $props->{'autolink'} );
 	}
-	Para::History->add('talias', HA_UPDATE,
+	Para::History->add('talias', $C_HA_UPDATE,
 			  {
 			      topic => $a->topic,
 			      skey  => $a->name,
@@ -388,7 +388,7 @@ sub update
 	    warn sprintf( "  Index changed: %d -> %d\n",
 			  $a->index, $props->{'index'} );
 	}
-	Para::History->add('talias', HA_UPDATE,
+	Para::History->add('talias', $C_HA_UPDATE,
 			  {
 			      topic => $a->topic,
 			      skey  => $a->name,
@@ -409,7 +409,7 @@ sub update
 			    '<none>' ),
 			);
 	}
-	Para::History->add('talias', HA_UPDATE,
+	Para::History->add('talias', $C_HA_UPDATE,
 			  {
 			      topic => $a->topic,
 			      skey  => $a->name,
@@ -435,7 +435,7 @@ sub update
     if( defined $props->{'status'} )
     {
 	$status = $props->{'status'};
-	$active = $props->{'status'} >= S_PENDING ? 1 : 0;
+	$active = $props->{'status'} >= $C_S_PENDING ? 1 : 0;
 
 	warn "  Setting status to $status\n";
 	warn "  Existing status is ".$a->status."\n";
@@ -449,7 +449,7 @@ sub update
 		warn sprintf( "  Status changed: %d -> %d\n",
 			      $a->status, $status );
 	    }
-	    Para::History->add('talias', HA_UPDATE,
+	    Para::History->add('talias', $C_HA_UPDATE,
 			      {
 				  topic => $a->topic,
 				  skey  => $a->name,
@@ -463,11 +463,11 @@ sub update
     elsif( defined $props->{'active'} )
     {
 	$active = $props->{'active'};
-	if( $a->status >= S_PENDING )
+	if( $a->status >= $C_S_PENDING )
 	{
 	    if( not $active )
 	    {
-		$status = S_DENIED;
+		$status = $C_S_DENIED;
 		$changed ++;
 		debug(3,"Status changed to DENIED");
 	    }
@@ -477,7 +477,7 @@ sub update
 	    if( $active )
 	    {
 		$status = $m->new_status;
-		Para::History->add('talias', HA_UPDATE,
+		Para::History->add('talias', $C_HA_UPDATE,
 				  {
 				      topic => $a->topic,
 				      skey  => $a->name,

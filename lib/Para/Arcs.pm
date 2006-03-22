@@ -72,7 +72,7 @@ sub init_rel
 
     # Could include active relations to inactive topics
     my $rels = $Para::dbix->select_list("from rel where rev=? and rel_active is true
-                            and rel_strength >= ?", $t->id, TRUE_MIN);
+                            and rel_strength >= ?", $t->id, $C_TRUE_MIN);
     foreach my $rel ( @$rels )
     {
 	defined $rel->{'rel_type'} or die "rel_type undef: ".Dumper( $rel );
@@ -145,7 +145,7 @@ sub init_rev
 
 
     my $revs = $Para::dbix->select_list("from rel where rel=? and rel_active is true
-                            and rel_strength >= ?", $t->id, TRUE_MIN);
+                            and rel_strength >= ?", $t->id, $C_TRUE_MIN);
     foreach my $rev ( @$revs )
     {
 	defined $rev->{'rel_type'} or die "rel_type undef: ".Dumper( $rev );

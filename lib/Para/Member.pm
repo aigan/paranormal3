@@ -55,7 +55,7 @@ BEGIN
 
 }
 
-our $ONLINE_COUNT; # Not used, since DB_ONLINE changes externally
+our $ONLINE_COUNT; # Not used, since $C_DB_ONLINE changes externally
 our %UNSAVED;
 
  INIT:
@@ -381,7 +381,7 @@ sub on_logout
 
     $time ||= now();
     $u->latest_out( $time ) if $u->level > 0; # In case user deleted
-    my $db = paraframe_dbm_open( DB_ONLINE );
+    my $db = paraframe_dbm_open( $C_DB_ONLINE );
     delete $db->{$u->id};
 }
 
@@ -1334,7 +1334,7 @@ sub validate_nick
     }
 
     my $topics = Para::Topic->find( $uid );
-    my $person = Para::Topic->get_by_id( T_PERSON );
+    my $person = Para::Topic->get_by_id( $C_T_PERSON );
     debug(3,"Look for existing topic");
     foreach my $t ( @$topics )
     {
@@ -1684,10 +1684,10 @@ sub new_status
     my( $m, $final ) = @_;
     my $level = $m->level;
 
-    return S_PROPOSED if $level < 5;
-    return S_PENDING if $level < 12;
-    return S_NORMAL if $level < 40;
-    return $final ? S_FINAL : S_NORMAL; ### Only make final explicitly
+    return $C_S_PROPOSED if $level < 5;
+    return $C_S_PENDING if $level < 12;
+    return $C_S_NORMAL if $level < 40;
+    return $final ? $C_S_FINAL : $C_S_NORMAL; ### Only make final explicitly
 }
 
 
@@ -2029,7 +2029,7 @@ sub chat_level
 {
     my( $m ) = @_;
 
-    ## See C_... in Constants
+    ## See C_C_... in Constants
     return $m->{'chat_level'};
 }
 
@@ -2094,7 +2094,7 @@ sub latest_seen
 	$m->{'latest_seen'} = $time;
 
 	# Update DBM
-	my $db = paraframe_dbm_open( DB_ONLINE );
+	my $db = paraframe_dbm_open( $C_DB_ONLINE );
 	$db->{ $m->id } = $time->epoch;
     }
     else
@@ -2105,7 +2105,7 @@ sub latest_seen
 	if( not $m->{'latest_seen'} or
 	    ( now()->epoch - $m->{'latest_seen'}->epoch > 60 * 15 ) )
 	{
-	    my $db = paraframe_dbm_open( DB_ONLINE );
+	    my $db = paraframe_dbm_open( $C_DB_ONLINE );
 	    if( my $last = $db->{ $m->id } )
 	    {
 		$m->{'latest_seen'} = date( $last );
@@ -2365,7 +2365,7 @@ sub dbm_alias
       throw( 'denied', sprintf "%s doesn't have the nick '%s'\n",
 	$m->_nickname, $nick );
 
-    my $db = paraframe_dbm_open( DB_ALIAS );
+    my $db = paraframe_dbm_open( $C_DB_ALIAS );
     return $db->{ $nick };
 }
 
@@ -2376,7 +2376,7 @@ sub set_dbm_alias
     $address ||= $m->sys_uid || $m->sys_email;
     $nick or throw( 'incomplete', "nick param missing" );
 
-    my $db = paraframe_dbm_open( DB_ALIAS );
+    my $db = paraframe_dbm_open( $C_DB_ALIAS );
     debug(3,"Setting $nick forward to $address");
     return $db->{ $nick } = $address;
 }
@@ -2387,7 +2387,7 @@ sub unset_dbm_alias
 
     $nick or throw( 'incomplete', "nick param missing" );
 
-    my $db = paraframe_dbm_open( DB_ALIAS );
+    my $db = paraframe_dbm_open( $C_DB_ALIAS );
     debug(3,"Removing $nick forward");
     return delete $db->{ $nick };
 }
@@ -2400,7 +2400,7 @@ sub set_dbm_passwd
     my $sys_uid = $m->sys_uid;
     return unless $sys_uid;
 
-    my $db = paraframe_dbm_open( DB_PASSWD );
+    my $db = paraframe_dbm_open( $C_DB_PASSWD );
 
     return $db->{ $sys_uid } = $passwd;
 }
@@ -2410,7 +2410,7 @@ sub unset_dbm_passwd
     my( $m ) = @_;
 
     my $sys_uid = $m->sys_uid;
-    my $db = paraframe_dbm_open( DB_PASSWD );
+    my $db = paraframe_dbm_open( $C_DB_PASSWD );
 
     return delete $db->{ $sys_uid } ? 1 : 0;
 }
@@ -2419,7 +2419,7 @@ sub dbm_passwd_check
 {
     my( $m ) = @_;
 
-    my $db = paraframe_dbm_open( DB_PASSWD );
+    my $db = paraframe_dbm_open( $C_DB_PASSWD );
     my $dbm_passwd = $db->{ $m->sys_uid };
 
     if( $dbm_passwd eq $m->{'passwd'} )
@@ -2437,7 +2437,7 @@ sub dbm_passwd_exist
     my( $m ) = @_;
 
     return 0 unless $m->sys_uid;
-    my $db = paraframe_dbm_open( DB_PASSWD );
+    my $db = paraframe_dbm_open( $C_DB_PASSWD );
     my $dbm_passwd = $db->{ $m->sys_uid };
     return length $dbm_passwd ? 1 : 0;
 }
@@ -3134,7 +3134,7 @@ sub currently_online
     # mode 2 = both
 
     $mode ||= 0;
-    my $db = paraframe_dbm_open( DB_ONLINE );
+    my $db = paraframe_dbm_open( $C_DB_ONLINE );
     my @list;
     if( $mode == 1 and $Para::Frame::U->level >= 41 )
     {
@@ -3173,7 +3173,7 @@ sub currently_online
 
 sub count_currently_online
 {
-    my $db = paraframe_dbm_open( DB_ONLINE );
+    my $db = paraframe_dbm_open( $C_DB_ONLINE );
     return scalar keys %$db;
 
     

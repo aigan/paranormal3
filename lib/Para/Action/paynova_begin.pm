@@ -10,7 +10,7 @@ use Para::Frame::Utils qw( throw trim );
 use Para::Frame::Time qw( now duration );
 
 use Para::Topic;
-use Para::Constants qw( T_PRENUMERATION T_PARANORMAL_SWEDEN T_PAYNOVA MONTH_LENGTH );
+use Para::Constants qw( $C_T_PRENUMERATION $C_T_PARANORMAL_SWEDEN $C_T_PAYNOVA $C_MONTH_LENGTH );
 
 sub handler
 {
@@ -44,7 +44,7 @@ sub handler
 
 
 
-    my $month_length = MONTH_LENGTH;
+    my $month_length = $C_MONTH_LENGTH;
     my $amount_kr = int($worth * $length / $month_length );
     $amount_kr = 1 if $amount_kr < 1;
 
@@ -79,9 +79,9 @@ sub handler
       ( payment_id, payment_member, payment_company, payment_date, payment_order_date, payment_invoice_date, payment_log_date, payment_product, payment_price, payment_vat, payment_quantity, payment_method, payment_receiver, payment_message )
       values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-    my $product_id  = T_PRENUMERATION;
-    my $method_id   = T_PAYNOVA;
-    my $receiver_id = T_PARANORMAL_SWEDEN;
+    my $product_id  = $C_T_PRENUMERATION;
+    my $method_id   = $C_T_PAYNOVA;
+    my $receiver_id = $C_T_PARANORMAL_SWEDEN;
     my $today = now();
 
     my $vat_db = $vat;

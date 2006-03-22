@@ -7,7 +7,7 @@ use Data::Dumper;
 use Para::Frame::Utils qw( throw );
 
 use Para::Arc;
-use Para::Constants qw( S_PROPOSED TRUE_MIN );
+use Para::Constants qw( $C_S_PROPOSED $C_TRUE_MIN );
 
 sub handler
 {
@@ -39,12 +39,12 @@ sub handler
 	my $list = $Para::dbix->select_list('from rel where rev=? and rel_type=? and rel=?
                                 and (rel_status>=? or rel_active is true)
                                 order by rel_topic', $rev, $reltype, $rel,
-			       S_PROPOSED);
+			       $C_S_PROPOSED);
 
 	my $active_seen = 0; # Set if any in the list is active.  Just one in the list should bee
 	foreach my $rec ( @$list ) ## In creation order
 	{
-	    my $pleed = $rec->{'rel_strength'} < TRUE_MIN
+	    my $pleed = $rec->{'rel_strength'} < $C_TRUE_MIN
 	      ? 'f' : 't';
 
 	    my $arc = Para::Arc->get( $rec->{'rel_topic'}, $rec );

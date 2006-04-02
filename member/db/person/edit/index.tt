@@ -47,7 +47,11 @@ Spenderat [% elapsed_time(m.total_time_online) %] online.
 	<li>[% jump('Sidutseende', 'skin.tt', run='mark', mid=m.id) %]
 [% END %]
 
+[% IF u.level < 5 %]
+	<li>[% jump('Presentation', '../quest/level_02/presentation.tt', mid=m.id) %]
+[% ELSE %]
 	<li>[% jump('Presentation', 'presentation.tt', run='mark', mid=m.id) %]
+[% END %]
 [% IF u.complexity >= 30 AND u.level < 7 %]
 	<li>[% jump('Avsluta medlemskap', 'remove.tt', run='mark', mid=m.id) %]
 [% END %]

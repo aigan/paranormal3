@@ -14,7 +14,8 @@
 <input type="hidden" name="done_presentation" value="1">
 
 <p><input type="button" value="Snabbspara" OnClick="javascript:document.f.action='presentation.tt'; document.f.done_presentation.value=0; document.f.submit()" class="msg">
-[%+ submit("Klar!") %]
+eller
+[%+ submit("Klar!") %] <- Klicka <em>klar</em> när du är färdig med din presentation.
 
 <p class="important">Du blev medlem när du valde ditt namn. Du behöver dock inte vara medlem eller ens logga in för att se uppslagsverket. Men för att komma åt det stora medlemsregistret behöver du en godkänd presentation. Utan en sådan kommer ditt medlemskap att raderas efter ett par månaders inaktivitet från din sida.</p>
 

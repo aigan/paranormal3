@@ -3140,6 +3140,14 @@ sub currently_online
     {
 	foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
 	{
+	    unless( $mid =~ /^\d+$/ )
+	    {
+		debug( sprintf "Removed invalid key $mid (%s)",
+		       $db->{$mid}||'<undef>');
+		delete $db->{$mid};
+		next;
+	    }
+
 	    my $m = $this->get_by_id($mid);
 	    $m->{'member'} = $mid;
 	    if( $m->present_activity < 10 or
@@ -3153,6 +3161,14 @@ sub currently_online
     {
 	foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
 	{
+	    unless( $mid =~ /^\d+$/ )
+	    {
+		debug( sprintf "Removed invalid key $mid (%s)",
+		       $db->{$mid}||'<undef>');
+		delete $db->{$mid};
+		next;
+	    }
+
 	    my $m = $this->get_by_id($mid);
 	    $m->{'member'} = $mid;
 	    push @list, $m;
@@ -3162,6 +3178,14 @@ sub currently_online
     {
 	foreach my $mid ( sort {$db->{$b} <=> $db->{$a}} keys %$db )
 	{
+	    unless( $mid =~ /^\d+$/ )
+	    {
+		debug( sprintf "Removed invalid key $mid (%s)",
+		       $db->{$mid}||'<undef>');
+		delete $db->{$mid};
+		next;
+	    }
+
 	    my $m = $this->get_by_id($mid);
 	    next if $m->present_activity < 10;
 	    next if $m->present_contact < 5;

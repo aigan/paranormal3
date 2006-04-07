@@ -45,6 +45,7 @@ use Para::Payment;
 use Para::Email::Address;
 use Para::Member::Email::Address;
 use Para::Place;
+use Para::Utils qw( trim_text );
 
 use base qw( Para::Frame::User );
 use base qw( Exporter );
@@ -406,6 +407,19 @@ sub set_field
     return $m->change->success("$field uppdaterad");
 }
 
+sub set_field_block
+{
+    my( $m, $field, $value ) = @_;
+
+    return unless defined $value;
+    trim_text(\$value);
+    $m->{$field} ||= '';
+    return if $value eq $m->{$field};
+    $m->{$field} = $value;
+    $m->mark_unsaved;
+    return $m->change->success("$field uppdaterad");
+}
+
 sub set_field_number
 {
     my( $m, $field, $value ) = @_;
@@ -537,14 +551,23 @@ sub update_by_query
 			    home_tele_phone_comment
 			    home_tele_mobile_comment
 			    home_tele_fax_comment statement
-			    home_online_email presentation
-			    member_comment_admin show_style
+			    home_online_email show_style
 			    home_online_skype
 			    ) )
     {
 	if( defined $q->param($field) )
 	{
 	    $m->set_field($field, $q->param($field));
+	}
+    }
+
+    foreach my $field ( qw( presentation
+			    member_comment_admin
+			    ) )
+    {
+	if( defined $q->param($field) )
+	{
+	    $m->set_field_block($field, $q->param($field));
 	}
     }
 

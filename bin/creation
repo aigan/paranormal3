@@ -58,6 +58,7 @@ use Para::Member;
 
 use WA::Domains;
 use Ekoby::Ekonomi;
+use Para::Healing;
 
 {
     # Do not daemonize if run with cmdline argument
@@ -154,6 +155,7 @@ use Ekoby::Ekonomi;
 			    'time_format' => "%Y-%m-%d kl %H:%M:%S",
 			    'params' 	  =>
 			    {
+ 			     'is_forummember' => \&Para::Healing::is_forummember,
 		             'hdb'        => $Para::Healing::dbix,
 			     'css'	  => 'style.css',
 			     'favicon'    => 'images/hjarta2c.ico',

@@ -8,6 +8,7 @@
 <h1>Lista aktiviteter: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
+[% PROCESS person_activity_menu.tt %]
 
 <h2>Skapande</h2>
 

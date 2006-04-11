@@ -5,17 +5,18 @@
 
 [% PROCESS load_member.tt %]
 
-[% order_default = 't';
-   direction_default = 'desc';
-   PROCESS pagify.tt;
-%]
-
 <h1>Ämnen som avslagits: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
+[% PROCESS person_activity_menu.tt %]
 
+[% USE Sorted_table('t','desc') %]
+[% recs = cached_select_list("from t where t_createdby=? and t_changedby<>? and t_status = 0 and t_entry is false order by $order $direction", m.member, m.member) %]
 
 <div class="entry">
+
+<p align="center">[% recs.pagelist %]</p>
+<p align="center">[% recs.size %] stycken</p>
 <table>
 
 <tr><th>[% sort('tid','t') %]
@@ -24,7 +25,7 @@
     <th>Ändrad av
 </tr>
 
-[% FOREACH rec = select_list("from t where t_createdby=? and t_changedby<>? and t_status = 0 and t_entry is false order by $order $direction offset ? limit ?", m.member, m.member, part_offset, pagesize) %]
+[% FOREACH rec IN recs.from_page %]
    [% t = topic(rec.t, rec.t_ver) %]
 
    [%tr2%]
@@ -42,12 +43,11 @@
            inaktiv
         [% END %]</td>
    </tr>
-   [% subpart.shown = loop.size %]
 [% END %]
 
 </table>
 </div>
 
-[% PROCESS pagify_footer.tt %]
+<p align="center">[% recs.pagelist %]</p>
 
 [% step %]

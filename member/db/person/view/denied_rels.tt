@@ -8,6 +8,7 @@
 <h1>Relationer som avslagits: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
+[% PROCESS person_activity_menu.tt %]
 
 [% USE Sorted_table('rel_topic','desc') %]
 [% recs = cached_select_list("select rel_topic from rel where 

@@ -137,6 +137,12 @@
    <p>[% m.presentation | html_psi %]
 [% END %]
 
+[% mt = m.topic %]
+[% IF mt %]
+   <p>[% jump("Skriv i gästboken", "/member/db/topic/guestbook/add.tt", tid=mt.id) %]
+   <p>[% jump("Se gästboken", "/member/db/topic/guestbook/", tid=mt.id) %]
+[% END %]
+
 
 [% BLOCK member_list %]
    <h1>Det finns $members.size <code>$nick</code></h1>

@@ -103,9 +103,9 @@ sub create
 
     my $m = $Para::Frame::U;
 
-    my $id = get_nextval( "reltype_seq" );
+    my $id = $Para::dbix->get_nextval( "reltype_seq" );
 
-    my $sth_reltype = $Psi::dbh->prepare(
+    my $sth_reltype = $Para::dbh->prepare(
 	  "insert into reltype (reltype, reltype_updated, reltype_changedby)
            values ( ?, now(), ? )");
     $sth_reltype->execute($id, $m->id) or die;

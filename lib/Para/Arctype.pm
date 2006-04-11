@@ -130,6 +130,7 @@ sub update
     my $types =
     {
 	'reltype_literal'     => 'boolean',
+	'reltype_updated'     => 'date',
     };
 
     return $Para::dbix->save_record({

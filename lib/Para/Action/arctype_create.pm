@@ -13,7 +13,7 @@ sub handler
     my( $req ) = @_;
 
     my $q = $req->q;
-    my $u = $req->s->u;
+    my $u = $req->session->user;
 
     if( $u->level < 40 )
     {

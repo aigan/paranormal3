@@ -3,7 +3,7 @@
 %]
 
 <p>
-[ [% jump('Skapa ny', 'edit' run='arctype_create') +%]
+[ [% jump('Skapa ny', 'edit.tt' run='arctype_create') +%]
 ]</p>
 
 <div class="entry">

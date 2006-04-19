@@ -775,12 +775,9 @@ sub insert_web_links
 
 sub autolink {
     my $text = shift;
-    # search for http:// anything html|htm|php|tt|/
-    $text =~ s/(http:[\w\/\.]+(\.html|\.htm|\.php|\/|\.tt))/<a href="$1" target="_blank">$1<\/a>/gi;
+    # Creates links from URLs
+    $text =~ s/([^\/]|^)(http:\/\/|(www\.))([\w\.]+\.(?:se|net|org|com|nu|tk|co.uk|dk))(\/(?:[\w\/\.]+(?:\.html|\.htm|\.php|\.tt))?|)/$1<a href="http:\/\/$3$4$5" target="_blank">$3$4$5<\/a>/gi;
 
-    # search for www. anything .se  etc
-    $text =~ s/([^\/]|^)(www.+?\.(se|net|org|com|nu|tk|co.uk|dk))/$1<a href="http:\/\/$2" target="_blank">$2<\/a>/gi;
-    
     return $text;
 }
 

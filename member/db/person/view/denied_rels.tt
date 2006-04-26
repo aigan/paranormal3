@@ -34,7 +34,7 @@ rel_createdby=? and rel_changedby<>?  and (rel_active is false and rel_strength 
    [% arc = getarc(rec.rel_topic) %]
 
    [%tr2%]
-        <td align="right">[% jump(arc.id, '/member/db/topic/edit/rel', rel_topic=arc.id) %]</td>
+        <td align="right">[% jump(arc.id, '/member/db/topic/edit/arc.tt', rel_topic=arc.id) %]</td>
         <td colspan="3">[% arc.as_string %]</td>
 	<td>[% arc.updated_by.link %]</td>
         <td>[% arc.status %]</td>

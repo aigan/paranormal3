@@ -271,7 +271,7 @@ sub handler
 
     if( $topics[1] )
     {
-	$res->{'info'}{'alternatives'}{'list'} = \@topics;
+	$res->{'info'}{'alternatives'}{'alts'} = \@topics;
 	my $euri = $q->escapeHTML( $uri );
 	throw('alternatives', "Välj ett av dessa alternativ för <code>$euri</code>");
     }

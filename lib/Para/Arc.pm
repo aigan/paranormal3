@@ -626,11 +626,12 @@ sub set_implicit
     my $arc_id    = $arc->id;
     my $mid       = $Para::Frame::U->id;
     my $now       = now();
+    my $now_out   = $Para::dbix->format_datetime( $now );
 
     my $sth = $Para::dbh->prepare("update rel set rel_implicit=?, ".
 				   "rel_updated=?, rel_changedby=? ".
 				   "where rel_topic=?");
-    $sth->execute(pgbool($val), $now->cdate, $mid, $arc_id);
+    $sth->execute(pgbool($val), $now_out, $mid, $arc_id);
 
     $arc->{'rel_updated'} = $arc->{'updated'} = $now;
     $arc->{'rel_changedby'} = $mid;
@@ -674,11 +675,12 @@ sub set_indirect
     my $arc_id    = $arc->id;
     my $mid       = $Para::Frame::U->id;
     my $now       = now();
+    my $now_out   = $Para::dbix->format_datetime( $now );
 
     my $sth = $Para::dbh->prepare("update rel set rel_indirect=?, ".
 				   "rel_updated=?, rel_changedby=? ".
 				   "where rel_topic=?");
-    $sth->execute(pgbool($val), $now->cdate, $mid, $arc_id);
+    $sth->execute(pgbool($val), $now_out, $mid, $arc_id);
 
     $arc->{'rel_updated'} = $arc->{'updated'} = $now;
     $arc->{'rel_changedby'} = $mid;
@@ -728,6 +730,7 @@ sub activate
     my $m = $Para::Frame::U;
     $status ||= $m->new_status;
     my $now       = now();
+    my $now_out   = $Para::dbix->format_datetime( $now );
     my $mid       = $Para::Frame::U->id;
 
     confess sprintf("Wrong status %d for activating arc %s\n", $status, $arc->desig) if $status <= $C_S_PROPOSED;
@@ -759,7 +762,7 @@ sub activate
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
 
-	$sth->execute( $status, $mid, $now->cdate, $rarc->id );
+	$sth->execute( $status, $mid, $now_out, $rarc->id );
     }
 
     my $sth = $Para::dbh->prepare(
@@ -768,7 +771,7 @@ sub activate
            where rel_topic=?");
 
     debug(1,"Updating arc status to $status");
-    $sth->execute( $status, $mid, $now->cdate, $arc->id );
+    $sth->execute( $status, $mid, $now_out, $arc->id );
 
     if( $status > $arc->status )
     {
@@ -796,7 +799,7 @@ sub reject_other_versions
 
     foreach my $arcv (@{ $arc->versions })
     {
-#	warn sprintf " --   Deactivating %d?\n", $arcv->id;
+	warn sprintf " --   Deactivating %d?\n", $arcv->id;
 	next if $arcv->equals( $arc );
 	next if $arcv->status <= $C_S_REPLACED and $arcv->inactive;
 
@@ -807,7 +810,7 @@ sub reject_other_versions
 	      $arc->desig, $arc->status );
 	}
 
-#	warn " --     yes\n";
+	warn " --     yes\n";
 	$arcv->deactivate( $C_S_REPLACED );
     }
 }
@@ -822,6 +825,7 @@ sub deactivate
 
     $status ||= $C_S_DENIED;
     my $now       = now();
+    my $now_out   = $Para::dbix->format_datetime( $now );
     my $mid       = $Para::Frame::U->id;
 
     die "Wrong status" if $status >= $C_S_PENDING;
@@ -849,7 +853,7 @@ sub deactivate
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
 
-	$sth->execute( $status, $mid, $now->cdate, $rarc->id );
+	$sth->execute( $status, $mid, $now_out, $rarc->id );
     }
 
     my $sth = $Para::dbh->prepare(
@@ -857,7 +861,7 @@ sub deactivate
            rel_changedby=?, rel_updated=?
            where rel_topic=?");
 
-    $sth->execute( $status, $mid, $now->cdate, $arc->id );
+    $sth->execute( $status, $mid, $now_out, $arc->id );
 
     if( $status < $arc->status )
     {

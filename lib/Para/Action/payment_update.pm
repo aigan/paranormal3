@@ -8,6 +8,7 @@ use Para::Frame::Utils qw( throw trim );
 use Para::Frame::Time qw( date );
 
 use Para::Topic;
+use Para::Constants qw( $C_T_PARANORMAL_SWEDEN );
 
 sub handler
 {
@@ -42,7 +43,7 @@ sub handler
     my $vat        = $q->param('vat');
     my $quantity   = $q->param('quantity');
     my $method     = Para::Topic->get_by_id( $q->param('method') );
-    my $receiver   = Para::Topic->get_by_id( T_PARANORMAL_SWEDEN );
+    my $receiver   = Para::Topic->get_by_id( $C_T_PARANORMAL_SWEDEN );
     my $vernr      = $q->param('vernr');
     my $reference  = $q->param('reference');
     my $comment    = $q->param('comment');
@@ -75,14 +76,14 @@ sub handler
 
     my $company_id = $company ? Para::Topic->find_one( $company )->id : undef;
 
-    my $payment_date_cdate = $payment_date ? $payment_date->cdate : undef;
-    my $order_date_cdate   = $order_date   ? $order_date->cdate   : undef;
-    my $invoice_date_cdate = $invoice_date ? $invoice_date->cdate : undef;
-    my $log_date_cdate     = $log_date     ? $log_date->cdate     : undef;
+    my $payment_date_out = $payment_date ? $Para::dbix->format_datetime($payment_date) : undef;
+    my $order_date_out   = $order_date   ? $Para::dbix->format_datetime($order_date)   : undef;
+    my $invoice_date_out = $invoice_date ? $Para::dbix->format_datetime($invoice_date) : undef;
+    my $log_date_out     = $log_date     ? $Para::dbix->format_datetime($log_date)     : undef;
 
-    my @update_vals = ( $m->id, $company_id, $payment_date_cdate,
-			$order_date_cdate, $invoice_date_cdate,
-			$log_date_cdate, $product_id, $price, $vat,
+    my @update_vals = ( $m->id, $company_id, $payment_date_out,
+			$order_date_out, $invoice_date_out,
+			$log_date_out, $product_id, $price, $vat,
 			$quantity, $method_id, $receiver_id, $vernr,
 			$message, $comment, $reference, $pid );
 

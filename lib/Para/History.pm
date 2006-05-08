@@ -44,6 +44,8 @@ sub add
     my $id = $Para::dbix->get_nextval('history_seq');
     my $status = $args->{status} || $C_HS_CREATED;
     my $created = now();
+    my $created_out = $Para::dbix->format_datetime( $created );
+
     my $createdby = $args->{createdby} || $Para::Frame::U;
     my $secret = $args->{secret} || 0;
     my $partof = $args->{partof};
@@ -70,7 +72,7 @@ sub add
                           ) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?,
                           ?, ?, ?, ?, ?, ? )");
 
-#    $sth->execute($id, $status, $created->cdate, $createdby->id,
+#    $sth->execute($id, $status, $created_out, $createdby->id,
 #		  pgbool($secret), $partof, $topic_id, $member_id,
 #		  $hclass, $action, $skey, $slot, $vold, $vnew,
 #		  $comment);

@@ -83,12 +83,13 @@ sub handler
     my $method_id   = $C_T_PAYNOVA;
     my $receiver_id = $C_T_PARANORMAL_SWEDEN;
     my $today = now();
+    my $today_out = $Para::dbix->format_datetime( $today );
 
     my $vat_db = $vat;
     $vat_db =~ s/,/./;
 
-    $sth->execute( $order_id, $mid, undef, undef, $today->cdate,
-		   $today->cdate, undef, $product_id, $amount_kr,
+    $sth->execute( $order_id, $mid, undef, undef, $today_out,
+		   $today_out, undef, $product_id, $amount_kr,
 		   $vat_db, $length, $method_id, $receiver_id, $message
 		   );
 

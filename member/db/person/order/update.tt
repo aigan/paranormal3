@@ -1,5 +1,5 @@
 [% META title="Uppdatera beställning"
-        next_tempalte = "details.tt"
+        next_template = "details.tt"
 	next_action  = "payment_update"
 	level = 42
 %]
@@ -12,12 +12,12 @@
 [% PROCESS payment_menu.tt %]
 
 [% product_list = {} %]
-[% FOREACH product = topic(422155).rev_arcs('är') %]
+[% FOREACH product IN topic(422155).rev_arcs('är') %]
    [% product_list.${product.subj.id} = product.subj.desig %]
 [% END %]
 
 [% method_list = {} %]
-[% FOREACH method = topic(422433).rev_arcs('är') %]
+[% FOREACH method IN topic(422433).rev_arcs('är') %]
    [% method_list.${method.subj.id} = method.subj.desig %]
 [% END %]
 

@@ -35,6 +35,7 @@ sub handler
 
     my $m = $Para::Frame::U;
     my $created   = now();
+    my $created_out = $Para::dbix->format_datetime($created);
     trim( \$reason );
 
     unless( $reason )
@@ -49,7 +50,7 @@ sub handler
       ( ipfilter_pattern, ipfilter_createdby, ipfilter_created, ipfilter_changedby, ipfilter_updated, ipfilter_expire, ipfilter_reason )
       values ( ?, ?, ?, ?, ?, ?, ?)");
 
-    $sth->execute( $pattern, $m->id, $created->cdate, $m->id, $created->cdate, $expire, $reason );
+    $sth->execute( $pattern, $m->id, $created_out, $m->id, $created_out, $expire, $reason );
 
     return "Filter created\n";
 };

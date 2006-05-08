@@ -33,7 +33,7 @@ sub handler
     {
 	$expire = date( $expire );
 	$expire or throw('validate', 'Inget bra datumformat');
-	$expire = $expire->cdate;
+	$expire = $Para::dbix->format_datetime( $expire );
     }
     else
     {
@@ -42,6 +42,7 @@ sub handler
 
     my $m = $Para::Frame::U;
     my $updated   = now();
+    my $updated_out = $Para::dbix->format_datetime( $updated );
     trim( \$reason );
 
     unless( $reason )
@@ -54,7 +55,7 @@ sub handler
     #
     my $sth = $Para::dbh->prepare_cached("update ipfilter set ipfilter_reason=?, ipfilter_expire=?, ipfilter_changedby=?, ipfilter_updated=? where ipfilter_pattern=?");
 
-    $sth->execute( $reason, $expire, $m->id, $updated->cdate, $pattern );
+    $sth->execute( $reason, $expire, $m->id, $updated_out, $pattern );
 
     return "Filter updated\n";
 };

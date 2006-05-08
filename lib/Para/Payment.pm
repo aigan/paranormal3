@@ -129,8 +129,10 @@ sub set_completed
 
     my $sth = $Para::dbh->prepare("update payment set payment_completed=true, payment_reference=?, payment_date=?, payment_log_date=now() where payment_id=?");
 
-    my $payment_date = $p->payment_date ? $p->payment_date->cdate : Para::Frame::Time->now()->cdate;
-    $sth->execute( $reference, $payment_date, $p->id );
+    my $payment_date = $p->payment_date || Para::Frame::Time->now();
+    my $payment_date_out = $Para::dbix->format_datetime( $payment_date );
+
+    $sth->execute( $reference, $payment_date_out, $p->id );
 
     my $body = "Betalning från ".$p->member->name."\n";
     $body .= "http://paranormal.se/member/db/person/order/details?pid=".$p->id."\n\n";
@@ -179,11 +181,12 @@ sub add_to_member_stats
 #	warn "$$:     old_expire is $old_expire\n";
 	$old_expire    = $date if $date > $old_expire;
 	my $new_expire = Para::Frame::Time->get( $old_expire + duration( days => $length ) );
+	my $new_expire_out = $Para::dbix->format_datetime( $new_expire );
 	my $cost       = $p->price;
 	my $total      = $m->payment_total + $cost;
 
 	$m->{'member_payment_period_length'} = $length;
-	$m->{'member_payment_period_expire'} = $new_expire->cdate;
+	$m->{'member_payment_period_expire'} = $new_expire_out;
 	$m->{'member_payment_period_cost'}   = $cost;
 	$m->{'member_payment_total'}         = $total;
 

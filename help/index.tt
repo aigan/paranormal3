@@ -11,8 +11,6 @@
 
 <h1>Hjälp-linjen</h1>
 
-<p>
-[% WRAPPER instruction %]
 <p>Medlemmar på paranormal.se har kontakter med många andra organisationer och nätverk.  Vi kallar oss [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %] och ställer upp för att lösa problem där du har drabbats av andliga eller övernaturliga fenomen.  Vad det än gäller, leder vi dig rätt efter bästa förmåga.</p>
 
 <p>Men:
@@ -21,7 +19,6 @@
 <li>Är du på jakt efter kunskap eller information om något bör du istället fråga någon av de enskilda hjälparna under hjälpare [% jump('under respektive uppslagsord', '/index.tt') %]. Dessa frågor är för många för att vi ska kunna ta hand om dem här.</li>
 <li>Har du andra typer av frågor eller annan anledning att kontakta oss, se [% jump('våra kontaktuppgifter', '/topic/kontaktuppgifter_for_paranormalse.html') %].</li>
 </ul>
-[% END %]
 
 <table>
 [% IF u.level %]
@@ -41,6 +38,7 @@
 
 [% DEFAULT tid = 428516 %]
 [% hidden('tid',tid) %]
+
 [% hr %]
 
 <p>Vill du prata med någon direkt, går det bra att ringa också!</p>

@@ -18,7 +18,7 @@ package Para::Interest;
 
 use strict;
 use Data::Dumper;
-use Carp qw(cluck);
+use Carp qw( cluck confess );
 use locale;
 
 BEGIN
@@ -28,7 +28,7 @@ BEGIN
 }
 
 use Para::Frame::Reload;
-use Para::Frame::Utils qw( trim throw uri );
+use Para::Frame::Utils qw( trim throw uri datadump );
 use Para::Frame::Time qw( date now );
 
 use Para::Arcs;
@@ -206,6 +206,9 @@ sub create
 
     my $mid = ref $m ? $m->id : $m;
     my $tid = ref $t ? $t->id : $t;
+
+    $mid or confess "No member given";
+    $tid or confess "No topic given: ".datadump($t,2);
 
     if( $u->level < 40 and $u->id != $mid )
     {

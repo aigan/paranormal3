@@ -39,6 +39,7 @@ use Para::Interest;
 use Para::Interests::Tree;
 use Para::Email;
 use Para::Calendar;
+use Para::Domains;
 
 our $CLEAR_CACHE;
 
@@ -264,6 +265,12 @@ sub display_slogan
     srand();
     my $rand = int(rand(@Para::slogans));
     return $Para::slogans[$rand];
+}
+
+our $DOMAINS;
+sub domains
+{
+    return $DOMAINS ||= Para::Domains->new;
 }
 
 

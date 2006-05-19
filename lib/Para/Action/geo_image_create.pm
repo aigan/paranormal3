@@ -27,7 +27,6 @@ use vars qw( $img $dotc $gref );
 #
 #
 
-use Para::Widget;
 use Para::Member;
 use Para::Frame::Utils qw( debug );
 
@@ -86,7 +85,7 @@ sub do_job
 	}
 	else
 	{
-	    $precs = Para::Widget::select_persons();
+	    $precs = Para::Member->search();
 	    foreach my $prec ( @$precs )
 	    {
 		my $m = Para::Member->get_by_id( $prec->{'member'} );

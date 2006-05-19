@@ -6,7 +6,6 @@ use strict;
 use Para::Frame::Utils qw( throw );
 
 use Para::Member;
-use Para::Widget;
 
 sub handler
 {
@@ -20,7 +19,7 @@ sub handler
 	throw('denied', "Du måste vara minst nivå 7 för att skicka epost till en lista");
     }
 
-    my $list = Para::Widget::select_persons({all=>1});
+    my $list = Para::Member->search({all=>1});
     my $subject = $q->param('subject');
 
     my $from = $u->sys_email->format;

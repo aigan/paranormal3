@@ -3,56 +3,35 @@
 	next_template = 'unchecked_rels.tt'
         level = 11
 %]
-[%
-   subpart = {};
-   offset = q.param('offset');
-   DEFAULT offset=1;
-   hidden('offset', offset);
-   part_offset = offset - 1;
-%]
 
 <div class="entry">
 <table>
    <tr><th>Ja</th><th>?</th><th>Nej</th><th>rev</th><th>arctype</th><th>rel</th></tr>
-[% FOREACH select_list("select distinct rel_topic, t_rev.t_title as rev_title, t_rel.t_title as rel_title, rel_name, rev, rel, reltype from rel, t t_rev, reltype, t t_rel where rev=t_rev.t and rel=t_rel.t and rel_type=reltype and t_rev.t_active is true and t_rel.t_active is true and (rel_status=2 or rel_status=3) and rel_indirect is false order by rel_name, rel_title, rev_title, rev limit 10 offset ?", part_offset ) %]
-   [% tr2 %]
-      [% a = getarc( rel_topic ) %]
-      <td>[% radio("relrev_${reltype}_${rel}_${rev}", 't' ) %]
-      <td>[% radio("relrev_${reltype}_${rel}_${rev}", '', 1 ) %]
-      <td>[% radio("relrev_${reltype}_${rel}_${rev}", 'f' ) %]
+[% recs = select_list("from rel where (rel_status=2 or rel_status=3) and rel_indirect is false order by rel_topic limit 10" ) %]
 
-      <td>[% jump(a.revt.desig, '/member/db/topic/view/', tid=rev href_target='info') %]
-          [% INCLUDE typelist.tt rel=rev %]
+[% FOREACH rec IN recs %]
+   [% a = getarc(rec.rel_topic, rec) %]
+   [% revt = a.revt %]
+   [% tr2 %]
+      <td>[% radio("relrev_${a.id}", 't' ) %]
+      <td>[% radio("relrev_${a.id}", '', '' ) %]
+      <td>[% radio("relrev_${a.id}", 'f' ) %]
+
+      <td[% UNLESS revt.active_ver %] style="text-decoration: line-through"[% END %]>[% jump(revt.desig, '/member/db/topic/view/', tid=revt.id href_target='info') %]
+          [% INCLUDE typelist.tt rel=revt.id %]
       </td>
-      <td>$rel_name</td>
-      <td>[% jump(a.relt.desig, '/member/db/topic/view/', tid=rel href_target='info') %]
-          [% INCLUDE typelist.tt rel=rel %]
+      <td>[% a.pred.rel_name %]</td>
+      [% IF a.relt %]
+         [% relt = a.relt %]
+         <td[% UNLESS relt.active_ver %] style="text-decoration: line-through"[% END %]>[% jump(relt.desig, '/member/db/topic/view/', tid=relt.id href_target='info') %]
+             [% INCLUDE typelist.tt rel=relt.id %]
+      [% ELSE %]
+         <td>[% a.value %]
+      [% END %]
       </td>
    </tr>
-   [% subpart.shown = loop.size %]
 [% END %]
 </table>
 </div>
 
 <p>[% step %]
-
-
-[%
-   prev_from = offset - 10;
-   prev_to = offset - 1;
-   this_from = offset;
-   this_to = offset + subpart.shown - 1;
-   next_from = offset + 10;
-   next_to = offset + 19;
-%]
-
-
-<p>
-[% IF offset > 10 %]
-   [% jump("$prev_from - $prev_to", me offset = prev_from) %] | 
-[% END %]
-$this_from - $this_to
-[% IF subpart.shown == 10 %]
-   | [% jump("$next_from - $next_to", me offset = next_from) %]
-[% END %]
-</p>

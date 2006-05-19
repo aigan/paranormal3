@@ -3191,7 +3191,7 @@ sub search
     my $presentation  = $q->param('_presentation');
     my $order      = $q->param('order') || 'dist';
 
-    my $interest_words = rowlist('interest');
+    my $interest_words = Para::Frame::Widget::rowlist('interest');
     my( $interest_part,  @where_data, @where_part, @select );
 
     debug 3, "Interest words: @$interest_words";

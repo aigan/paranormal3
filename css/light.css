@@ -298,3 +298,17 @@ abbr, acronym
 {
 	BACKGROUND-COLOR: #AFA;
 }
+
+input,select,textarea
+{
+	background-color: #EBF1FA;
+	color: #222222;
+}
+input:focus,select:focus,textarea:focus
+{
+	background-color: #ffffff;
+}
+label:hover
+{
+	background-color: #ffff00;
+}

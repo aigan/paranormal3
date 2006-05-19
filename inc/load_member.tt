@@ -1,6 +1,6 @@
   [%- DEFAULT mid = q.param('mid') || u.id || 0 %]
   [%- DEFAULT level = 0 %]
-  [%- m = getmember( mid ) %]
+  [%- m = members.get_by_id( mid ) %]
   [%- IF m.present_contact < 5 %]
      [%- level = 41 %]
   [%- END %]

@@ -3,5 +3,5 @@
               and editor>=30 and intrest_defined>=50 and present_contact_public>=12 order by member_level*(editor+knowledge) desc,
               member limit 1", tid) %]
 [% IF red %]
-Försteredaktör: [% getmember(red.member).link %]<br />
+Försteredaktör: [% members.get_by_id(red.member, red).link %]<br />
 [% END %]

@@ -793,3 +793,39 @@ form
 {
 	margin: 0;
 }
+
+.paraframe_box
+{
+  border-style: outset;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.paraframe_box table
+{
+  border-style: inset;
+}
+
+.paraframe_info
+{
+  font-weight: bold;
+  font-family:  verdana, Arial, helvetica, san-serif;
+  font-size: 10pt;
+}
+
+label { margin-right: 1em }
+td label
+{
+	width: 100%;
+	display: block;
+}
+
+
+table.minimal
+{
+	border-spacing: 0;
+}
+table.minimal td
+{
+	padding: 0;
+}

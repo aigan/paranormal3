@@ -305,7 +305,7 @@ sub check_rel_create
 		    $res->{'info'}{'alternatives'}{'replace'} = "_rel__n_${row}_rel";
 		    $res->{'info'}{'alternatives'}{'view'} = "/member/db/topic/edit/meta.tt";
 
-		    $req->page->set_error_template($site->home.'/alternatives.tt');
+		    $req->page->set_error_template('/alternatives.tt');
 		    $req->s->route->bookmark;
 		}
 		die $@; # Propagate error

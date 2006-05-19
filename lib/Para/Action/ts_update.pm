@@ -125,7 +125,7 @@ sub check_ts_create
 					);
 		    };
 
-		    $req->page->set_error_template($site->home.'/alternatives.tt');
+		    $req->page->set_error_template('/alternatives.tt');
 		    $req->s->route->bookmark;
 		}
 		die $@; # Propagate error

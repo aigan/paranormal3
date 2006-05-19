@@ -1,6 +1,6 @@
 [% RETURN UNLESS u.level %]
 [%
-   DEFAULT keep=[ 'mid' ];
+   DEFAULT keep=[ 'mid' 'rid' 'did'];
 %]
 <p>Visa: 
 [ [%+ jump('Översikt', '/member/db/person/view/', mid=m.id) +%]

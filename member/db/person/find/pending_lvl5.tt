@@ -18,8 +18,8 @@
 [% END %]
 <th>Inne?</th>
 </tr>
-[% FOREACH rec = recs %]
-   [% m = getmember(rec.member, rec) %]
+[% FOREACH rec IN recs %]
+   [% m = members.get_by_id(rec.member, rec) %]
    [% NEXT IF m.level != 3; # DB may not be synced %]
    [% tr2 %]<td>$m.id</td><td>[% jump(m.nickname, "/member/db/person/edit/check_presentation.tt", mid=m.id) %]</td>
 <td>[% m.created %]</td>

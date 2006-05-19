@@ -11,7 +11,7 @@
 <table>
 <tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
 </tr>
-[% list = getmember_currently_online %]
+[% list = members.currently_online %]
 [% FOREACH m IN list %]
    [% tr2 %]
        <td>$m.id</td>
@@ -31,7 +31,7 @@
 <table>
 <tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
 </tr>
-[% list = getmember_currently_online(1) %]
+[% list = members.currently_online(1) %]
 [% FOREACH m IN list %]
    [% tr2 %]
        <td>$m.id</td>
@@ -47,7 +47,7 @@
 
 [% ELSE %]
 
-[% anoncount = count_online - list.size %]
+[% anoncount = members.count_currently_online - list.size %]
 <p>Samt [% inflect(anoncount, "1 anonym medlem", "%d anonyma medlemmar") %]...
 
 [% END %]

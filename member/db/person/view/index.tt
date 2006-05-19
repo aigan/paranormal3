@@ -8,12 +8,12 @@
       IF q.param('one');
          complete=0;
       END;
-      members = select_persons_by_name(nick, complete, 1);
-      IF members.size == 0;
+      found_members = members.by_name(nick, complete, 1);
+      IF found_members.size == 0;
          PROCESS member_not_found;
          RETURN;
-      ELSIF members.size == 1;
-         mid = members.0.id;
+      ELSIF found_members.size == 1;
+         mid = found_members.0.id;
       ELSE;
          PROCESS member_list;
          RETURN;
@@ -145,9 +145,9 @@
 
 
 [% BLOCK member_list %]
-   <h1>Det finns $members.size <code>$nick</code></h1>
+   <h1>Det finns $found_members.size <code>$nick</code></h1>
 
-   [% pm = getmember_by_nick(nick) %]
+   [% pm = members.get_by_nickname(nick) %]
    [% IF pm %]
       <p>Se [% jump(pm.name, me, mid=pm.id) %], som har detta användarnamn</p>
    [% END %]
@@ -155,7 +155,7 @@
 
    <table>
    <tr><th>Användarnamn <th>Namn <th>Uppslagsord <th>Senast sedd
-   [% FOREACH m = members %]
+   [% FOREACH m IN found_members %]
       [% tr2 %]
       <td>[% jump(m.nickname, me, mid=m.id, href_class='msg') %]
       <td>$m.name

@@ -22,11 +22,11 @@
 
 [% TRY %]
 
-[% members = select_persons() %]
+[% members_found = members.search() %]
 
 <div align="center">
-<p>[% members.size %] träffar
-<p>[% members.pagelist %]
+<p>[% members_found.size %] träffar
+<p>[% members_found.pagelist %]
 </div>
 
 <div class="entry">
@@ -34,15 +34,14 @@
 <tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th><th>Senast sedd</th>
 </tr>
 
-[% FOREACH members.from_page %]
-   [% m = getmember( member ) %]
-
-  [% tr2 %]
+[% FOREACH mrec IN members_found.from_page %]
+   [% m = members.get_by_id( mrec.member ) %]
+   [% tr2 %]
        <td>$m.id</td>
        <td>[% jump(m.nickname, "../view/", mid=m.id) %]</td>
        <td>[% m.level %]</td>
        <td>[% m.name %]</td>
-       <td>[% IF dist.length; dist / 1000 | format('%d km'); END %]</td>
+       <td>[% IF mrec.dist.length; mrec.dist / 1000 | format('%d km'); END %]</td>
        <td>[% m.home_postal_city %]</td>
        <td>[% m.latest_seen %]</td>
    </tr>
@@ -50,7 +49,7 @@
 </table>
 </div>
 
-<p align="center">[% members.pagelist %]</p>
+<p align="center">[% members_found.pagelist %]</p>
 
 
 [% IF u.level > 6 %]

@@ -35,7 +35,7 @@
 
 <li>[% jump('Besöksstatistik', '/webalizer/') %]
 
-[% cnt_online = count_online %]
+[% cnt_online = members.count_currently_online %]
 <li>Vi har just nu [% cnt_online %] medlem[% 'mar' IF cnt_online > 1 %] online
 
 [% IF u.level > 41 %]

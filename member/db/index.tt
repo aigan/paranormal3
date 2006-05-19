@@ -96,7 +96,7 @@
 
 [% motd %]
 
-<p>Det är just nu [% jump(inflect(count_online, '1 medlem inloggad', '%d medlemmar inloggade'), "person/find/online.tt") %] här</p>
+<p>Det är just nu [% jump(inflect(members.count_currently_online, '1 medlem inloggad', '%d medlemmar inloggade'), "person/find/online.tt") %] här</p>
 </div>
 
 

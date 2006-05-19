@@ -10,8 +10,8 @@
 <table>
 <tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Ort</th>
 </tr>
-[% FOREACH rec = select_list("from member where member_level=5 and present_contact >= 5 order by member_created desc limit 20") %]
-   [% m = getmember( rec.member, rec ) %]
+[% FOREACH rec IN select_list("from member where member_level=5 and present_contact >= 5 order by member_created desc limit 20") %]
+   [% m = members.get_by_id( rec.member, rec ) %]
    [% tr2 %]
        <td>$m.id</td>
        <td>$m.created</td>

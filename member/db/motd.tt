@@ -6,7 +6,7 @@
 %]
 
 
-[% m =  getmember( -1 ) %]
+[% m =  members.get_by_id( -1 ) %]
 <textarea name="statement" wrap="soft" cols="40" rows="10">[% m.presentation|html %]</textarea>
 
 <p>[% step %]

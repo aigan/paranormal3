@@ -7,8 +7,8 @@ fortsätta med.</p>
 
 <div class="entry">
 <table>
-[% FOREACH rec = select_list("from member where member_level=1 and member>1000 order by member_created desc") %]
-   [% m = getmember(rec.member, rec) %]
+[% FOREACH rec IN select_list("from member where member_level=1 and member>1000 order by member_created desc") %]
+   [% m = members.get_by_id(rec.member, rec) %]
    [% tr2 %]<td align="right">[% loop.count %].<td>[% m.created %]<td>[% m.id %] <td>[% jump(m.nickname, 'email.tt', nick=m.nickname) %]
 
 [% END %]

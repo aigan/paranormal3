@@ -49,7 +49,7 @@
 
       <td>[% jump(t_title, '/member/db/topic/edit/meta.tt', tid=t, href_target='info') %]</td>
       <td>[% PROCESS typelist.tt %]</td>
-      <td>[% getmember(talias_createdby).link %]</td>
+      <td>[% members.get_by_id(talias_createdby).link %]</td>
   </tr>
    [% subpart.shown = loop.size %]
 [% END %]

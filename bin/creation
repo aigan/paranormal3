@@ -36,7 +36,6 @@ our $SITE_CFG;  # Hashref with rest of config
 
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
-use lib "$WA::APPROOT/lib";
 use lib "$Ekoby::APPROOT/lib";
 use lib "$Para::Healing::APPROOT/lib";
 
@@ -55,8 +54,8 @@ use Para::Frame::Site;
 
 use Para;
 use Para::Member;
+use Para::Domains;
 
-use WA::Domains;
 use Ekoby::Ekonomi;
 use Para::Healing;
 
@@ -109,6 +108,8 @@ use Para::Healing;
 	    connect => ["DBI:Pg:dbname=ekoby;port=5433"],
 	});
 
+    # Configure Healing database
+    #
     $Para::Healing::dbix = Para::Frame::DBIx ->
 	new({
 	     connect            =>  ["dbi:Pg:dbname=healing;port=5433"],
@@ -167,7 +168,6 @@ use Para::Healing;
 
     Para::Frame::Site->add({
 	'webhost'    => $WA::HOST,
-	'appbase'    => "WA",
 	'params'     =>
 	{
 	    'css'        => $para_css,
@@ -239,6 +239,7 @@ use Para::Healing;
 	'html_psi_nolinks' => \&Para::Widget::html_psi_nolinks_factory,
     }, 1);
 
+    # Used in healing.se
     Para::Frame::Burner->get_by_type('html')->add_filters({
 	'alink' => \&Para::Widget::autolink,
      });
@@ -280,8 +281,8 @@ use Para::Healing;
 
 			      Para::Constants->init;
 
-#			      # Take shortcut...
-#			      return unless $SITE_CFG->{'do_bgjob'};
+			      # Take shortcut...
+			      return unless $SITE_CFG->{'do_bgjob'};
 
 			      # Setup MOTD
 			      Para::Widget::new_entry(undef, 'static');
@@ -292,19 +293,14 @@ use Para::Healing;
     Para::Frame->add_hook('busy_background_job', \&Para::clear_caches);
 
 
+    $Para::dbix->connect; ### Need the DB for this
     my $global_params =
     {
-     'select_persons'    => \&Para::Widget::select_persons,
      'diff'              => \&Para::Widget::diff,
      'tfilter_init'      => \&Para::Widget::tfilter_init,
      'new_entry'         => \&Para::Widget::new_entry,
 
-     'select_persons_by_name' => sub{ Para::Member->by_name( @_ ) },
-     'getmember'         => sub{ Para::Member->get_by_id( @_ ) },
-     'getmember_by_nick' => sub{ Para::Member->get_by_nickname( @_ ) },
-     'getmember_currently_online'
- 	                 => sub{ Para::Member->currently_online( @_ ) },
-     'count_online'      => sub{ Para::Member->count_currently_online },
+     'members'           => bless({}, 'Para::Member'),
 
      'topic'             => sub{ Para::Topic->get_by_id( @_ ) },
      'find_topic'        => sub{ Para::Topic->find( @_ ) },
@@ -327,6 +323,7 @@ use Para::Healing;
      'now'               => \&Para::Frame::Time::now,
      'date'              => \&Para::Frame::Time::date,
      'elapsed_time'      => \&Para::Frame::Utils::elapsed_time,
+     'timespan'          => \&Para::Frame::Time::timespan,
 
      'uc'                => sub{ "\U$_[0]" },
      'lc'                => sub{ "\L$_[0]" },
@@ -337,12 +334,10 @@ use Para::Healing;
      'motd'              => sub{ $Para::MOTD },
      'display_slogan'    => \&Para::display_slogan,
      'C'                 => Para::Constants->new,
-
-     ### WA Domains
-     'wa_domains'        => WA::Domains->new,
-
+     'domains'           => Para->domains,
 
     };
+    $Para::dbix->disconnect; ### Done with DB
     Para::Frame->add_global_tt_params( $global_params );
 
     $Data::Dumper::Maxdepth = 5;

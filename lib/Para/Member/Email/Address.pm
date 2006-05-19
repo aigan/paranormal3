@@ -119,7 +119,7 @@ sub delete
     my $m = $e->member;
 
     # Do not allow to remove an alias if its the sys_email
-    if( $m->sys_email->equals($e) )
+    if( $m->sys_email and $m->sys_email->equals($e) )
     {
 	throw('email', "Du kan inte ta bort din primära e-postadress");
     }

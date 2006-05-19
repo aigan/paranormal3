@@ -96,6 +96,7 @@ sub get
 	return $Para::Arc::CACHE{ $id };
     }
 
+    confess "missing id" unless $id; ### DEBUG
     $rec ||= $Para::dbix->select_possible_record('from rel where rel_topic=?', $id);
     return undef unless $rec;
     return Para::Arc->new( $rec );

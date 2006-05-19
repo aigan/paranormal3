@@ -115,6 +115,8 @@ sub get_by_id
     my( $this, $mid, $rec, $no_cache ) = @_;
     my $class = ref($this) || $this;
 
+
+#    debug "get member by id $mid";
     # $rec can be provided as a mean for optimization
 
     return undef unless defined $mid;
@@ -310,23 +312,12 @@ sub create
     my $m = $this->get_by_id( $mid );
     $m->change->success("Medlemskap registrerat");
 
+    
+
     return $m;
 }
 
 ##################################################
-
-# sub verify_user
-# {
-#     my( $this, $username, $password ) = @_;
-#
-#     my $m = $this->get_by_nickname( $username );
-#     unless( $m )
-#     {
-# 	debug(0,"Medlemmen $username existerar inte");
-# 	return $this->identify_user('guest');
-#     }
-#     return $m->verify_password( $password );
-# }
 
 sub verify_password
 {
@@ -1992,6 +1983,12 @@ sub nickname
 	return undef;
     }
 }
+
+sub nickname_trimmed
+{
+    return name2nick( $_[0]->{'nickname'} );
+}
+
 sub set_nickname
 {
     my( $m, $nickname ) = @_;
@@ -2999,6 +2996,10 @@ sub by_name  ## LIST CONSTRUCTOR
     my %recs;
 
     trim( \$identity );
+
+    length($identity) or confess "Identity param missing";
+
+
     $identity = lc( $identity );
     my $nick = name2nick( $identity );
 
@@ -3148,6 +3149,374 @@ sub by_name  ## LIST CONSTRUCTOR
     return \@sorted;
 }
 
+#################################################################
+
+
+
+sub search
+{
+    my( $this, $crits ) = @_;
+
+    $crits ||= {};
+    my $all = 0;
+    $all = 1 if $crits->{'all'};
+
+    my $req = $Para::Frame::REQ;
+    my $q = $req->q;
+
+    my $belief     = $q->param('_belief')||0;
+    my $knowledge  = $q->param('_knowledge');
+    my $theory     = $q->param('_theory');
+    my $skill      = $q->param('_skill');
+    my $practice   = $q->param('_practice');
+    my $bookmark   = $q->param('_bookmark');
+    my $editor     = $q->param('_editor');
+    my $discussion = $q->param('_discussion');
+    my $meeter     = $q->param('_meeter');
+    my $experience = $q->param('_experience');
+    my $helper     = $q->param('_helper');
+    my $newsmail   = $q->param('_newsmail') || 3;
+    my $union      = $q->param('union');
+    my $dist       = $q->param('dist');
+    my $place      = $q->param('place') || 'mig';
+    my $sex_m      = $q->param('_sex_m') || 0;
+    my $sex_f      = $q->param('_sex_f') || 0;
+    my $age_min    = $q->param('_age_min');
+    my $age_max    = $q->param('_age_max');
+    my $level_min  = $q->param('_level_min');
+    my $level_max  = $q->param('_level_max');
+    my $has_uri    = $q->param('_uri');
+    my $has_icq    = $q->param('_icq');
+    my $has_phone  = $q->param('_phone');
+    my $presentation  = $q->param('_presentation');
+    my $order      = $q->param('order') || 'dist';
+
+    my $interest_words = rowlist('interest');
+    my( $interest_part,  @where_data, @where_part, @select );
+
+    debug 3, "Interest words: @$interest_words";
+
+    if( $sex_m and $sex_f )
+    {
+	$sex_m = 0;
+	$sex_f = 0;
+    }
+
+    if( @$interest_words )
+    {
+	my( @interest, @interest_part );
+	foreach my $word ( @$interest_words )
+	{
+	    warn "Add $word to spec\n";
+
+	    my $topic;
+	    eval
+	    {
+		$topic = Para::Topic->find_one( $word );
+	    };
+	    if( $@ )
+	    {
+		if( ref $@ and $@->[0] eq 'alternatives' )
+		{
+		    my $res = $req->result;
+		    my $alt = $res->{'info'}{'alternatives'} ||= {};
+
+		    my $block;
+		    foreach my $oldword ( @$interest_words )
+		    {
+			if( $word ne $oldword )
+			{
+			    $block .= $oldword."\n";
+			}
+		    }
+
+		    $alt->{'rowformat'} = sub
+		    {
+			my( $t ) = @_;
+			
+			my $tid = $t->id;
+			my $ver = $t->ver;
+
+			my $val = $block . $tid ." ".$t->desig;
+
+			my $replace = $alt->{'replace'} || 'interest';
+			my $view = $alt->{'view'} || $req->template_uri;
+			
+			return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
+					jump('välj',
+					     $view,
+					     {
+						 step_replace_params => $replace,
+						 $replace => $val,
+						 run => 'next_step',
+						 class => 'link_button',
+					     }),
+					$t->id,
+					$ver,
+					$t->link,
+					$t->type_list_string,
+					);
+		    };
+		}
+		die $@; # Propagate error
+	    }
+
+	    my $part =
+	    {
+		id => $topic->id,
+		interest => "intrest > 30",
+	    };
+	    push @interest, $part;
+
+	    $part->{belief} = "belief > 30" if $belief > 0;
+	    $part->{belief} = "belief < -30" if $belief < 0;
+	    $part->{experience} = "experience > 20" if $experience;
+	    $part->{bookmark} = "bookmark > 50" if $bookmark;
+	    $part->{knowledge} = "knowledge > 40" if $knowledge;
+	    $part->{theory} = "theory > 60" if $theory;
+	    $part->{skill} = "skill > 30" if $skill;
+	    $part->{practice} = "practice > 60" if $practice;
+	    $part->{editor} = "editor > 30" if $editor;
+	    $part->{helper} = "helper > 30" if $helper;
+	    $part->{meeter} = "meeter > 50" if $meeter;
+	}
+
+	foreach my $interest ( @interest )
+	{
+	    my $cond = "";
+	    foreach my $key ( keys %$interest )
+	    {
+		next if $key eq 'id';
+		$cond .= "and $interest->{$key} ";
+	    }
+
+	    push @interest_part, "member in (select intrest_member ".
+	      "from intrest where intrest_topic=? $cond)";
+	    push @where_data,  $interest->{'id'};
+	}
+
+	if( $union )
+	{
+	    $interest_part = join " or ", @interest_part;
+	    push @where_part, "( $interest_part )" if  $interest_part;
+	}
+	else
+	{
+	    $interest_part = join " and ", @interest_part;
+	    push @where_part, $interest_part if  $interest_part;
+	}
+    }
+    else
+    {
+#	throw('validation', "Ha med åtminstonne ett intresse\n");
+
+	my $part =
+	{
+	    member => "member > 0",
+	};
+
+	$part->{belief} = "general_belief > 30" if $belief > 0;
+	$part->{belief} = "general_belief < -30" if $belief < 0;
+	$part->{bookmark} = "general_bookmark > 50" if $bookmark;
+	$part->{theory} = "general_theory > 60" if $theory;
+	$part->{practice} = "general_practice > 60" if $practice;
+	$part->{editor} = "general_editor > 30" if $editor;
+	$part->{helper} = "general_helper > 30" if $helper;
+	$part->{meeter} = "general_meeter > 50" if $meeter;
+
+	foreach my $key ( keys %$part )
+	{
+	    push @where_part, $part->{$key};
+	}
+
+	foreach my $key (qw(experience knowledge skill))
+	{
+	    if( $part->{$key} )
+	    {
+		throw('validation', "Du kan bara söka på $skill i kombination med ett urval av intressen\n");
+	    }
+	}
+    }
+
+    push @where_part, "general_discussion>40" if $discussion;
+
+    if( $newsmail )
+    {
+	debug 3, "newsmail: $newsmail";
+	push @where_part, "newsmail >= ?";
+	push @where_data,  $newsmail;
+    }
+
+    if( $sex_m )
+    {
+	push @where_part, "gender = 'M'";
+    }
+
+    if( $sex_f )
+    {
+	push @where_part, "gender = 'F'";
+    }
+
+    if( $age_min )
+    {
+	push @where_part, "bdate_ymd_year <= ?";
+ 	push @where_data,  now()->year - $age_min;
+    }
+
+    if( $age_max )
+    {
+	push @where_part, "bdate_ymd_year >= ?";
+ 	push @where_data,  now()->year - $age_max;
+    }
+
+    if( $level_min )
+    {
+	push @where_part, "member_level >= ?";
+ 	push @where_data,  $level_min;
+    }
+
+    if( $level_max )
+    {
+	push @where_part, "member_level <= ?";
+ 	push @where_data,  $level_max;
+    }
+
+    if( $has_uri )
+    {
+	push @where_part, "home_online_uri is not null";
+    }
+
+    if( $has_icq )
+    {
+	push @where_part, "home_online_icq is not null";
+    }
+
+    if( $has_phone )
+    {
+	push @where_part, "( home_tele_phone is not null or home_tele_mobile is not null )";
+    }
+
+    if( $presentation )
+    {
+	push @where_part, "present_contact >= 10 and lower(presentation) like lower(?)";
+	$presentation =~ s/%//g;
+	push @where_data,  "%$presentation%";
+    }
+
+
+    if( $Para::Frame::U->level < 41 )
+    {
+	push @where_part, "present_contact > 4";
+
+    }
+
+    # Skip old members
+    push @where_part, "member_level > 0";
+
+    if( $order eq "latest_in desc" )
+    {
+	push @where_part, "latest_in is not null";
+	
+    }
+
+
+    if( $dist or $order eq 'dist')
+    {
+	my( $x, $y );
+
+	my $plist = Para::Place->by_name( $place );
+	if( @$plist > 1)
+	{
+	    die "Fick flera träffar för angiven plats\n";
+	}
+	elsif( @$plist == 1 )
+	{
+	    my $p = $plist->[0];
+	    $x = $p->geo_x;
+	    $y = $p->geo_y; # ;;;
+	    unless( $x and $y )
+	    {
+		throw('notfound', "Vi vet inte var $place är någonstans\n");
+	    }
+	    debug 3, "Hittade platsen $place\n";
+	}
+	else
+	{
+	    my $mlist = Para::Member->by_name( $place, 0, 1 );
+	    if( @$mlist > 1 )
+	    {
+		die "Fick flera träffar för angiven person\n";
+	    }
+	    elsif( @$mlist == 1 )
+	    {
+		my $m = $mlist->[0];
+		$x = $m->geo_x;
+		$y = $m->geo_y; # ;;;
+		unless( $x and $y )
+		{
+		    throw('notfound', "Vi vet inte var $place bor\n");
+		}
+
+		my $nickname = $m->nickname;
+		debug 3, "Hittade person $nickname\n";
+	    }
+	    else
+	    {
+		throw('notfound', "Vet inte vad '$place' är för plats\n");
+	    }
+	}
+
+	if( $dist )
+	{
+	    warn "Inom $dist km\n";
+	    push @where_part, "sqrt(pow(geo_y - ?,2) + pow(geo_x - ?,2)) * 70866.66666666 < ?*1000";
+	    push @where_data, $y, $x, $dist;
+
+	    if( $Para::Frame::U->level < 41 )
+	    {
+		push @where_part, "present_contact >= 15";
+	    }
+
+	}
+
+	if( $Para::Frame::U->level < 41 )
+	{
+	    push @select, "CASE WHEN present_contact < 15 THEN null ELSE (sqrt(pow(geo_y - $y,2) + pow(geo_x - $x,2)) * 70866.66666666) END as dist";
+	}
+	else
+	{
+	    push @select, "(sqrt(pow(geo_y - $y,2) + pow(geo_x - $x,2)) * 70866.66666666) as dist";
+	}
+    }
+
+
+    my $where_string = join " and ", @where_part;
+
+    my $part_select = join ", ", 'member', @select;
+    my $sql = 'select '.$part_select.' from member where '.$where_string.
+	" order by $order";
+    my(@data) = ($sql, @where_data);
+
+
+    my $values = join ", ",map defined($_)?"'$_'":'<undef>', @data;
+#    debug "SQL: $values";
+
+    # Remember to recrate the List object returned
+    my $persons = $Para::dbix->cached_select_list(@data);
+
+    $persons->set_page_size( $q->param('pagesize') || 20 );
+
+###  TODO: Return memberr objects...
+#    $persons->materialize_sub(sub{
+#        Para::Member->get_by_id($_[0]->{'member'}, $_[0]);
+#    });
+
+    return $persons;
+}
+
+
+#################################################################
+
 sub currently_online
 {
     my( $this, $mode ) = @_;
@@ -3218,6 +3587,9 @@ sub currently_online
     return \@list;
 }
 
+
+######################################################
+
 sub count_currently_online
 {
     my $db = paraframe_dbm_open( $C_DB_ONLINE );
@@ -3233,6 +3605,75 @@ sub count_currently_online
 #    debug sprintf "Count online $ONLINE_COUNT (%s)", $_[0]->count_currently_online_dbm();
 #    return $ONLINE_COUNT;
 }
+
+
+######################################################
+
+sub suggest_nicknames
+{
+    my( $this, $first, $second, $altsgoal ) = @_;
+
+    $first ||= [];
+    $second ||= [];
+    $altsgoal ||= 5;
+
+    if( not UNIVERSAL::isa $first, "ARRAY" )
+    {
+	$first = [$first];
+	unless( UNIVERSAL::isa $second, "ARRAY" )
+	{
+	    push @$first, $second;
+	    undef $second;
+	}
+    }
+    elsif( not UNIVERSAL::isa $second, "ARRAY" )
+    {
+	$second = [$second];
+    }
+
+    my @alts;
+    my %altshash;
+
+  CHECK:
+    foreach my $baselist ($first, $second )
+    {
+	foreach my $addnums (0..3)
+	{
+	    foreach my $base ( @$baselist )
+	    {
+		$base =~ s/\@.*//;
+		my $test = name2nick($base);
+		if( $addnums )
+		{
+		    # Avoid nick0 and nick1
+		    $test .= int(rand((10**$addnums)-2)+2);
+		}
+		next if $altshash{$test}++;
+		next unless eval{ $this->validate_nick($test)};
+		unless( $this->get_by_nickname($test) )
+		{
+		    push @alts, $test;
+		    last CHECK if @alts >= $altsgoal;
+		}
+		
+	    }
+	}
+    }
+
+    if( @alts < $altsgoal )
+    {
+	my $randname = make_passwd();
+	my $left = $altsgoal - scalar(@alts);
+	push @alts, $this->suggest_nicknames([$randname],[],$left);
+    }
+
+    return @alts;
+}
+
+
+
+
+
 
 ######################################################
 

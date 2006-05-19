@@ -5,7 +5,7 @@ use strict;
 use Data::Dumper;
 use CGI;
 
-use Para::Frame::Utils qw( throw catch debug );
+use Para::Frame::Utils qw( throw catch debug trim );
 
 use Para::Topic;
 
@@ -18,7 +18,15 @@ sub handler
     my $u = $req->s->u;
     my $result = $req->result;
 
-    my $talias = $q->param('talias');
+    my $talias = $q->param('talias') ||"";
+    trim(\$talias);
+
+    unless( length $talias )
+    {
+	$page->set_template("/topic/");
+	return "Ingen söksträng angiven";
+    }
+
 
     debug("Searching for '$talias'") if $talias;
     # In some cases will we have to de-escape the string

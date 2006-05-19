@@ -1,5 +1,5 @@
 <div id="admin_menu">
-<div style="float: right"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published"/>Sök <input size="10" name="talias"/></form></div>
+<div style="float: right"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published"/><label for="top_talias">Sök <input size="10" name="talias" id="top_talias"/></form></div>
 
 <form action="/member/db/topic/view/">
  [ [% u.level +%] [%+ jump('Hem', '/') %]

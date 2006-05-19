@@ -1,0 +1,12 @@
+[%
+alias = q.param('alias');
+rid = q.param('rid');
+IF rid;
+   r = d.redirect(rid);
+ELSIF alias;
+   r = d.redirect(alias);
+ELSE;
+   THROW validation "rid param missing";
+END;
+hidden('rid', r.id);
+%]

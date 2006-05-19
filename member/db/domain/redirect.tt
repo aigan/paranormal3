@@ -1,0 +1,88 @@
+[% META
+	otitle = 'Vidaresändning'
+	level = 41
+	next_action = 'email_redirect_update'
+	next_template = 'me'
+%]
+
+[% PROCESS domain_menu.tt %]
+[% PROCESS redirect_menu.tt %]
+[% IF r.member %]
+   [% PROCESS load_member.tt mid=r.member.id %]
+   [% PROCESS person_view_menu.tt %]
+[% END %]
+
+[%
+TRY;
+   dest = r.dest;
+   dest_str = dest.address;
+CATCH;
+END;
+DEFAULT dest_str = r.dest_raw;
+UNLESS dest_str;
+   warn(dump(r));
+   THROW validation "$r.src has a bad destination";
+END;
+%]
+
+<h1>Vidaresändning: [% r.src_raw %]</h1>
+
+
+[%
+UNLESS r.id;
+   warn(dump(r,1));
+   hidden('sync',1);
+   hidden('alias', r.alias);
+   hidden('dest', dest_str);
+   "<p>";
+   step("Synka");
+   STOP;
+END;
+%]
+
+
+<table class="minimal">
+<tr><td>Domän <td>[% jump(d.name, "http://www.$d.name") %] <td><em>[% d.type_name %]</em>
+<tr><td>[% input('member', r.member.nickname, tdlabel="Medlem") %]
+<tr><td>[% input('alias', r.alias, tdlabel="Alias") %] 
+<tr><td>[% input('dest', dest_str, tdlabel="Till") %]<td>
+[% IF dest %]
+   [% dd = domains.get(dest.host) %]
+   [% IF dd %]
+      [% jump("Hoppa", me, did=dest.host, alias=dest.user, run='mark') %]
+   [% ELSE %]
+      <em>Format okej</em>
+   [% END %]
+[% ELSE %]
+   <em>Fel format</em>
+[% END %]
+</table>
+
+<p>[% step %]<input type="reset">
+
+[% UNLESS r.member %]
+<div class="entry">
+[% possible_members = members.by_name(dest_str,1) %]
+[% IF possible_members.size %]
+   <h2>Möjliga medlemmar</h2>
+   <table>
+   [% FOREACH am IN possible_members %]
+      [%tr2%]
+      <td>[% jump(am.desig,"/member/db/person/view/", mid=am.id, href_target='_blank') %]
+      <td>[% am.sys_email %]
+      <td><a href="#" onclick="javascript:document.f.member.value='[% am.nickname_trimmed %]';return(false);">välj</a>
+   [% END %]
+   </table>
+[% ELSE %]
+   <h2>Förslag på lediga användarnamn</h2>
+   <table>
+   [% FOREACH nick IN members.suggest_nicknames([r.alias], [dest_str]) %]
+      [%tr2%]
+      <td>[% nick %]
+      <td><a href="#" onclick="javascript:document.f.member.value='[% nick %]';return(false);">välj</a>
+   [% END %]
+   </table>
+[% END %]
+</div>
+[% END %]
+

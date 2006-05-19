@@ -1,0 +1,11 @@
+[% did = q.param('did') %]
+[% d = domains.get(did) %]
+[% hidden('did', d.id) %]
+[% base = "$home/member/db/domain" %]
+
+[% IF u.level > 40 %]
+<p>
+[ [% jump("Domäner", "$base/") +%]
+| [% jump(d.name, "$base/info.tt", did=d.id) +%]
+]</p>
+[% END %]

@@ -1,0 +1,29 @@
+[% META title="Domäner"
+        level = 11
+%]
+
+<div class="entry">
+<table>
+<tr><th>Namn <th>Typ <th colspan="2">Status
+[% FOREACH d IN domains %]
+   [% tr2 %]
+      <td>[% IF d.in_rdb %]
+             [% jump(d.name, 'info.tt', did=d.id) %]
+          [% ELSE %]
+             [% d.name %]
+          [% END %]
+      <td>[% d.type_name %]
+   [% IF ! d.in_rdb %]
+      <td>Saknas i RDB
+      <td>[% jump("Synka", 'info.tt', did=d.id, run="domain_update", sync=1) %]
+   [% ELSIF ! d.in_dbm %]
+      <td>Saknas i DBM
+      <td>[% jump("Synka", 'info.tt', did=d.id, run="domain_update", sync=1) %]
+   [% ELSE %]
+      <td colspan="2">[% d.redirects.size %] redirects
+   [% END %]
+  </tr>
+[% END %]
+
+</table>
+</div>

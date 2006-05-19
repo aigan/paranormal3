@@ -1,0 +1,44 @@
+[% META
+	otitle = 'Domäninfo'
+	level = 41
+	next_action = 'domain_update'
+	next_template = '/member/db/domain/'
+%]
+
+[% PROCESS domain_menu.tt %]
+
+<h1>Domäninfo: [% jump(d.name, "http://www.$d.name/") %]</h1>
+[% warn("Looking at '$d.name'") %]
+
+<p>Typ: $d.type [% select('type', d.type, domains.types_as_hash) %]
+<p>[% step %]
+
+<h2>E-postadresser</h2>
+
+<div class="entry">
+<table>
+<tr><th>Alias <th>Destination <th colspan="2">Status
+
+[% FOREACH r = d.redirects %]
+   [%tr2%]
+      <td>[% IF r.in_rdb %]
+             [% jump(r.alias, 'redirect.tt', did=d.id, alias=r.alias, run='mark') %]
+          [% ELSE %]
+             [% r.alias %]
+          [% END %]
+   <td>[% r.dest_raw %]
+   [% IF !r.in_rdb %]
+      <td>Saknas i RDB
+      <td>[% jump("Synka", 'redirect.tt', did=d.id, alias=r.alias, run="email_redirect_update&mark", sync=1) %]
+   [% ELSIF !r.in_dbm %]
+      <td>Saknas i DBM
+      <td>[% jump("Synka", 'redirect.tt', did=d.id, alias=r.alias, run="email_redirect_update&mark", sync=1) %]
+   [% ELSIF r.member %]
+      <td>[% r.mlink %]
+      <td>[% r.created %]
+   [% ELSE %]
+      <td colspan="2"><em>Ej kopplad</em>
+   [% END %]
+[% END %]
+</table>
+</div>

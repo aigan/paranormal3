@@ -3243,7 +3243,7 @@ sub search
 			my $view = $alt->{'view'} || $req->template_uri;
 			
 			return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
-					jump('välj',
+					&Para::Frame::Widget::jump('välj',
 					     $view,
 					     {
 						 step_replace_params => $replace,

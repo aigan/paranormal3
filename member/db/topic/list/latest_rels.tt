@@ -1,0 +1,55 @@
+[% META title="Senast uppdaterade relationerna"
+%]
+
+[% 
+   step = q.param('step');
+   DEFAULT step=25;
+%]
+
+<p>
+[ [% jump('Ladda om sidan', me) +%]
+]</p>
+
+[% USE Sorted_table %]
+[% recs = cached_select_list("select rel_topic FROM rel WHERE rel_active IS TRUE ORDER BY rel_updated DESC limit 100") %]
+[% recs.set_page_size(step) %]
+
+<p align="center">[% recs.size %] träffar</p>
+<p align="center">[%recs.pagelist %]</p>
+
+<div class="entry">
+<table>
+   <tr>
+      <th>id</th>
+      <th>subj</th>
+      <th>pred</th>
+      <th>value</th>
+      <th>Sty</th>
+      <th>Skapad av</th>
+   </tr>
+[% FOREACH rec IN recs.from_page %]
+   [% tr2 %]
+      [% a = getarc(rec.rel_topic) %]
+      [% revt = a.revt %]
+
+      <td>[% jump(a.id, "/member/db/topic/edit/arc.tt", rel_topic=a.id) %]</td>
+      <td[% UNLESS revt.active_ver %] style="text-decoration: line-through"[% END %]>[% jump(revt.desig, '/member/db/topic/view/', tid=revt.id href_target='info') %]
+          [% INCLUDE typelist.tt rel=revt.id %]
+      </td>
+      <td>[% a.pred.rel_name %]</td>
+      [% IF a.relt %]
+         [% relt = a.relt %]
+         <td[% UNLESS relt.active_ver %] style="text-decoration: line-through"[% END %]>[% jump(relt.desig, '/member/db/topic/view/', tid=relt.id href_target='info') %]
+             [% INCLUDE typelist.tt rel=relt.id %]
+      [% ELSE %]
+         <td>[% a.value %]
+      [% END %]
+      </td>
+      <td>[% IF a.status > 3;'<b>';a.strength;'</b>'; ELSE; a.strength; END %]</th>
+      <td>[% a.created_by.link; ' '; a.created %]</td>
+   </tr>
+[% END %]
+</table>
+</div>
+
+<p align="center">[%recs.pagelist %]</p>

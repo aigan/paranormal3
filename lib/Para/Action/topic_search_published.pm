@@ -21,12 +21,6 @@ sub handler
     my $talias = $q->param('talias') ||"";
     trim(\$talias);
 
-    unless( length $talias )
-    {
-	$page->set_template("/topic/");
-	return "Ingen söksträng angiven";
-    }
-
 
     debug("Searching for '$talias'") if $talias;
     # In some cases will we have to de-escape the string
@@ -66,6 +60,12 @@ sub handler
 	    $constraint =~ /^(re.)_(\w+)$/;
 	    my $dir = $1;
 	    my $type_id = $2;
+
+	    unless( length $talias )
+	    {
+		$page->set_template("/topic/");
+		return "Ingen söksträng angiven";
+	    }
 
 	    my $topics_in = Para::Topic->find($talias);
 	    my $topics_out = [];
@@ -116,6 +116,12 @@ sub handler
 	}
 	else
 	{
+	    unless( length $talias )
+	    {
+		$page->set_template("/topic/");
+		return "Ingen söksträng angiven";
+	    }
+
 	    $t = Para::Topic->find_one($talias);
 	}
 

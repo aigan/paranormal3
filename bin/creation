@@ -36,6 +36,7 @@ our $SITE_CFG;  # Hashref with rest of config
 
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
+use lib "$WA::APPROOT/lib";
 use lib "$Ekoby::APPROOT/lib";
 use lib "$Para::Healing::APPROOT/lib";
 
@@ -57,7 +58,11 @@ use Para::Member;
 use Para::Domains;
 
 use Ekoby::Ekonomi;
+use Ekoby::Library;
+
 use Para::Healing;
+
+use WA::Domains;
 
 {
     # Do not daemonize if run with cmdline argument
@@ -168,9 +173,11 @@ use Para::Healing;
 
     Para::Frame::Site->add({
 	'webhost'    => $WA::HOST,
+	'appbase'    => "WA",
 	'params'     =>
 	{
 	    'css'        => $para_css,
+	    'wa_domains'        => WA::Domains->new,
 	},
     });
 

@@ -36,6 +36,10 @@
 <ul>
   <li>[% jump('Senast uppdaterade ämnena', 'list/latest_topics.tt') %]
   <li>[% jump('Senast uppdaterade texterna', 'list/latest_texts.tt') %]
+  <li>[% jump('Senast uppdaterade relationer', 'list/latest_rels.tt') %]
+</ul>
+
+<ul>
   <li>[% jump('Dubletter alias', 'list/doubles_aliases.tt') %]
   <li>[% jump('Dubletter titlar', 'list/doubles_titles.tt') %]
   <li>[% jump('Ämnen utan kortbeskrivning', 'list/no_description.tt') %]

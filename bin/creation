@@ -209,9 +209,9 @@ use Para::Healing;
 	    'lista_tillgangar' => \&Ekoby::Ekonomi::lista_tillgangar,
 	    'authorized_level' => \&Ekoby::Ekonomi::authorized_level,
 	    'ekodbix'          => $Ekoby::dbix,
+	    'library'          => sub{ Ekoby::Library->new( @_ ) },
 	},
     });
-
 
     Para::Frame::Site->add({
 	'webhost'    => "frame.para.se",

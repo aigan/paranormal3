@@ -18,7 +18,7 @@ sub handler
     my $mid = $q->param('mid') or
 	throw('validation', "mid param missing");
 
-    my $from = $q->param('from') || 'spam@paranormal.se';
+    my $from = $q->param('from') || 'psi_cgi@paranormal.se';
     my $subject = $q->param('subject') || '<inget ämne>';
 
     my $m = Para::Member->get_by_id( $mid );

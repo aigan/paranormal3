@@ -36,7 +36,7 @@ sub handler
 
 
 
-    my $from = $q->param('from') || 'spam@paranormal.se';
+    my $from = $q->param('from') || 'psi_cgi@paranormal.se';
     my $subject = $q->param('subject')
 	or throw('validation', "Ange en tydlig rubrik till brevet");
 

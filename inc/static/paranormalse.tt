@@ -26,21 +26,23 @@
       <div id="topic_header">
          [% INCLUDE meta.tt entry=t %]
 
-         [% IF t.text %]
+         [% IF t.text and m.present_contact_public >= 5 %]
             <p id="description">[% t.text | html %]</p>
          [% END %]
       </div>
 
-      [% IF m.presentation and m.present_contact_public >= 10 %]
       <div class="entry">
          [% CALL new_entry(tid) %]
+      [% IF m.presentation and m.present_contact_public >= 10 %]
          <a name="presentation"></a>
          <h2>Presentation</h2>
          [% PROCESS illustration %]
 
          <p>[% m.presentation | html_psi %]
-      </div>
+      [% ELSE %]
+         [% PROCESS illustration %]
       [% END %]
+      </div>
 
       [% PROCESS entry_list.tt %]
 

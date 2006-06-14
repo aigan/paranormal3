@@ -1,13 +1,17 @@
 [% PROCESS topic/button_update.tt %]
 
-[% jump('Detaljer','/member/db/person/view/', mid=m.id, href_class='link_button' href_id='member_details') %]
+[% IF m.present_contact >= 5 %]
+   [% jump('Detaljer','/member/db/person/view/', mid=m.id, href_class='link_button' href_id='member_details') %]
+[% END %]
 
 <table align="left">
  
-<tr><td valign="top">Medlem <td>[% m.id %], nivå [%m.level %],
+<tr><td valign="top">[% IF m.present_contact_public >= 5 %]Medlem <td>[% m.id %][% ELSE %]Anonym medlem[% END %][% IF m.present_interests >= 5 %], nivå [%m.level %][% END %],
 ämne [% entry.id %], v$entry.ver
 
+[% IF m.present_contact_public >= 2 %]
 <tr><td>Kallar sig <td>[% m.nickname %]
+[% END %]
 
 [% IF m.age(1) %]
 <tr><td>
@@ -90,7 +94,9 @@
    <em>Nej tack</em>
 [% END %]
 
+[% IF m.present_activity >= 5 %]
 <tr><td>Uppdaterad <td>[% m.updated.ymd %]
+[% END %]
 
 </table>
 

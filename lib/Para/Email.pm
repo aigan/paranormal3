@@ -78,13 +78,16 @@ sub set
     # If the sender isn't one of our authorative domains..:
     my @domains = qw( paranormal.se para.se );
     my $host = $from->host;
+
+    ## Setting a correct sender if this is not the home domain
     unless( in $host, @domains )
     {
-	debug "$host is not one of @domains";
+    	debug "$host is not one of @domains";
+    
+    	my $desig = $from->desig;
 
-	my $desig = $from->desig;
-	$p->{'reply_to'} = "\"$desig\" <$from>";
-	$from = "\"$desig via paranormal.se\" <bounce\@paranormal.se>";
+	$p->{'envelope_from'} = "bounce\@paranormal.se";
+    	$p->{'sender'} = "\"$desig via paranormal.se\" <bounce\@paranormal.se>";
     }
 
     $p->{'from'} = $from;

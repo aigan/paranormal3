@@ -25,8 +25,6 @@ Para::Email - Sending emails
 use strict;
 use vars qw( $VERSION );
 
-use Data::Dumper;
-
 BEGIN
 {
     $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
@@ -35,7 +33,7 @@ BEGIN
 
 use Para::Frame::Reload;
 
-use Para::Frame::Utils qw( debug in );
+use Para::Frame::Utils qw( debug in datadump );
 
 use base 'Para::Frame::Email';
 
@@ -84,8 +82,8 @@ sub set
     {
 	debug "$host is not one of @domains";
 
-	$p->{'Reply-To'} = $from;
 	my $desig = $from->desig;
+	$p->{'reply_to'} = "\"$desig\" <$from>";
 	$from = "\"$desig via paranormal.se\" <bounce\@paranormal.se>";
     }
 

@@ -22,7 +22,7 @@
 [% WRAPPER viewbox label='Tro' %]
 <p>
 [% radio('_belief', -1) %] Skeptiker<br>
-[% radio('_belief') %] Både och<br>
+[% radio('_belief', 0) %] Både och<br>
 [% radio('_belief', 1) %] Troende<br>
 </p>
 [% END %]

@@ -382,7 +382,7 @@ sub find_one
 	    my $ver = $t->ver;
 
 	    my $replace = $alt->{'replace'} || 'tid';
-	    my $view = $alt->{'view'} || $req->template_uri;
+	    my $view = $alt->{'view'} || $req->page->url_path;
 
 	    return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
 			    jump('välj',

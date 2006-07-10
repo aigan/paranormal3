@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+#  $Id$  -*-cperl-*-
 package Para::Member;
 #=====================================================================
 #
@@ -2937,6 +2937,7 @@ sub remove
 
     $Para::dbh->do("delete from nick where nick_member = ?", undef, $mid);
     $Para::dbh->do("delete from passwd where passwd_member = ?", undef, $mid);
+    $Para::dbh->do("delete from mailr where mailr_member = ?", undef, $mid);
     $Para::dbh->do("delete from member where member = ?", undef, $mid);
     $Para::dbh->do("delete from mailalias where mailalias_member = ?", undef, $mid);
     $Para::dbh->do("delete from memberhost where memberhost_member = ?", undef, $mid);
@@ -3240,7 +3241,7 @@ sub search
 			my $val = $block . $tid ." ".$t->desig;
 
 			my $replace = $alt->{'replace'} || 'interest';
-			my $view = $alt->{'view'} || $req->template_uri;
+			my $view = $alt->{'view'} || $req->page->url_path;
 			
 			return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
 					&Para::Frame::Widget::jump('välj',

@@ -14,7 +14,7 @@
 
 [% FOREACH select_list("from member where chat_level>0 order by chat_level, member_level, member") %]
    <tr>
-      <td>[% getmember(member).tlink %]
+      <td>[% members.get(member).tlink %]
       <td>[% PROCESS select_chat_level %]
    </tr>
 [% END %]

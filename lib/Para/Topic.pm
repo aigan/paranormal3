@@ -3930,7 +3930,7 @@ sub publish_params
     my $site = Para::Frame::Site->get();
 
     $params{'site'} = $site;
-    $params{'home'} = $site->webhome;
+    $params{'home'} = $site->home_url_path;
     return \%params;
 }
 

@@ -3927,7 +3927,7 @@ sub publish_params
     my( $t, $extra ) = @_;
 
     my %params = %$Para::Frame::PARAMS;
-    my $site = Para::Frame::Site->get();
+    my $site = $Para::Frame::REQ->site;
 
     $params{'site'} = $site;
     $params{'home'} = $site->home_url_path;

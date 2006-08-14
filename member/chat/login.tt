@@ -90,16 +90,16 @@ Mest aktivitet är det vid arbetsdagens slut samt senare på
 
 	  <h3>Välj ingångskanal:</h3>
 
-	  [% jump('#Paranormalt', "/topic/paranormalt.html") %] - Huvudkanalen fÃ¶r paranormala diskussioner. Hit kommer alla.<br/>
-	  #Torget - En kanal dÃ¤r ordet stÃ¥r fritt. Prata om vad ni vill. Anarki. Hit kommer alla.<br/>
-VÃ¤lj dessutom en nedan:<br/>
-	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#HjÃ¤lp" checked="1"/> [% jump('#HjÃ¤lp', "/topic/hjalp.html") %] - FÃ¥ hjÃ¤lp med hur man hanterar chatten<br/>
-	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#devel"/> [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, fÃ¥ hjÃ¤lp med att skapa texter och Ã¤mnen<br/>
-	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Vetenskap"/> [% jump('#Vetenskap', "/topic/paranormalse/vetenskap.html") %] - Paranormala fenomen ur ett vetenskapligt (vÃ¤sterlÃ¤ndskt) perspektiv<br/>
-          <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Magi"/> [% jump('#Magi', "/topic/paranormalse/magi.html") %] - FÃ¶r gediget och seriÃ¶st magiskt arbete<br/>
-	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Guide"/> [% jump('#Guide', "/topic/paranormalse/guide.html") %] - FÃ¶r de som sÃ¶ker, vill ha hjÃ¤lp, vÃ¤gledning, stÃ¶d, bekrÃ¤ftelse. OcksÃ¥ fÃ¶r hjÃ¤lparna inom [% jump("Sveriges spÃ¶kjÃ¤garnÃ¤tverk", "/topic/sveriges_spokjagarnatverk.html") %]<br/>
+	  [% jump('#Paranormalt', "/topic/paranormalt.html") %] - Huvudkanalen för paranormala diskussioner. Hit kommer alla.<br/>
+	  #Torget - En kanal där ordet står fritt. Prata om vad ni vill. Anarki. Hit kommer alla.<br/>
+Välj dessutom en nedan:<br/>
+	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Hjälp" checked="1"/> [% jump('#Hjälp', "/topic/hjalp.html") %] - Få hjälp med hur man hanterar chatten<br/>
+	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#devel"/> [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, få hjälp med att skapa texter och ämnen<br/>
+	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Vetenskap"/> [% jump('#Vetenskap', "/topic/paranormalse/vetenskap.html") %] - Paranormala fenomen ur ett vetenskapligt (västerländskt) perspektiv<br/>
+          <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Magi"/> [% jump('#Magi', "/topic/paranormalse/magi.html") %] - För gediget och seriöst magiskt arbete<br/>
+	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Guide"/> [% jump('#Guide', "/topic/paranormalse/guide.html") %] - För de som söker, vill ha hjälp, vägledning, stöd, bekräftelse. Också för hjälparna inom [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %]<br/>
 
-	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#healing"/> [% jump('#healing', "/topic/healing.html") %] - Kom in och lÃ¥t dig bli omsvept av helande ljus<br/>
+	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#healing"/> [% jump('#healing', "/topic/healing.html") %] - Kom in och låt dig bli omsvept av helande ljus<br/>
 
 	  <p>Du kan gå in på fler kanaler när du är på chatten genom att säga: <strong>/join #kanalnamn</strong>. Använd <strong>/list</strong> för att se vad som finns.<br/>
 <br>

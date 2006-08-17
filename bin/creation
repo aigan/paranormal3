@@ -144,6 +144,7 @@ use WA::Domains;
 	'last_step'  => "/member/db/",
 	'static_ttc' => "$APPROOT/var/ttc/static",
 	'backup_host'=> $SITE_CFG->{'backup_host'},
+	'loadpage'    => "/meta/loading.html",
 	'params'     =>
 	{
 	    'css'        => $para_css,

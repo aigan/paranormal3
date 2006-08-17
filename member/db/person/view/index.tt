@@ -138,7 +138,7 @@
 [% END %]
 
 [% mt = m.topic %]
-[% IF mt %]
+[% IF 0 %]
    <p>[% jump("Skriv i gästboken", "/member/db/topic/guestbook/add.tt", tid=mt.id) %]
    <p>[% jump("Se gästboken", "/member/db/topic/guestbook/", tid=mt.id) %]
 [% END %]

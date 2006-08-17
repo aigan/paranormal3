@@ -190,6 +190,14 @@ use WA::Domains;
     });
 
     Para::Frame::Site->add({
+	'webhost'    => "mystica.magi.se",
+	'params'     =>
+	{
+	    'css'        => $para_css,
+	},
+    });
+
+    Para::Frame::Site->add({
 	'webhost'    => $Ekoby::HOST,
 	'aliases'    => ['ekoby'],
 	'code'       => 'eboby',

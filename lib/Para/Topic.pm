@@ -442,6 +442,9 @@ sub publish_from_queue
     $limit ||= 40;
     my( $cnt ) = 0;
 
+    my $site = Para::Frame::Site->get('default');
+    $req->set_site($site);
+
     my $topics =  $Para::dbix->select_list("select t from t where t_published is false and t_active is true and t_entry is false order by t_updated limit ?", $limit);
     foreach my $rec ( @$topics )
     {

@@ -192,6 +192,14 @@ sub timeout_login
 	my $m = Para::Member->get_by_id( $mid );
 	next if $seen{$mid} ++;
 
+	unless( $mid == $m->id )
+	{
+	    debug "Member $mid has been removed from the db";
+	    my $db = paraframe_dbm_open( $C_DB_ONLINE );
+	    delete $db->{$mid};
+	    next;
+	}
+
 	my $latest_in = $m->latest_in;
 	my $latest_seen = $m->latest_seen;
 
@@ -206,7 +214,7 @@ sub timeout_login
 	# Failsafe in case no logout was registred
 	if( $latest_in->delta_ms($now) > duration( hours => 40 ) )
 	{
-	    debug $m->desig." has been online since $latest_in";
+	    debug "$mid: ".$m->desig." has been online since $latest_in";
 	    $m->on_logout( $latest_in->add(hours=>1) );
 	}
 	elsif( $latest_seen->delta_ms($now) > duration( minutes => 30 ) )

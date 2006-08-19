@@ -585,6 +585,10 @@ sub import_zip
                values (?,?,?,?,?)");
 #	print "--- $street, $from, $to, $step, $postnr\n";
 	$sth->execute($street, $from, $to, $step, $postnr );
+
+
+	# This may commit data half way through
+	$Para::Frame::REQ->may_yield;
     }
 
     $city_name or return undef;

@@ -24,7 +24,7 @@ sub handler
     defined $statement or throw('validation',"statement param missing");
 
     my $m = Para::Member->skapelsen;
-    $m->set_field('presentation', $statement );
+    $m->set_field_block('presentation', $statement );
 
     Para::Widget::new_entry(undef, 'static');
     $Para::MOTD = Para::Widget::html_psi( $m->presentation );

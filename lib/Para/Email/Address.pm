@@ -55,7 +55,20 @@ sub validate
 	}
     }
 
-    return $a->SUPER::validate or $m->change->fail($a->error_msg);
+    # This construct was created because the SUPER::validate would
+    # throw an exception that doesn't has the $@ set. Maby this is a
+    # bug with SUPER. -- We check the $res and constructs the failure
+    # massage in any case.
+
+    my $res;
+    eval
+    {
+	$res = $a->SUPER::validate;
+    };
+    die $@ if $@;
+    return $res if $res;
+
+    return $m->change->fail($a->error_msg); # error
 }
 
 ######################################################################

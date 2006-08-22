@@ -372,7 +372,7 @@ sub on_logout
     my( $u, $time ) = @_;
 
     $time ||= now();
-    $u->latest_out( $time ) if $u->id > 0; # In case user deleted
+    $u->latest_out( $time );
     my $db = paraframe_dbm_open( $C_DB_ONLINE );
     delete $db->{$u->id};
 }
@@ -541,7 +541,7 @@ sub update_by_query
 			    home_postal_street home_postal_visiting
 			    home_tele_phone_comment
 			    home_tele_mobile_comment
-			    home_tele_fax_comment statement
+			    home_tele_fax_comment
 			    home_online_email show_style
 			    home_online_skype
 			    ) )
@@ -552,7 +552,7 @@ sub update_by_query
 	}
     }
 
-    foreach my $field ( qw( presentation
+    foreach my $field ( qw( presentation statement
 			    member_comment_admin
 			    ) )
     {

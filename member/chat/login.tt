@@ -63,7 +63,6 @@ Mest aktivitet är det vid arbetsdagens slut samt senare på
            [% hidden('Nickname', u.chat_nick) %]
            [% hidden('Server', 'irc.paranormal.se') %]
            [% hidden('Realname', u.name) %]
-           [% hidden('Password', q.cookie('password')) %]
            [% hidden('login', u.id) %]
            [% hidden('interface', 'nonjs') %]
 
@@ -93,7 +92,7 @@ Mest aktivitet är det vid arbetsdagens slut samt senare på
 	  [% jump('#Paranormalt', "/topic/paranormalt.html") %] - Huvudkanalen för paranormala diskussioner. Hit kommer alla.<br/>
 	  #Torget - En kanal där ordet står fritt. Prata om vad ni vill. Anarki. Hit kommer alla.<br/>
 Välj dessutom en nedan:<br/>
-	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Hjälp" checked="1"/> [% jump('#Hjälp', "/topic/hjalp.html") %] - Få hjälp med hur man hanterar chatten<br/>
+	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Hjalp" checked="1"/> [% jump('#Hjalp', "/topic/hjalp.html") %] - Få hjälp med hur man hanterar chatten<br/>
 	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#devel"/> [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, få hjälp med att skapa texter och ämnen<br/>
 	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Vetenskap"/> [% jump('#Vetenskap', "/topic/paranormalse/vetenskap.html") %] - Paranormala fenomen ur ett vetenskapligt (västerländskt) perspektiv<br/>
           <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Magi"/> [% jump('#Magi', "/topic/paranormalse/magi.html") %] - För gediget och seriöst magiskt arbete<br/>

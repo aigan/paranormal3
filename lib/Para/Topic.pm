@@ -2995,6 +2995,11 @@ sub save
 
     debug(1,"saving $tid v$v");
     my $saved = $t->_new( $tid, $v, 1); # Nocache
+    unless( $saved )
+    {
+	debug "Topic $tid $v no longer exist, while trying to save it";
+	return 1;
+    }
 
     my $types =
     {

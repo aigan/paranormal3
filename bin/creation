@@ -92,6 +92,7 @@ use WA::Domains;
 	'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
 	'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
 	'umask'        => 0007,
+        'time_stringify' => 1,
 	'site_auto'    => 1,
     };
     Para::Frame->configure( $cfg );

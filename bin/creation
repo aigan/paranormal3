@@ -238,6 +238,12 @@ use WA::Domains;
 	},
     });
 
+    Para::Frame::Site->add({
+	'webhost'    => "brisingasmycket.se",
+	'params' =>
+	{
+	},
+    });
 
     # Make sure we can read/write generated files
     chmod_tree( "$APPROOT/var" );

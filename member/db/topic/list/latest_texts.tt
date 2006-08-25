@@ -3,7 +3,9 @@
 
 [% 
    step = q.param('step');
+   limit = q.param('limit');
    DEFAULT step=25;
+   DEFAULT limit=100;
 %]
 
 <p>
@@ -12,7 +14,7 @@
 
 
 [% USE Sorted_table %]
-[% recs = cached_select_list("select t FROM t WHERE t_status=4 AND t_entry IS TRUE AND t_published IS TRUE ORDER BY t_updated DESC limit 100") %]
+[% recs = cached_select_list("select t FROM t WHERE t_status=4 AND t_entry IS TRUE AND t_published IS TRUE ORDER BY t_updated DESC limit ?", limit) %]
 [% recs.set_page_size(step) %]
 
 <p align="center">[% recs.size %] träffar</p>

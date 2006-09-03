@@ -1,0 +1,42 @@
+[% META otitle='Index över filer' %]
+
+[%
+	dir = page.dir;
+%]
+
+<h1>Bilder: $dir.path_slash</h1>
+
+<p><a href="$dir.parent.url_path/"><img src="/icons/back.gif" border="0"> Tillbaka</a></p>
+
+[% dirs = [] %]
+[% FOREACH item IN dir.files %]
+   [% CALL req.may_yield %]
+   [% NEXT UNLESS item.is_dir %]
+   [% dirs.push(item) %]
+   [% warn(dump(dirs)) %]
+[% END %]
+
+[% IF dirs.size %]
+<p>Kataloger:
+[% FOREACH item IN dirs %]
+   [% name = item.name %]
+   [% IF item.has_index %]
+      [% name = item.page.title %]
+   [% END %]
+   <a href="$item.name/">[% name %]</a>
+   [% UNLESS loop.last %]
+      |
+   [% END %]
+[% END %]
+</p>
+[% END %]
+
+<p>
+[% FOREACH item IN dir.files %]
+   [% CALL req.may_yield %]
+   [% NEXT IF item.is_dir %]
+   [% NEXT UNLESS item.name.match('-t.jpg$') %]
+   <a href="image.tt?name=$item.name"><img src="[% item.name %]"></a>
+
+[% END %]
+</p>

@@ -1,0 +1,13 @@
+[% META otitle='Bild' %]
+
+[%
+	dir = page.dir;
+        name = q.param('name');
+%]
+
+<p><a href="$dir.url_path/"><img src="/icons/back.gif" border="0"> Tillbaka</a></p>
+
+[% base = name.replace('-t.jpg$',"") %]
+
+<p><a href="[% base %]-o.jpg"><img src="[% base %]-n.jpg"></a></p>
+

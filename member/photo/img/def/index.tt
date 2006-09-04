@@ -6,7 +6,7 @@
 
 <h1>Bilder: $dir.path_slash</h1>
 
-<p><a href="$dir.parent.url_path/"><img src="/icons/back.gif" border="0"> Tillbaka</a></p>
+<p><a href="$dir.parent.url_path/"><img src="/icons/back.gif" border="0"> Tillbaka</a> | [% jump("Visa med kommentarer", "details.tt") %]</p>
 
 [% dirs = [] %]
 [% FOREACH item IN dir.files %]

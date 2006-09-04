@@ -1,4 +1,6 @@
-[% META otitle='Bild' %]
+[% META otitle='Bild'
+        level=5
+%]
 
 [%
 	dir = page.dir;
@@ -11,3 +13,10 @@
 
 <p><a href="[% base %]-o.jpg"><img src="[% base %]-n.jpg"></a></p>
 
+[% IF dir.has_file("${base}.txt") %]
+   [% CALL new_entry(1) %]
+   <p>[% jump("Uppdatera kommentar","comment.tt", file=base) %]</p>
+   <div style="background:white;color:black;border:thin black outset; padding: 0 0 0 1em">[% INSERT $dir.get("${base}.txt").sys_path | html_psi %]</div>
+[% ELSE %]
+   <p>[% jump("Skriv en kommentar","comment.tt", file=base) %]</p>
+[% END %]

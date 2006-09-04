@@ -12,6 +12,7 @@
 [% FOREACH item IN dir.files %]
    [% CALL req.may_yield %]
    [% NEXT UNLESS item.is_dir %]
+   [% NEXT IF item.name == 'orig' %]
    [% dirs.push(item) %]
    [% warn(dump(dirs)) %]
 [% END %]

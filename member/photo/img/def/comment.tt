@@ -1,0 +1,26 @@
+[% META otitle='Bild'
+        level=5
+        next_action='save_comment'
+        next_template='me'
+%]
+
+[%
+	dir = page.dir;
+        hidden('dir', dir.path);
+        base = q.param('file');
+        hidden('file', base);
+%]
+
+<h1>[% base %]</h1>
+
+<p><a href="$dir.url_path/image.tt?name=${base}-t.jpg"><img src="/icons/back.gif" border="0"> Tillbaka</a></p>
+
+<textarea name="comment" class="big_input" wrap="soft" cols="55" rows="20">
+[% IF dir.has_file("${base}.txt");
+   INSERT $dir.get("${base}.txt").sys_path | html;
+END %]
+</textarea>
+
+<p>[% step('Spara') %]
+
+<p>Respektera andras kommentarer. Avsluta din kommentar med ditt anävndarnamn...

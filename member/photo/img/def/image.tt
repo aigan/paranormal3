@@ -15,8 +15,8 @@
 
 [% IF dir.has_file("${base}.txt") %]
    [% CALL new_entry(1) %]
-   <p>[% jump("Uppdatera kommentar","comment.tt", file=base) %]</p>
    <div style="background:white;color:black;border:thin black outset; padding: 0 0 0 1em">[% INSERT $dir.get("${base}.txt").sys_path | html_psi %]</div>
+   <p>[% jump("Uppdatera kommentar","comment.tt", file=base) %]</p>
 [% ELSE %]
    <p>[% jump("Skriv en kommentar","comment.tt", file=base) %]</p>
 [% END %]

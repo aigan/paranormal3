@@ -9,7 +9,7 @@ while( my $file = readdir( ORIG ) )
     next if $file =~ /^\./;
     print $file . "\n";
 
-    $file =~ /(.*)\.jpg/i or next;
+    $file =~ /(.*)\.jpe?g/i or next;
     my $name = $1;
 
     my $p = new Image::Magick;

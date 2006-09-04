@@ -17,6 +17,11 @@ sub handler
     my $comment  = $q->param('comment');
     my $path     = $home_path.$dir_path.'/'.$base.'.txt';
 
+    unless( $dir_path =~ m(^/member/photo/img/) )
+    {
+	die "path out of bound";
+    }
+
     open(FILE, '>', $path) or die "Couldn't save '$path': $!";
     print FILE $comment;
     close FILE;

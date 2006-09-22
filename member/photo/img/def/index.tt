@@ -37,15 +37,15 @@
 [% FOREACH item IN dir.files %]
    [% CALL req.may_yield %]
    [% NEXT IF item.is_dir %]
-   [% NEXT UNLESS item.name.match('(-t\.jpg|\.3gp|\.mpg)$') %]
+   [% NEXT UNLESS item.name.match('(-t\.jpg|\.3gp|\.mpg|\.wav)$') %]
    [% IF     item.name.match('-t\.jpg$') %]
       <a href="image.tt?name=$item.name"><img src="[% item.name %]"></a>
    [% ELSE %]
       [% base = item.name.replace('\.\w{2,4}','') %]
       [% IF dir.has_file("${base}-t.gif") %]
-         <a href="$item.name"><img src="[% base %]-t.gif"></a>
+         <a href="file.tt?name=$item.name"><img src="[% base %]-t.gif"></a>
       [% ELSE %]
-         <a href="$item.name">$item.name</a>
+         <a href="file.tt?name=$item.name">$item.name</a>
       [% END %]
    [% END %]
 [% END %]

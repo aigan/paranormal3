@@ -1,0 +1,28 @@
+[% META otitle='File'
+        level=5
+        next_action='save_comment'
+        next_template='~$me'
+%]
+
+[%
+	dir = page.dir;
+        hidden('dir', dir.path);
+        name = q.param('name');
+        base = name.replace('\.\w{2,4}$',"");
+        hidden('file', base);
+        hidden('name', name);
+%]
+
+<h1>[% name %]</h1>
+
+<p><a href="$dir.url_path/file.tt?name=${name}"><img src="/icons/back.gif" border="0"> Tillbaka</a></p>
+
+<textarea name="comment" class="big_input" wrap="soft" cols="55" rows="20">
+[% IF dir.has_file("${base}.txt");
+   INSERT $dir.get("${base}.txt").sys_path | html;
+END %]
+</textarea>
+
+<p>[% step('Spara') %]
+
+<p>Respektera andras kommentarer. Avsluta din kommentar med ditt anävndarnamn...

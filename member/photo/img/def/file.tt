@@ -1,0 +1,30 @@
+[% META otitle='Fil'
+        level=5
+%]
+
+[%
+	dir = page.dir;
+        name = q.param('name');
+%]
+
+<h1>$name</h1>
+
+<p><a href="$dir.url_path/"><img src="/icons/back.gif" border="0"> Tillbaka</a></p>
+
+[% base = name.replace('\.\w{2,4}',"") %]
+
+<p>
+      [% IF dir.has_file("${base}-t.gif") %]
+         <a href="$name"><img src="[% base %]-t.gif"></a>
+      [% ELSE %]
+         <a href="$name">$item.name</a>
+      [% END %]
+</p>
+
+[% IF dir.has_file("${base}.txt") %]
+   [% CALL new_entry(1) %]
+   <div style="background:white;color:black;border:thin black outset; padding: 0 0 0 1em">[% INSERT $dir.get("${base}.txt").sys_path | html_psi %]</div>
+   <p>[% jump("Uppdatera kommentar","comment-file.tt", name=name) %]</p>
+[% ELSE %]
+   <p>[% jump("Skriv en kommentar","comment-file.tt", name=name) %]</p>
+[% END %]

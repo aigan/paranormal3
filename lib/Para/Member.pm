@@ -2784,8 +2784,8 @@ sub score_hash
 
     unless( $m->{'score'} )
     {
-	my $rec = $Para::dbix->select_record("from score where score_member=?", $m->id);
-	$m->{'score'} = $rec;
+	my $rec = $Para::dbix->select_possible_record("from score where score_member=?", $m->id);
+	$m->{'score'} = $rec || {};
     }
 
     return $m->{'score'};

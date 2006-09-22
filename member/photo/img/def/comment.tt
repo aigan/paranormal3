@@ -1,7 +1,7 @@
 [% META otitle='Bild'
         level=5
         next_action='save_comment'
-        next_template='me'
+        next_template='~$me'
 %]
 
 [%

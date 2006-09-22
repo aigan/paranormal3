@@ -23,22 +23,20 @@
 <div class="entry">
 <table>
    <tr>
-      <th>Uppdaterad&nbsp;/&nbsp;Skriven</th>
-      <th>Av</th>
-      <th>id</th>
-      <th>v</th>
-      <th>Text</th>
       <th>Skapad av</th>
+      <th>Uppdaterad&nbsp;/&nbsp;Skriven</th>
+      <th>Text</th>
+      <th>v</th>
+      <th>Ämne</th>
    </tr>
 [% FOREACH rec IN recs.from_page %]
    [% tr2 %]
       [% e = topic( rec.t ) %]
-      <td>[% e.updated %]</td>
-      <td>[% e.created_by.link %]</td>
-      <td>[% e.id %]</td>
-      <td>[% e.ver %]</td>
-      <td>[% e.link %]</td>
       <td>[% e.first_ver.created_by.link; ' '; e.first_ver.created %]</td>
+      <td>[% e.updated %] av [% e.created_by.link %]</td>
+      <td>[% title = e.title || e.id; jump(title, e.file) %]</td>
+      <td>[% e.ver %]</td>
+      <td>[% e.topic.link %]</td>
    </tr>
 [% END %]
 </table>

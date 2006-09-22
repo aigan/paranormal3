@@ -34,8 +34,8 @@
 [% END %]
 
 <style>
-#imglist a {float: left; padding-right: 1em}
-#imglist p {margin: 0 0 0.2em 0; font-style: italic;}
+#imglist > a {float: left; padding-right: 1em}
+#imglist p {margin: 0 0 0.4em 0; font-style: italic; line-height: 1em}
 p.date {color:green}
 </style>
 
@@ -43,15 +43,15 @@ p.date {color:green}
 [% FOREACH item IN dir.files %]
    [% CALL req.may_yield %]
    [% NEXT IF item.is_dir %]
-   [% NEXT UNLESS item.name.match('(-t\.jpg|\.3gp|\.mpg)$') %]
-   [% base = item.name.replace('(-t\.jpg|\.3gp|\.mpg)$','') %]
+   [% NEXT UNLESS item.name.match('(-t\.jpg|\.3gp|\.mpg|\.wav)$') %]
+   [% base = item.name.replace('(-t\.jpg|\.3gp|\.mpg|\.wav)$','') %]
    [% IF item.name.match('-t\.jpg$') %]
       <a href="image.tt?name=$item.name"><img src="[% item.name %]"></a>
    [% ELSE %]
       [% IF dir.has_file("${base}-t.gif") %]
-         <a href="$item.name"><img src="[% base %]-t.gif"></a>
+         <a href="file.tt?name=$item.name"><img src="[% base %]-t.gif"></a>
       [% ELSE %]
-         <a href="$item.name">$item.name</a> ("${base}-t.gif")
+         <a href="file.tt?name=$item.name">$item.name</a> ("${base}-t.gif")
       [% END %]
    [% END %]
    [% IF dir.has_file("${base}.txt") %]

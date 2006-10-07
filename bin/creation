@@ -245,6 +245,32 @@ use WA::Domains;
 	},
     });
 
+    Para::Frame::Site->add({
+	'webhost'    => "parapsykologi.se",
+	'webhome'    => "/new",
+	'css'        =>
+	{
+	    persistent => ["pf/css/paraframe.css",
+			   "css/psi.css"],
+	},
+	'params' =>
+	{
+	},
+    });
+
+    Para::Frame::Site->add({
+	'webhost'    => "parapsychology.se",
+	'webhome'    => "/PA-stockholm/photo",
+	'css'        =>
+	{
+	    persistent => ["/PA-stockholm/css_styles/ordinary.css",
+			   "pf/css/paraframe.css"],
+	},
+	'params' =>
+	{
+	},
+    });
+
     # Make sure we can read/write generated files
     chmod_tree( "$APPROOT/var" );
  # Takes too long

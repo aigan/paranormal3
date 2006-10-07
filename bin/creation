@@ -194,9 +194,13 @@ use WA::Domains;
 
     Para::Frame::Site->add({
 	'webhost'    => "mystica.magi.se",
+	'css'        =>
+	{
+	    persistent => ["pf/css/paraframe.css",
+			   "css/myst.css"],
+	},
 	'params'     =>
 	{
-	    'css'        => $para_css,
 	},
     });
 

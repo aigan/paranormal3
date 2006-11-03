@@ -45,6 +45,7 @@
          [% PROCESS alias_list.tt %]
       </div>
 
+      [% UNLESS t.arc('slut') %]
       [% UNLESS t.has_rel(28); # Tillåtelse %]
       <div class="entry">
          [% IF eng %]
@@ -67,7 +68,7 @@
          [% END %]
          [% IF loop.last %]</div>[% END %]
       [% END %]
-
+      [% END %]
 
 
       [% IF multi_content %]

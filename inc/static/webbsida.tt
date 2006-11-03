@@ -41,6 +41,18 @@
       [% END %]
 
       <hr>
+      [% IF t.arc('slut') %]
+      <h2 class="contained">
+         [% t.title %]
+         <span class="living_years">
+         (
+            [% t.arc('start').value %]
+            -
+            [% t.arc('slut').value %]
+         )
+         </span>
+         [% INCLUDE typelist.tt %]
+      [% ELSE %]
       <h2 class="contained">
          [% jump(t.title, url) %]
          [% IF t.arc('start') or t.arc('slut') %]
@@ -59,10 +71,11 @@
             [% jump('Gå till webbsidan', url) %]
          [% END %]
       </h2>
+
+      <h2 class="contained">[% jump(url, url) %]</h2>
+
+      [% END %]
    [% END %]
-
-   <h2 class="contained">[% jump(url, url) %]</h2>
-
 
    [% PROCESS setup.tt %]
 
@@ -79,6 +92,13 @@
 
    [% IF url AND NOT t.title.search('^Paranormal.se') %]
    <div class="entry">
+   [% IF t.arc('slut') %]
+      [% IF eng %]
+        <p>The page [% url %] was discontinued in [% t.arc('slut').value %]</p>
+      [% ELSE %]
+        <p>Sidan [% url %] lades ned [% t.arc('slut').value %]</p>
+      [% END %]
+   [% ELSE %]
       [% UNLESS t.has_rel(28); # Tillåtelse %]
          [% IF eng %]
             <p>This page is a reference to [% jump(url, url) %]. It exists because we want to say something <strong>about</strong> the site. It may have been used as a source of an article, citation or may just be recommended for it's content regarding a specific topic. <strong>Paranormal.se is not behind that site.</strong></p>
@@ -94,6 +114,7 @@
       [% END %]
 
       <h2 align="center">[% jump(url, url, target='external') %]</h2>
+   [% END %]
    </div>
 
    <div class="entry">

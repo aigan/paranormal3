@@ -17,7 +17,7 @@ sub handler
     my $comment  = $q->param('comment');
     my $path     = $home_path.$dir_path.'/'.$base.'.txt';
 
-    unless( $dir_path =~ m(^/member/photo/img/) )
+    unless( $dir_path =~ m(^(/member/photo/img/|/PA-stockholm/photo/)) )
     {
 	die "path out of bound";
     }

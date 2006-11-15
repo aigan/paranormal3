@@ -252,14 +252,24 @@
       [% IF group.title %]<h3>[% group.title | html %]</h3>[% END %]
       [% FOREACH entry = group.content %]
          <span class="link">
-            [% name = entry.topic.$present || entry.topic.desig %]
-            [% IF entry.topic.media_url %]
-               [% jump(name, entry.topic.file) %]<br>
+            [% et = entry.topic %]
+            [% name = et.$present || et.desig %]
+            [% IF et.media_url %]
+               [% jump(name, et.file) %]<br>
             [% ELSE %]
-               [% jump(name, entry.topic.file) %]<br>
+               [% jump(name, et.file) %]<br>
             [% END %]
             [% IF entry.arc.comment %]
                &nbsp;[% entry.arc.comment %]<br>
+            [% END %]
+            [% IF et.arc('slut') %]
+               <span class="living_years">
+               (
+                  [% et.arc('start').value %]
+                  -
+                  [% et.arc('slut').value %]
+               )
+               </span>
             [% END %]
          </span>
       [% END %]

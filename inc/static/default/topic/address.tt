@@ -1,4 +1,5 @@
 [% DEFAULT t = topic(tid) %]
+[% UNLESS t.arc('slut') %]
 [% IF t.arc(26) or t.arc(27) %]
 <div class="address_block">
 [% street = t.arc(43).value %]
@@ -42,4 +43,5 @@
    Telefon: <div class="address">[% t.arc(27).value %]</div>
 [% END %]
 </div>
+[% END %]
 [% END %]

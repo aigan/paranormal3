@@ -23,7 +23,8 @@ hänsyn.</p>
 <div class="entry">
 <table>
 [% FOREACH rec = helprecs %]
-   [% m = getmember(rec.member) %]
+   [% m = members.get(rec.member) %]
+
 
    <tr><td>
 <p>[% m.city || 'Hjälpare' %]: [% m.link %]

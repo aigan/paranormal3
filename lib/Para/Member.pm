@@ -9,7 +9,7 @@ package Para::Member;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2005 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2006 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -2562,6 +2562,9 @@ sub save
 	present_intrests             => 'integer',
 	present_activity             => 'integer',
 	present_gifts                => 'integer',
+        present_contact              => 'integer',
+        present_contact_public       => 'integer',
+        present_blog                 => 'integer',
 	general_belief               => 'integer',
 	general_theory               => 'integer',
 	general_practice             => 'integer',
@@ -2914,11 +2917,14 @@ sub remove
 
     # Don't bother about failed email
     # Send before we remove info about reciepient
-    Para::Email->send_by_proxy({
-	    subject => "Medlemskap raderat",
-	    m => $m,
-	    template => 'member_remove.tt',
-	});
+    eval
+    {
+	Para::Email->send_by_proxy({
+				    subject => "Medlemskap raderat",
+				    m => $m,
+				    template => 'member_remove.tt',
+				   });
+    };
 
 
     # Remove from nickname cache

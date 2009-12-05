@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Slå samman två ämnen'
 	next_template = 'merge_find.tt'
 	level = 12

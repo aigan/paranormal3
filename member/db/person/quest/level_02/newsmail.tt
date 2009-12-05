@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'E-postmängd'
 	next_template = 'topics.tt'
 	next_action = 'member_update'

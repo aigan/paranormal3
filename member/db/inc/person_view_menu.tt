@@ -1,4 +1,4 @@
-[% RETURN UNLESS u.level %]
+﻿[% RETURN UNLESS u.level %]
 [%
    DEFAULT keep=[ 'mid' 'rid' 'did'];
 %]

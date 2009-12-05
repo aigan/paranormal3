@@ -1,4 +1,4 @@
-[% IF u.complexity < 5; PROCESS tlink.tt; RETURN; END %]
+﻿[% IF u.complexity < 5; PROCESS tlink.tt; RETURN; END %]
 [% DEFAULT t = topic(tid) %]
 [% IF t.file %]
    [% jump(t.desig, t.file) %]

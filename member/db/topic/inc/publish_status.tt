@@ -1,4 +1,4 @@
-[% IF t.published %]
+﻿[% IF t.published %]
    Är publicerad
 [% ELSIF t.in_publish_queue %]
    Publiceras snart

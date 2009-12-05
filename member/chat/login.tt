@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title='Logga in på chatten'
 	next_template = "/member/chat/cgiirc/irc.cgi"
 	onsubmit = "setjs()"

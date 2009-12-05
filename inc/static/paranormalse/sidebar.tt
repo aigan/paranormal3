@@ -1,4 +1,4 @@
-[% IF m.present_interests >= 10 %]
+﻿[% IF m.present_interests >= 10 %]
 [%
 	max   = 20;
 	cutof = 85;

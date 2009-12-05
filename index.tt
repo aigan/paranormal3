@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = "Paranormal.se - Index"
         next_template='-site.login_page'
 	next_action = "user_login"

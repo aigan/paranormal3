@@ -1,4 +1,4 @@
-<p>Aktiviteter: 
+﻿<p>Aktiviteter: 
 [ [% jump("Ämnen skapade", 'created_topics.tt', mid=m.id) %]
 | [% jump("Ämnen uppdaterade", 'created_versions_topics_active.tt', mid=m.id) %]
 | [% jump("Skrivna texter", 'created_entries.tt', mid=m.id) %]

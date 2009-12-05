@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Flytta en text'
 	next_action = 'entry_move'
 	next_template = '/member/db/topic/view/'

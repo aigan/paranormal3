@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Chatta eller läsa'
 	next_template = 'newsmail.tt'
 	next_action = 'member_update'

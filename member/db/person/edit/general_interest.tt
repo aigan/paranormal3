@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - Intressetyper'
 	next_action = 'member_update'
 	level = 2

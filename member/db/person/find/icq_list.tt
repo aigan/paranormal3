@@ -1,4 +1,4 @@
-[% META title = "ICQ-lista" level = 5 %]
+﻿[% META title = "ICQ-lista" level = 5 %]
 
 [% PROCESS person_find_menu.tt %]
 

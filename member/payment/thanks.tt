@@ -1,4 +1,4 @@
-[% META title="Tack" %]
+﻿[% META title="Tack" %]
 
 [% p = getpayment(q.param('oid')) %]
 [% m = p.member %]

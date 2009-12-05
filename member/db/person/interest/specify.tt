@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Berätta om ditt intresse'
 	next_action = 'interest_update'
 	level = 5

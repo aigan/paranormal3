@@ -1,4 +1,4 @@
-[% DEFAULT replace = 'tid' %]
+﻿[% DEFAULT replace = 'tid' %]
 [% DEFAULT view = me %]
 [% DEFAULT run='nop' %]
    <h3>Flera ämnen har aliaset <code>[% q.param($replace) %]</code></h3>

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Personuppgifter'
 	next_template = 'contact.tt'
 	next_action = 'member_update'

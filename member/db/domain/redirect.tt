@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Vidaresändning'
 	level = 41
 	next_action = 'email_redirect_update'

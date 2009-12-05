@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Relaterade intressen'
 	next_action = 'interest_update_multi'
 	level = 2

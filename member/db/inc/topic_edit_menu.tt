@@ -1,4 +1,4 @@
-[% RETURN UNLESS u.complexity > 5 %]
+﻿[% RETURN UNLESS u.complexity > 5 %]
 [%
    base = '/member/db/topic';
    DEFAULT tid=t.id;

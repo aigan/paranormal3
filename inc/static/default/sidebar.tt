@@ -1,4 +1,4 @@
-<div id="sidebar">
+﻿<div id="sidebar">
 
 [% INCLUDE present_rel_links type=3 %]
 [% INCLUDE present_rel_links type=31 %]

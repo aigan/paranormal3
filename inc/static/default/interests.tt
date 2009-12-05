@@ -1,4 +1,4 @@
-[%
+﻿[%
 PROCESS interests/discussion.tt;
 PROCESS interests/editor.tt;
 PROCESS interests/helper.tt;

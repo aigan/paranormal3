@@ -1,4 +1,4 @@
-[%
+﻿[%
 alias = q.param('alias');
 rid = q.param('rid');
 IF rid;

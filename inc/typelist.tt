@@ -1,4 +1,4 @@
-[%
+﻿[%
    DEFAULT t=topic(tid);
    FOREACH type IN t.type_list;
       GET '<span class="typelist">' IF loop.first;

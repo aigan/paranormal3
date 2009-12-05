@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Statistik'
         level = 5
 	next_template = '../view/'

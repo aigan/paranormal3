@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - E-post'
 	next_action = 'member_update'
 	focus = 'sys_email'

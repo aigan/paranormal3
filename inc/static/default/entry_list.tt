@@ -1,4 +1,4 @@
-[% FOREACH e = t.entry_list %]
+﻿[% FOREACH e = t.entry_list %]
    [% NEXT UNLESS e.active %]
    <div class="entry">
    <a id="[% e.t %]" href="[% e.file %]" class="topic_status">[% INCLUDE topic_status.tt t=e%]</a>

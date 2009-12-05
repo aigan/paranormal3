@@ -1,4 +1,4 @@
-[% META	otitle = "Gåvor till Paranormal.se: Paynova"
+﻿[% META	otitle = "Gåvor till Paranormal.se: Paynova"
 	onsubmit = 'open_window()'
 	next_handler = '/member/db/'
 	level=1

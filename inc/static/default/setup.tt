@@ -1,4 +1,4 @@
-[% PROCESS components.tt %]
+﻿[% PROCESS components.tt %]
 [% PROCESS app_components.tt %]
 
 [% ill.recs = select_list("select t from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'image/%' order by ts_status desc, ontopic desc, completeness desc, delight desc, correctness desc, ts_score desc, t asc", tid) %]

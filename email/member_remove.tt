@@ -1,4 +1,4 @@
-[% u.title %] [%+ u.nickname %] har raderat ditt medlemskap i
+﻿[% u.title %] [%+ u.nickname %] har raderat ditt medlemskap i
 http://Paranormal.se/ med användarnamnet [% m.nickname %].
 
 Anledningen är troligen en av följande:

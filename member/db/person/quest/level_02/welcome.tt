@@ -1,4 +1,4 @@
-[% META title = 'Välkommen till nivå 2'
+﻿[% META title = 'Välkommen till nivå 2'
         level = 2
 	next_template = "privacy.tt"
 %]

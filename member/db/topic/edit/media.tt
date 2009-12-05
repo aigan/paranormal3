@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Redigera URL för media'
 	next_action = 'topic_update'
 	next_template = '/member/db/topic/view/'

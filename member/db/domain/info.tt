@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Domäninfo'
 	level = 41
 	next_action = 'domain_update'

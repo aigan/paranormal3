@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Redigera ämnesuttalanden'
 	next_template = '/member/db/topic/view/'
 	next_action = 'ts_update'

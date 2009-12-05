@@ -1,4 +1,4 @@
-[% META title="Medlemskap" %]
+﻿[% META title="Medlemskap" %]
 
 <p>Nej, du behöver inte [% jump('vara medlem',
 '/topic/medlemskap_i_paranormalse.html') %] för att använda [%

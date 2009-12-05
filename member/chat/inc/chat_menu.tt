@@ -1,4 +1,4 @@
-<p>
+﻿<p>
 [ [% jump('Chatta', '/member/chat/login.tt') +%]
 | [% jump('Lägg till nytt filter', '/member/chat/admin/filter_create.tt') +%]
 | [% jump('IP-filter', '/member/chat/admin/') +%]

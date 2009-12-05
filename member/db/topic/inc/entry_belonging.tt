@@ -1,4 +1,4 @@
-   [% IF t.parent %]
+﻿   [% IF t.parent %]
       <p>(Den här texten hör till [% jump(t.parent.desig, '/member/db/topic/view/', tid=t.parent.id) %].
       [%+ INCLUDE publish_status.tt %]
       )

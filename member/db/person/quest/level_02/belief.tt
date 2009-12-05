@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Tro'
 	next_template = 'theory.tt'
 	next_action = 'member_update'

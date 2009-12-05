@@ -1,4 +1,4 @@
-[% META title="Svarta listan"
+﻿[% META title="Svarta listan"
 	next_action  = "chat_level_update"
         next_handler = "/member/db/chat/bans"
 %]

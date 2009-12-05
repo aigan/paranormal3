@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar'
 	next_action = 'member_update'
 	default_template = '-me'

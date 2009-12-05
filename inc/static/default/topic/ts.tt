@@ -1,4 +1,4 @@
-  [% ### Detta ämne behandlar ###
+﻿  [% ### Detta ämne behandlar ###
 
     FOREACH tsr = select_list("from ts, t where ts_topic=t and ts_entry=?
                                and t_active is true and ts_active is true", entry.id);

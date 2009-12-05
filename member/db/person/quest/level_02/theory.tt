@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Teori eller praktik'
 	next_template = 'meeter.tt'
 	next_action = 'member_update'

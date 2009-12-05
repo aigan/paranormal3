@@ -1,4 +1,4 @@
-  [% ### Relationer till text ### %]
+﻿  [% ### Relationer till text ### %]
 
 [% FOREACH rt = rtlist %]
   [% FOREACH rel = select_list("from rel, reltype where rev=?

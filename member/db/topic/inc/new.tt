@@ -1,4 +1,4 @@
-   <h3>Det finns inget ämne med alias <code>$talias</code></h3>
+﻿   <h3>Det finns inget ämne med alias <code>$talias</code></h3>
 
    <p>Sök igen: [% input('talias') %] [% submit('Sök') %]</p>
    [% hidden('_name', talias) %]

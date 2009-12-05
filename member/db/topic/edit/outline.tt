@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Disposition'
         level = 5
 	next_template = 'outline.tt'

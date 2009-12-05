@@ -1,4 +1,4 @@
-<small>
+﻿<small>
   [% IF t.entry %]
   <ul>
      <li>Text [% t.id %],

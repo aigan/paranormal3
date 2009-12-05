@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Slå samman två ämnen'
 	next_action = 'topic_merge'
 	next_template = '/member/db/topic/view/'

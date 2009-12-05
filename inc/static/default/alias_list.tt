@@ -1,4 +1,4 @@
-<p id="alias">Alias:
+﻿<p id="alias">Alias:
 [% FOREACH kw = select_list("from talias where talias_t=? and talias_active is true and talias_index is true", tid) %]
    [%- IF loop.first %]
    [% ELSIF loop.last %] och

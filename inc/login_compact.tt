@@ -1,4 +1,4 @@
-<p align="center"><strong>[% message | html %]</strong></p>
+﻿<p align="center"><strong>[% message | html %]</strong></p>
 
 <table class="login">
 <tr><th align="left" colspan="2">Logga in:</th>

@@ -1,4 +1,4 @@
-[% META title="Aliases att kontrollera"
+﻿[% META title="Aliases att kontrollera"
 	next_action = 'multi_set_talias'
 	next_template = 'unchecked_aliases.tt'
         level = 11

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Redigera arc'
 	next_template = '/member/db/topic/edit/meta.tt'
 	next_action = 'arc_update'

@@ -1,4 +1,4 @@
-[% FOREACH ts = select_list("from ts, t where ts_topic=? and ts_entry=t and t_active is true and ts_active is true and t not in (select media from media) order by t_title", t.id) %]
+﻿[% FOREACH ts = select_list("from ts, t where ts_topic=? and ts_entry=t and t_active is true and ts_active is true and t not in (select media from media) order by t_title", t.id) %]
    [% IF loop.first %]<h2>Behandlas av</h2>[% END %]
    [% e = topic(ts.t) %]
    <span class="link">[% jump(e.desig, e.file) %]

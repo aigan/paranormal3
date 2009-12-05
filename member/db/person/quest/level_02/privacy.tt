@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Anonymitet'
 	next_template = 'belief.tt'
 	next_action = 'member_update'

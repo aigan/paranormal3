@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - Adressuppgifter'
 	next_action = 'member_update'
 	focus = 'home_postal_code'

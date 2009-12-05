@@ -1,4 +1,4 @@
-  [% ### Representerar sidan en online-media?  TODO: clearer link!  ### %]
+﻿  [% ### Representerar sidan en online-media?  TODO: clearer link!  ### %]
   [% media_rec = select_possible_record("from media where media=?", entry.id) %]
   [% IF media_rec.media == entry.id %]
      <span class="meta">

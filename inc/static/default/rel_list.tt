@@ -1,4 +1,4 @@
-         [% FOREACH arc = t.rel( type=reltype direct=1 ).arcs %]
+﻿         [% FOREACH arc = t.rel( type=reltype direct=1 ).arcs %]
             [%- IF loop.first %]
                [% prefix %]
             [% ELSIF loop.last %] och

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Söker kontakt'
         level = 5
 	next_template = '../view/'

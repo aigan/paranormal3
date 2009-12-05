@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Skicka e-post'
 	next_action = 'email'
 	default_template = '/member/db/topic/view/helpers.tt'

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Namn'
 	next_template = 'demography.tt'
 	next_action = 'member_update'

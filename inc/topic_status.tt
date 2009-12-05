@@ -1,4 +1,4 @@
-[% SWITCH t.status;
+﻿[% SWITCH t.status;
    CASE 0; 'raderad';
    CASE 1; 'ersatt';
    CASE 2; 'föreslagen';

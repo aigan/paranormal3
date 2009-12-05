@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar'
 	next_template = '-me'
 	level = 2

@@ -1,4 +1,4 @@
-[% IF u.level > 40 %]
+﻿[% IF u.level > 40 %]
 <p>
 [ [% jump('Gåvor', '/member/payment/') +%]
 | [% jump('Mata in ny transaktion', '/member/db/person/order/create.tt', mid=m.id) +%]

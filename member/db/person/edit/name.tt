@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - Namn'
 	next_action = 'member_update'
 	focus = 'name_given'

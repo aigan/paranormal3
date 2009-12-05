@@ -1,4 +1,4 @@
-[% META otitle="Index"
+﻿[% META otitle="Index"
    no_robots_follow="-q.param('part').replace('^.', '')"
    no_robots_index="1"
 %]

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Arctype edit'
 	next_template = 'list.tt'
 	next_action = 'arctype_update'

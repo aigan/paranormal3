@@ -1,4 +1,4 @@
-[% PROCESS topic/button_update.tt %]
+﻿[% PROCESS topic/button_update.tt %]
 [% PROCESS topic/button_interest.tt %]
 
 <span class="meta">

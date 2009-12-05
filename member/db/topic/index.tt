@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Administrera ämnen'
 	next_template = 'view/'
 	focus = 'talias'

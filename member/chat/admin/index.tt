@@ -1,4 +1,4 @@
-[% META title="Filter"
+﻿[% META title="Filter"
 %]
 
 [% PROCESS chat_menu.tt %]

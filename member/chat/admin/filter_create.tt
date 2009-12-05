@@ -1,4 +1,4 @@
-[% META title="Skapa nytt filter"
+﻿[% META title="Skapa nytt filter"
         next_handler = "/member/chat/admin/"
 	next_action  = "filter_create"
 	level = 5

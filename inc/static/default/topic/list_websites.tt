@@ -1,4 +1,4 @@
-[% FOREACH ts = select_list("from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'text/%' order by t_title", t.id) %]
+﻿[% FOREACH ts = select_list("from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'text/%' order by t_title", t.id) %]
    [% IF loop.first %]<h2>Webbsidor</h2>[% END %]
    [% tso = topic(ts.t) %]
    [% IF tso.arc('slut') %]

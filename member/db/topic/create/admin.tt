@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Topic create form'
 	next_template = '../edit/meta.tt'
 	next_action = 'topic_create'

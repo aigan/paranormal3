@@ -1,4 +1,4 @@
-[%-
+﻿[%-
 DEFAULT cnt = q.param('count');
 DEFAULT cnt = 0;
 -%]

@@ -1,4 +1,4 @@
-[% META title = 'Statistik: Ålder' %]
+﻿[% META title = 'Statistik: Ålder' %]
 
 [% PROCESS stats_menu.tt %]
 

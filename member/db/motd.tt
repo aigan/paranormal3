@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Dagens meddelande'
 	next_action = 'today'
 	next_template = '/member/db/'

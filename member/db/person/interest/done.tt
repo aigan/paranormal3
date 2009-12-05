@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Denna runda är klar'
 	default_template = 'focus.tt'
 	level = 5

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Ny text'
 	next_action = 'entry_create'
 	next_template = '/member/db/topic/view/'

@@ -1,4 +1,4 @@
-[% META title="Uppdatera filter"
+﻿[% META title="Uppdatera filter"
         next_handler = "/member/db/chat/"
 	next_action  = "filter_update"
 	level = 5

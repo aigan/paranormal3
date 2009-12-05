@@ -1,4 +1,4 @@
-Din presentation godkändes av [% u.title %] [%+ u.nickname %].
+﻿Din presentation godkändes av [% u.title %] [%+ u.nickname %].
 
 [% IF q.param('comment') %]
    [% u.nickname %] skriver:

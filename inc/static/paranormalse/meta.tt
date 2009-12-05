@@ -1,4 +1,4 @@
-[% PROCESS topic/button_update.tt %]
+﻿[% PROCESS topic/button_update.tt %]
 
 [% IF m.present_contact >= 5 %]
    [% jump('Detaljer','/member/db/person/view/', mid=m.id, href_class='link_button' href_id='member_details') %]

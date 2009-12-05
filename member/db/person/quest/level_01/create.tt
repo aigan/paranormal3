@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Registrering för nykomling'
 	next_template = 'email.tt'
 	next_action = 'member_create'

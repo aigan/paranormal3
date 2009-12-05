@@ -1,4 +1,4 @@
-[% META title="Relationer att kontrollera"
+﻿[% META title="Relationer att kontrollera"
 	next_action = 'multi_set_rel'
 	next_template = 'unchecked_rels.tt'
         level = 11

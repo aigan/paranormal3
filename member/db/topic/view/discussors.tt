@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Diskutanter'
         level = 5
 	next_template = '../view/'

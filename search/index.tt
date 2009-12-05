@@ -1,4 +1,4 @@
-[% META title="Sök efter ord, var som helst"
+﻿[% META title="Sök efter ord, var som helst"
 	next_template="/cgi-bin/htsearch"
 	form_enctype="application/x-www-form-urlencoded"
 	body_class="search_result"

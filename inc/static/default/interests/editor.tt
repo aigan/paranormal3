@@ -1,4 +1,4 @@
-[%
+﻿[%
 interest_editor = select_list("from intrest, member
               where intrest_member = member and intrest_topic=?
               and editor>=30 and intrest_defined>=50 and member_level > 0 and present_intrests >= 20

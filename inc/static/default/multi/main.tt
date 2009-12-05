@@ -1,4 +1,4 @@
-<div align="center" class="entry">
+﻿<div align="center" class="entry">
 [% IF multi_letter %]
    <h2>&lt; [% uc(multi_letter) %] &gt;</h2>
 [% END %]

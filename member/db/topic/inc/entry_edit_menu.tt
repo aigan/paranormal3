@@ -1,4 +1,4 @@
-[%
+﻿[%
    base = '/member/db/topic';
    tid=t.id;
    v=t.ver;

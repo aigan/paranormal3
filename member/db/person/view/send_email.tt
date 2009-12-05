@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Skicka e-post'
 	next_action = 'email_member'
 	default_template = '/member/db/person/view/'

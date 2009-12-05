@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Fler intressen?'
 	next_action = 'interest_update_multi'
 	next_template = 'done.tt'

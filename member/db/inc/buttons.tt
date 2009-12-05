@@ -1,4 +1,4 @@
-[% DEFAULT t = topic(tid) %]
+﻿[% DEFAULT t = topic(tid) %]
 [% UNLESS t; THROW incomplete "Ämnes-id (tid) saknas"; END %]
 [% UNLESS t.entry %]
 [% DEFAULT m = u %]

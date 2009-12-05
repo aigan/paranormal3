@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Flytta text'
 	next_template = 'move_find.tt'
 	level = 12

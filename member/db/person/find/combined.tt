@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Hitta medlemmar: Kombinerad sökning'
 	next_template = 'result.tt'
 	level = 5

@@ -1,4 +1,4 @@
-  [% ### Relationer 1,2 ### %]
+﻿  [% ### Relationer 1,2 ### %]
   [% FOREACH rel = select_list("from rel, t, reltype where rev=?
                               and rel=t and rel_type=reltype
                               and rel_active is true and t_active is true and rel_indirect is false

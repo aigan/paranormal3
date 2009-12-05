@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Ladda upp bild'
 	next_action = 'upload_image'
 %]

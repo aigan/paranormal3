@@ -1,4 +1,4 @@
-[% META title="Senast inloggade"
+﻿[% META title="Senast inloggade"
         level = 5
 %]
 

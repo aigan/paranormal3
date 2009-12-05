@@ -1,4 +1,4 @@
-[%
+﻿[%
 interest_discussion = select_list("from intrest, member
               where intrest_member = member and intrest_topic=?
               and theory>=50 and intrest_defined>=50 and newsmail > 2

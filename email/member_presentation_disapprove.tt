@@ -1,4 +1,4 @@
-[% u.title %] [%+ u.nickname %] har tittat på
+﻿[% u.title %] [%+ u.nickname %] har tittat på
 din presentation och bedömt att den ännu inte är klar.
 
 [% IF q.param('comment') %]

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Skapa ny medlem'
 	next_template = '../edit/'
 	next_action = 'member_create'

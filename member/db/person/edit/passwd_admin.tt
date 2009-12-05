@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - Lösenord'
 	next_action = 'member_passwd_update'
 	level = 41

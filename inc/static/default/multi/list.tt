@@ -1,4 +1,4 @@
-<div class="entry">
+﻿<div class="entry">
 <table cellpadding="10">
 [% FOREACH pair = multi_content %]
    [% te = pair.1 %]

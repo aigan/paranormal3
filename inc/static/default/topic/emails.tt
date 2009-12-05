@@ -1,4 +1,4 @@
-  [% ### Epostadresser ### %]
+﻿  [% ### Epostadresser ### %]
 
 [% FOREACH ts = select_list("from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype = 'email' order by t_title", entry.id) %]
    <span class="meta">E-post:

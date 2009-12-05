@@ -1,4 +1,4 @@
-[% META otitle = 'Statistik' %]
+﻿[% META otitle = 'Statistik' %]
 [% order = q.param('order') || 'accepted_thing' %]
 [% direction = q.param('direction') %]
 

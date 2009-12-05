@@ -1,4 +1,4 @@
-[% META title="Vita listan"
+﻿[% META title="Vita listan"
 	next_action  = "chat_level_update"
         next_handler = "/member/db/chat/ops.tt"
 %]

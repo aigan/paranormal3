@@ -1,4 +1,4 @@
-[% DEFAULT t = topic(tid) %]
+﻿[% DEFAULT t = topic(tid) %]
 [% DEFAULT t_status = t.status %]
 <p>Ändra status för version $t.ver<br>
 [%

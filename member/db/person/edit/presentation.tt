@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - Presentation'
 	next_action = 'member_update'
 	focus = 'presentation'

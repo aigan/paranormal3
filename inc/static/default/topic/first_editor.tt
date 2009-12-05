@@ -1,4 +1,4 @@
-[% red = select_possible_record("from intrest, member
+﻿[% red = select_possible_record("from intrest, member
               where intrest_member = member and intrest_topic=?
               and editor>=30 and intrest_defined>=50 and present_contact_public>=12 order by member_level*(editor+knowledge) desc,
               member limit 1", tid) %]

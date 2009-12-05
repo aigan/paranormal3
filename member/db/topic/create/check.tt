@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Skapa ämne - Kontroll av alias'
 	next_template = '../edit/text.tt'
 	next_action = 'topic_create'

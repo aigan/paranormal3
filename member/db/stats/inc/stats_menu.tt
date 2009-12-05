@@ -1,4 +1,4 @@
-<p>Stats: 
+﻿<p>Stats: 
 [ [%+ jump('Allmänt', '/member/db/stats/') +%]
 | [%+ jump('Aktiviteter', '/member/db/stats/activity.tt') +%]
 | [%+ jump('Ålder', '/member/db/stats/age.tt') +%]

@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - DBM'
 	level = 41
 	default_template = "-me"

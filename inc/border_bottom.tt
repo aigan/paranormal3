@@ -1,4 +1,4 @@
-</div>
+﻿</div>
 <div id="footer">
 [% UNLESS u.level %]
 <p>Detta är en sida från webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.

@@ -1,4 +1,4 @@
-[%
+﻿[%
 DEFAULT keep = [ 'tid' 'v' ];
 IF t.entry;
    PROCESS entry_edit_menu.tt;

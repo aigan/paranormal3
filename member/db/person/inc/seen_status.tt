@@ -1,4 +1,4 @@
-[% IF m.online %]
+﻿[% IF m.online %]
 online sedan [% m.latest_in %]
 [% ELSE %]
 offline sedan [% m.latest_out %]

@@ -1,4 +1,4 @@
-[% META title="Mata in beställning"
+﻿[% META title="Mata in beställning"
         next_template = "history.tt"
 	next_action  = "payment_create"
 	level = 5

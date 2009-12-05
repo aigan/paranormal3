@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Registrering'
 	next_template = 'login.tt'
 	next_action = 'member_update&email_welcome'

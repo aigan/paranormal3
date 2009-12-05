@@ -1,4 +1,4 @@
-[% PROCESS doctype.tt %]
+﻿[% PROCESS doctype.tt %]
 <html>
 <head>
    [% PROCESS head_meta.tt %]

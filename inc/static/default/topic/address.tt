@@ -1,4 +1,4 @@
-[% DEFAULT t = topic(tid) %]
+﻿[% DEFAULT t = topic(tid) %]
 [% UNLESS t.arc('slut') %]
 [% IF t.arc(26) or t.arc(27) %]
 <div class="address_block">

@@ -1,4 +1,4 @@
-[% META title="Uppdatera beställning"
+﻿[% META title="Uppdatera beställning"
         next_template = "details.tt"
 	next_action  = "payment_update"
 	level = 42

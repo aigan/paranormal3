@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	otitle = 'Inställningar - Innersta väsen'
 	next_action = 'member_update'
 	level = 41

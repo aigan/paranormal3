@@ -1,4 +1,4 @@
-[% META
+﻿[% META
 	title = 'Nytt ämne'
 	next_template = 'check.tt'
 	level = 5

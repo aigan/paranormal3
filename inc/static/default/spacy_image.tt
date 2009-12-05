@@ -1,4 +1,4 @@
-<div class="spacy_image">
+﻿<div class="spacy_image">
       <table>
          <tr><td><img alt="[% t.desig | html %]" 
                       src="[% t.media_url | html %]"></td></tr>

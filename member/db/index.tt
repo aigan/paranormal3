@@ -1,4 +1,4 @@
-[% META otitle = 'Torget' %]
+﻿[% META otitle = 'Torget' %]
 
 [% PROCESS load_member.tt %]
 

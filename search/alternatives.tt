@@ -1,4 +1,4 @@
-[% META
+﻿[% META
    otitle = 'Sökresultat'
    hide='notfound'
    next_template = '/search/alternatives.tt'

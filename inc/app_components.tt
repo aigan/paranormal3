@@ -1,4 +1,4 @@
-[% MACRO row_edit(field) BLOCK %]
+﻿[% MACRO row_edit(field) BLOCK %]
    [% DEFAULT object = m %]
    <tr><th>$field </th><td><input name="$field" value="[% 
       ( q.param(field) || object.$field )| html 

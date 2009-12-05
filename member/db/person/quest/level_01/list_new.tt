@@ -1,9 +1,9 @@
 [% META
-	title = 'Pågående registreringar'
+	title = 'PÃ¥gÃ¥ende registreringar'
 %]
 
-<p>Här är påbörjade registreringar.  Välj den registrering du vill
-fortsätta med.</p>
+<p>HÃ¤r Ã¤r pÃ¥bÃ¶rjade registreringar.  VÃ¤lj den registrering du vill
+fortsÃ¤tta med.</p>
 
 <div class="entry">
 <table>

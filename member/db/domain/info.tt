@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Dom‰ninfo'
+	otitle = 'Dom√§ninfo'
 	level = 41
 	next_action = 'domain_update'
 	next_template = '/member/db/domain/'
@@ -7,7 +7,7 @@
 
 [% PROCESS domain_menu.tt %]
 
-<h1>Dom‰ninfo: [% jump(d.name, "http://www.$d.name/") %]</h1>
+<h1>Dom√§ninfo: [% jump(d.name, "http://www.$d.name/") %]</h1>
 [% warn("Looking at '$d.name'") %]
 
 <p>Typ: $d.type [% select('type', d.type, domains.types_as_hash) %]

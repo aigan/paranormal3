@@ -56,8 +56,8 @@
 </table>
 
 [% IF arc.indirect %]
-      <h2>Härledning</h2>
-      <p>Varje punkt utgör tillräcklig anledning</p>
+      <h2>HÃ¤rledning</h2>
+      <p>Varje punkt utgÃ¶r tillrÃ¤cklig anledning</p>
 
       <ol>
       [% FOREACH part =  arc.explain %]
@@ -74,15 +74,15 @@
 </p>
 
 [% WRAPPER instruction %]
-<p>Just denna relation kan ha ersätt tidigare relationer med delvis
-liknande egenskaper.  Vi har inte uttryckligen versionsnummer på
-relationerna.  Vi visar en specifik relaion här, men alla ändringar
-appliceras på relationen REV TYPE REL som i databasen kan finnas i
-flera versioner varav högst en är aktiv.  Om du nu tittar på en
+<p>Just denna relation kan ha ersÃ¤tt tidigare relationer med delvis
+liknande egenskaper.  Vi har inte uttryckligen versionsnummer pÃ¥
+relationerna.  Vi visar en specifik relaion hÃ¤r, men alla Ã¤ndringar
+appliceras pÃ¥ relationen REV TYPE REL som i databasen kan finnas i
+flera versioner varav hÃ¶gst en Ã¤r aktiv.  Om du nu tittar pÃ¥ en
 inaktiv relation men det finns aktiva versioner av samma REV TYPE REL,
-kommer du återgå till denna tidigare version.</p>
+kommer du Ã¥tergÃ¥ till denna tidigare version.</p>
 
-<p>Vi kompletterar formuläret med fler funktioner senare...</p>
+<p>Vi kompletterar formulÃ¤ret med fler funktioner senare...</p>
 [% END %]
 
 

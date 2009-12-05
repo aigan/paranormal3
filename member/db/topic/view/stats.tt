@@ -11,7 +11,7 @@
    PROCESS buttons.tt;
 %]
 
-<h1>Statistik fˆr [% PROCESS tlink.tt %]</h1>
+<h1>Statistik f√∂r [% PROCESS tlink.tt %]</h1>
 
 
 [% PROCESS topic_edit_menu.tt %]
@@ -82,7 +82,7 @@
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
 <tr>
-  <th class="colheader">Os‰ker
+  <th class="colheader">Os√§ker
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and belief > -30 and belief < 30",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
@@ -105,7 +105,7 @@
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
 <tr>
-  <th class="colheader">Os‰ker
+  <th class="colheader">Os√§ker
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and experience > 0 and experience < 30",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
@@ -129,7 +129,7 @@
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
 <tr>
-  <th class="colheader">Vill l‰ra
+  <th class="colheader">Vill l√§ra
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and practice >= 30 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
@@ -146,7 +146,7 @@
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
 <tr>
-  <th class="colheader">Vill l‰ra
+  <th class="colheader">Vill l√§ra
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and theory >= 30 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
@@ -154,24 +154,24 @@
 
 
 <table>
-<tr><th colspan="3">÷vrigt</th></tr>
+<tr><th colspan="3">√ñvrigt</th></tr>
 <tr>
-  <th class="colheader">Hj‰lpare
+  <th class="colheader">Hj√§lpare
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and helper >= 30 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
 <tr>
-  <th class="colheader">Sˆker kontakt
+  <th class="colheader">S√∂ker kontakt
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and meeter >= 30 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
 <tr>
-  <th class="colheader">Bokm‰rkat
+  <th class="colheader">Bokm√§rkat
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and bookmark >= 30 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>
 <tr>
-  <th class="colheader">Redaktˆrer
+  <th class="colheader">Redakt√∂rer
   <td align="right">[% s = select_record("select count(intrest) as cnt from intrest where intrest_topic=?  and intrest_defined>10 and editor >= 30 ",tid); s.cnt %]
   <td align="right">[% s.cnt * 100 /  si.cnt | format('%d') %]%
 </tr>

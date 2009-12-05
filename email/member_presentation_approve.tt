@@ -1,4 +1,4 @@
-Din presentation godk‰ndes av [% u.title %] [%+ u.nickname %].
+Din presentation godk√§ndes av [% u.title %] [%+ u.nickname %].
 
 [% IF q.param('comment') %]
    [% u.nickname %] skriver:
@@ -6,6 +6,6 @@ Din presentation godk‰ndes av [% u.title %] [%+ u.nickname %].
 [% END %]
 
 
-N‰sta steg ‰r att ber‰tta mer om dina intressen.  GÂ hit:
+N√§sta steg √§r att ber√§tta mer om dina intressen.  G√• hit:
 
 	http://paranormal.se/member/db/person/quest/level_05/welcome.tt

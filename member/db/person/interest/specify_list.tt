@@ -13,7 +13,7 @@
 [% list = select_list("select t from t, intrest where intrest_member=? and intrest_topic=t and t_active is true and intrest_defined < 10 and t_entry is false order by t limit 5", mid ) %]
 
 [% IF list.size %]
-   <p>Hur intresserad är du av följande ämnen?
+   <p>Hur intresserad Ã¤r du av fÃ¶ljande Ã¤mnen?
 
    [% FOREACH rec IN list %]
      [% t = topic(rec.t) %]
@@ -34,7 +34,7 @@
    <p>
 [% ELSE %]
 
-   <p>Vill du lägga till fler intressen?
+   <p>Vill du lÃ¤gga till fler intressen?
 
    <p>[% go('Fler intressen', 'enter_list.tt', 'nop') %]
 

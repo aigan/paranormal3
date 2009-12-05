@@ -1,5 +1,5 @@
 [% META
-	title = 'Slå samman två ämnen'
+	title = 'SlÃ¥ samman tvÃ¥ Ã¤mnen'
 	next_template = 'merge_find.tt'
 	level = 12
 	focus = 't1_alias'
@@ -16,6 +16,6 @@
 
 [% PROCESS edit_menu.tt %]
 
-<p>Slå samman <code>$tid: $t.title</code> med [% input('t1_alias') %]
+<p>SlÃ¥ samman <code>$tid: $t.title</code> med [% input('t1_alias') %]
 
-[% step('Sök') %]
+[% step('SÃ¶k') %]

@@ -1,15 +1,15 @@
-[% META title="Sök efter ord, var som helst"
+[% META title="SÃ¶k efter ord, var som helst"
 	next_template="/cgi-bin/htsearch"
 	form_enctype="application/x-www-form-urlencoded"
 	body_class="search_result"
 %]
 
-<p>Det här är fritextsökning.  Sökning sker efter orden i texterna för
+<p>Det hÃ¤r Ã¤r fritextsÃ¶kning.  SÃ¶kning sker efter orden i texterna fÃ¶r
 alla uppslagsord, samt i FAQs, speciella samlingar och e-postlistor.
 </p>
 
 <p>
-Sök efter: <select name="method">
+SÃ¶k efter: <select name="method">
 <option value="and">All
 <option value="or">Any
 <option value="boolean">Boolean
@@ -18,7 +18,7 @@ Format: <select name="format">
 <option value="builtin-long">Long
 <option value="builtin-short">Short
 </select>
-Sortera på: <select name="sort">
+Sortera pÃ¥: <select name="sort">
 <option value="score">Score
 <option value="time">Time
 <option value="title">Title
@@ -30,7 +30,7 @@ Sortera på: <select name="sort">
 <input type="hidden" name="restrict" value="">
 <input type="hidden" name="exclude" value="">
 <br>
-Sökord:
+SÃ¶kord:
 <input type="text" size="30" name="words" value="">
-<input type="submit" value="Sök">
+<input type="submit" value="SÃ¶k">
 

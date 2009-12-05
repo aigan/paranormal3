@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Ämne'
+	otitle = 'Ã„mne'
         level = 0
 %]
 
@@ -36,7 +36,7 @@
 %]
 
 
-<h1>[% PROCESS tlink.tt %]<span style="font-size: small; vertical-align: text-top;">([% forward('Ändra', '../edit/text.tt', tid=tid run='mark') %])</span></h1>
+<h1>[% PROCESS tlink.tt %]<span style="font-size: small; vertical-align: text-top;">([% forward('Ã„ndra', '../edit/text.tt', tid=tid run='mark') %])</span></h1>
 
 [% PROCESS edit_menu.tt %]
 
@@ -55,7 +55,7 @@
       [% END %]
       <em>[% alias.name | html %]</em>
    [%- END %]
-   [%+ forward('Ändra alias', '../edit/aliases.tt', tid=tid run='mark') %]
+   [%+ forward('Ã„ndra alias', '../edit/aliases.tt', tid=tid run='mark') %]
    
    
    [% IF t.text %]
@@ -63,7 +63,7 @@
       
       <blockquote>
          <p><strong>[% t.text | html %]</strong>
-         [%+ forward('Ändra', '../edit/text.tt', tid=tid run='mark') %]</p>
+         [%+ forward('Ã„ndra', '../edit/text.tt', tid=tid run='mark') %]</p>
       </blockquote>
    [% ELSE %]
       <p>[% forward('Skapa kortbeskrivning', '../edit/text.tt', tid=tid run='mark') %]</p>
@@ -71,13 +71,13 @@
    
    [% IF t.admin_comment %]
       <div class="important">[% t.admin_comment | html | html_para  %]
-         [% forward('Ändra redaktionskommentar', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]
+         [% forward('Ã„ndra redaktionskommentar', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]
       </div>
    [% ELSE %]
-      <p>[% forward('Lägg till kommentar för redaktörer', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]</p>
+      <p>[% forward('LÃ¤gg till kommentar fÃ¶r redaktÃ¶rer', '../edit/text_admin.tt', tid=tid run='mark') IF u.level > 10 %]</p>
    [% END %]
    
-   <p>[% jump('Lägg till ny text', '../edit/new_entry.tt' tid=tid run='mark')  %]</p>
+   <p>[% jump('LÃ¤gg till ny text', '../edit/new_entry.tt' tid=tid run='mark')  %]</p>
 
 [% END # t_entry %]
 
@@ -123,7 +123,7 @@
       - [% ts.comment | html %]
    [% END %]
 
- ([% forward('Ändra', '/member/db/topic/edit/topicstatements.tt' tid=tse.id) %])
+ ([% forward('Ã„ndra', '/member/db/topic/edit/topicstatements.tt' tid=tse.id) %])
 
    [% IF loop.last %]
       </ul>

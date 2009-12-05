@@ -1,18 +1,18 @@
 [% META
-	otitle = 'Inställningar - Intressetyper'
+	otitle = 'InstÃ¤llningar - Intressetyper'
 	next_action = 'member_update'
 	level = 2
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - Intressetyper: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - Intressetyper: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
-<p>Dessa värden är utgångspunkt för vad du tycker om respektive ämne
-som du är intresserad av.  Är du allmänt sett 80% teoretiker och anger
-att du är 50% intresserad av exempelvis UFO kommer vi anta att du är
+<p>Dessa vÃ¤rden Ã¤r utgÃ¥ngspunkt fÃ¶r vad du tycker om respektive Ã¤mne
+som du Ã¤r intresserad av.  Ã„r du allmÃ¤nt sett 80% teoretiker och anger
+att du Ã¤r 50% intresserad av exempelvis UFO kommer vi anta att du Ã¤r
 intresserad av UFO-teori till 40%.
 
 
@@ -22,13 +22,13 @@ intresserad av UFO-teori till 40%.
            number=9
            min=-100 max=100
            min_txt='Inget alls'
-           max_txt='Allt, benhårt'
+           max_txt='Allt, benhÃ¥rt'
 %]
 
-  Tror du på allt det här paranormala?  Existerar fenomenen?  Hur stor
-andel tror du existerar? Tror du på <a target="external" href="/psi/telepati.html">Telepati</a>, <a target="external" href="/psi/varsel.html">varsel</a> och <a target="external" href="/psi/droem/esp.html">sanndrömmar</a>?  <a target="external" href="/psi/spoeke.html">Spöken</a>, <a target="external" href="/psi/aengel.html">änglar</a> och
-<a target="external" href="/psi/demon.html">demoner</a>?  <a target="external" href="/psi/naturvaesen.html">Tomtar</a>, <a target="external" href="/psi/naturvaesen.html">troll</a> och <a target="external" href="/psi/snoemannen.html">snömän</a>?  <a target="external" href="/psi/flygande_tefat.html">Flygande tefat</a>, <a target="external" href="/psi/sjaelv/antaendning.html">spontan
-självförbränning</a> och <a target="external" href="/psi/rspk.html">poltergeists</a>?  <a target="external" href="/psi/healing.html">Healing</a>, <a target="external" href="/psi/magi.html">magi</a> och <a target="external" href="/psi/slagruta.html">slagruta</a>?
+  Tror du pÃ¥ allt det hÃ¤r paranormala?  Existerar fenomenen?  Hur stor
+andel tror du existerar? Tror du pÃ¥ <a target="external" href="/psi/telepati.html">Telepati</a>, <a target="external" href="/psi/varsel.html">varsel</a> och <a target="external" href="/psi/droem/esp.html">sanndrÃ¶mmar</a>?  <a target="external" href="/psi/spoeke.html">SpÃ¶ken</a>, <a target="external" href="/psi/aengel.html">Ã¤nglar</a> och
+<a target="external" href="/psi/demon.html">demoner</a>?  <a target="external" href="/psi/naturvaesen.html">Tomtar</a>, <a target="external" href="/psi/naturvaesen.html">troll</a> och <a target="external" href="/psi/snoemannen.html">snÃ¶mÃ¤n</a>?  <a target="external" href="/psi/flygande_tefat.html">Flygande tefat</a>, <a target="external" href="/psi/sjaelv/antaendning.html">spontan
+sjÃ¤lvfÃ¶rbrÃ¤nning</a> och <a target="external" href="/psi/rspk.html">poltergeists</a>?  <a target="external" href="/psi/healing.html">Healing</a>, <a target="external" href="/psi/magi.html">magi</a> och <a target="external" href="/psi/slagruta.html">slagruta</a>?
 Osv..
 
 [% END %]
@@ -40,7 +40,7 @@ Osv..
            number=9
 %]
 
-Grundar sig intresset i en nyfikenhet i hur världen fungerar?  Dvs
+Grundar sig intresset i en nyfikenhet i hur vÃ¤rlden fungerar?  Dvs
 ett intresse av att analysera, studera och logiskt begrunda fenomenen?
 
 [% END %]
@@ -52,46 +52,46 @@ ett intresse av att analysera, studera och logiskt begrunda fenomenen?
            number=9
 %]
 
-Är det din önskan att praktisera och uppleva dessa fenomen?
-Söker du en intuitiv förståelse av fenomenen?
+Ã„r det din Ã¶nskan att praktisera och uppleva dessa fenomen?
+SÃ¶ker du en intuitiv fÃ¶rstÃ¥else av fenomenen?
 
 [% END %]
 
 
 [% WRAPPER draw_slider 
-	   title='Redaktör'
+	   title='RedaktÃ¶r'
            field='general_editor' 
            number=9
 %]
 
-Är du intresserad av att ta hand om och uppdatera ett eller flera
-ämnen på webbplatsen?  Är du beredd att lägga ned tid och energi på
+Ã„r du intresserad av att ta hand om och uppdatera ett eller flera
+Ã¤mnen pÃ¥ webbplatsen?  Ã„r du beredd att lÃ¤gga ned tid och energi pÃ¥
 att skriva texter och kategoriesera dem?
 
 [% END %]
 
 
 [% WRAPPER draw_slider 
-	   title='Hjälpare'
+	   title='HjÃ¤lpare'
            field='general_helper' 
            number=9
 %]
 
-Vill ni ställa upp med att svara på frågor från personer som söker
-svar?  Hjälpa dem hitta rätt väg / rätt person / rätt plats att leta
+Vill ni stÃ¤lla upp med att svara pÃ¥ frÃ¥gor frÃ¥n personer som sÃ¶ker
+svar?  HjÃ¤lpa dem hitta rÃ¤tt vÃ¤g / rÃ¤tt person / rÃ¤tt plats att leta
 vidare?
 
 [% END %]
 
 
 [% WRAPPER draw_slider 
-	   title='Söker kontakt'
+	   title='SÃ¶ker kontakt'
            field='general_meeter' 
            number=9
 %]
 
-Söker ni nya kontakter / nya vänner?  Intresse av att chatta eller
-brevväxla?
+SÃ¶ker ni nya kontakter / nya vÃ¤nner?  Intresse av att chatta eller
+brevvÃ¤xla?
 
 [% END %]
 
@@ -102,8 +102,8 @@ brevväxla?
            number=9
 %]
 
-Vill ni lära er mer om erat intresse genom att läsa böcker och texter
-på webben?  Mer specifikt; vill ni läsa allt som står om ämnet på
+Vill ni lÃ¤ra er mer om erat intresse genom att lÃ¤sa bÃ¶cker och texter
+pÃ¥ webben?  Mer specifikt; vill ni lÃ¤sa allt som stÃ¥r om Ã¤mnet pÃ¥
 denna webbplatsen?
 
 [% END %]
@@ -115,7 +115,7 @@ denna webbplatsen?
            number=9
 %]
 
-Vill du delta i diskussioner om dessa ämnen?  Syftar främst då på
+Vill du delta i diskussioner om dessa Ã¤mnen?  Syftar frÃ¤mst dÃ¥ pÃ¥
 diskussioner via webbforum och mail.  Inte chatt.
 
 [% END %]

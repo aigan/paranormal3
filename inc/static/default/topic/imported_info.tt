@@ -1,6 +1,6 @@
 [% IF entry.oldfile %]
    [% oldurl = "/old${entry.oldfile}" %]
 <span class="meta">
-   Denna text är importerad från [% jump(oldurl, oldurl) %] <br />
+   Denna text Ã¤r importerad frÃ¥n [% jump(oldurl, oldurl) %] <br />
 </span>
 [% END %]

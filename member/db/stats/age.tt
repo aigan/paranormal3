@@ -1,11 +1,11 @@
-[% META title = 'Statistik: Ålder' %]
+[% META title = 'Statistik: Ã…lder' %]
 
 [% PROCESS stats_menu.tt %]
 
 
-<h2>Distribution av åldrar</h2>
+<h2>Distribution av Ã¥ldrar</h2>
 
-<table><tr><th>Födelseår</th><th>Ålder</th><th>Antal</th></tr>
+<table><tr><th>FÃ¶delseÃ¥r</th><th>Ã…lder</th><th>Antal</th></tr>
 [% bdlist = select_list("select bdate_ymd_year, count(member) as cnt from member where bdate_ymd_year > 0 and bdate_ymd_year < 2000 group by bdate_ymd_year order by bdate_ymd_year") %]
 
 [% maxcount = 0 %]
@@ -41,7 +41,7 @@
 [% tf = select_record("select count(member) as cnt from member where gender='F'") %]
 [% to = select_record("select count(member) as cnt from member where gender is null") %]
 
-<h2>Könsfördelning</h2>
+<h2>KÃ¶nsfÃ¶rdelning</h2>
 
 [% total = tm.cnt + tf.cnt %]
 
@@ -49,7 +49,7 @@
 <table>
 <tr><td>[% jump("Hanar", '/member/db/person/find/result.tt', _sex_m=1) %]<td>[% tm.cnt %]  <td>[% tm.cnt * 100 / total  | format('%d %%'); %]
 <tr><td>[% jump("Honor", '/member/db/person/find/result.tt', _sex_f=1) %]<td>[% tf.cnt %]  <td>[% tf.cnt * 100 / total  | format('%d %%'); %]
-<tr><td>Övriga <td>[% to.cnt %] <td>&nbsp;
+<tr><td>Ã–vriga <td>[% to.cnt %] <td>&nbsp;
 </table>
 </div>
 

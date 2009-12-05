@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Vidares‰ndning'
+	otitle = 'Vidares√§ndning'
 	level = 41
 	next_action = 'email_redirect_update'
 	next_template = 'me'
@@ -25,7 +25,7 @@ UNLESS dest_str;
 END;
 %]
 
-<h1>Vidares‰ndning: [% r.src_raw %]</h1>
+<h1>Vidares√§ndning: [% r.src_raw %]</h1>
 
 
 [%
@@ -42,7 +42,7 @@ END;
 
 
 <table class="minimal">
-<tr><td>Dom‰n <td>[% jump(d.name, "http://www.$d.name") %] <td><em>[% d.type_name %]</em>
+<tr><td>Dom√§n <td>[% jump(d.name, "http://www.$d.name") %] <td><em>[% d.type_name %]</em>
 <tr><td>[% input('member', r.member.nickname, tdlabel="Medlem") %]
 <tr><td>[% input('alias', r.alias, tdlabel="Alias") %] 
 <tr><td>[% input('dest', dest_str, tdlabel="Till") %]<td>
@@ -64,22 +64,22 @@ END;
 <div class="entry">
 [% possible_members = members.by_name(dest_str,1) %]
 [% IF possible_members.size %]
-   <h2>Mˆjliga medlemmar</h2>
+   <h2>M√∂jliga medlemmar</h2>
    <table>
    [% FOREACH am IN possible_members %]
       [%tr2%]
       <td>[% jump(am.desig,"/member/db/person/view/", mid=am.id, href_target='_blank') %]
       <td>[% am.sys_email %]
-      <td><a href="#" onclick="javascript:document.f.member.value='[% am.nickname_trimmed %]';return(false);">v‰lj</a>
+      <td><a href="#" onclick="javascript:document.f.member.value='[% am.nickname_trimmed %]';return(false);">v√§lj</a>
    [% END %]
    </table>
 [% ELSE %]
-   <h2>Fˆrslag pÂ lediga anv‰ndarnamn</h2>
+   <h2>F√∂rslag p√• lediga anv√§ndarnamn</h2>
    <table>
    [% FOREACH nick IN members.suggest_nicknames([r.alias], [dest_str]) %]
       [%tr2%]
       <td>[% nick %]
-      <td><a href="#" onclick="javascript:document.f.member.value='[% nick %]';return(false);">v‰lj</a>
+      <td><a href="#" onclick="javascript:document.f.member.value='[% nick %]';return(false);">v√§lj</a>
    [% END %]
    </table>
 [% END %]

@@ -22,21 +22,21 @@
    [% rows = 25 %]
    [% PROCESS entry_belonging.tt %]
 [% ELSE %]
-   <h1>[% PROCESS tlink_ver.tt %]: Ämne</h1>
+   <h1>[% PROCESS tlink_ver.tt %]: Ã„mne</h1>
    [% PROCESS topic_edit_menu.tt %]
    [% rows = 2 %]
 [% END %]
 
 [% WRAPPER instruction %]
-<p>Textens syfte är att med så få ord som möjligt förklara vad ämnet
-är för den som inte har hört namnet tidigare.
+<p>Textens syfte Ã¤r att med sÃ¥ fÃ¥ ord som mÃ¶jligt fÃ¶rklara vad Ã¤mnet
+Ã¤r fÃ¶r den som inte har hÃ¶rt namnet tidigare.
 [% END %]
 
 
 <p>Texthantering
-[ [% jump('Lägg till en ny text', 'new_entry.tt' tid=tid run='mark' ) %]
+[ [% jump('LÃ¤gg till en ny text', 'new_entry.tt' tid=tid run='mark' ) %]
    [% IF u.level > 10 +%]
-|      [% jump('Ändra redaktörskommentar', 'text_admin.tt' tid=tid ) %]
+|      [% jump('Ã„ndra redaktÃ¶rskommentar', 'text_admin.tt' tid=tid ) %]
    [% END %]
 ]</p>
 
@@ -50,9 +50,9 @@
 
 [% UNLESS t.active %]
 - <strong>
-<blink>Denna version gäller inte</blink>
+<blink>Denna version gÃ¤ller inte</blink>
 [% IF t.active_ver %]
-- [% jump("Version $t.active_ver.ver", me, tid=t.id) %] gäller nu
+- [% jump("Version $t.active_ver.ver", me, tid=t.id) %] gÃ¤ller nu
 [% END %]
 </strong>
 [% ELSE %]
@@ -62,11 +62,11 @@
 [% IF t.entry %]
    <tr><td>Rubrik <td>[% input('t_title', t.title, size=50 maxlength=128) %]
 [% ELSE %]
-   <tr><td>Fullständig titel <td>[% input('t_title', t.title, size=50 maxlength=128) %] Singular. <strong>ej undertitel</strong>
+   <tr><td>FullstÃ¤ndig titel <td>[% input('t_title', t.title, size=50 maxlength=128) %] Singular. <strong>ej undertitel</strong>
    <tr><td>Kort titel <td>[% input('t_title_short', t.real_short, size=25 maxlength=50) %]
-      Att användas när vi vet kontexten. När överämnet är känt.
+      Att anvÃ¤ndas nÃ¤r vi vet kontexten. NÃ¤r Ã¶verÃ¤mnet Ã¤r kÃ¤nt.
    <tr><td>Pluralform <td>[% input('t_title_short_plural', t.real_plural, size=25 maxlength=50) %]
-      som rubrik för listor av instanser. (ex lista på <em>böcker</em>)
+      som rubrik fÃ¶r listor av instanser. (ex lista pÃ¥ <em>bÃ¶cker</em>)
 [% END %]
 </table>
 [% END %]
@@ -81,7 +81,7 @@
 
 <p>[% step('Uppdatera') %]<br>
 [% IF u.complexity > 10 %]
-»...«<br>| ...<br>"..."[link]
+Â»...Â«<br>| ...<br>"..."[link]
 [% END %]
 </p>
 
@@ -90,6 +90,6 @@
 [% hr %]
 
 [% IF not t.entry %]
-   <p>Kortbeskrivningen ska vara kort. Vill du skriva något om detta ämnet; [% jump('Lägg till en ny text', 'new_entry.tt' tid=tid run='mark' ) %]</p>
+   <p>Kortbeskrivningen ska vara kort. Vill du skriva nÃ¥got om detta Ã¤mnet; [% jump('LÃ¤gg till en ny text', 'new_entry.tt' tid=tid run='mark' ) %]</p>
 [% END %]
-<p>Se [% jump("instruktion för att formatera texten", "/topic/instruktion_for_att_formatera_text_i_paranormalse.html", href_target='published') %]</p>
+<p>Se [% jump("instruktion fÃ¶r att formatera texten", "/topic/instruktion_for_att_formatera_text_i_paranormalse.html", href_target='published') %]</p>

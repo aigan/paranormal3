@@ -1,11 +1,11 @@
 [% META
-	otitle = 'Skapade ämnen'
+	otitle = 'Skapade Ã¤mnen'
 	level = 5
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Skapade ämnen: [% m.tlink %]</h1>
+<h1>Skapade Ã¤mnen: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 [% PROCESS person_activity_menu.tt %]
@@ -23,7 +23,7 @@
 <tr><th>[% sort('tid','t') %]
     <th>[% sort('Titel', 't_title') %]
     <th>[% sort('Skapad', 't_created') %]
-    <th>Senast ändrad av
+    <th>Senast Ã¤ndrad av
 </tr>
 
 [% FOREACH rec IN recs.from_page  %]
@@ -35,7 +35,7 @@
 	<td>[% t.created.ymd %]</td>
 	<td>
         [% IF t.active %]
-           oförändrad
+           ofÃ¶rÃ¤ndrad
         [% ELSIF t.active_ver %]
            [% t.active_ver.created_by.link %] [%+ t.active_ver.created %]
         [% ELSIF t.replaced_by %]

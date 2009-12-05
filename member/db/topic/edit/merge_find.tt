@@ -1,5 +1,5 @@
 [% META
-	title = 'Slå samman två ämnen'
+	title = 'SlÃ¥ samman tvÃ¥ Ã¤mnen'
 	next_action = 'topic_merge'
 	next_template = '/member/db/topic/view/'
 	level = 12
@@ -14,14 +14,14 @@
    preserve_data('t1', 't2');
 %]
 
-<p>Slå samman <code>$t</code> <strong>[% t_title %]</strong> [% PROCESS typelist.tt rel=t %] med:</p>
+<p>SlÃ¥ samman <code>$t</code> <strong>[% t_title %]</strong> [% PROCESS typelist.tt rel=t %] med:</p>
 
 [%
    talias = q.param('t1_alias');
    IF talias;
       list = select_list('from talias, t where talias_t=t and talias=lower(?) and talias_active is true and t_active is true', talias );
       IF list.size == 0;
-         THROW notfound, "Det finns inget ämne med alias $talias";
+         THROW notfound, "Det finns inget Ã¤mne med alias $talias";
       END;
    END;
   found = 0;
@@ -40,9 +40,9 @@
 
 [% IF found %]
 
-<p>[% step('Slå samman') %]
+<p>[% step('SlÃ¥ samman') %]
 
 [% ELSE;
-      THROW notfound, "Det finns inget ämne med alias $talias";
+      THROW notfound, "Det finns inget Ã¤mne med alias $talias";
    END;
 %]

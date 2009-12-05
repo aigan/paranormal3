@@ -40,12 +40,12 @@
 [% INCLUDE present_rev_links type=44 %]
 [% INCLUDE present_rev_links type=45 %]
 
-<h2>Ditt kontaktnät</h2>
+<h2>Ditt kontaktnÃ¤t</h2>
 
-   <span class="link">[% jump('Hjälpare', "/member/db/topic/view/helpers.tt" tid=t.id) %]<br></span>
+   <span class="link">[% jump('HjÃ¤lpare', "/member/db/topic/view/helpers.tt" tid=t.id) %]<br></span>
    <span class="link">[% jump('Diskutanter', "/member/db/topic/view/discussors.tt" tid=t.id) %]<br></span>
-   <span class="link">[% jump('Söker kontakt', "/member/db/topic/view/meeters.tt" tid=t.id) %]<br></span>
-   <span class="link">[% jump('Redaktörer', "/member/db/topic/view/editors.tt" tid=t.id) %]<br></span>
+   <span class="link">[% jump('SÃ¶ker kontakt', "/member/db/topic/view/meeters.tt" tid=t.id) %]<br></span>
+   <span class="link">[% jump('RedaktÃ¶rer', "/member/db/topic/view/editors.tt" tid=t.id) %]<br></span>
 
 
 [% PROCESS topic/list_websites.tt UNLESS multi == 'rev_ts' %]

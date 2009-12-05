@@ -1,4 +1,4 @@
-[% META title="Ämnen utan relationer"
+[% META title="Ã„mnen utan relationer"
         level = 5
 %]
 
@@ -6,11 +6,11 @@
 [ [% jump('Ladda om sidan', me) +%]
 ]</p>
 
-<p>25 först funna ämnen</p>
+<p>25 fÃ¶rst funna Ã¤mnen</p>
 
 <div class="entry">
 <table>
-   <tr><th>S</th><th>Ämne</th><th>Skapad</th></tr>
+   <tr><th>S</th><th>Ã„mne</th><th>Skapad</th></tr>
 [% FOREACH rec = select_list("select t from t main where t_active is true and t_entry is false and not exists (select 1 from rel where (rev=main.t or rel=main.t) and rel_active is true and rel_strength >= 30) limit 25" ) %]
    [% t = topic(rec.t) %]
    [% tr2 %]

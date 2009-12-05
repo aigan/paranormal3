@@ -23,7 +23,7 @@
     <th>[% sort('rev', 'rev') %]
     <th>[% sort('type', 'rel_type') %]
     <th>[% sort('rel', 'rel') %]
-    <th>[% sort('Ändrad', 'rel_changedby') %]
+    <th>[% sort('Ã„ndrad', 'rel_changedby') %]
     <th>S
     <th>Sty
 </tr>

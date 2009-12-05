@@ -25,7 +25,7 @@
 %]
 
 [% IF list.size or revlist.size %]
-   <p>Är du möjligen intresserad av något av dessa relaterade ämnen?
+   <p>Ã„r du mÃ¶jligen intresserad av nÃ¥got av dessa relaterade Ã¤mnen?
    [% hr %]
 
    [% FOREACH rec IN list %]
@@ -49,10 +49,10 @@
    [% END %]
 [% ELSE %]
 
-  <p> Här kunde du tidigare ange fler relateradeintressen till detta ämnet.</p>
+  <p> HÃ¤r kunde du tidigare ange fler relateradeintressen till detta Ã¤mnet.</p>
 
-<p>Den funktionen kommer att göras om. Nu kan du bara fortsätta...</p>
+<p>Den funktionen kommer att gÃ¶ras om. Nu kan du bara fortsÃ¤tta...</p>
 
 [% END %]
 
-[% step('Fortsätt', i.next_step(defined=90).template, 'interest_update_multi') %]
+[% step('FortsÃ¤tt', i.next_step(defined=90).template, 'interest_update_multi') %]

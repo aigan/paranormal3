@@ -1,16 +1,16 @@
-[% META otitle = 'Framför porten' %]
+[% META otitle = 'FramfÃ¶r porten' %]
 
 <div align="center">
 
-<h1>Framför porten</h1>
+<h1>FramfÃ¶r porten</h1>
 
 <img src="/images/gate.jpg">
 
-<p>Du står inför porten och begrundar ditt beslut.</p>
+<p>Du stÃ¥r infÃ¶r porten och begrundar ditt beslut.</p>
 
-<p>Är du redo att bosätta dig i <em>[% jump('Den paranormala sfären', '/topic/paranormalse.html', target='published') %]</em>?</p>
+<p>Ã„r du redo att bosÃ¤tta dig i <em>[% jump('Den paranormala sfÃ¤ren', '/topic/paranormalse.html', target='published') %]</em>?</p>
 
 [% hr %]
 
-<p>[% jump('Fortsätt', '../level_01/create.tt') %]</p>
+<p>[% jump('FortsÃ¤tt', '../level_01/create.tt') %]</p>
 </div>

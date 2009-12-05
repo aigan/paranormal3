@@ -1,20 +1,20 @@
-[% META title = 'Meny över frågor'
+[% META title = 'Meny Ã¶ver frÃ¥gor'
         level = 2
 %]
 
-<p><a href="welcome.tt">Översikt</a></p>
+<p><a href="welcome.tt">Ã–versikt</a></p>
 
 <ol>
   <li><a href="privacy.tt">Anonymitet</a></li>
   <li><a href="belief.tt">Tro</a></li>
   <li><a href="theory.tt">Teori / Praktik</a></li>
-  <li><a href="meeter.tt">Chatta / Läsa</a></li>
-  <li><a href="newsmail.tt">E-postmängd</a></li>
-  <li><a href="topics.tt">Ämnen</a></li>
+  <li><a href="meeter.tt">Chatta / LÃ¤sa</a></li>
+  <li><a href="newsmail.tt">E-postmÃ¤ngd</a></li>
+  <li><a href="topics.tt">Ã„mnen</a></li>
   <li><a href="name.tt">Namn</a></li>
   <li><a href="demography.tt">Personuppgifter</a></li>
   <li><a href="contact.tt">Kontaktinformation</a></li>
   <li><a href="presentation.tt">Presentation</a></li>
 </ol>
 
-<p>[% nostep("Gör något annat istället...") %]
+<p>[% nostep("GÃ¶r nÃ¥got annat istÃ¤llet...") %]

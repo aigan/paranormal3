@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Inställningar - E-post'
+	otitle = 'InstÃ¤llningar - E-post'
 	next_action = 'member_update'
 	focus = 'sys_email'
 	level = 2
@@ -7,22 +7,22 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - E-post: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - E-post: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
-[% WRAPPER draw_string title='Primär e-postadress' field='sys_email' %]
-   Detta är den adress som används för att skicka ut nyheter och information.
+[% WRAPPER draw_string title='PrimÃ¤r e-postadress' field='sys_email' %]
+   Detta Ã¤r den adress som anvÃ¤nds fÃ¶r att skicka ut nyheter och information.
    [% UNLESS m.sys_uid %]
-      Brev till något av dina <code>namn@paranormal.se</code> går till
-din primära e-postadress. ... Dvs ditt namn efter att mellanslag etc konverterats...
+      Brev till nÃ¥got av dina <code>namn@paranormal.se</code> gÃ¥r till
+din primÃ¤ra e-postadress. ... Dvs ditt namn efter att mellanslag etc konverterats...
    [% END %]
 [% END %]
 
 [% IF m.sys_uid %]
-<p>      Du har en brevlåda på paranormal.se med namnet <strong>[% m.sys_uid %]</strong>.
-      Genom att sätta primär epostadress till <code>[% m.sys_uid %]@paranormal.se</code>
-      kan du läsa din e-post från <code>mail.paranormal.se</code>, via POP3, IMAP eller
+<p>      Du har en brevlÃ¥da pÃ¥ paranormal.se med namnet <strong>[% m.sys_uid %]</strong>.
+      Genom att sÃ¤tta primÃ¤r epostadress till <code>[% m.sys_uid %]@paranormal.se</code>
+      kan du lÃ¤sa din e-post frÃ¥n <code>mail.paranormal.se</code>, via POP3, IMAP eller
      [%+ jump('webbmail', '/member/mail/') %].
 <table>
 <tr><td>Mailbox <td>[% m.mailbox.root %]
@@ -43,37 +43,37 @@ din primära e-postadress. ... Dvs ditt namn efter att mellanslag etc konverterat
            list= m.mailaliases
 %]
 
-Lista på epostadresser.  Ange så många som möjligt.  Om din primära
-e-postadress slutar att fungera är det bra om vi kan nå dig på någon
+Lista pÃ¥ epostadresser.  Ange sÃ¥ mÃ¥nga som mÃ¶jligt.  Om din primÃ¤ra
+e-postadress slutar att fungera Ã¤r det bra om vi kan nÃ¥ dig pÃ¥ nÃ¥gon
 av de andra adresserna.  Ange bara dina egna adresser eftersom
-lösenord kan komma att postas hit.
+lÃ¶senord kan komma att postas hit.
 
 [% END %]
 
 
 [% WRAPPER draw_string title='Publik e-postadress'
-field='home_online_email' %] Här anger du den adress du vill sprida
+field='home_online_email' %] HÃ¤r anger du den adress du vill sprida
 till andra.  Vi kontrollerar inte om adressen fungerar.  [% END %]
 
-[% WRAPPER draw_alt title='Mängd e-post' field='newsmail'
+[% WRAPPER draw_alt title='MÃ¤ngd e-post' field='newsmail'
    values = 
    {
 	'0' => '0. Ingen e-post alls'
-   	'1' => '1. Ett par gånger om året'
-	'2' => '2. Varje månad'
-	'3' => '3. Varje vecka (magisk gräns)'
-	'4' => '4. Ett par gånger i veckan'
+   	'1' => '1. Ett par gÃ¥nger om Ã¥ret'
+	'2' => '2. Varje mÃ¥nad'
+	'3' => '3. Varje vecka (magisk grÃ¤ns)'
+	'4' => '4. Ett par gÃ¥nger i veckan'
 	'5' => '5. Varje dag'
 	'6' => '6. Allt, hela tiden'
-	'7' => '7. Allt, även när inloggad'
+	'7' => '7. Allt, Ã¤ven nÃ¤r inloggad'
    }
 %]
 
 Vi kommer att skicka ut anpassade nyhetsbrev, information etc.  Vi
-bedömer hur intressant nyheten är just för dig.  Kanske du bara vill
-ha det mest intressanta eller kanske föredrar du att få mer e-post och
-solla själv?  Detta värde avgör också i hur många lägen vi länkar till
-dig för de som vill ha någon att e-posta till.
+bedÃ¶mer hur intressant nyheten Ã¤r just fÃ¶r dig.  Kanske du bara vill
+ha det mest intressanta eller kanske fÃ¶redrar du att fÃ¥ mer e-post och
+solla sjÃ¤lv?  Detta vÃ¤rde avgÃ¶r ocksÃ¥ i hur mÃ¥nga lÃ¤gen vi lÃ¤nkar till
+dig fÃ¶r de som vill ha nÃ¥gon att e-posta till.
 
 [% END %]
 
@@ -81,19 +81,19 @@ dig för de som vill ha någon att e-posta till.
 
 <hr>
 
-<p>Brev får du när någon har något att skriva.  Förhoppningsvis mest från
+<p>Brev fÃ¥r du nÃ¤r nÃ¥gon har nÃ¥got att skriva.  FÃ¶rhoppningsvis mest frÃ¥n
 andra medlemmar.
 
-<p>Mängdangivelsen är en slags maxgräns som vi på olika sätt försöker hålla.
+<p>MÃ¤ngdangivelsen Ã¤r en slags maxgrÃ¤ns som vi pÃ¥ olika sÃ¤tt fÃ¶rsÃ¶ker hÃ¥lla.
 
-<p>Värdet styr din placering i olika listor (med tanken att de högre upp
-i listan oftare får brev).  Med vissa inställningar göms
+<p>VÃ¤rdet styr din placering i olika listor (med tanken att de hÃ¶gre upp
+i listan oftare fÃ¥r brev).  Med vissa instÃ¤llningar gÃ¶ms
 e-postadressen helt.
 
-<p>Värdet kommer också att styra hur ofta du får de automatiska
-nyhetsutskicken, när dessa kommit igång.
+<p>VÃ¤rdet kommer ocksÃ¥ att styra hur ofta du fÃ¥r de automatiska
+nyhetsutskicken, nÃ¤r dessa kommit igÃ¥ng.
 
-<p>Skriver du upp dig som hjälpare för fler ämnen så kommer du också att
-få fler brev, men det beror också på vad du skriver om ämnet.  Här är
-exempel för [% jump("de som vill hjälpa med att svara på frågor (etc) angående
-spöken", "/member/db/topic/view/helpers" tid=349) %].
+<p>Skriver du upp dig som hjÃ¤lpare fÃ¶r fler Ã¤mnen sÃ¥ kommer du ocksÃ¥ att
+fÃ¥ fler brev, men det beror ocksÃ¥ pÃ¥ vad du skriver om Ã¤mnet.  HÃ¤r Ã¤r
+exempel fÃ¶r [% jump("de som vill hjÃ¤lpa med att svara pÃ¥ frÃ¥gor (etc) angÃ¥ende
+spÃ¶ken", "/member/db/topic/view/helpers" tid=349) %].

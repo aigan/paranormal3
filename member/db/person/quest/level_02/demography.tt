@@ -9,21 +9,21 @@
 [% PROCESS load_member.tt %]
 <p align="right">Steg 8 av 10</p>
 
-<p>Dessa uppgifter kan vara av intresse för en person som eventuellt
+<p>Dessa uppgifter kan vara av intresse fÃ¶r en person som eventuellt
 vill kontakta dig.</p>
 
-<p>(Uppgifterna är frivilliga)</p>
+<p>(Uppgifterna Ã¤r frivilliga)</p>
 
 <table>
   <tr>
-    <td>Födelseår</td>
+    <td>FÃ¶delseÃ¥r</td>
     <td>[% input('bdate_ymd_year', m.bdate_ymd_year, size=4) %]</td>
-    <td>(ÅÅÅÅ)</td>
+    <td>(Ã…Ã…Ã…Ã…)</td>
   </tr>
   <tr>
-    <td>Kön</td>
+    <td>KÃ¶n</td>
     <td>
-      <input type="radio" name="gender" value=""[% ' checked' UNLESS m.gender %]>Okänt<br>
+      <input type="radio" name="gender" value=""[% ' checked' UNLESS m.gender %]>OkÃ¤nt<br>
       <input type="radio" name="gender" value="M"[% ' checked' IF m.gender=='M' %]>Man<br>
       <input type="radio" name="gender" value="F"[% ' checked' IF m.gender=='F' %]>Kvinna<br>
     </td>
@@ -31,7 +31,7 @@ vill kontakta dig.</p>
   <tr>
     <td>Postnummer</td>
     <td>[% input('home_postal_code', m.home_postal_code, size=8) %]</td>
-    <td>(Används för att beräkna avstånd mellan två medlemmar)</td>
+    <td>(AnvÃ¤nds fÃ¶r att berÃ¤kna avstÃ¥nd mellan tvÃ¥ medlemmar)</td>
   </tr>
 </table>
 

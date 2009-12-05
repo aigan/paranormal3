@@ -1,4 +1,4 @@
-[% META otitle="Ämnen"
+[% META otitle="Ã„mnen"
 %]
 [%
    subpart = {};
@@ -14,7 +14,7 @@
    END;
 %]
 
-<h1 align="center">Ämnen</h1>
+<h1 align="center">Ã„mnen</h1>
 <h2>- [% part | upper %] -</h2>
 
 <p align="center">[% alfanum_bar('alias_list.tt', 'part') %]</p>

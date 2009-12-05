@@ -1,11 +1,11 @@
 [% META
-	otitle = 'Ämnen som avslagits'
+	otitle = 'Ã„mnen som avslagits'
 	level = 5
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Ämnen som avslagits: [% m.tlink %]</h1>
+<h1>Ã„mnen som avslagits: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 [% PROCESS person_activity_menu.tt %]
@@ -22,7 +22,7 @@
 <tr><th>[% sort('tid','t') %]
     <th>[% sort('Titel', 't_title') %]
     <th>[% sort('Skapad', 't_created') %]
-    <th>Ändrad av
+    <th>Ã„ndrad av
 </tr>
 
 [% FOREACH rec IN recs.from_page %]
@@ -34,7 +34,7 @@
 	<td>[% t.created.ymd %]</td>
 	<td>
         [% IF t.active %]
-           oförändrad
+           ofÃ¶rÃ¤ndrad
         [% ELSIF t.active_ver %]
            ersatt med v[% t.active_ver.ver %]
         [% ELSIF t.replaced_by %]

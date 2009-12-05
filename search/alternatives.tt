@@ -1,5 +1,5 @@
 [% META
-   otitle = 'Sökresultat'
+   otitle = 'SÃ¶kresultat'
    hide='notfound'
    next_template = '/search/alternatives.tt'
    next_action = "topic_search_published"
@@ -13,7 +13,7 @@
 [% string = q.param('talias') %]
 <div id="topic_header">
    [% IF string %]
-      Flera ämnen har aliaset <code>[% string | html %]</code>
+      Flera Ã¤mnen har aliaset <code>[% string | html %]</code>
    [% ELSE %]
       [% req.result.parts.0.message %]
    [% END %]
@@ -32,7 +32,7 @@
 [% ELSIF req.result.parts.0.type == 'notfound' %]
    [% info = result.info.notfound %]
    [% CALL req.set_http_status(404) %]
-<h1 align="center">404 - Vilse i det okända</h1>
+<h1 align="center">404 - Vilse i det okÃ¤nda</h1>
 
 <div id="topic_header">
 [% IF info.uri %]
@@ -47,7 +47,7 @@
 [% IF info.tid %]
    [% t = topic(info.tid).last_ver %]
    <p>
-      Ämnet <code>[% t.desig %]</code>
+      Ã„mnet <code>[% t.desig %]</code>
       [% SWITCH t.status %]
          [% CASE 0 %]
             har raderats.
@@ -56,21 +56,21 @@
                                     t.replaced_by.file) %].
          [% CASE %]
             [% IF t.file %]
-               är inte publicerat.
+               Ã¤r inte publicerat.
             [% ELSE %]
-               är hemligt.
+               Ã¤r hemligt.
             [% END %]
       [% END %]
    </p>
-   <p>Du kan se versioner av uppslagsordet på
+   <p>Du kan se versioner av uppslagsordet pÃ¥
    [% jump('adminsidan', '/member/db/topic/view/', tid=t.id, v=t.ver) %].
 [% ELSE %]
-   <p>Vi kan tyvärr inte hitta den sida du tänke ta dig till.  Vi har
-   försökt.  Jättemycket. -- Har ödet valt en annan väg åt dig?</p>
+   <p>Vi kan tyvÃ¤rr inte hitta den sida du tÃ¤nke ta dig till.  Vi har
+   fÃ¶rsÃ¶kt.  JÃ¤ttemycket. -- Har Ã¶det valt en annan vÃ¤g Ã¥t dig?</p>
 [% END %]
 
-<p>Pröva att söka igen: [% input('talias', info.name) %]
-[% submit('Sök') %]
+<p>PrÃ¶va att sÃ¶ka igen: [% input('talias', info.name) %]
+[% submit('SÃ¶k') %]
 <script language="javascript">
 <!--
 document.f.talias.focus();
@@ -80,25 +80,25 @@ document.f.talias.focus();
 </div>
 <div class="entry">
 
-<p>Eller får jag kanske lov att fresta med några länkar?</p>
+<p>Eller fÃ¥r jag kanske lov att fresta med nÃ¥gra lÃ¤nkar?</p>
 
 <table><tr>
 <th align="left" class="colheader">Kategorier</th>
 <td><a href="/topic/kategori_vetenskap.html">Vetenskap</a></td>
-<td><a href="/topic/kategori_samhalle.html">Samhälle</a></td>
-<td><a href="/topic/kategori_spadom.html">Spådom</a></td>
+<td><a href="/topic/kategori_samhalle.html">SamhÃ¤lle</a></td>
+<td><a href="/topic/kategori_spadom.html">SpÃ¥dom</a></td>
 <td><a href="/topic/kategori_sociologi.html">Sociologi</a></td>
 </tr><tr><th class="colheader"></th>
-<td><a href="/topic/kategori_halsa.html">Hälsa</a></td>
+<td><a href="/topic/kategori_halsa.html">HÃ¤lsa</a></td>
 <td><a href="/topic/kategori_magi.html">Magi</a></td>
-<td><a href="/topic/kategori_underhallning.html">Nöje</a></td>
+<td><a href="/topic/kategori_underhallning.html">NÃ¶je</a></td>
 <td><a href="/topic/kategori_estetik.html">Estetik</a></td>
 
 </tr><tr>
 
 <th align="left" class="colheader">Sorter</th>
 <td><a href="/topic/person.html">Personer</a></td>
-<td><a href="/topic/bok.html">Böcker</a></td>
+<td><a href="/topic/bok.html">BÃ¶cker</a></td>
 <td><a href="/topic/film.html">Filmer</a></td>
 <td><a href="/topic/webbplats.html">Webbplatser</a></td>
 </tr><tr><th class="colheader"></th>

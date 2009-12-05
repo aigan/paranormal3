@@ -30,7 +30,7 @@
 [% IF intr %]
    [% hidden('tid', tid) %]
 
-<h1>Dagens ämne: [% t.link %]</h1>
+<h1>Dagens Ã¤mne: [% t.link %]</h1>
 
 <p>[% INCLUDE typelist.tt %]
 
@@ -50,18 +50,18 @@
 <blockquote>[% t.text | html %]</blockquote>
 
 
-<p>Vi vill veta mer om ditt intresse för <code>[% t.title | html
-%]</code>.  Du väljer själv hur mycket du vill svara på.  Du kan när
-som helst avbryta för att fortsätta vid ett senare tillfälle.  Allt du
+<p>Vi vill veta mer om ditt intresse fÃ¶r <code>[% t.title | html
+%]</code>.  Du vÃ¤ljer sjÃ¤lv hur mycket du vill svara pÃ¥.  Du kan nÃ¤r
+som helst avbryta fÃ¶r att fortsÃ¤tta vid ett senare tillfÃ¤lle.  Allt du
 gjort hittills kommer att finnas kvar.
 
-<p>Frågor kan ställas i kanalen #devel på [% jump('chatten', '/member/chat/login.tt', href_target='chat') %].
+<p>FrÃ¥gor kan stÃ¤llas i kanalen #devel pÃ¥ [% jump('chatten', '/member/chat/login.tt', href_target='chat') %].
 
-<p>[% step('Påbörja resan', intr.next_step.template) %]
+<p>[% step('PÃ¥bÃ¶rja resan', intr.next_step.template) %]
 
 [% ELSE %]
 
-<p>Det finns inget kvar att göra...
+<p>Det finns inget kvar att gÃ¶ra...
 
 [% END %]
 

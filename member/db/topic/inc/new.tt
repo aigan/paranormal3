@@ -1,8 +1,8 @@
-   <h3>Det finns inget ämne med alias <code>$talias</code></h3>
+   <h3>Det finns inget Ã¤mne med alias <code>$talias</code></h3>
 
-   <p>Sök igen: [% input('talias') %] [% submit('Sök') %]</p>
+   <p>SÃ¶k igen: [% input('talias') %] [% submit('SÃ¶k') %]</p>
    [% hidden('_name', talias) %]
-   <p>Eller [% go('skapa ämnet', '/member/db/topic/create/maby.tt') %]
+   <p>Eller [% go('skapa Ã¤mnet', '/member/db/topic/create/maby.tt') %]
 
    <script>
       document.f.talias.focus();

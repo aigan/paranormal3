@@ -6,8 +6,8 @@
 
 <table align="left">
  
-<tr><td valign="top">[% IF m.present_contact_public >= 5 %]Medlem <td>[% m.id %][% ELSE %]Anonym medlem[% END %][% IF m.present_interests >= 5 %], nivå [%m.level %][% END %],
-ämne [% entry.id %], v$entry.ver
+<tr><td valign="top">[% IF m.present_contact_public >= 5 %]Medlem <td>[% m.id %][% ELSE %]Anonym medlem[% END %][% IF m.present_interests >= 5 %], nivÃ¥ [%m.level %][% END %],
+Ã¤mne [% entry.id %], v$entry.ver
 
 [% IF m.present_contact_public >= 2 %]
 <tr><td>Kallar sig <td>[% m.nickname %]
@@ -16,14 +16,14 @@
 [% IF m.age(1) %]
 <tr><td>
    [% IF m.gender == 'M' %]
-      Han är
+      Han Ã¤r
    [% ELSIF m.gender == 'F' %]
-      Hon är
+      Hon Ã¤r
    [% ELSE %]
-      Ålder
+      Ã…lder
    [% END %]
 
-   <td>[% m.age %] år
+   <td>[% m.age %] Ã¥r
    [% IF m.home_postal_city(1) %]
       och bor i [% jump( m.home_postal_city,
                          'http://www.sna.se/bin/ort.cgi',
@@ -34,7 +34,7 @@
    [% END %]
 [% ELSE %]
    [% IF m.gender(1) %]
-      <tr><td>Kön <td>
+      <tr><td>KÃ¶n <td>
       [% IF m.gender == 'M' %]
          Man
       [% ELSIF m.gender == 'F' %]
@@ -101,7 +101,7 @@
 </table>
 
 [% IF m.present_gifts and m.payment_active and m.payment_total %]<br clear="right">
-   <a href="/topic/prenumeration_pa_paranormalse.html"><img alt="stödmedlem" src="/images/icon/coins-small.png" id="coins"></a>
+   <a href="/topic/prenumeration_pa_paranormalse.html"><img alt="stÃ¶dmedlem" src="/images/icon/coins-small.png" id="coins"></a>
 [% END %]
 
 <br clear="all">

@@ -12,8 +12,8 @@
 <div class="entry" align="center">
 <table>
 <tr><th>[% sort('Person','nickname') %]
-    <th>[% sort('NivÂ', 'member_level') %]
-    <th>[% sort('Godk‰nt', 'accepted_thing') %]
+    <th>[% sort('Niv√•', 'member_level') %]
+    <th>[% sort('Godk√§nt', 'accepted_thing') %]
     <th>[% sort('Avvisat', 'rejected_thing') %]
     <th>[% sort('Kvot', 'CASE WHEN rejected_thing=0 THEN 0 ELSE (accepted_thing + rejected_thing) / rejected_thing END') %]
 

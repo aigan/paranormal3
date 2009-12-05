@@ -2,13 +2,13 @@
 DEFAULT cnt = q.param('count');
 DEFAULT cnt = 0;
 -%]
-Detta brev är skickat via http://Paranormal.se av [% u.nickname +%]
+Detta brev Ã¤r skickat via http://Paranormal.se av [% u.nickname +%]
 [%+ IF cnt == 1 %]speciellt till dig.
 [%+ ELSIF cnt > 1 %]till ett urval av [% cnt %] medlemmar.
 [% END +%]
 [% IF from == 'spam@paranormal.se' %]
-Avsändaren angav inte någon e-postadress.
-Du kan alltså inte svara på detta brev.
+AvsÃ¤ndaren angav inte nÃ¥gon e-postadress.
+Du kan alltsÃ¥ inte svara pÃ¥ detta brev.
 [% END +%]
 
 [%+ q.param('body') | lf | autoformat %]

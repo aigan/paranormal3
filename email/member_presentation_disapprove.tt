@@ -1,5 +1,5 @@
-[% u.title %] [%+ u.nickname %] har tittat på
-din presentation och bedömt att den ännu inte är klar.
+[% u.title %] [%+ u.nickname %] har tittat pÃ¥
+din presentation och bedÃ¶mt att den Ã¤nnu inte Ã¤r klar.
 
 [% IF q.param('comment') %]
    [% u.nickname %] skriver:
@@ -8,9 +8,9 @@ din presentation och bedömt att den ännu inte är klar.
 
 
 Presentationen ska beskriva ditt intresse av paranormala fenomen.
-Räkna gärna upp saker du är intresserad av.  Något du kanske vill lära
-dig om eller pröva på?  Har du någon gång haft en upplevelse av något
+RÃ¤kna gÃ¤rna upp saker du Ã¤r intresserad av.  NÃ¥got du kanske vill lÃ¤ra
+dig om eller prÃ¶va pÃ¥?  Har du nÃ¥gon gÃ¥ng haft en upplevelse av nÃ¥got
 paranormalt?
 
-Du kan ändra på din presentation här:
+Du kan Ã¤ndra pÃ¥ din presentation hÃ¤r:
   http://paranormal.se/member/db/person/quest/level_02/presentation.tt

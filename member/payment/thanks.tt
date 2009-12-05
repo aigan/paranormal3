@@ -3,25 +3,25 @@
 [% p = getpayment(q.param('oid')) %]
 [% m = p.member %]
 
-<p>[% jump("Din gåva på $p.price kr",
+<p>[% jump("Din gÃ¥va pÃ¥ $p.price kr",
            '/member/db/person/order/details.tt',
            pid=p.id) %] har mottagits.
 
-<p>Du har nu totalt skänkt [% m.payment_total %] kr till oss.  Jätte
-jättemycket tack!!!  <img alt=":-)" src="/images/icon/smiley.gif">
+<p>Du har nu totalt skÃ¤nkt [% m.payment_total %] kr till oss.  JÃ¤tte
+jÃ¤ttemycket tack!!!  <img alt=":-)" src="/images/icon/smiley.gif">
 
-<p>Din stödprenumeration löper till [% m.payment_expire.ymd
-%]. (Självklart får du skicka mer pengar innan dess.)
+<p>Din stÃ¶dprenumeration lÃ¶per till [% m.payment_expire.ymd
+%]. (SjÃ¤lvklart fÃ¥r du skicka mer pengar innan dess.)
 
-<p>Du har [% jump("i dina anonymitetsinställninga", '/member/db/person/edit/privacy.tt') %] valt att
+<p>Du har [% jump("i dina anonymitetsinstÃ¤llninga", '/member/db/person/edit/privacy.tt') %] valt att
 [% IF m.present_gifts >= 30 -%]
-   visa alla detaljer kring dina gåvor
+   visa alla detaljer kring dina gÃ¥vor
 [%- ELSIF m.present_gifts >= 5 -%]
-   visa gåvornas storlek i din medlemsöversikt
+   visa gÃ¥vornas storlek i din medlemsÃ¶versikt
 [%- ELSIF m.present_gifts >= 1 -%]
-   visa om du är stödmedlem
+   visa om du Ã¤r stÃ¶dmedlem
 [%- ELSE -%]
-   hålla dina gåvor hemliga
+   hÃ¥lla dina gÃ¥vor hemliga
 [%- END -%]
 .</p>
 

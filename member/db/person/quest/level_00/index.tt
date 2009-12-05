@@ -1,29 +1,29 @@
 [% META title="Medlemskap" %]
 
-<p>Nej, du behöver inte [% jump('vara medlem',
-'/topic/medlemskap_i_paranormalse.html') %] för att använda [%
-jump('den här webbplatsen', '/topic/paranormalse.html') %].</p>
+<p>Nej, du behÃ¶ver inte [% jump('vara medlem',
+'/topic/medlemskap_i_paranormalse.html') %] fÃ¶r att anvÃ¤nda [%
+jump('den hÃ¤r webbplatsen', '/topic/paranormalse.html') %].</p>
 
 <p><code>[% jump('Paranormal.se', '/topic/paranormalse.html')
-%]</code> är ett uppslagsverk.  [% jump('Alla uppslagsord', '/topic/')
-%] är fria för alla.  Du behöver inte [% jump('logga in',
-'/member/db/member_login') %] för att läsa dem.</p>
+%]</code> Ã¤r ett uppslagsverk.  [% jump('Alla uppslagsord', '/topic/')
+%] Ã¤r fria fÃ¶r alla.  Du behÃ¶ver inte [% jump('logga in',
+'/member/db/member_login') %] fÃ¶r att lÃ¤sa dem.</p>
 
 <p>[% jump('Medlemskap', '/topic/medlemskap_i_paranormalse.html') +%]
-är till för de som aktivt vill delta med att förbättra denna
+Ã¤r till fÃ¶r de som aktivt vill delta med att fÃ¶rbÃ¤ttra denna
 webbplats.</p>
 
-<p>Du hjälper andra besökare genom att berätta om dina intressen,
-erfarenheter och kunskaper.  Kanske vill någon kontakta just dig?</p>
+<p>Du hjÃ¤lper andra besÃ¶kare genom att berÃ¤tta om dina intressen,
+erfarenheter och kunskaper.  Kanske vill nÃ¥gon kontakta just dig?</p>
 
-<p>Uppslagsverket är tidslöst. Ditt medlemskap är för evigt!</p>
+<p>Uppslagsverket Ã¤r tidslÃ¶st. Ditt medlemskap Ã¤r fÃ¶r evigt!</p>
 
-<p>Läs om:
+<p>LÃ¤s om:
 
 <ol>
   <li>[% jump('webbplatsen', '/topic/paranormalse.html') %]
-  <li>[% jump('vår målsättning', '/topic/malsattningen_med_paranormalse.html') %]
-  <li>[% jump('företaget', '/topic/paranormal_sweden.html') %]
+  <li>[% jump('vÃ¥r mÃ¥lsÃ¤ttning', '/topic/malsattningen_med_paranormalse.html') %]
+  <li>[% jump('fÃ¶retaget', '/topic/paranormal_sweden.html') %]
 </ol>
 </p>
 
@@ -31,7 +31,7 @@ erfarenheter och kunskaper.  Kanske vill någon kontakta just dig?</p>
 
 [% hr %]
 
-<p>Konturerna syns tydligare nu. Du närmar dig porten till staden.</p>
+<p>Konturerna syns tydligare nu. Du nÃ¤rmar dig porten till staden.</p>
 
-<p>[% jump('Fortsätt', 'terms.tt') %]</p>
+<p>[% jump('FortsÃ¤tt', 'terms.tt') %]</p>
 </div>

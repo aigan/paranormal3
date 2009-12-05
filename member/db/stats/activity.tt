@@ -6,12 +6,12 @@
 
 [% PROCESS stats_menu.tt %]
 
-<h2>Egna bidrag till ämnen</h2>
+<h2>Egna bidrag till Ã¤mnen</h2>
 
 <div class="entry" align="center">
 <table>
 <tr><th>[% sort('Person','nickname') %]
-    <th>[% sort('Nivå', 'member_level') %]
+    <th>[% sort('NivÃ¥', 'member_level') %]
     <th>[% sort('Skapat', 'topic_submitted') %]
     <th>[% sort('Skrivit', 'entry_submitted') %]
     <th>[% sort('Kopplat', 'topic_connected') %]

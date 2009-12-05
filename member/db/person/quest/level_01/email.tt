@@ -7,17 +7,17 @@
 
 [% record = select_record("from member where nickname=?", q.param('nick') ) %]
 
-<h2>Välkommen, [% record.nickname %]!</h2>
+<h2>VÃ¤lkommen, [% record.nickname %]!</h2>
 
 <input type="hidden" name="mid" value="[% record.member %]" >
 <input type="hidden" name="nick" value="[% record.nickname %]" >
 
-<p>Vi vill kunna nå dig via din e-postadress.  Den adress du anger här
-kommer inte att publiceras.  Den är enbart till för nyhetsutskick och
-information från paranormal.se.</p>
+<p>Vi vill kunna nÃ¥ dig via din e-postadress.  Den adress du anger hÃ¤r
+kommer inte att publiceras.  Den Ã¤r enbart till fÃ¶r nyhetsutskick och
+information frÃ¥n paranormal.se.</p>
 
-<p>Vi kommer att skicka ett lösenord till den adress du anger här.
-När du väl loggat in kan du ändra ditt lösenord.</p>
+<p>Vi kommer att skicka ett lÃ¶senord till den adress du anger hÃ¤r.
+NÃ¤r du vÃ¤l loggat in kan du Ã¤ndra ditt lÃ¶senord.</p>
 
 <p>E-post:
   <input name="sys_email" value="[% q.param('sys_email') | html %]"> [% submit %]

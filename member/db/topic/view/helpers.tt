@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Hjälpare'
+	otitle = 'HjÃ¤lpare'
         level = 0
 	next_template = '../view/'
 %]
@@ -13,7 +13,7 @@
 [% PROCESS buttons.tt IF u.level %]
 
 
-<h1>Hjälpare inom [% PROCESS tlink.tt %]</h1>
+<h1>HjÃ¤lpare inom [% PROCESS tlink.tt %]</h1>
 
 [% PROCESS static/default/interests/helper.tt interest_limit=150 %]
 
@@ -26,11 +26,11 @@
 
 [% hr %]
 
-<h2>[% jump('Hjälp-linjen', '/help/', tid=tid) %]</h2>
+<h2>[% jump('HjÃ¤lp-linjen', '/help/', tid=tid) %]</h2>
 
-<p>Är du drabbad av något paranormalt eller andligt fenomen? Vi har en hjälp-linje där du kan få hjälp med dina problem.  Skriv till [% jump('Hjälp-linjen', '/help/', tid=tid) %].
+<p>Ã„r du drabbad av nÃ¥got paranormalt eller andligt fenomen? Vi har en hjÃ¤lp-linje dÃ¤r du kan fÃ¥ hjÃ¤lp med dina problem.  Skriv till [% jump('HjÃ¤lp-linjen', '/help/', tid=tid) %].
 
-<p>Är du på jakt efter kunskap eller information om något bör du istället fråga någon av de enskilda hjälparna listade här nedan. Dessa frågor är för många för att vi ska kunna ta hand om dem.</p>
+<p>Ã„r du pÃ¥ jakt efter kunskap eller information om nÃ¥got bÃ¶r du istÃ¤llet frÃ¥ga nÃ¥gon av de enskilda hjÃ¤lparna listade hÃ¤r nedan. Dessa frÃ¥gor Ã¤r fÃ¶r mÃ¥nga fÃ¶r att vi ska kunna ta hand om dem.</p>
 
 [% hr %]
 
@@ -42,24 +42,24 @@
 [% helplist = BLOCK %]
 
 [% WRAPPER instruction %]
-<p>Detta är andra medlemmar som sagt sig vara intresserad av detta
-ämne och har lust att hjälpa.  Vi har ingen kontroll på att detta är
-bra personer att kontakta för vissa frågor, eller att de har de
-kunskaper de säger sig ha. -- Bedöm på egen hand, från fall till fall.
-Läs deras presentationer.
+<p>Detta Ã¤r andra medlemmar som sagt sig vara intresserad av detta
+Ã¤mne och har lust att hjÃ¤lpa.  Vi har ingen kontroll pÃ¥ att detta Ã¤r
+bra personer att kontakta fÃ¶r vissa frÃ¥gor, eller att de har de
+kunskaper de sÃ¤ger sig ha. -- BedÃ¶m pÃ¥ egen hand, frÃ¥n fall till fall.
+LÃ¤s deras presentationer.
 
 [% IF u.level %]
-<p>Har du frågor kring hur du bidrar till detta ämnet bör du skriva
-till [% forward('redaktörerna för detta ämnet','editors') %].  Frågor
-om webbplatsen i allmänhet ska gå till <a
+<p>Har du frÃ¥gor kring hur du bidrar till detta Ã¤mnet bÃ¶r du skriva
+till [% forward('redaktÃ¶rerna fÃ¶r detta Ã¤mnet','editors') %].  FrÃ¥gor
+om webbplatsen i allmÃ¤nhet ska gÃ¥ till <a
 href="/member/mail.cgi?helpers">red@paranormal.se</a>.
 [% ELSE %]
-<p>Om du [% jump("loggar in", "/login.tt", run='mark') %] har du möjlighet att hitta fler personer som vill hjälpa inom ett visst område.  Då kan du även göra göra speciella sökningar och hitta personer som bor i närheten av dig. Du kommer även kunna läsa medlemmarnas presentationer, med mera.
+<p>Om du [% jump("loggar in", "/login.tt", run='mark') %] har du mÃ¶jlighet att hitta fler personer som vill hjÃ¤lpa inom ett visst omrÃ¥de.  DÃ¥ kan du Ã¤ven gÃ¶ra gÃ¶ra speciella sÃ¶kningar och hitta personer som bor i nÃ¤rheten av dig. Du kommer Ã¤ven kunna lÃ¤sa medlemmarnas presentationer, med mera.
 [% END %]
 
 
 <p>
-H = Lust att hjälpa.
+H = Lust att hjÃ¤lpa.
 [% 'T = Tro. ' IF trobart %]
 [% 'U = Upplevt. ' IF upplevbart %]
 K = Kunskap.
@@ -105,11 +105,11 @@ K = Kunskap.
    [% helplist %]
 [% ELSE %]
 
-<h2>Inga hjälpare</h2>
+<h2>Inga hjÃ¤lpare</h2>
 
-<p>Inga medlemmar har skrivit upp sig som hjälpare för just det här ämnet.
+<p>Inga medlemmar har skrivit upp sig som hjÃ¤lpare fÃ¶r just det hÃ¤r Ã¤mnet.
 [% UNLESS u.level %]
-<p>Det kan hända att du hittar några ifall du loggar in.  En del listningar har bara begränsad visning.
+<p>Det kan hÃ¤nda att du hittar nÃ¥gra ifall du loggar in.  En del listningar har bara begrÃ¤nsad visning.
 [% END %]
 [% END %]
 

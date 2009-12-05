@@ -18,22 +18,22 @@
 
 [% IF u.level %]
 [% ELSE %]
-   <p>Här finns tusentals uppslagsord. Sök med sökrutan uppe till höger. Du kan också bläddra i [% jump("indexet", "/topic") %]. Eller klicka dig fram bland korshänvisningarna i uppslagsorden.</p>
+   <p>HÃ¤r finns tusentals uppslagsord. SÃ¶k med sÃ¶krutan uppe till hÃ¶ger. Du kan ocksÃ¥ blÃ¤ddra i [% jump("indexet", "/topic") %]. Eller klicka dig fram bland korshÃ¤nvisningarna i uppslagsorden.</p>
 
-   <p>Som medlem kan du få webbplatsen anpassad efter dina egna intressen och önskemål och komma i kontakt med andra medlemmar.</p>
+   <p>Som medlem kan du fÃ¥ webbplatsen anpassad efter dina egna intressen och Ã¶nskemÃ¥l och komma i kontakt med andra medlemmar.</p>
 
    [% PROCESS login_compact.tt %]
 [% END %]
 
 <table>
 <tr><td>
-<h1>Innehåll</h1>
+<h1>InnehÃ¥ll</h1>
 
-<h2><a href="/topic/toppkategori.html">OMRÅDEN:</a></h2>
+<h2><a href="/topic/toppkategori.html">OMRÃ…DEN:</a></h2>
 <div class="indent">
 <a href="/topic/kategori_magi.html">Magi</a><br/>
-<a href="/topic/kategori_halsa.html">Hälsa</a><br/>
-<a href="/topic/kategori_spadom.html">Spådom</a><br/>
+<a href="/topic/kategori_halsa.html">HÃ¤lsa</a><br/>
+<a href="/topic/kategori_spadom.html">SpÃ¥dom</a><br/>
 <a href="/topic/kategori_vetenskap.html">Vetenskap</a><br/>
 </div>
 
@@ -41,11 +41,11 @@
 <div class="indent">
 <a href="/topic/person.html">Personer</a><br/>
 <a href="/topic/grupp.html">Grupper</a><br/>
-<a href="/topic/bok.html">Böcker</a><br/>
+<a href="/topic/bok.html">BÃ¶cker</a><br/>
 <a href="/topic/film.html">Filmer</a><br/>
 </div>
 
-<h2><a href="/member/db/topic/list/latest_texts.tt">SENAST ÄNDRADE TEXTER:</a></h2>
+<h2><a href="/member/db/topic/list/latest_texts.tt">SENAST Ã„NDRADE TEXTER:</a></h2>
 
 <div style="font-size: 0.7em" class="indent">
    [% FOREACH rec = select_list("from t where t_entry is true and t_active is true and t_status>3 and t_published is true order by t_created desc limit 5") %]
@@ -56,9 +56,9 @@
 
 </td><td>
 
-<h2><a href="/topic/kontaktuppgifter_for_paranormalse.html">DITT KONTAKTNÄT:</a></h2>
+<h2><a href="/topic/kontaktuppgifter_for_paranormalse.html">DITT KONTAKTNÃ„T:</a></h2>
 <div class="indent">
-<a href="/help/">Hjälp-linjen</a><br/>
+<a href="/help/">HjÃ¤lp-linjen</a><br/>
 <a href="/member/db/">Medlemssida</a><br/>
 <a href="/topic/diskussionslistan_for_paranormalse.html">Diskussionslista</a><br/>
 <a href="/member/chat/login.tt">Chatta</a><br/>
@@ -68,13 +68,13 @@
 <h2>OM WEBBPLATSEN:</h2>
 <div class="indent">
 <a href="/topic/paranormalse.html">Paranormal.se</a><br/>
-<a href="/member/payment/">Gåvor</a><br/>
+<a href="/member/payment/">GÃ¥vor</a><br/>
 <a href= "/topic/malsattningen_med_paranormalse.html">M&aring;ls&auml;ttning</a><br/>
 <a href= "/meta/news.html">Nyheter</a><br/>
 </div>
 
 
-<h2>LÄNKAR:</h2>
+<h2>LÃ„NKAR:</h2>
 <div class="indent">
 <a href="/meta/banners.html">Banners</a><br/>
 <a href="http://parapsykologi.se/">SPF</a><br/>

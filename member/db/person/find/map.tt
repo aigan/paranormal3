@@ -6,5 +6,5 @@
 [% PROCESS person_find_menu.tt %]
 [% PROCESS load_member.tt %]
 
-<p>Plottningen ‰r klar. Se kartan h‰r:
+<p>Plottningen √§r klar. Se kartan h√§r:
 [% jump("/images/temp/map.png", "http://paranormal.se/images/temp/map.png") %]

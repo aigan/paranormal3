@@ -1,15 +1,15 @@
-[% META	otitle = "Gåvor till Paranormal.se"
+[% META	otitle = "GÃ¥vor till Paranormal.se"
 	level=0
 %]
 
 <h1><a href="/member/db/"><img src="/images/icon/arrow.gif" alt=
-      "Meny"></a> Gåvor till Paranormal.se</h1>
+      "Meny"></a> GÃ¥vor till Paranormal.se</h1>
 
 [% PROCESS payment_menu.tt %]
 
-<p>Du kan stödja Paranormal.se genom ett <a
-href="/topic/prenumeration_pa_paranormalse.html">stödmedlemskap</a>.
-Du väljer hur mycket och för hur länge.</p>
+<p>Du kan stÃ¶dja Paranormal.se genom ett <a
+href="/topic/prenumeration_pa_paranormalse.html">stÃ¶dmedlemskap</a>.
+Du vÃ¤ljer hur mycket och fÃ¶r hur lÃ¤nge.</p>
 
 <h2>Alternativ</h2>
 
@@ -17,34 +17,34 @@ Du väljer hur mycket och för hur länge.</p>
 
 <li><a href="paynova.tt">Paynova</a> - Betala via din internetbank, ditt kontokort eller med postgiro (Omedelbar registrering)
 
-<li><a href="bankgiro.tt">Bankgiro</a> (Mer arbete för oss och lång väntetid innan registrering)
+<li><a href="bankgiro.tt">Bankgiro</a> (Mer arbete fÃ¶r oss och lÃ¥ng vÃ¤ntetid innan registrering)
 
-<li><a href="account_transfer.tt">Direkt insättning</a> (undvik denna metod)
+<li><a href="account_transfer.tt">Direkt insÃ¤ttning</a> (undvik denna metod)
 
 </ol>
 
-<p>Förslagsvis: 250 kr för ett år.</p>
+<p>FÃ¶rslagsvis: 250 kr fÃ¶r ett Ã¥r.</p>
 
 [% hr %]
 
 
-<p>Moms på 25% ingår i mottagna gåvor.  Mottagaren, <a href="/topic/paranormal_sweden.html">Paranormal Sweden</a>, (org.nr 720529-5095) innehar F-skattesedel.  (Eventuellt kan vi vid större gåvor räkna gåvan som gåva istället för försäljning ur beskattningssynpunkt.  [% jump('kontakta mig', 'account_transfer.tt') %].)</p>
+<p>Moms pÃ¥ 25% ingÃ¥r i mottagna gÃ¥vor.  Mottagaren, <a href="/topic/paranormal_sweden.html">Paranormal Sweden</a>, (org.nr 720529-5095) innehar F-skattesedel.  (Eventuellt kan vi vid stÃ¶rre gÃ¥vor rÃ¤kna gÃ¥van som gÃ¥va istÃ¤llet fÃ¶r fÃ¶rsÃ¤ljning ur beskattningssynpunkt.  [% jump('kontakta mig', 'account_transfer.tt') %].)</p>
 
 [% hr %]
 
-<p>Paranormal.se vill [% jump('öka kunskapen om de paranormala
+<p>Paranormal.se vill [% jump('Ã¶ka kunskapen om de paranormala
 fenomenen', '/topic/malsattningen_med_paranormalse.html') %]. Vi
-kopplar samman tusentals uppslagsord och tusentals experter på alla
-områden.  Vi vill bli det ultimata verktyget för att skapa ny kunskap
+kopplar samman tusentals uppslagsord och tusentals experter pÃ¥ alla
+omrÃ¥den.  Vi vill bli det ultimata verktyget fÃ¶r att skapa ny kunskap
 och sprida den bland alla intresserade.</p>
 
-<p>Vi är många som brinner för den här webbplatsen.  Vi lägger ned
-stor tid och möda på att skapa något verkligt bra.  [% jump('Jonas',
-'/topic/jonas_liljegren.html') %] har ett jobb på <a href="http://www.rit.se/">RIT.se</a> där han är 3 dar i veckan. Övrig tid går åt till att
+<p>Vi Ã¤r mÃ¥nga som brinner fÃ¶r den hÃ¤r webbplatsen.  Vi lÃ¤gger ned
+stor tid och mÃ¶da pÃ¥ att skapa nÃ¥got verkligt bra.  [% jump('Jonas',
+'/topic/jonas_liljegren.html') %] har ett jobb pÃ¥ <a href="http://www.rit.se/">RIT.se</a> dÃ¤r han Ã¤r 3 dar i veckan. Ã–vrig tid gÃ¥r Ã¥t till att
 utveckla webbplatsen.</p>
 
-<p>Hur mycket är denna webbplats värd för dig?  Hur mycket du vill
-bidra med, och hur ofta du vill göra det, är helt frivilligt. Även
-gåvor på 1 krona hjälper till! (Förutsatt att du använder <a
-href="paynova.tt">Paynova</a>, för annars skulle det bli för mycket
-jobb för mig.)</p>
+<p>Hur mycket Ã¤r denna webbplats vÃ¤rd fÃ¶r dig?  Hur mycket du vill
+bidra med, och hur ofta du vill gÃ¶ra det, Ã¤r helt frivilligt. Ã„ven
+gÃ¥vor pÃ¥ 1 krona hjÃ¤lper till! (FÃ¶rutsatt att du anvÃ¤nder <a
+href="paynova.tt">Paynova</a>, fÃ¶r annars skulle det bli fÃ¶r mycket
+jobb fÃ¶r mig.)</p>

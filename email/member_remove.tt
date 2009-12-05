@@ -1,13 +1,13 @@
 [% u.title %] [%+ u.nickname %] har raderat ditt medlemskap i
-http://Paranormal.se/ med användarnamnet [% m.nickname %].
+http://Paranormal.se/ med anvÃ¤ndarnamnet [% m.nickname %].
 
-Anledningen är troligen en av följande:
+Anledningen Ã¤r troligen en av fÃ¶ljande:
 
- 1. Du har varit inaktiv under en längre tid
+ 1. Du har varit inaktiv under en lÃ¤ngre tid
 
- 2. Du hade mer än ett medlemskap
+ 2. Du hade mer Ã¤n ett medlemskap
 
- 3. Du har önskat "gå ur" Paranormal.se
+ 3. Du har Ã¶nskat "gÃ¥ ur" Paranormal.se
 
 
-Du är välkommen att bli medlem på nytt.
+Du Ã¤r vÃ¤lkommen att bli medlem pÃ¥ nytt.

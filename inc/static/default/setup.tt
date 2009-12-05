@@ -100,11 +100,11 @@
      [% ELSE %]
         <li>Representerar det av typ [% t.media_type %] som har adressen [% jump(t.media_url, t.media_url, href_target='external') %]
      [% END %]
-     ([% forward('Ändra', '/member/db/topic/edit/media') %])</li>
+     ([% forward('Ã„ndra', '/member/db/topic/edit/media') %])</li>
   [% END %]
 
 
-  [%### rel -- Relation till ämne ###%]
+  [%### rel -- Relation till Ã¤mne ###%]
   [% FOREACH rt = t.rel.types %]
      [% NEXT IF rt.id < 3 %]
      <li>[% rt.name('rel') %]
@@ -127,7 +127,7 @@
   [% END %]
 
 
-  [%### rev -- Omvänd Relation till ämne ###%]
+  [%### rev -- OmvÃ¤nd Relation till Ã¤mne ###%]
   [% FOREACH rt = t.rev.types %]
      [% NEXT IF rt.id < 3 %]
      <li>[% rt.name('rev') %]

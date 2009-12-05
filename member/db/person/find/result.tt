@@ -11,9 +11,9 @@
 %]
 
 <p>
-[ [% jump('Ny sökning', 'combined.tt') +%]
-| [% forward('Bokmärka sökningen') +%]
-| [% forward('Ändra sökbegrepp', 'combined.tt') +%]
+[ [% jump('Ny sÃ¶kning', 'combined.tt') +%]
+| [% forward('BokmÃ¤rka sÃ¶kningen') +%]
+| [% forward('Ã„ndra sÃ¶kbegrepp', 'combined.tt') +%]
 [% IF u.level > 10 +%]
 | [% forward("Karta", 'map.tt', run='geo_image_create', offset = 0, pagesize=10000) +%]
 [% END +%]
@@ -25,13 +25,13 @@
 [% members_found = members.search() %]
 
 <div align="center">
-<p>[% members_found.size %] träffar
+<p>[% members_found.size %] trÃ¤ffar
 <p>[% members_found.pagelist %]
 </div>
 
 <div class="entry">
 <table>
-<tr><th>Mnr</th><th>Alias</th><th>Nivå</th><th>Namn</th><th>Avstånd</th><th>Ort</th><th>Senast sedd</th>
+<tr><th>Mnr</th><th>Alias</th><th>NivÃ¥</th><th>Namn</th><th>AvstÃ¥nd</th><th>Ort</th><th>Senast sedd</th>
 </tr>
 
 [% FOREACH mrec IN members_found.from_page %]
@@ -56,13 +56,13 @@
 
 [% hr %]
 
-<h2>Skicka e-post till alla i sökresultatet</h2>
+<h2>Skicka e-post till alla i sÃ¶kresultatet</h2>
 
 <p>Rubrik: [% input('subject') %]
 
 <p>[% textarea('body') %]
 
-<p><span class="highlight">Ändrat beteende:</span> Numera skickas brevet till <em>hela</em> sökresultatet. Inte bara till de på den sida som visas ovan. Breven skickas i bakgrunden, så du behöver inte vänta.</p>
+<p><span class="highlight">Ã„ndrat beteende:</span> Numera skickas brevet till <em>hela</em> sÃ¶kresultatet. Inte bara till de pÃ¥ den sida som visas ovan. Breven skickas i bakgrunden, sÃ¥ du behÃ¶ver inte vÃ¤nta.</p>
 
 
 <p>[% go('Skicka brevet','result.tt','email_combined_list') %]

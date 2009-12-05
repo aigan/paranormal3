@@ -10,7 +10,7 @@
 
 <div class="entry">
 <table>
-   <tr><th>A</th><th>S</th><th>T</th><th>v</th><th>Titel</th><th>Ämne</th><th colspan="2">Skapad av</th></tr>
+   <tr><th>A</th><th>S</th><th>T</th><th>v</th><th>Titel</th><th>Ã„mne</th><th colspan="2">Skapad av</th></tr>
 [% FOREACH rec = select_list("from t, member where t_changedby=member and (t_status=2 or t_status=3) and t_entry is true order by t_active desc, t_status, t_updated") %]
    [% t = topic(rec.t, rec.t_ver) %]
    [% tr2 %]
@@ -20,7 +20,7 @@
       <td>$t.ver</td>
 
       [% title = t.title %]
-      [% DEFAULT title = 'Odöpt text' %]
+      [% DEFAULT title = 'OdÃ¶pt text' %]
       <td>[% jump(title, '/member/db/topic/edit/versions.tt', tid=t.id v=t.ver run='mark') %]</td>
       <td>[% jump(t.topic.desig, '/member/db/topic/view/', tid=t.topic.id) %]
       <td>[% t.created_by.link %]</td>
@@ -30,13 +30,13 @@
 </table>
 </div>
 [% WRAPPER instruction %]
-<p>Se [% jump("hur väktare bedömer ämnen och texter", "/hur_vaktare_bedomer_amnen_och_texter.html" ) %]</p>
+<p>Se [% jump("hur vÃ¤ktare bedÃ¶mer Ã¤mnen och texter", "/hur_vaktare_bedomer_amnen_och_texter.html" ) %]</p>
 
-<p>Denna funktion är preliminär.</p>
+<p>Denna funktion Ã¤r preliminÃ¤r.</p>
 
-<p>När systemet är mer utvecklat kommer redaktörerna på gesällnivå för respektive ämne få i uppdrag att kontrollera ändrade och nya texter.  Men tills vidare vill vi bara se att texterna är vettiga.</p>
+<p>NÃ¤r systemet Ã¤r mer utvecklat kommer redaktÃ¶rerna pÃ¥ gesÃ¤llnivÃ¥ fÃ¶r respektive Ã¤mne fÃ¥ i uppdrag att kontrollera Ã¤ndrade och nya texter.  Men tills vidare vill vi bara se att texterna Ã¤r vettiga.</p>
 
-<p>Se det här som en grovsollning.</p>
+<p>Se det hÃ¤r som en grovsollning.</p>
 [% END %]
 
 <p>[% nostep %]

@@ -8,14 +8,14 @@
 [% PROCESS load_member.tt %]
 <p align="right">Steg 3 av 10</p>
 
-<p>På villket sätt är du intresserad av området?</p>
+<p>PÃ¥ villket sÃ¤tt Ã¤r du intresserad av omrÃ¥det?</p>
 
-<p>Grundar sig intresset i en nyfikenhet i hur världen fungerar?  Dvs
+<p>Grundar sig intresset i en nyfikenhet i hur vÃ¤rlden fungerar?  Dvs
 ett intresse av att analysera, studera och logiskt begrunda fenomenen?
 (Teori)</p>
 
-<p>Eller är det din önskan att praktisera och uppleva dessa fenomen?
-Söker du en intuitiv förståelse av fenomenen? (Praktik)</p>
+<p>Eller Ã¤r det din Ã¶nskan att praktisera och uppleva dessa fenomen?
+SÃ¶ker du en intuitiv fÃ¶rstÃ¥else av fenomenen? (Praktik)</p>
 
 <p>Teoretiker
 [% slider(

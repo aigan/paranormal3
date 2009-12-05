@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Berätta om ditt intresse'
+	otitle = 'BerÃ¤tta om ditt intresse'
 	next_action = 'interest_update'
 	level = 5
 %]
@@ -15,7 +15,7 @@
 
    i = m.interest(t);
    UNLESS i;
-     THROW validation "$m.desig är inte intresserad av $t.desig";
+     THROW validation "$m.desig Ã¤r inte intresserad av $t.desig";
    END;
 
    hidden('defined', 75);
@@ -24,17 +24,17 @@
 
 
 
-<h1>[% m.mlink %] intresse för [% t.link %][% PROCESS typelist.tt %]</h1>
+<h1>[% m.mlink %] intresse fÃ¶r [% t.link %][% PROCESS typelist.tt %]</h1>
 
-<p>Överdriv inte i dina svar.  Bäst effekt får du om dina markeringar
-har en jämn fördelning så att det i medel hamnar nära mitten.  Markera
-bara max ifall du verkligen kan stå för det.
+<p>Ã–verdriv inte i dina svar.  BÃ¤st effekt fÃ¥r du om dina markeringar
+har en jÃ¤mn fÃ¶rdelning sÃ¥ att det i medel hamnar nÃ¤ra mitten.  Markera
+bara max ifall du verkligen kan stÃ¥ fÃ¶r det.
 
-<p>Dina val här avgör var du hamnar på listor när en annan medlem
-söker efter kontakter.
+<p>Dina val hÃ¤r avgÃ¶r var du hamnar pÃ¥ listor nÃ¤r en annan medlem
+sÃ¶ker efter kontakter.
 
-<p>Tänk dig att rutorna nedan är numrerade från 0 längst till vänster
-till 10 längst till höger.  I vanliga fall gäller att ruta 0-2 tolkas
+<p>TÃ¤nk dig att rutorna nedan Ã¤r numrerade frÃ¥n 0 lÃ¤ngst till vÃ¤nster
+till 10 lÃ¤ngst till hÃ¶ger.  I vanliga fall gÃ¤ller att ruta 0-2 tolkas
 som <em>Nej</em> och ruta 3-10 tolkas som <em>Ja</em>.
 
 [% hr %]
@@ -45,9 +45,9 @@ som <em>Nej</em> och ruta 3-10 tolkas som <em>Ja</em>.
 	   title='Intresse'
 	   number=11
 	   min_txt='Inte alls'
-	   max_txt='Det är i mina tankar dygnet runt'
+	   max_txt='Det Ã¤r i mina tankar dygnet runt'
 %]
-Hur intresserad är du av ämnet?
+Hur intresserad Ã¤r du av Ã¤mnet?
 [% END %]
 
 
@@ -62,21 +62,21 @@ Hur intresserad är du av ämnet?
            max_txt='Ja'
 %]
 
-Tror du på det här?
+Tror du pÃ¥ det hÃ¤r?
 
-<p>Exempel på fenomen är <a
+<p>Exempel pÃ¥ fenomen Ã¤r <a
 href="/psi/astral/projektion.html">astralprojektion</a>, <a
-href="/psi/klaervoajans.html">klärvoajans</a> och <a
-href="/psi/kundalini.html">kundalini</a>.  För fenomen är frågan om
-dessa fenomen existerar?  Existerar fenomenet på det vis som det är
+href="/psi/klaervoajans.html">klÃ¤rvoajans</a> och <a
+href="/psi/kundalini.html">kundalini</a>.  FÃ¶r fenomen Ã¤r frÃ¥gan om
+dessa fenomen existerar?  Existerar fenomenet pÃ¥ det vis som det Ã¤r
 definierat?
 
-<p>Exempel på läror är <a href="/psi/astrologi.html">astrologi</a>, <a
+<p>Exempel pÃ¥ lÃ¤ror Ã¤r <a href="/psi/astrologi.html">astrologi</a>, <a
 href="/psi/hinduism.html">hinduism</a> och <a
-href="/psi/materialism.html">materialism</a>.  För läror är frågan om
-det läran påstår är riktigt.
+href="/psi/materialism.html">materialism</a>.  FÃ¶r lÃ¤ror Ã¤r frÃ¥gan om
+det lÃ¤ran pÃ¥stÃ¥r Ã¤r riktigt.
 
-<p>Ett svar i mitten betyder att du är osäker på om det är sant eller inte.
+<p>Ett svar i mitten betyder att du Ã¤r osÃ¤ker pÃ¥ om det Ã¤r sant eller inte.
 
 [% END %]
 [% END %]
@@ -91,7 +91,7 @@ det läran påstår är riktigt.
 	   max_txt='Jag har omfattande erfarenhet av detta'
 %]
 
-Har du upplevt detta nån gång? Hur mycket har upplevelsen påverkat dig?
+Har du upplevt detta nÃ¥n gÃ¥ng? Hur mycket har upplevelsen pÃ¥verkat dig?
 
 [% END %]
 [% END %]
@@ -101,13 +101,13 @@ Har du upplevt detta nån gång? Hur mycket har upplevelsen påverkat dig?
 	   field='knowledge'
 	   number=11
 	   title='Kunskap'
-	   min_txt='Vad är det?'
-	   max_txt='Jag har skrivit en bok om ämnet'
+	   min_txt='Vad Ã¤r det?'
+	   max_txt='Jag har skrivit en bok om Ã¤mnet'
 %]
 
-Hur mycket teoretisk kunskap har du om ämnet?  Har du läst allt som
-går att läsa om det? Har du spenderat åratal med att tänka på och
-analysera ämnet?
+Hur mycket teoretisk kunskap har du om Ã¤mnet?  Har du lÃ¤st allt som
+gÃ¥r att lÃ¤sa om det? Har du spenderat Ã¥ratal med att tÃ¤nka pÃ¥ och
+analysera Ã¤mnet?
 
 [% END %]
 
@@ -115,14 +115,14 @@ analysera ämnet?
 [% WRAPPER draw_slider
            object=i
            field='theory'
-           title='Vilja att lära teori'
+           title='Vilja att lÃ¤ra teori'
            number=11
 	   min_txt='Nej'
 	   max_txt='Absolut, ja! Resten av mitt liv.'
 %]
 
-Är du intresserad av att lära dig mer om ämnet?  Vill du lägga andra
-intressen åt sidan för att studera detta ämne?
+Ã„r du intresserad av att lÃ¤ra dig mer om Ã¤mnet?  Vill du lÃ¤gga andra
+intressen Ã¥t sidan fÃ¶r att studera detta Ã¤mne?
 
 [% END %]
 
@@ -134,26 +134,26 @@ intressen åt sidan för att studera detta ämne?
 	   title='Praktisk skicklighet'
 	   number=11
 	   min_txt='Noll'
-	   max_txt='Jag är så bra man kan bli'
+	   max_txt='Jag Ã¤r sÃ¥ bra man kan bli'
 %]
 
-Hur bra är du på att praktisera detta?
+Hur bra Ã¤r du pÃ¥ att praktisera detta?
 
-<p>Vissa saker är enklare än andra. I många fall finns det inte en
-människa på hela jorden som kan praktisera perfekt.  Är du bland de
-bästa i världen får du lov att markera näst högsta alternativet...
+<p>Vissa saker Ã¤r enklare Ã¤n andra. I mÃ¥nga fall finns det inte en
+mÃ¤nniska pÃ¥ hela jorden som kan praktisera perfekt.  Ã„r du bland de
+bÃ¤sta i vÃ¤rlden fÃ¥r du lov att markera nÃ¤st hÃ¶gsta alternativet...
 
 [% END %]
 [% WRAPPER draw_slider
            object=i
 	   field='practice'
-	   title='Vilja att lära sig det praktiska'
+	   title='Vilja att lÃ¤ra sig det praktiska'
 	   number=11
 	   min_txt='Nej tack'
-	   max_txt='Det här är mitt liv!'
+	   max_txt='Det hÃ¤r Ã¤r mitt liv!'
 %]
 
-Är du intresserad av att praktisera detta?  Hur långt vill du gå?  Ju mer intresserad du är, desto mindre kommer du ha tid att göra något annat.
+Ã„r du intresserad av att praktisera detta?  Hur lÃ¥ngt vill du gÃ¥?  Ju mer intresserad du Ã¤r, desto mindre kommer du ha tid att gÃ¶ra nÃ¥got annat.
 
 [% END %]
 [% END %]
@@ -161,42 +161,42 @@ bästa i världen får du lov att markera näst högsta alternativet...
 [% WRAPPER draw_slider
            object=i
 	   field='helper'
-	   title='Hjälpare'
+	   title='HjÃ¤lpare'
 	   number=11
 	   min_txt='Nej'
 	   max_txt='Ja'
 %]
 
-Vill du hjälpa andra i detta ämnet?  Vi frågar inte vad du har för
-förmåga att hjälpa. Du har redan svarat vad du har för kunskap
-och/eller skicklighet.  Beroende på intresset för detta ämnet, och hur
-mycket e-post du valt att få, kommer du få brev från andra medlemmar
-som vill ha hjälp.
+Vill du hjÃ¤lpa andra i detta Ã¤mnet?  Vi frÃ¥gar inte vad du har fÃ¶r
+fÃ¶rmÃ¥ga att hjÃ¤lpa. Du har redan svarat vad du har fÃ¶r kunskap
+och/eller skicklighet.  Beroende pÃ¥ intresset fÃ¶r detta Ã¤mnet, och hur
+mycket e-post du valt att fÃ¥, kommer du fÃ¥ brev frÃ¥n andra medlemmar
+som vill ha hjÃ¤lp.
 
-<p>Om du inte begär betalt får du välja mellan 0-10.  Om du vill ha
-betalt för din hjälp måste du hålla dig på vänster del; ruta 0-4.
+<p>Om du inte begÃ¤r betalt fÃ¥r du vÃ¤lja mellan 0-10.  Om du vill ha
+betalt fÃ¶r din hjÃ¤lp mÃ¥ste du hÃ¥lla dig pÃ¥ vÃ¤nster del; ruta 0-4.
 
-<p>Alltså; vill du ta dig tid att hjälpa folk som frågar dig om det?
+<p>AlltsÃ¥; vill du ta dig tid att hjÃ¤lpa folk som frÃ¥gar dig om det?
 
 [% END %]
 
 [% WRAPPER draw_slider
            object=i
 	   field='meeter'
-	   title='Vill träffa andra med detta intresset'
+	   title='Vill trÃ¤ffa andra med detta intresset'
 	   number=11
 	   min_txt='Nej'
 	   max_txt='Ja'
 %]
 
-Vill du träffa andra med intresse av detta ämne?
+Vill du trÃ¤ffa andra med intresse av detta Ã¤mne?
 
-<p>Av svaren ovan kan vi räkna ut om du vill träffa någon som kanske
-kan lära dig något, eller om du vill träffa någon som du kan hjälpa.
-Eller om du bara vill träffa någon med samma intresse.
+<p>Av svaren ovan kan vi rÃ¤kna ut om du vill trÃ¤ffa nÃ¥gon som kanske
+kan lÃ¤ra dig nÃ¥got, eller om du vill trÃ¤ffa nÃ¥gon som du kan hjÃ¤lpa.
+Eller om du bara vill trÃ¤ffa nÃ¥gon med samma intresse.
 
-<p>Är du intresserad av att brevväxla eller kanske träffa någon som
-bor i närheten?
+<p>Ã„r du intresserad av att brevvÃ¤xla eller kanske trÃ¤ffa nÃ¥gon som
+bor i nÃ¤rheten?
 
 [% END %]
 
@@ -204,13 +204,13 @@ bor i närheten?
 [% WRAPPER draw_slider
            object=i
 	   field='bookmark'
-	   title='Bokmärka det här ämnet'
+	   title='BokmÃ¤rka det hÃ¤r Ã¤mnet'
 	   number=11
 %]
 
-Här kan du ange om du vill läsa existerande och framtida texter och
-diskussioner om ämnet via webben.  Vi kan hjälpa dig med tips när det
-finns mer att läsa eller när vi upptäckt en ny bok eller webbsida.
+HÃ¤r kan du ange om du vill lÃ¤sa existerande och framtida texter och
+diskussioner om Ã¤mnet via webben.  Vi kan hjÃ¤lpa dig med tips nÃ¤r det
+finns mer att lÃ¤sa eller nÃ¤r vi upptÃ¤ckt en ny bok eller webbsida.
 
 [% END %]
 
@@ -218,39 +218,39 @@ finns mer att läsa eller när vi upptäckt en ny bok eller webbsida.
 [% WRAPPER draw_slider
            object=i
 	   field='editor'
-	   title='Redaktör'
+	   title='RedaktÃ¶r'
 	   number=11
 %]
 
-Vill du hjälpa till med att administrera det här ämnet?
+Vill du hjÃ¤lpa till med att administrera det hÃ¤r Ã¤mnet?
 
-<p>Kan du exempelvis tänka dig att definiera relationer mellan detta
-och andra ämnen, titta igenom nya texter, länkar och annan information
-och rätta sådant som ser fel ut?
+<p>Kan du exempelvis tÃ¤nka dig att definiera relationer mellan detta
+och andra Ã¤mnen, titta igenom nya texter, lÃ¤nkar och annan information
+och rÃ¤tta sÃ¥dant som ser fel ut?
 
-<p>Ju högre värde, desto större ansvar vill du ta för ämnet.
+<p>Ju hÃ¶gre vÃ¤rde, desto stÃ¶rre ansvar vill du ta fÃ¶r Ã¤mnet.
 
 [% END %]
 
 [% WRAPPER draw_textbox
            object = i
 	   field='description'
-	   title='Hur / Varför ?'
+	   title='Hur / VarfÃ¶r ?'
 %]
-Något mer du vill säga om ditt intresse?
+NÃ¥got mer du vill sÃ¤ga om ditt intresse?
 
-<p>Det här är inte platsen att redogöra för åsikter, teorier, etc.
-Skriv bara om ditt intresse för ämnet. Inte om ämnet självt.
+<p>Det hÃ¤r Ã¤r inte platsen att redogÃ¶ra fÃ¶r Ã¥sikter, teorier, etc.
+Skriv bara om ditt intresse fÃ¶r Ã¤mnet. Inte om Ã¤mnet sjÃ¤lvt.
 
-<p>Du kan exempelvis säga villket årtal du började, vad du gjort, osv.
-Du kan se den här texten som en rad i din meritförteckning.
+<p>Du kan exempelvis sÃ¤ga villket Ã¥rtal du bÃ¶rjade, vad du gjort, osv.
+Du kan se den hÃ¤r texten som en rad i din meritfÃ¶rteckning.
 
-<p>Berätta<br>
+<p>BerÃ¤tta<br>
 [% END %]
 
 
-<p>Dessa värden är inte statiska.  De kommer gradeligen och
-kontinuerligen att förändras för att motsvara det intresse du visar
-genom vad du gör på webbplatsen.
+<p>Dessa vÃ¤rden Ã¤r inte statiska.  De kommer gradeligen och
+kontinuerligen att fÃ¶rÃ¤ndras fÃ¶r att motsvara det intresse du visar
+genom vad du gÃ¶r pÃ¥ webbplatsen.
 
-<p>[% step('Fortsätt', i.next_step(defined=50).template, 'interest_update') %]
+<p>[% step('FortsÃ¤tt', i.next_step(defined=50).template, 'interest_update') %]

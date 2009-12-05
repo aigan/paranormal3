@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Inst‰llningar - DBM'
+	otitle = 'Inst√§llningar - DBM'
 	level = 41
 	default_template = "-me"
         next_action = "mailbox_change_quota"
@@ -7,7 +7,7 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Inst‰llningar - DBM: [% m.tlink %]</h1>
+<h1>Inst√§llningar - DBM: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
@@ -23,7 +23,7 @@
 
 [% IF m.mailbox.exist %]
 <tr><td>Mailbox <td>[% m.mailbox.root %]
-<tr><td>Mbx quota <td>[% input('quota', m.mailbox.quota, size=8) %] KB [% submit('‰ndra') %]
+<tr><td>Mbx quota <td>[% input('quota', m.mailbox.quota, size=8) %] KB [% submit('√§ndra') %]
 <tr><td>Mbx used <td>[% m.mailbox.used %] KB
 [% ELSE %]
 <tr><td>Mailbox <td>Nej
@@ -51,8 +51,8 @@
 
 <br clear="all">
 [% IF m.mailbox.exist %]
-<p>[% go('Radera brevlÂda', me, 'member_delete_sysuid') %]
+<p>[% go('Radera brevl√•da', me, 'member_delete_sysuid') %]
 [% ELSE %]
-<p>[% go('Skapa brevlÂda', me, 'member_create_sysuid') %]
+<p>[% go('Skapa brevl√•da', me, 'member_create_sysuid') %]
 [% END +%]
 [%+ step %]

@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Redaktörer'
+	otitle = 'RedaktÃ¶rer'
         level = 5
 	next_template = '../view/'
 %]
@@ -11,7 +11,7 @@
    PROCESS buttons.tt;
 %]
 
-<h1>Redaktörer för [% PROCESS tlink.tt %]</h1>
+<h1>RedaktÃ¶rer fÃ¶r [% PROCESS tlink.tt %]</h1>
 
 
 [% PROCESS topic_edit_menu.tt %]
@@ -22,14 +22,14 @@
 [ [% jump('Lista alla', '/member/db/person/find/result.tt' interest=tid _editor=1) +%]
 ]</p>
 
-<p>Frågor om hur du bidrar med material till detta ämne bör gå till en
-väktare.  Dvs någon med minst nivå 11.
+<p>FrÃ¥gor om hur du bidrar med material till detta Ã¤mne bÃ¶r gÃ¥ till en
+vÃ¤ktare.  Dvs nÃ¥gon med minst nivÃ¥ 11.
 
-<p>R = Önskemål att redigera ämnet. K = Kunskap</p>
+<p>R = Ã–nskemÃ¥l att redigera Ã¤mnet. K = Kunskap</p>
 
 <div class="entry">
 <table>
-<tr><th>Namn <th>Nivå <th>R <th>K <th>Kommentar
+<tr><th>Namn <th>NivÃ¥ <th>R <th>K <th>Kommentar
 [% FOREACH interest = interest_editor %]
    [% tr2 %]
       <td valign="top">[% jump(interest.nickname, '/member/db/person/view/', mid=interest.member) %]</td>
@@ -43,7 +43,7 @@ väktare.  Dvs någon med minst nivå 11.
 </div>
 
 
-[%#### TODO: Skapa action för att skicka till alla i listan interest_editor ####%]
+[%#### TODO: Skapa action fÃ¶r att skicka till alla i listan interest_editor ####%]
 [% IF u.level > 99 %]
 
 [% hr %]
@@ -54,7 +54,7 @@ väktare.  Dvs någon med minst nivå 11.
 
 <p>[% textarea('body') %]
 
-<p>Skickar medan du väntar...
+<p>Skickar medan du vÃ¤ntar...
 
 
 <p>[% go('Skicka brevet',me,'email_type2_list.tt') %]

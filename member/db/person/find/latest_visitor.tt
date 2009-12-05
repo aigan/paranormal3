@@ -9,7 +9,7 @@
 
 <div class="entry">
 <table>
-<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
+<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>NivÃ¥</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
 </tr>
 [% FOREACH rec IN select_list("from member where latest_in is not null and present_contact >= 5 order by latest_in desc limit 20") %]
    [% m = members.get_by_id( rec.member, rec ) %]

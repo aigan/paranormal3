@@ -1,4 +1,4 @@
-[% META title="Mata in beställning"
+[% META title="Mata in bestÃ¤llning"
         next_template = "history.tt"
 	next_action  = "payment_create"
 	level = 5
@@ -9,24 +9,24 @@
 [% PROCESS payment_menu.tt %]
 
 [% product_list = {} %]
-[% FOREACH product = topic(422155).rev_arcs('är') %]
+[% FOREACH product = topic(422155).rev_arcs('Ã¤r') %]
    [% product_list.${product.subj.id} = product.subj.desig %]
 [% END %]
 
 [% method_list = {} %]
-[% FOREACH method = topic(422433).rev_arcs('är') %]
+[% FOREACH method = topic(422433).rev_arcs('Ã¤r') %]
    [% method_list.${method.subj.id} = method.subj.desig %]
 [% END %]
 
 <div class="entry">
 <table>
 <tr><td>ID        <td> Autogenereras
-<tr><td>Beställd  <td>[% input('order_date', now) %]
+<tr><td>BestÃ¤lld  <td>[% input('order_date', now) %]
 <tr><td>Faktura   <td>[% input('invoice_date', now) %]
 <tr><td>Betald    <td>[% input('payment_date', now) %]
 <tr><td>Loggad    <td> Autogenereras
 <tr><td>Medlem    <td>[% input('nickname', m.nickname) %]
-<tr><td>Företag   <td>[% input('company') %]
+<tr><td>FÃ¶retag   <td>[% input('company') %]
 <tr><td>Produkt   <td>[% select('product', 422154, product_list) %]
 <tr><td>Pris      <td>[% input('price') %] kr
 <tr><td>varav moms<td>[% input('vat') %] kr

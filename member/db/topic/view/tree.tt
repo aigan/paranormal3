@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Ämnesträd'
+	otitle = 'Ã„mnestrÃ¤d'
 %]
 
 [%
@@ -14,7 +14,7 @@
 <tr><td valign="top">
 
 [% FOREACH rel = select_list("from rel, t where rev=? and rel_type=? and rel=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title", tid, 2 ) %]
-[% IF loop.first %]Är en sorts:<br>[% END %]
+[% IF loop.first %]Ã„r en sorts:<br>[% END %]
 [% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
 [% jump(title, me, tid=rel.t) %] <br>
 
@@ -22,7 +22,7 @@
 
 
 [% FOREACH rel = select_list("from rel, t where rev=? and rel_type=? and rel=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title", tid, 3 ) %]
-[% IF loop.first %]Är underämne till:<br>[% END %]
+[% IF loop.first %]Ã„r underÃ¤mne till:<br>[% END %]
 [% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
 [% jump(title, me, tid=rel.t) %]<br>
 
@@ -56,7 +56,7 @@
 
 
 [% FOREACH rel = select_list("from rel, t where rev=? and rel_type=? and rel=t and rel_active is true and t_active is true and rel_strength >= 30 order by t_title", tid, 0 ) %]
-[% IF loop.first %]Är relaterad till:<br>[% END %]
+[% IF loop.first %]Ã„r relaterad till:<br>[% END %]
 
 [% jump(rel.t_title, me, tid=rel.t) %] <br>
 
@@ -73,7 +73,7 @@
 
 
 [% FOREACH rel = select_list("from rel, t where rel=? and rel_type=? and rev=t and rel_active is true and t_active is true and rel_strength >= 30 and rel_indirect is false order by t_title ", tid, 3 ) %]
-[% IF loop.first %]Har underämne:<br>[% END %]
+[% IF loop.first %]Har underÃ¤mne:<br>[% END %]
 [% title = rel.t_title_short_plural || rel.t_title_short || rel.t_title %]
 [% jump(title, me, tid=rel.t) %]<br>
 

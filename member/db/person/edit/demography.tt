@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Inställningar - Personuppgifter'
+	otitle = 'InstÃ¤llningar - Personuppgifter'
 	next_action = 'member_update'
 	focus = 'bdate_ymd_year'
 	level = 2
@@ -7,12 +7,12 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - Personuppgifter: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - Personuppgifter: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
-[% WRAPPER draw_string title='Födelseår' field='bdate_ymd_year' size=4 %]
-Används för att beräkna ålder.
+[% WRAPPER draw_string title='FÃ¶delseÃ¥r' field='bdate_ymd_year' size=4 %]
+AnvÃ¤nds fÃ¶r att berÃ¤kna Ã¥lder.
 [% END %]
 
 [% genders =
@@ -22,8 +22,8 @@ Används för att beräkna ålder.
 	'F' => 'Kvinna',
    }
 %]
-  <h3>Kön</h3>
-  <p>Vad finns det för anledning att ange kön da?  Inte vet jag....
+  <h3>KÃ¶n</h3>
+  <p>Vad finns det fÃ¶r anledning att ange kÃ¶n da?  Inte vet jag....
   <p>
   [% gender = q.param('gender') || m.gender %]
   [% FOREACH key = genders.keys.sort %]

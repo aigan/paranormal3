@@ -9,7 +9,7 @@
 
 <div class="entry">
 <table>
-<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
+<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>NivÃ¥</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
 </tr>
 [% list = members.currently_online %]
 [% FOREACH m IN list %]
@@ -29,7 +29,7 @@
 <h2>Anonyma</h2>
 
 <table>
-<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>Nivå</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
+<tr><th>Mnr</th><th>Skapad</th><th>Namn</th><th>NivÃ¥</th><th>Ort</th><th>Senast inloggad</th><th>Senast sedd</th>
 </tr>
 [% list = members.currently_online(1) %]
 [% FOREACH m IN list %]

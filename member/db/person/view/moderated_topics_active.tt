@@ -1,11 +1,11 @@
 [% META
-	otitle = 'Ämnen som godkänts'
+	otitle = 'Ã„mnen som godkÃ¤nts'
 	level = 5
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Ämnen som godkänts: [% m.tlink %]</h1>
+<h1>Ã„mnen som godkÃ¤nts: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 [% PROCESS person_activity_menu.tt %]
@@ -24,7 +24,7 @@
     <th>Titel
     <th>[% sort('ver', 't_ver') %]
     <th>[% sort('Datum', 't_updated') %]
-    <th>[% sort('Från', 't_createdby') %]
+    <th>[% sort('FrÃ¥n', 't_createdby') %]
 </tr>
 
 [% FOREACH rec IN recs.from_page %]

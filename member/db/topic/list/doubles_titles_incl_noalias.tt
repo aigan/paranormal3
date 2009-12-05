@@ -1,4 +1,4 @@
-[% META title="Titlar anv‰nda av flera ‰mnen"
+[% META title="Titlar anv√§nda av flera √§mnen"
         level = 5
 %]
 <p>[% jump('Ladda om sidan', me) %]</p>

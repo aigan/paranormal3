@@ -17,7 +17,7 @@
 [% recs = cached_select_list("select t FROM t WHERE t_status=4 AND t_entry IS TRUE AND t_published IS TRUE ORDER BY t_updated DESC limit ?", limit) %]
 [% recs.set_page_size(step) %]
 
-<p align="center">[% recs.size %] träffar</p>
+<p align="center">[% recs.size %] trÃ¤ffar</p>
 <p align="center">[%recs.pagelist %]</p>
 
 <div class="entry">
@@ -27,7 +27,7 @@
       <th>Uppdaterad&nbsp;/&nbsp;Skriven</th>
       <th>Text</th>
       <th>v</th>
-      <th>Ämne</th>
+      <th>Ã„mne</th>
    </tr>
 [% FOREACH rec IN recs.from_page %]
    [% tr2 %]

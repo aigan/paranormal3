@@ -1,18 +1,18 @@
 [% META
-	title = 'Registrering för nykomling'
+	title = 'Registrering fÃ¶r nykomling'
 	next_template = 'email.tt'
 	next_action = 'member_create'
 	focus = 'nick'
 %]
 
-<p>Alla medborgare använder ett eller flera namn.  Det kan vara ditt
+<p>Alla medborgare anvÃ¤nder ett eller flera namn.  Det kan vara ditt
 fulla namn, ett smeknamn eller magiskt namn.</p>
 
-<p>Vilket namn vill du använda här?</p>
+<p>Vilket namn vill du anvÃ¤nda hÃ¤r?</p>
 
 <p>Namn: <input name="nick" value="[% q.param('nick') | html %]">
 <input type="hidden" name="confirmed_chat_nick" value="[% q.param('confirmed_chat_nick') | html %]">
 
 [% submit %]
 
-<p>([% jump('Fortsätt med en pågående registrering', 'list_new.tt') %], om du blev avbruten...)</p>
+<p>([% jump('FortsÃ¤tt med en pÃ¥gÃ¥ende registrering', 'list_new.tt') %], om du blev avbruten...)</p>

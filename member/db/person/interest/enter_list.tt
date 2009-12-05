@@ -8,12 +8,12 @@
 [% PROCESS load_member.tt %]
 
 <p>Vi kommer <strong>automatiskt</strong> att leta upp de intressen du
-anger i vår databas.  Skriv <strong>namnen</strong> på de ämnen du är intresserad.
+anger i vÃ¥r databas.  Skriv <strong>namnen</strong> pÃ¥ de Ã¤mnen du Ã¤r intresserad.
 
-<p>Vi vill bara veta om intressen som är relaterade till paranormala fenomen.</p>
+<p>Vi vill bara veta om intressen som Ã¤r relaterade till paranormala fenomen.</p>
 
 [% IF q.param('_interests') %]
-   <p>Ta bort de rader du inte är intresserad av.
+   <p>Ta bort de rader du inte Ã¤r intresserad av.
 [% END %]
 
 <p>Ange ett intresse per rad<br>

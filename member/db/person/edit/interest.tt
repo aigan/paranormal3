@@ -1,16 +1,16 @@
 [% META
-	otitle = 'Inställningar - Intressen'
+	otitle = 'InstÃ¤llningar - Intressen'
 	level = 2
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - Intressen: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - Intressen: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
 <p>
-[ [% jump('Lägg till fler intressen', '/member/db/person/interest/enter_list.tt', run='mark', mid=m.id) %]
+[ [% jump('LÃ¤gg till fler intressen', '/member/db/person/interest/enter_list.tt', run='mark', mid=m.id) %]
 ]
 [%+ m.interests.count %] intressen, varav [% m.interests.count_real %] <em>besvarade</em>
 </p>
@@ -46,7 +46,7 @@
 %]
 
 
-<p>Visa även
+<p>Visa Ã¤ven
 [
 [%
    extra = "";
@@ -58,9 +58,9 @@
    END;
    ' | ';
    IF ifilter.include_nonsure;
-      jump('osäkra', me, keep_params=keep, href_class='selected', include_nonsure=0, offset=0);
+      jump('osÃ¤kra', me, keep_params=keep, href_class='selected', include_nonsure=0, offset=0);
    ELSE;
-      jump('osäkra', me, keep_params=keep, include_nonsure=1, offset=0);
+      jump('osÃ¤kra', me, keep_params=keep, include_nonsure=1, offset=0);
       extra = "$extra and intrest_defined > 10";
    END;
    ' | ';
@@ -100,7 +100,7 @@
       <div class="entry">
       <table>
       <tr>
-         <th>[% sort('Ämne', 'intrest_topic') %]
+         <th>[% sort('Ã„mne', 'intrest_topic') %]
          <th>[% sort('%', 'intrest') %]
          <th>[% sort('S', 'intrest_defined') %]
       [% IF ifilter.include_date %]
@@ -156,8 +156,8 @@ $this_from - $this_to
 
 [% hr %]
 
-<p>Kolumnen <code>S</code> anger intressets definieringsgrad.  Det är
-ett mått på hur säkra vi är på att intressenivån stämmer.  Ju fler
-detaljer om intresset som besvarats, desto högre säkerhet.</p>
+<p>Kolumnen <code>S</code> anger intressets definieringsgrad.  Det Ã¤r
+ett mÃ¥tt pÃ¥ hur sÃ¤kra vi Ã¤r pÃ¥ att intressenivÃ¥n stÃ¤mmer.  Ju fler
+detaljer om intresset som besvarats, desto hÃ¶gre sÃ¤kerhet.</p>
 
-<p><em>Besvarade</em> intressen är de där du inte är ointresserad och inte markerade som osäkra.</p>
+<p><em>Besvarade</em> intressen Ã¤r de dÃ¤r du inte Ã¤r ointresserad och inte markerade som osÃ¤kra.</p>

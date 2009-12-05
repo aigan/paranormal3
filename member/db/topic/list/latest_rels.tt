@@ -14,7 +14,7 @@
 [% recs = cached_select_list("select rel_topic FROM rel WHERE rel_active IS TRUE ORDER BY rel_updated DESC limit 100") %]
 [% recs.set_page_size(step) %]
 
-<p align="center">[% recs.size %] tr‰ffar</p>
+<p align="center">[% recs.size %] tr√§ffar</p>
 <p align="center">[%recs.pagelist %]</p>
 
 <div class="entry">

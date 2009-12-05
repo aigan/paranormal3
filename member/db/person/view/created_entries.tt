@@ -23,7 +23,7 @@
 <tr><th>[% sort('tid','t') %]
     <th>Titel
     <th>[% sort('Skapad', 't_created') %]
-    <th>Senast ändrad av
+    <th>Senast Ã¤ndrad av
 </tr>
 
 [% FOREACH rec IN recs.from_page %]
@@ -35,7 +35,7 @@
 	<td>[% t.created.ymd %]</td>
 	<td>
         [% IF t.active %]
-           oförändrad
+           ofÃ¶rÃ¤ndrad
         [% ELSIF t.active_ver %]
            [% t.active_ver.created_by.link %] [% t.active_ver.created %]
         [% ELSE %]

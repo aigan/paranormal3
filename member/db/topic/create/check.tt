@@ -1,5 +1,5 @@
 [% META
-	title = 'Skapa ämne - Kontroll av alias'
+	title = 'Skapa Ã¤mne - Kontroll av alias'
 	next_template = '../edit/text.tt'
 	next_action = 'topic_create'
 	level = 5
@@ -7,7 +7,7 @@
 [%
 	title = q.param('title');
         preserve_data;
-	found = 0;     #Hittat ett redan kopplat ämne
+	found = 0;     #Hittat ett redan kopplat Ã¤mne
 %]
 
 <h2>[% title | html %]</h2>
@@ -16,13 +16,13 @@
 
 [% IF aliaslist.size %]
 
-<p>Här undersöker vi om någon av dessa alias redan existerar i
-databasen.  Om så är fallet kanske du vill använda det existerande
-ämnet istället för att skapa ett nytt.
+<p>HÃ¤r undersÃ¶ker vi om nÃ¥gon av dessa alias redan existerar i
+databasen.  Om sÃ¥ Ã¤r fallet kanske du vill anvÃ¤nda det existerande
+Ã¤mnet istÃ¤llet fÃ¶r att skapa ett nytt.
 
 [% title_aliases = getalias_list(title, active=1) %]
 [% IF title_aliases.size %]
-   <p>Titeln [% title | html %] är redan knuten till annat ämne:
+   <p>Titeln [% title | html %] Ã¤r redan knuten till annat Ã¤mne:
       <ul>
       [% FOREACH a IN title_aliases %]
          <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, href_target='info') %]
@@ -33,14 +33,14 @@ databasen.  Om så är fallet kanske du vill använda det existerande
       </ul>
       [% found = 1 %]
 
-   <p>Markera de alias du vill koppla till något av dessa ämnen.</p>
+   <p>Markera de alias du vill koppla till nÃ¥got av dessa Ã¤mnen.</p>
 
 [% END %]
 
-   <p>Om du vill gå vidare och skapa ämnet <code>[% title | html
-   %]</code> ska du markera de alias du vill använda.  Ett alias bör
-   enbart knytas till det ämne som passar bäst.  Ibland passar ett
-   alias dock lika bra till två helt skilda ämnen.</p>
+   <p>Om du vill gÃ¥ vidare och skapa Ã¤mnet <code>[% title | html
+   %]</code> ska du markera de alias du vill anvÃ¤nda.  Ett alias bÃ¶r
+   enbart knytas till det Ã¤mne som passar bÃ¤st.  Ibland passar ett
+   alias dock lika bra till tvÃ¥ helt skilda Ã¤mnen.</p>
 
 <div class="entry">
 <table>
@@ -49,7 +49,7 @@ databasen.  Om så är fallet kanske du vill använda det existerande
    [% IF aliases.size %]
       [% found = 1 %]
       <tr><td>[% checkbox('_aliaslist',row,'f') %]
-      <td>[% row | html %] <td>finns redan, kopplad till ämnet:
+      <td>[% row | html %] <td>finns redan, kopplad till Ã¤mnet:
       <ul>
       [% FOREACH a IN aliases %]
          <li>[% jump(a.t.title, '/member/db/topic/view/', tid=a.tid, href_target='info') %]
@@ -68,14 +68,14 @@ databasen.  Om så är fallet kanske du vill använda det existerande
 
 [% ELSE %]
 
-<p>Du har inte skrivit in några alias för ämnet. Det var ju inte så bra. Jag föreslår att du [% forward('går tillbaka', 'maby.tt') %] och lägger till några.
+<p>Du har inte skrivit in nÃ¥gra alias fÃ¶r Ã¤mnet. Det var ju inte sÃ¥ bra. Jag fÃ¶reslÃ¥r att du [% forward('gÃ¥r tillbaka', 'maby.tt') %] och lÃ¤gger till nÃ¥gra.
 
 [% END %]
 
-<p>[% step('Skapa ämnet') +%]
+<p>[% step('Skapa Ã¤mnet') +%]
 [%+ go('Backa', 'maby.tt') %]
 
 
 [% IF found %]
-   <p>De alternativa ämnena ovan har bokmärkats åt dig</p>
+   <p>De alternativa Ã¤mnena ovan har bokmÃ¤rkats Ã¥t dig</p>
 [% END %]

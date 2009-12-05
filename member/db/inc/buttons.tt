@@ -1,5 +1,5 @@
 [% DEFAULT t = topic(tid) %]
-[% UNLESS t; THROW incomplete "Ämnes-id (tid) saknas"; END %]
+[% UNLESS t; THROW incomplete "Ã„mnes-id (tid) saknas"; END %]
 [% UNLESS t.entry %]
 [% DEFAULT m = u %]
 [% IF m.complexity >= 10 %]

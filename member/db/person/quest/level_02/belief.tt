@@ -8,24 +8,24 @@
 [% PROCESS load_member.tt %]
 <p align="right">Steg 2 av 10</p>
 
-<p>Det första vi måste fråga är:</p>
+<p>Det fÃ¶rsta vi mÃ¥ste frÃ¥ga Ã¤r:</p>
 
-<p> - Tror du på allt det här paranormala?</p>
+<p> - Tror du pÃ¥ allt det hÃ¤r paranormala?</p>
 
-<p>Tror du på <a target="external" href="/psi/telepati.html">Telepati</a>, <a target="external" href="/psi/varsel.html">varsel</a> och <a target="external" href="/psi/droem/esp.html">sanndrömmar</a>?  <a target="external" href="/psi/spoeke.html">Spöken</a>, <a target="external" href="/psi/aengel.html">änglar</a> och
-<a target="external" href="/psi/demon.html">demoner</a>?  <a target="external" href="/psi/naturvaesen.html">Tomtar</a>, <a target="external" href="/psi/naturvaesen.html">troll</a> och <a target="external" href="/psi/snoemannen.html">snömän</a>?  <a target="external" href="/psi/flygande_tefat.html">Flygande tefat</a>, <a target="external" href="/psi/sjaelv/antaendning.html">spontan
-självförbränning</a> och <a target="external" href="/psi/rspk.html">poltergeists</a>?  <a target="external" href="/psi/healing.html">Healing</a>, <a target="external" href="/psi/magi.html">magi</a> och <a target="external" href="/psi/slagruta.html">slagruta</a>?
+<p>Tror du pÃ¥ <a target="external" href="/psi/telepati.html">Telepati</a>, <a target="external" href="/psi/varsel.html">varsel</a> och <a target="external" href="/psi/droem/esp.html">sanndrÃ¶mmar</a>?  <a target="external" href="/psi/spoeke.html">SpÃ¶ken</a>, <a target="external" href="/psi/aengel.html">Ã¤nglar</a> och
+<a target="external" href="/psi/demon.html">demoner</a>?  <a target="external" href="/psi/naturvaesen.html">Tomtar</a>, <a target="external" href="/psi/naturvaesen.html">troll</a> och <a target="external" href="/psi/snoemannen.html">snÃ¶mÃ¤n</a>?  <a target="external" href="/psi/flygande_tefat.html">Flygande tefat</a>, <a target="external" href="/psi/sjaelv/antaendning.html">spontan
+sjÃ¤lvfÃ¶rbrÃ¤nning</a> och <a target="external" href="/psi/rspk.html">poltergeists</a>?  <a target="external" href="/psi/healing.html">Healing</a>, <a target="external" href="/psi/magi.html">magi</a> och <a target="external" href="/psi/slagruta.html">slagruta</a>?
 Osv..</p>
 
-<p>Du kommer senare få möjligheten att i detalj tala om just vad du
-tror på och vad du inte tror på.</p>
+<p>Du kommer senare fÃ¥ mÃ¶jligheten att i detalj tala om just vad du
+tror pÃ¥ och vad du inte tror pÃ¥.</p>
 
 <p>Inget alls
 [% slider(
    field='general_belief' 
    number=7
    min=-100 max=100
-)%] Allt, benhårt
+)%] Allt, benhÃ¥rt
 </p>
 
 <p>[% step %]

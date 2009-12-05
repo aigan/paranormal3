@@ -7,13 +7,13 @@
 [% PROCESS stats_menu.tt %]
 
 
-<h2>Ändrat annans nivå</h2>
+<h2>Ã„ndrat annans nivÃ¥</h2>
 
 <div class="entry" align="center">
 <table>
 <tr><th>[% sort('Person','nickname') %]
-    <th>[% sort('Nivå', 'member_level') %]
-    <th>[% sort('Ökat', 'promoted_user') %]
+    <th>[% sort('NivÃ¥', 'member_level') %]
+    <th>[% sort('Ã–kat', 'promoted_user') %]
     <th>[% sort('Minskat', 'demoted_user') %]
     <th>[% sort('Kvot', 'CASE WHEN demoted_user=0 THEN 0 ELSE (promoted_user + demoted_user) / demoted_user END') %]
 

@@ -1,10 +1,10 @@
 [% DEFAULT replace = 'tid' %]
 [% DEFAULT view = me %]
 [% DEFAULT run='nop' %]
-   <h3>Flera ‰mnen har aliaset <code>[% q.param($replace) %]</code></h3>
+   <h3>Flera √§mnen har aliaset <code>[% q.param($replace) %]</code></h3>
    <table>
    [% FOREACH t IN list %]
-      <tr><td>$t.id <td>[[% forward('v‰lj', view, $replace=t.id, v=t.ver, run=run) %]],
+      <tr><td>$t.id <td>[[% forward('v√§lj', view, $replace=t.id, v=t.ver, run=run) %]],
                          [% jump(t.desig, view, tid=t.id, v=t.ver) %],
                          v$t.ver<td>[% PROCESS typelist.tt %]
    [% END %]

@@ -7,17 +7,17 @@
 [% PROCESS stats_menu.tt %]
 
 
-<h2>Resultat frÂn modereringar</h2>
+<h2>Resultat fr√•n modereringar</h2>
 
-<p align="center">Personer som kopplat minst 10 ‰mnen</p>
+<p align="center">Personer som kopplat minst 10 √§mnen</p>
 
 <div class="entry" align="center">
 <table>
 <tr><th>[% sort('Person', 'nickname') %]
-    <th>[% sort('NivÂ', 'member_level') %]
-    <th>[% sort('Po‰ng', 'score') %]
+    <th>[% sort('Niv√•', 'member_level') %]
+    <th>[% sort('Po√§ng', 'score') %]
     <th>[% sort('Kvalitet', 'quality') %]
-    <th>[% sort('Godk‰nd', 'total_accepted') %]
+    <th>[% sort('Godk√§nd', 'total_accepted') %]
     <th>[% sort('Avvisad', 'thing_rejected') %]
     <th>[% sort('Kopplat', 'topic_connected') %]
 

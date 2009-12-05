@@ -1,9 +1,9 @@
 [% SWITCH t.status;
    CASE 0; 'raderad';
    CASE 1; 'ersatt';
-   CASE 2; 'föreslagen';
+   CASE 2; 'fÃ¶reslagen';
    CASE 3; 'overifierad';
    CASE 4; 'normal';
-   CASE 5; 'befäst';
+   CASE 5; 'befÃ¤st';
    END;
 %]

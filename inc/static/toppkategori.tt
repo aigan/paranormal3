@@ -49,10 +49,10 @@
          <p class="top_category_persons">
             <big><strong>Medlemmar:</strong></big>
             [% view = '/member/db/topic/view' %]
-            [% jump('Hjälpare', "$view/helpers.tt" tid=t.id) %]
+            [% jump('HjÃ¤lpare', "$view/helpers.tt" tid=t.id) %]
             [% jump('Diskutanter', "$view/discussors.tt" tid=t.id) %]
-            [% jump('Söker kontakt', "$view/meeters.tt" tid=t.id) %]
-            [% jump('Redaktörer', "$view/editors.tt" tid=t.id) %]
+            [% jump('SÃ¶ker kontakt', "$view/meeters.tt" tid=t.id) %]
+            [% jump('RedaktÃ¶rer', "$view/editors.tt" tid=t.id) %]
          </p>
       </div>
 

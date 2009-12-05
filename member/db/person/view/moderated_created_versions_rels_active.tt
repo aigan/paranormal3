@@ -1,11 +1,11 @@
 [% META
-	otitle = 'Aktiva versioner av ändrade relationer'
+	otitle = 'Aktiva versioner av Ã¤ndrade relationer'
 	level = 5
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Aktiva versioner av ändrade relationer: [% m.tlink %]</h1>
+<h1>Aktiva versioner av Ã¤ndrade relationer: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 [% PROCESS person_activity_menu.tt %]
@@ -24,7 +24,7 @@
     <th>[% sort('rev', 'rev') %]
     <th>[% sort('type', 'rel_type') %]
     <th>[% sort('rel', 'rel') %]
-    <th>[% sort('Ändrad', 'rel_changedby') %]
+    <th>[% sort('Ã„ndrad', 'rel_changedby') %]
     <th>S
     <th>Sty
 </tr>

@@ -23,11 +23,11 @@
    count.row = 0;
 %]
 
-[% submit('Ändra') %]
+[% submit('Ã„ndra') %]
 
 <div class="entry">
 <table>
-<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ämne <th>Uppdaterad av</tr>
+<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ã„mne <th>Uppdaterad av</tr>
 
 [% FOREACH arc = t.arcs(arctypes) %]
    [% NEXT UNLESS arc.true   or tfilter.include_false %]
@@ -142,7 +142,7 @@
 [% hr %]
 
 <table>
-<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Värde <th>Uppdaterad av </tr>
+<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>VÃ¤rde <th>Uppdaterad av </tr>
 
 [% FOREACH arc = t.arcs(getarctype_list('literals')) %]
    [% NEXT UNLESS arc.true   or tfilter.include_false %]
@@ -185,7 +185,7 @@
 [% hr %]
 
 <table>
-<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ämne <th>Uppdaterad av</tr>
+<tr><th>Aktiv <th>S <th>Sann <th>Relation <th>Ã„mne <th>Uppdaterad av</tr>
 
 [% FOREACH arc = t.arcs(pred_not = arctypes) %]
    [% NEXT IF arc.pred.literal %]
@@ -265,7 +265,7 @@
    [% hidden("_rel__rows", count.row) %]
    [% hr %]
 
-[% submit('Ändra') %]
+[% submit('Ã„ndra') %]
 
 <h3>Skapa nya relationer</h3>
 
@@ -286,7 +286,7 @@
 </table>
 
 [% IF u.level >= 40 %]
-   <p>Är klass: [% checkbox('t_class', 't', t.class) %]</p>
+   <p>Ã„r klass: [% checkbox('t_class', 't', t.class) %]</p>
    [% hidden("_meta_class", 1) %]
 [% END %]
 
@@ -296,22 +296,22 @@
    [% hidden( 't_connected_status', u.new_status ) %]
 [% END %]
 [% input('t_connected', t.connected, size=4) %]
-(0 är okopplad. 30 är färdigkopplad)
+(0 Ã¤r okopplad. 30 Ã¤r fÃ¤rdigkopplad)
 </p>
 [% END %]
 
 [% WRAPPER instruction %]
 <p>Ange namn/alias eller nummer.  Existerande relationer visar nummer och namn.
 
-<p>Exempel: Om ämnet är "ljusfenomen" kan du vilja säga att
-"Ljusfenomen är en sorts fenomen", såhär:<br>
+<p>Exempel: Om Ã¤mnet Ã¤r "ljusfenomen" kan du vilja sÃ¤ga att
+"Ljusfenomen Ã¤r en sorts fenomen", sÃ¥hÃ¤r:<br>
 <pre>| 2              || fenomen          |</pre></p>
 
-<p>I exempelt ovan valde jag att ange relationens nummer i vänster
-fält och ett av aliasen till det relaterade ämnet i höger fält.</p>
+<p>I exempelt ovan valde jag att ange relationens nummer i vÃ¤nster
+fÃ¤lt och ett av aliasen till det relaterade Ã¤mnet i hÃ¶ger fÃ¤lt.</p>
 
-<p>Klicka på rubriker "Relation" för att se relationstyperna.</p>
+<p>Klicka pÃ¥ rubriker "Relation" fÃ¶r att se relationstyperna.</p>
 [% END %]
 
-<p>[% step('Ändra') %]
+<p>[% step('Ã„ndra') %]
    [%+ go('Radera', '/member/db/topic/', 'topic_delete') %]

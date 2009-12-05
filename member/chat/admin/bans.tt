@@ -9,7 +9,7 @@
 <table>
    <tr>
       <th>Medlem
-      <th>Nivå
+      <th>NivÃ¥
    </tr>
 
 [% FOREACH select_list("from member where chat_level<0 order by chat_level, member_level, member") %]
@@ -21,7 +21,7 @@
 </table>
 </div>
 
-<p>Lägg till medlem: [% input('new') %]
+<p>LÃ¤gg till medlem: [% input('new') %]
 [% hidden('chat_level', '-2') %]
 
 <p>[% submit %]

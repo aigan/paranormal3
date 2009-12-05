@@ -1,11 +1,11 @@
 [% META
-	otitle = 'Ämnen som avslagits'
+	otitle = 'Ã„mnen som avslagits'
 	level = 5
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Ämnen som avslagits: [% m.tlink %]</h1>
+<h1>Ã„mnen som avslagits: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 [% PROCESS person_activity_menu.tt %]
@@ -24,7 +24,7 @@
     <th>Titel
     <th>[% sort('ver', 't_ver') %]
     <th>[% sort('Datum', 't_updated') %]
-    <th>[% sort('Från', 't_createdby') %]
+    <th>[% sort('FrÃ¥n', 't_createdby') %]
     <th>Status
 </tr>
 
@@ -39,11 +39,11 @@
 	<td>[% t.created_by.link %]</td>
 	<td>
         [% IF t.active_ver %]
-           Ändring av titel/kortbeskrivning avslagen
+           Ã„ndring av titel/kortbeskrivning avslagen
         [% ELSIF t.replaced_by %]
            Ersatt med [% jump(t.replaced_by.id, '/member/db/topic/view/', tid=t.replaced_by.id) %]
         [% ELSE %]
-           Ämnet inaktiverat
+           Ã„mnet inaktiverat
         [% END %]</td>
    </tr>
 [% END %]

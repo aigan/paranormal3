@@ -3,9 +3,9 @@
    DEFAULT keep=[ 'mid' 'rid' 'did'];
 %]
 <p>Visa: 
-[ [%+ jump('÷versikt', '/member/db/person/view/', mid=m.id) +%]
+[ [%+ jump('√ñversikt', '/member/db/person/view/', mid=m.id) +%]
 [% IF m.topic %]
-   | [%+ jump('ƒmne', '/member/db/topic/view/', tid=m.topic.id ) +%]
+   | [%+ jump('√Ñmne', '/member/db/topic/view/', tid=m.topic.id ) +%]
 [% END +%]
 | [%+ jump('Intressen', '/member/db/person/view/interest.tt', mid=m.id) +%]
 | [%+ jump('Aktiviteter', '/member/db/person/view/lists.tt', mid=m.id) +%]
@@ -16,5 +16,5 @@
 [% IF u.level > 40 or u.equals(m) %]
    | [%+ jump('Betalningar', '/member/db/person/order/history.tt', mid=m.id) +%]
 [% END +%]
-| [%+ jump('Bokm‰rka', me, keep_params=keep) +%]
+| [%+ jump('Bokm√§rka', me, keep_params=keep) +%]
 ]</p>

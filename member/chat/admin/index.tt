@@ -6,10 +6,10 @@
 <div class="entry">
 <table>
    <tr>
-      <th>Mönster
+      <th>MÃ¶nster
       <th>Skapad
       <th>Anledning
-      <th>Utgår
+      <th>UtgÃ¥r
    </tr>
 
 [% FOREACH select_list("from ipfilter order by ipfilter_created") %]

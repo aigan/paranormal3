@@ -9,22 +9,22 @@
 [% t = topic(tid) %]
 [% PROCESS load_member.tt %]
 
-<h1>Hjälp-linjen</h1>
+<h1>HjÃ¤lp-linjen</h1>
 
-<p>Medlemmar på paranormal.se har kontakter med många andra organisationer och nätverk.  Vi kallar oss [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %] och ställer upp för att lösa problem där du har drabbats av andliga eller övernaturliga fenomen.  Vad det än gäller, leder vi dig rätt efter bästa förmåga.</p>
+<p>Medlemmar pÃ¥ paranormal.se har kontakter med mÃ¥nga andra organisationer och nÃ¤tverk.  Vi kallar oss [% jump("Sveriges spÃ¶kjÃ¤garnÃ¤tverk", "/topic/sveriges_spokjagarnatverk.html") %] och stÃ¤ller upp fÃ¶r att lÃ¶sa problem dÃ¤r du har drabbats av andliga eller Ã¶vernaturliga fenomen.  Vad det Ã¤n gÃ¤ller, leder vi dig rÃ¤tt efter bÃ¤sta fÃ¶rmÃ¥ga.</p>
 
 <p>Men:
 <ul>
-<li>Vill du veta mer om [% jump("den här webbplatsen","/topic/paranormalse.html") %]?
-<li>Är du på jakt efter kunskap eller information om något bör du istället fråga någon av de enskilda hjälparna under hjälpare [% jump('under respektive uppslagsord', '/index.tt') %]. Dessa frågor är för många för att vi ska kunna ta hand om dem här.</li>
-<li>Har du andra typer av frågor eller annan anledning att kontakta oss, se [% jump('våra kontaktuppgifter', '/topic/kontaktuppgifter_for_paranormalse.html') %].</li>
+<li>Vill du veta mer om [% jump("den hÃ¤r webbplatsen","/topic/paranormalse.html") %]?
+<li>Ã„r du pÃ¥ jakt efter kunskap eller information om nÃ¥got bÃ¶r du istÃ¤llet frÃ¥ga nÃ¥gon av de enskilda hjÃ¤lparna under hjÃ¤lpare [% jump('under respektive uppslagsord', '/index.tt') %]. Dessa frÃ¥gor Ã¤r fÃ¶r mÃ¥nga fÃ¶r att vi ska kunna ta hand om dem hÃ¤r.</li>
+<li>Har du andra typer av frÃ¥gor eller annan anledning att kontakta oss, se [% jump('vÃ¥ra kontaktuppgifter', '/topic/kontaktuppgifter_for_paranormalse.html') %].</li>
 </ul>
 
 <table>
 [% IF u.level %]
-<tr><td>Från <td>: [% input('from', "\"$m.name\" <$m.sys_email>" size=50) %]
+<tr><td>FrÃ¥n <td>: [% input('from', "\"$m.name\" <$m.sys_email>" size=50) %]
 [% ELSE %]
-<tr><td>Från <td>: [% input('from', '' size=50) %]
+<tr><td>FrÃ¥n <td>: [% input('from', '' size=50) %]
 [% END %]
 <tr><td>Till <td>: <big><a href="mailto:help@paranormal.se">help@paranormal.se</a></big>[% hidden('to', "help@paranormal.se") %]
 <tr><td>Rubrik <td>: [% input('subject', t.desig, size=50) %]
@@ -32,7 +32,7 @@
 
 <p>[% textarea('body','' ) %]
 
-[% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
+[% IF u.level %] <p>(Mottagaren kommer att se ditt anvÃ¤ndarnamn) [% END %]
 
 <p>[% step('Skicka brevet') %]
 
@@ -41,6 +41,6 @@
 
 [% hr %]
 
-<p>Vill du prata med någon direkt, går det bra att ringa också!</p>
+<p>Vill du prata med nÃ¥gon direkt, gÃ¥r det bra att ringa ocksÃ¥!</p>
 
-<p>[% jump('Hjälp-linjen via telefon', 'phone.tt', tid=tid) %]
+<p>[% jump('HjÃ¤lp-linjen via telefon', 'phone.tt', tid=tid) %]

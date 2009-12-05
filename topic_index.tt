@@ -20,9 +20,9 @@
 <h1 align="center">Index</h1>
 [% END %]
 
-<p align="center">Allt som börjar på [% alfanum_bar('/topic/', 'part') %]
+<p align="center">Allt som bÃ¶rjar pÃ¥ [% alfanum_bar('/topic/', 'part') %]
 [% IF part %]
-<br>Sök på <code><big><strong>[% part | upper %]</strong></big></code> följt av [% alfanum_bar('/topic/', 'part', part) %]
+<br>SÃ¶k pÃ¥ <code><big><strong>[% part | upper %]</strong></big></code> fÃ¶ljt av [% alfanum_bar('/topic/', 'part', part) %]
 [% END %]
 </p>
 

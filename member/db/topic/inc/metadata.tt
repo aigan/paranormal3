@@ -4,7 +4,7 @@
      <li>Text [% t.id %],
   [% ELSE %]
   <ul>
-     <li>Ämne [% t.id %],
+     <li>Ã„mne [% t.id %],
   [% END %]
 
   version $t.ver
@@ -35,20 +35,20 @@
   [% END %]
 
 
-  [%#### Importerad från ####%]
+  [%#### Importerad frÃ¥n ####%]
   [% IF ! t.entry %]
      [% IF t.oldfile %]
         <li>Gammal sida: [% jump(t.oldfile, "/old${t.oldfile}") %]
      [% ELSE %]
-        <li>Ingen gammal sida länkad hit
+        <li>Ingen gammal sida lÃ¤nkad hit
      [% END %]
-     ([% forward('Ändra', '../edit/oldfile.tt', tid=t.id run='mark') %])
+     ([% forward('Ã„ndra', '../edit/oldfile.tt', tid=t.id run='mark') %])
   [% END %]
 
 
   [%#### Behandlar ####%]
   [% IF t.ts_list.size > 25 %]
-      <li>Behandlar <strong>för många för att listas! [% jump("$t.ts_list.size stycken", "/member/db/topic/edit/topicstatements.tt", tid=t.id) %].</strong>
+      <li>Behandlar <strong>fÃ¶r mÃ¥nga fÃ¶r att listas! [% jump("$t.ts_list.size stycken", "/member/db/topic/edit/topicstatements.tt", tid=t.id) %].</strong>
      [% ELSE %]
   [% FOREACH ts = t.ts_list;
     IF loop.first; '<li>Behandlar '; END;
@@ -71,7 +71,7 @@
      [% ELSE %]
         <li>Representerar det av typ [% t.media_type %] som har adressen [% jump(t.media_url, t.media_url, href_target='external') %]
      [% END %]
-     ([% forward('Ändra', '/member/db/topic/edit/media.tt') %])</li>
+     ([% forward('Ã„ndra', '/member/db/topic/edit/media.tt') %])</li>
   [% END %]
 
 
@@ -102,7 +102,7 @@
      <li>[% rt.name('rev') %]
      [% arcs = t.rev( type=rt.id direct=1 ).arcs %]
      [% IF arcs.size > 25 %]
-        <strong>för många för att listas! [% jump("$arcs.size stycken", "/member/db/topic/edit/meta.tt", include_rev=1, tid=t.id) %].</strong>
+        <strong>fÃ¶r mÃ¥nga fÃ¶r att listas! [% jump("$arcs.size stycken", "/member/db/topic/edit/meta.tt", include_rev=1, tid=t.id) %].</strong>
      [% ELSE %]
         [% FOREACH arc = t.rev( type=rt.id direct=1 ).arcs %]
            [%- IF loop.first %]

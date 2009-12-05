@@ -17,9 +17,9 @@
 <tr><td>Medlem</td><td>[% m.id %]</td></tr>
 <tr><td>Priv E-post</td><td>[% m.sys_email %]</td></tr>
 <tr><td>Publ E-post</td><td>[% input('home_online_email', m.home_online_email size=20) %]</td></tr>
-<tr><td>Förnamn</td><td>[% input('name_given',m.name_given size=20) %]</td></tr>
+<tr><td>FÃ¶rnamn</td><td>[% input('name_given',m.name_given size=20) %]</td></tr>
 <tr><td>Efternamn</td><td>[% input('name_famliy', m.name_family size=20) %]</td></tr>
-<tr><td>Födelseår</td><td>[% input('bdate_ymd_year', m.bdate_ymd_year, size=5) %]</td></tr>
+<tr><td>FÃ¶delseÃ¥r</td><td>[% input('bdate_ymd_year', m.bdate_ymd_year, size=5) %]</td></tr>
 <tr><td>Webbsida</td><td><a href="[% m.home_online_uri %]">[% m.home_online_uri %]</a></td></tr>
 <tr><td>ICQ</td><td>[% m.home_online_icq %]</td></tr>
 </table>
@@ -33,16 +33,16 @@
 </td></tr>
 <tr><td colspan=2>
 
-<p>Kommentar på registrering (följer med brevet till [% m.nickname | html %]):<br>
+<p>Kommentar pÃ¥ registrering (fÃ¶ljer med brevet till [% m.nickname | html %]):<br>
 <textarea name="comment" cols=80 rows=5>[% q.param('comment') %]</textarea>
 
 </td></tr>
 <tr><td>
-   [% go('Godkänn','/member/db/person/find/pending_lvl5.tt','member_presentation_approve') %]
+   [% go('GodkÃ¤nn','/member/db/person/find/pending_lvl5.tt','member_presentation_approve') %]
 
 </td><td align="right">
 
-   [% go('Tillrättavisa','/member/db/person/find/pending_lvl5.tt','member_presentation_disapprove') %]
+   [% go('TillrÃ¤ttavisa','/member/db/person/find/pending_lvl5.tt','member_presentation_disapprove') %]
 </td></tr>
 </table>
 

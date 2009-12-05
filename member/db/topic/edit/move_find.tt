@@ -20,7 +20,7 @@
    list = find_topic(talias);
 
    IF list.size == 0;
-      THROW notfound, "Det finns inget ämne med alias $talias";
+      THROW notfound, "Det finns inget Ã¤mne med alias $talias";
    END;
 %]
 

@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Inst‰llningar - Adressuppgifter'
+	otitle = 'Inst√§llningar - Adressuppgifter'
 	next_action = 'member_update'
 	focus = 'home_online_icq'
 	level = 2
@@ -7,14 +7,14 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Inst‰llningar - Kommunikation: [% m.tlink2 %]</h1>
+<h1>Inst√§llningar - Kommunikation: [% m.tlink2 %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
 
 <h3>IRC</h3>
 
-<p>PÂ chatten anv‰nder du aliaset <code>[% m.chat_nick %]</code>
+<p>P√• chatten anv√§nder du aliaset <code>[% m.chat_nick %]</code>
 
 [% hr %]
 

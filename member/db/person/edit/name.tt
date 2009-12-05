@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Inställningar - Namn'
+	otitle = 'InstÃ¤llningar - Namn'
 	next_action = 'member_update'
 	focus = 'name_given'
 	level = 2
@@ -7,24 +7,24 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - Namn: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - Namn: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
-<p>Namnuppgifterna är frivilliga.  Det går bra att utelämna
-efternamnet.  Hitta inte på något namn.  Vi vill veta ditt riktiga
+<p>Namnuppgifterna Ã¤r frivilliga.  Det gÃ¥r bra att utelÃ¤mna
+efternamnet.  Hitta inte pÃ¥ nÃ¥got namn.  Vi vill veta ditt riktiga
 (lagliga) namn.
 
 <table>
   <tr>
-    <td>Förnamn</td>
+    <td>FÃ¶rnamn</td>
     <td>[% input('name_given', m.name_given) %]</td>
     <td>(Tilltalsnamn)</td>
   </tr>
   <tr>
     <td>Mellannamn</td>
     <td>[% input('name_middle', m.name_middle) %]</td>
-    <td>(Övriga namn, om de används vid tilltal)</td>
+    <td>(Ã–vriga namn, om de anvÃ¤nds vid tilltal)</td>
   </tr>
   <tr>
     <td>Efternamn</td>
@@ -37,7 +37,7 @@ efternamnet.  Hitta inte på något namn.  Vi vill veta ditt riktiga
 
 <h3>Aliases</h3>
 
-<p>Ditt (användar)namn måste basera sig på ett av dina alias.
+<p>Ditt (anvÃ¤ndar)namn mÃ¥ste basera sig pÃ¥ ett av dina alias.
 
 <ul>
 [% FOREACH nick = m.nicks %]
@@ -46,7 +46,7 @@ efternamnet.  Hitta inte på något namn.  Vi vill veta ditt riktiga
 </ul>
 
 [% IF u.level > 40 %]
-  <p>Så som livbringare kan du skapa ett nytt nickname, utöver de på
+  <p>SÃ¥ som livbringare kan du skapa ett nytt nickname, utÃ¶ver de pÃ¥
   listan ovan.</p>
 [% END %]
 

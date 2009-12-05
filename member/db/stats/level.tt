@@ -5,9 +5,9 @@
 [% PROCESS stats_menu.tt %]
 
 
-<h2>Distribution av nivåer</h2>
+<h2>Distribution av nivÃ¥er</h2>
 
-<table><tr><th>Nivå</th><th>Antal</th></tr>
+<table><tr><th>NivÃ¥</th><th>Antal</th></tr>
 [% FOREACH select_list("select member_level, count(member) as cnt from member where member_level > 0 group by member_level order by member_level") %]
 <tr><td>[% jump(member_level, '/member/db/person/find/result.tt', _level_min=member_level, _level_max=member_level) %]</td><td>$cnt</td></tr>
 [% END %]

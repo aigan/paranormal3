@@ -1,40 +1,40 @@
-[% META	otitle = "Gåvor till Paranormal.se: Bankgiro"
+[% META	otitle = "GÃ¥vor till Paranormal.se: Bankgiro"
 %]
 
 <h1><a href="/member/payment/"><img src="/images/icon/arrow.gif" alt=
-      "Meny"></a> Gåvor till Paranormal.se: Bankgiro</h1>
+      "Meny"></a> GÃ¥vor till Paranormal.se: Bankgiro</h1>
 
-<p>Val av period innebär inte några åtaganden.  Du avgör själv vid
-varje tillfälle om, när och hur mycket du vill ge.  Om du inte loggar in
-kommer du heller inte höra något från oss.</p>
+<p>Val av period innebÃ¤r inte nÃ¥gra Ã¥taganden.  Du avgÃ¶r sjÃ¤lv vid
+varje tillfÃ¤lle om, nÃ¤r och hur mycket du vill ge.  Om du inte loggar in
+kommer du heller inte hÃ¶ra nÃ¥got frÃ¥n oss.</p>
 
-<p>[% jump('Hur mycket har de andra pröjsat? Se statistiken.', '/member/db/stats/payment/') %]</p>
+<p>[% jump('Hur mycket har de andra prÃ¶jsat? Se statistiken.', '/member/db/stats/payment/') %]</p>
 
-<p>Om du exempelvis väljer att betala för 2 månader, kommer vi, nästa
-gång du loggar in efter två månader, be om en ny gåva för fortsatt
-stöd. (Du kommer då kunna välja att aldrig mer bli påmind.)</p>
+<p>Om du exempelvis vÃ¤ljer att betala fÃ¶r 2 mÃ¥nader, kommer vi, nÃ¤sta
+gÃ¥ng du loggar in efter tvÃ¥ mÃ¥nader, be om en ny gÃ¥va fÃ¶r fortsatt
+stÃ¶d. (Du kommer dÃ¥ kunna vÃ¤lja att aldrig mer bli pÃ¥mind.)</p>
 
-<p>Precis samma system gäller, oavsett betalmetod.  Om ingen period
-anges beräknas perioden baserat på ett stöd på ca 240 kr/år.</p>
+<p>Precis samma system gÃ¤ller, oavsett betalmetod.  Om ingen period
+anges berÃ¤knas perioden baserat pÃ¥ ett stÃ¶d pÃ¥ ca 240 kr/Ã¥r.</p>
 
 [% hr %]
 
-<p>Tänk på att en inbetalning via bankgiro innebär extra
-administration för mig, jämfört med en gåva via <a
-href="paynova.tt">paynova</a>.  För belopp under 100 kr önskar jag att
-ni använder Paynova.  En annan fördel med Paynova är att er
-stödprenumeration registreras omedelbart.  För bankgirot kan det ta
-över en vecka innan jag gör registreringen för hand.</p>
+<p>TÃ¤nk pÃ¥ att en inbetalning via bankgiro innebÃ¤r extra
+administration fÃ¶r mig, jÃ¤mfÃ¶rt med en gÃ¥va via <a
+href="paynova.tt">paynova</a>.  FÃ¶r belopp under 100 kr Ã¶nskar jag att
+ni anvÃ¤nder Paynova.  En annan fÃ¶rdel med Paynova Ã¤r att er
+stÃ¶dprenumeration registreras omedelbart.  FÃ¶r bankgirot kan det ta
+Ã¶ver en vecka innan jag gÃ¶r registreringen fÃ¶r hand.</p>
 
 <p class="important">
 Bankgiro: 5713-5212<br>
 Betalningsmottagare: Paranormal Sweden<br>
-Ange medlemsnamn och prenumerationens längd
+Ange medlemsnamn och prenumerationens lÃ¤ngd
 </p>
 
-<p>Du kan betala till bankgiro om du har bank via internet, oavsett vilken bank du använder.</p>
+<p>Du kan betala till bankgiro om du har bank via internet, oavsett vilken bank du anvÃ¤nder.</p>
 
-<p>Det går också bra att betala via bankgiro med bankgiro-AVI som är
-en liten blankett du hittar på ditt bank-kontor. Du fyller i
-blanketten och lämnar in den i kassan och betalar där direkt ur
-plånboken.</p>
+<p>Det gÃ¥r ocksÃ¥ bra att betala via bankgiro med bankgiro-AVI som Ã¤r
+en liten blankett du hittar pÃ¥ ditt bank-kontor. Du fyller i
+blanketten och lÃ¤mnar in den i kassan och betalar dÃ¤r direkt ur
+plÃ¥nboken.</p>

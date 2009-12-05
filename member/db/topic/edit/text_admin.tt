@@ -23,7 +23,7 @@
    [% rows = 25 %]
    [% PROCESS entry_belonging.tt %]
 [% ELSE %]
-   <h1>[% PROCESS tlink_ver.tt %]: Ämne</h1>
+   <h1>[% PROCESS tlink_ver.tt %]: Ã„mne</h1>
    [% PROCESS topic_edit_menu.tt %]
    [% rows = 2 %]
 [% END %]
@@ -34,7 +34,7 @@
    ELSE;        '  <em>ej aktiv</em>';
    END;
 %]
-   <p>Kommentar <span class="important">för redaktörer</span> om varför vissa relationer ska eller inte ska användas, etc:<br />
+   <p>Kommentar <span class="important">fÃ¶r redaktÃ¶rer</span> om varfÃ¶r vissa relationer ska eller inte ska anvÃ¤ndas, etc:<br />
    [% textarea('t_comment_admin', t.admin_comment, cols=70 rows=12) %]
 
 <p>[% step %]

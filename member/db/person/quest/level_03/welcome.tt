@@ -1,37 +1,37 @@
-[% META title = 'I väntan på e-post'
+[% META title = 'I vÃ¤ntan pÃ¥ e-post'
         level = 3
 %]
 
-<p>Då var det klart.  Vi skickar ett e-brev till dig när vi tittat på din presentation.</p>
+<p>DÃ¥ var det klart.  Vi skickar ett e-brev till dig nÃ¤r vi tittat pÃ¥ din presentation.</p>
 
-<p>Kontrollen är <strong>inte</strong> för att sortera bort vissa typer av människor. Vi vill bara se att du verkligen skrivit en presentation och inte fyllt textrutan med "bla bla bla bla".  Syftet med medlemskapet är som sagt att ge dig möjlighet att bidraga till uppslagsverket.  Så det minsta man kan begära är att du följer våra instruktioner här.
+<p>Kontrollen Ã¤r <strong>inte</strong> fÃ¶r att sortera bort vissa typer av mÃ¤nniskor. Vi vill bara se att du verkligen skrivit en presentation och inte fyllt textrutan med "bla bla bla bla".  Syftet med medlemskapet Ã¤r som sagt att ge dig mÃ¶jlighet att bidraga till uppslagsverket.  SÃ¥ det minsta man kan begÃ¤ra Ã¤r att du fÃ¶ljer vÃ¥ra instruktioner hÃ¤r.
 
-<p>Under tiden är du välkommen att fortsätta titta runt på webbplatsen.</p>
+<p>Under tiden Ã¤r du vÃ¤lkommen att fortsÃ¤tta titta runt pÃ¥ webbplatsen.</p>
 
-<p>Ta en titt på menyraden ovan.</p>
+<p>Ta en titt pÃ¥ menyraden ovan.</p>
 
 <div class="entry"><table>
 
-<tr><td>[% jump('Hem','/') %]</td><td>Här är webbplatsens ingångssida med länkar till uppslagsverket samt <em>dagens meddelande</em></td></tr>
+<tr><td>[% jump('Hem','/') %]</td><td>HÃ¤r Ã¤r webbplatsens ingÃ¥ngssida med lÃ¤nkar till uppslagsverket samt <em>dagens meddelande</em></td></tr>
 
-<tr><td>[% jump('Torget','/member/db/') %]</td><td>Detta är platsen du utgår ifrån när du jobbar med webbplatsen. Här hittar du information och saker att göra. Sidans innehåll anpassar sig till respektive medlem.</td></tr>
+<tr><td>[% jump('Torget','/member/db/') %]</td><td>Detta Ã¤r platsen du utgÃ¥r ifrÃ¥n nÃ¤r du jobbar med webbplatsen. HÃ¤r hittar du information och saker att gÃ¶ra. Sidans innehÃ¥ll anpassar sig till respektive medlem.</td></tr>
 
-<tr><td>[% jump('Inställingar','/member/db/person/edit/') %]</td><td>Här kommer du åt alla dina uppgifter. Du kan uppdatera lösenord, presentation och mycket mer. Det mesta i större detalj än vad du sett hittills. Du kommer att guidas igenom de inställningarna efter att vi tittat på din presentation.</td></tr>
+<tr><td>[% jump('InstÃ¤llingar','/member/db/person/edit/') %]</td><td>HÃ¤r kommer du Ã¥t alla dina uppgifter. Du kan uppdatera lÃ¶senord, presentation och mycket mer. Det mesta i stÃ¶rre detalj Ã¤n vad du sett hittills. Du kommer att guidas igenom de instÃ¤llningarna efter att vi tittat pÃ¥ din presentation.</td></tr>
 
-<tr><td>Logga ut</td><td>Nej. Det behövs inte. Såvida du inte vill lämna datorn för någon annan. (<em>Logga ut</em> gör att du behöver skriva in namn och lösenord igen när du vill göra något så som medlem här.)</td></tr>
+<tr><td>Logga ut</td><td>Nej. Det behÃ¶vs inte. SÃ¥vida du inte vill lÃ¤mna datorn fÃ¶r nÃ¥gon annan. (<em>Logga ut</em> gÃ¶r att du behÃ¶ver skriva in namn och lÃ¶senord igen nÃ¤r du vill gÃ¶ra nÃ¥got sÃ¥ som medlem hÃ¤r.)</td></tr>
 
 </table></div>
 
 <h2>Nu skulle du kunna...</h2>
 
 <ul>
-<li>passa på att <a href="/member/chat/login.html">logga in på chatten</a>?</li>
+<li>passa pÃ¥ att <a href="/member/chat/login.html">logga in pÃ¥ chatten</a>?</li>
 
-<li>gå tillbaka och [% jump("uppdatera din presentation", "/member/db/person/quest/level_02/presentation.tt") %]?</li>
+<li>gÃ¥ tillbaka och [% jump("uppdatera din presentation", "/member/db/person/quest/level_02/presentation.tt") %]?</li>
 
-<li>gå tillbaka och se på/ändra [% jump("övriga frågor du svarade på under din registrering", "/member/db/person/quest/level_02/") %].</li>
+<li>gÃ¥ tillbaka och se pÃ¥/Ã¤ndra [% jump("Ã¶vriga frÃ¥gor du svarade pÃ¥ under din registrering", "/member/db/person/quest/level_02/") %].</li>
 </ul>
 
-<p>Men håll utkik efter vårat brev till dig. (Det är möjligt att brevet kan ha sorterats som <em>spam</em>.)
+<p>Men hÃ¥ll utkik efter vÃ¥rat brev till dig. (Det Ã¤r mÃ¶jligt att brevet kan ha sorterats som <em>spam</em>.)
 
-<p>Siffran uppe till vänster är din medlemsnivå. Den kommer ändras så fort vi tittat på din presentation.</p>
+<p>Siffran uppe till vÃ¤nster Ã¤r din medlemsnivÃ¥. Den kommer Ã¤ndras sÃ¥ fort vi tittat pÃ¥ din presentation.</p>

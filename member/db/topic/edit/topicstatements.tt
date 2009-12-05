@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Redigera ämnesuttalanden'
+	otitle = 'Redigera Ã¤mnesuttalanden'
 	next_template = '/member/db/topic/view/'
 	next_action = 'ts_update'
 %]
@@ -17,7 +17,7 @@
 
 <div class="entry">
 <table>
-  <tr><th>Behåll</th><th>Ämne</th><th>Kommentar</th></tr>
+  <tr><th>BehÃ¥ll</th><th>Ã„mne</th><th>Kommentar</th></tr>
   [% FOREACH ts = t.ts_list(tfilter) %]
   <tr>
   <td>
@@ -30,19 +30,19 @@
 </table>
 </div>
 
-<h3><code>$t.desig</code> behandlar även dessa ämnen:</h3>
+<h3><code>$t.desig</code> behandlar Ã¤ven dessa Ã¤mnen:</h3>
 
-<p>Fler ämnen, ett per rad:<br>
+<p>Fler Ã¤mnen, ett per rad:<br>
 <textarea cols="30" rows="5" name="_meta_talias">[% list2block('_meta_talias') %]</textarea>
 
 [% WRAPPER instruction %]
-<p>Det här ska vara en lista om vad detta objekt behandlar.  Objektet
-måste vara media, så som en bok, tidskrift, diskussioninlägg eller
+<p>Det hÃ¤r ska vara en lista om vad detta objekt behandlar.  Objektet
+mÃ¥ste vara media, sÃ¥ som en bok, tidskrift, diskussioninlÃ¤gg eller
 liknande.  Det kan vara en artikel, en text i databasen, en grupp
-eller föredrag.  Dvs något som talar om ett ämne.  Här beskriver vi
-vad ämnet talar om.</p>
+eller fÃ¶redrag.  Dvs nÃ¥got som talar om ett Ã¤mne.  HÃ¤r beskriver vi
+vad Ã¤mnet talar om.</p>
 
-<p>Listan bör vara kort men fullständig.</p>
+<p>Listan bÃ¶r vara kort men fullstÃ¤ndig.</p>
 [% END %]
 
-<p>[% step('Ändra') %]
+<p>[% step('Ã„ndra') %]

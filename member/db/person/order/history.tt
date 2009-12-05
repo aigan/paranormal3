@@ -1,27 +1,27 @@
-[% META otitle="Beställningshistoria"
+[% META otitle="BestÃ¤llningshistoria"
 	level = 5
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Beställningshistoria: [% m.tlink %]</h1>
+<h1>BestÃ¤llningshistoria: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 [% PROCESS payment_menu.tt %]
 
 <h2>Prenumeration</h2>
 
-<p>Prenumeration går ut [% m.payment_expire %].
+<p>Prenumeration gÃ¥r ut [% m.payment_expire %].
 
-<p>Prenumerationssätt: [% m.payment_period_length %] dagar för [% m.payment_period_cost %] kr.  Det blir [% m.payment_rate %] kr / månad.
+<p>PrenumerationssÃ¤tt: [% m.payment_period_length %] dagar fÃ¶r [% m.payment_period_cost %] kr.  Det blir [% m.payment_rate %] kr / mÃ¥nad.
 
 <p>[% m.name %] har totalt betalat [% m.payment_total %] kr.
 
-<p>Beräknat från medlemskapets början [% m.created.ymd %] blir det [% m.payment_total_rate %] kr / månad.
+<p>BerÃ¤knat frÃ¥n medlemskapets bÃ¶rjan [% m.created.ymd %] blir det [% m.payment_total_rate %] kr / mÃ¥nad.
 
 [% IF u.equals(m) %]
 <ul>
-   <li>[% jump("Förläng prenumerationen!", '/member/payment/') %]
+   <li>[% jump("FÃ¶rlÃ¤ng prenumerationen!", '/member/payment/') %]
    <li>[% jump("Se statistik", '/member/db/stats/payment/') %]
 </ul>
 [% END %]

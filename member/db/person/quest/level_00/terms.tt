@@ -3,52 +3,52 @@
 	next_template = 'gate.tt'
 %]
 
-<p>Uppdaterad 2003-10-18 kl 07.  Detta är en [% jump("förtydling av
+<p>Uppdaterad 2003-10-18 kl 07.  Detta Ã¤r en [% jump("fÃ¶rtydling av
 tidigare villkor", "terms_old,tt") %].</p>
 
-<p>Allt du säger, skriver, gör och laddar upp på
-<code>paranormal.se</code> kan komma att lagras i våra arkiv.  Vi
-förbehåller oss rätten att bestämma hur uppgifterna kommer att
-användas.</p>
+<p>Allt du sÃ¤ger, skriver, gÃ¶r och laddar upp pÃ¥
+<code>paranormal.se</code> kan komma att lagras i vÃ¥ra arkiv.  Vi
+fÃ¶rbehÃ¥ller oss rÃ¤tten att bestÃ¤mma hur uppgifterna kommer att
+anvÃ¤ndas.</p>
 
 <p>Se [% jump('Anonymitet', '/topic/anonymitet_pa_paranormalse.html', href_target='info') %]</p>
 
-<p>När du godkänner dessa villkor godkänner du att [% jump('Paranormal
-Sweden', "/topic/paranormal_sweden.html") %] erhåller upphovsrätt till
-allt mottaget material.  Du har förståss själv kvar din egen
-upphovsrätt för ditt material, men kan inte bestämma över vad vi gör
-med vår kopia.</p>
+<p>NÃ¤r du godkÃ¤nner dessa villkor godkÃ¤nner du att [% jump('Paranormal
+Sweden', "/topic/paranormal_sweden.html") %] erhÃ¥ller upphovsrÃ¤tt till
+allt mottaget material.  Du har fÃ¶rstÃ¥ss sjÃ¤lv kvar din egen
+upphovsrÃ¤tt fÃ¶r ditt material, men kan inte bestÃ¤mma Ã¶ver vad vi gÃ¶r
+med vÃ¥r kopia.</p>
 
-<p>Om du matar in material på webbplatsen som du inte själv har
-upphovsrätt till; uppfyll minst ett av följande villkor:</p>
+<p>Om du matar in material pÃ¥ webbplatsen som du inte sjÃ¤lv har
+upphovsrÃ¤tt till; uppfyll minst ett av fÃ¶ljande villkor:</p>
 
 <ul>
 
-<li>Se till att en licens finns som tillåter publicering</li>
+<li>Se till att en licens finns som tillÃ¥ter publicering</li>
 
-<li>Erhåll och bifoga särskilt publiceringstillstånd från upphovsman</li>
+<li>ErhÃ¥ll och bifoga sÃ¤rskilt publiceringstillstÃ¥nd frÃ¥n upphovsman</li>
 
-<li>Skriv en egen text baserad på ursprungsmaterialet</li>
+<li>Skriv en egen text baserad pÃ¥ ursprungsmaterialet</li>
 
 </ul>
 
-<p>Upphovsman, författare, licens, tillåtelse (att publicera) och
-källor bör alltid bifogas materialet.  Detta är ett måste när
-materialet har en restriktiv licens och vår kopia inte kan räknas som
+<p>Upphovsman, fÃ¶rfattare, licens, tillÃ¥telse (att publicera) och
+kÃ¤llor bÃ¶r alltid bifogas materialet.  Detta Ã¤r ett mÃ¥ste nÃ¤r
+materialet har en restriktiv licens och vÃ¥r kopia inte kan rÃ¤knas som
 citering.</p>
 
-<p>För webbplatsens framtida utveckling är det mycket viktigt att
-Paranormal Sweden själv har upphovsrätt för så mycket material som
-möjligt.  Material vi inte har upphovsrätt till eller där frågan om
-upphovsrätt eller licens är oklar, kommer vi ersätta vid första bästa
-tillfälle.</p>
+<p>FÃ¶r webbplatsens framtida utveckling Ã¤r det mycket viktigt att
+Paranormal Sweden sjÃ¤lv har upphovsrÃ¤tt fÃ¶r sÃ¥ mycket material som
+mÃ¶jligt.  Material vi inte har upphovsrÃ¤tt till eller dÃ¤r frÃ¥gan om
+upphovsrÃ¤tt eller licens Ã¤r oklar, kommer vi ersÃ¤tta vid fÃ¶rsta bÃ¤sta
+tillfÃ¤lle.</p>
 
-<p>Du har möjlighet att inte ge Paranormal Sweden upphovsrätt för ditt
+<p>Du har mÃ¶jlighet att inte ge Paranormal Sweden upphovsrÃ¤tt fÃ¶r ditt
 egna material, genom att enligt ovan behandla materialet som om det
-kom från en tredje part.  Men detta bör enbart göras i undantag.</p>
+kom frÃ¥n en tredje part.  Men detta bÃ¶r enbart gÃ¶ras i undantag.</p>
 
-<p>Ska vi börja?</p>
+<p>Ska vi bÃ¶rja?</p>
 
 [% hr %]
-<p>[% go('Vänd och fly i panik', uri("/contact/", subject="Varför inte?", to='"Redaktionen" <red@paranormal.se>')) +%]
-[%+ submit('Godkänn villkoren') %]</p>
+<p>[% go('VÃ¤nd och fly i panik', uri("/contact/", subject="VarfÃ¶r inte?", to='"Redaktionen" <red@paranormal.se>')) +%]
+[%+ submit('GodkÃ¤nn villkoren') %]</p>

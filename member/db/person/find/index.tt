@@ -7,12 +7,12 @@
 
 [% PROCESS person_find_menu.tt %]
 
-<p>Medlem [% input('nick') %] [% submit('Sök') %] <em>Söker på flera sätt</em></p>
+<p>Medlem [% input('nick') %] [% submit('SÃ¶k') %] <em>SÃ¶ker pÃ¥ flera sÃ¤tt</em></p>
 
 
 <p class="small">[% alfanum_bar('list.tt', 'part') %]</p>
 
-<p class="big"><a href="combined.tt">Kombinerad sökning</a></p>
+<p class="big"><a href="combined.tt">Kombinerad sÃ¶kning</a></p>
 <p class="big">[% jump('Nya medborgare', 'latest_citizen.tt') %]</p>
 <p class="big">[% jump('Senast inloggade', 'latest_visitor.tt') %]</p>
 <p>[% jump('ICQ-adresser', 'icq_list.tt') %]</p>

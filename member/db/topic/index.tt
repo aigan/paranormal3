@@ -1,12 +1,12 @@
 [% META
-	title = 'Administrera ämnen'
+	title = 'Administrera Ã¤mnen'
 	next_template = 'view/'
 	focus = 'talias'
 %]
 
-<h2>[% jump('Navigera bland ämnena', '/member/db/topic/view/tree.tt?tid=1') %]</h2>
+<h2>[% jump('Navigera bland Ã¤mnena', '/member/db/topic/view/tree.tt?tid=1') %]</h2>
 
-<p align="center">[% input('talias') %] [% submit('Sök') %]
+<p align="center">[% input('talias') %] [% submit('SÃ¶k') %]
 
 <p>[% alfanum_bar('alias_list.tt', 'part') %]
 
@@ -14,8 +14,8 @@
 <table><tr><td valign="top">
 <ul>
 [% IF u.level > 10 %]
-  <li>[% jump('Skapa ämne', 'create/admin.tt') %]
-  <li>[% jump('Domäner', "/member/db/domain/") %]
+  <li>[% jump('Skapa Ã¤mne', 'create/admin.tt') %]
+  <li>[% jump('DomÃ¤ner', "/member/db/domain/") %]
 [% END %]
   <li>[% jump('Viktiga klasser', 'list/class.tt') %]
   <li>[% jump('Arc-typer', '/member/db/arctype/list.tt') %]
@@ -23,9 +23,9 @@
 </ul>
 
 [% IF u.level > 10 %]
-<h3>Kör direkt</h3>
+<h3>KÃ¶r direkt</h3>
 <ul>
-  <li>[% jump('Hitta förlorade texter', '/member/db/topic/edit/outline.tt', run='entry_find_lost', tid=137624) %]
+  <li>[% jump('Hitta fÃ¶rlorade texter', '/member/db/topic/edit/outline.tt', run='entry_find_lost', tid=137624) %]
   <li>[% jump('Publicera / synka sidor', me, run='topic_sync', href_class="") %]</ul>
 [% END %]
 
@@ -34,7 +34,7 @@
 </td><td valign="top">
 
 <ul>
-  <li>[% jump('Senast uppdaterade ämnena', 'list/latest_topics.tt') %]
+  <li>[% jump('Senast uppdaterade Ã¤mnena', 'list/latest_topics.tt') %]
   <li>[% jump('Senast uppdaterade texterna', 'list/latest_texts.tt') %]
   <li>[% jump('Senast uppdaterade relationer', 'list/latest_rels.tt') %]
 </ul>
@@ -42,9 +42,9 @@
 <ul>
   <li>[% jump('Dubletter alias', 'list/doubles_aliases.tt') %]
   <li>[% jump('Dubletter titlar', 'list/doubles_titles.tt') %]
-  <li>[% jump('Ämnen utan kortbeskrivning', 'list/no_description.tt') %]
-  <li>[% jump('Ämnen utan texter', 'list/no_entries.tt') %]
-  <li>[% jump('Ämnen med för lång kortbeskrivning', 'list/long_description.tt') %]
-  <li>[% jump('Ämnen utan relationer', 'list/no_relations.tt') %]
+  <li>[% jump('Ã„mnen utan kortbeskrivning', 'list/no_description.tt') %]
+  <li>[% jump('Ã„mnen utan texter', 'list/no_entries.tt') %]
+  <li>[% jump('Ã„mnen med fÃ¶r lÃ¥ng kortbeskrivning', 'list/long_description.tt') %]
+  <li>[% jump('Ã„mnen utan relationer', 'list/no_relations.tt') %]
 </ul>
 </td></tr></table>

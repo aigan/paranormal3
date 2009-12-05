@@ -8,33 +8,33 @@
 [% PROCESS load_member.tt %]
 <p align="right">Steg 1 av 10</p>
 
-<p><strong>OBSERVERA!</strong> Det är mycket värdefullt att andra
-medlemmar kan hitta just dig.  Du kan läsa andra medlemmars
-presentation.  Låt dem läsa din!</p>
+<p><strong>OBSERVERA!</strong> Det Ã¤r mycket vÃ¤rdefullt att andra
+medlemmar kan hitta just dig.  Du kan lÃ¤sa andra medlemmars
+presentation.  LÃ¥t dem lÃ¤sa din!</p>
 
-<p>Du kan gott och väl välja att <em>avslöja allt</em> eftersom det
-bara innefattar det du själv skrivit in.  Skriver du inte in ditt
+<p>Du kan gott och vÃ¤l vÃ¤lja att <em>avslÃ¶ja allt</em> eftersom det
+bara innefattar det du sjÃ¤lv skrivit in.  Skriver du inte in ditt
 efternamn kommer inte efternamnet att presenteras, oavsett vad du
-väljer för anonymitetsgrad här.</p>
+vÃ¤ljer fÃ¶r anonymitetsgrad hÃ¤r.</p>
 
-<p>Följande är en sammanfattning av existerande konfigurationsalternativ.  Du
-kan senare ändra och välja ytterligare detaljer.
+<p>FÃ¶ljande Ã¤r en sammanfattning av existerande konfigurationsalternativ.  Du
+kan senare Ã¤ndra och vÃ¤lja ytterligare detaljer.
 
 [% hr %]
 
 [% WRAPPER draw_alt title='Visande av kontaktinformation' field='_meta_present_contact' current=15
    values = 
    {
-	'00' => 'Bli totalt osynlig.  Som om du aldrig varit här'
-	'02' => 'Visa ditt primära alias (namn), men inget annat'
-	'10' => 'Visa publik e-post, webbadress, ålder och presentation'
-	'15' => 'Visa ditt fulla namn och bostadsort samt ovanstående (REKOMMENDERAS)'
+	'00' => 'Bli totalt osynlig.  Som om du aldrig varit hÃ¤r'
+	'02' => 'Visa ditt primÃ¤ra alias (namn), men inget annat'
+	'10' => 'Visa publik e-post, webbadress, Ã¥lder och presentation'
+	'15' => 'Visa ditt fulla namn och bostadsort samt ovanstÃ¥ende (REKOMMENDERAS)'
 	'30' => 'Allt'
    }
 %]
 
-Hur mycket av din identitet vill du avslöja för omvärlden? (Inklusive
-icke-medlemmar.)  Observera att det kan dröja mycket längre innan du
+Hur mycket av din identitet vill du avslÃ¶ja fÃ¶r omvÃ¤rlden? (Inklusive
+icke-medlemmar.)  Observera att det kan drÃ¶ja mycket lÃ¤ngre innan du
 blir medlem om du vill vara anonym!
 
 [% END %]
@@ -44,13 +44,13 @@ blir medlem om du vill vara anonym!
 [% WRAPPER draw_alt title='Visande av intressen och engagemang' field='present_intrests'
    values = 
    {
-	'05' => 'Göm dina intressen inför andra'
+	'05' => 'GÃ¶m dina intressen infÃ¶r andra'
 	'10' => 'Sammanfattning av intressen'
 	'30' => 'Alla detaljer'
    }
 %]
 
-Hur mycket av dina intressen vill du avslöja?
+Hur mycket av dina intressen vill du avslÃ¶ja?
 
 [% END %]
 

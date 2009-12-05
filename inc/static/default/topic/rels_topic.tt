@@ -1,4 +1,4 @@
-  [% ### Relationer till ämnen ### %]
+  [% ### Relationer till Ã¤mnen ### %]
 [% FOREACH rt = rtlist %]
   [% FOREACH rel = select_list("from rel, t, reltype where rev=?
                               and rel=t and rel_type=reltype

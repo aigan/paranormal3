@@ -79,7 +79,7 @@
    IF cv.ver == t.ver;
       IF t.previous_ver and t.previus_ve.ver != t.ver;
          cv = t.previous_ver;
-         cdesc = "Föregående (v$cv.ver)";
+         cdesc = "FÃ¶regÃ¥ende (v$cv.ver)";
       ELSIF t.last_ver and t.last_ver.ver != t.ver;
          cv = t.last_ver;
          cdesc = "Senaste (v$cv.ver)";
@@ -125,7 +125,7 @@
 </p>
 
 <p><small>
-Ämnet skapat av [% t.first_ver.created_by.link %] [%+ t.first_ver.created %]<br>
+Ã„mnet skapat av [% t.first_ver.created_by.link %] [%+ t.first_ver.created %]<br>
 Vers. skapad av [% t.created_by.link %] [%+ t.created %]<br>
 Vers. uppd. av [% t.updated_by.link %] [%+ t.updated %]
 </small></p>
@@ -133,19 +133,19 @@ Vers. uppd. av [% t.updated_by.link %] [%+ t.updated %]
 
 <p>
 [% IF t.ver > 1 %]
-   Ersätter [% forward("version $t.previous_ver.ver", me, tid=tid, v=t.previous_ver.ver) %].
+   ErsÃ¤tter [% forward("version $t.previous_ver.ver", me, tid=tid, v=t.previous_ver.ver) %].
 [% END %]
 [% IF t.replace %]
    [% r = t.replace %]
-   Ersätter [% jump("$r.rid $r.desig", me, tid=r.id) %].
+   ErsÃ¤tter [% jump("$r.rid $r.desig", me, tid=r.id) %].
 [% END %]
 
 [% nv = t.next_ver %]
 [% IF nv %]
-   Ersätts av [% forward("version $nv.ver", me, tid=tid, v=nv.ver) %].
+   ErsÃ¤tts av [% forward("version $nv.ver", me, tid=tid, v=nv.ver) %].
 [% ELSIF t.replaced_by %]
    [% rb = t.replaced_by %]
-   Ersätts av [% forward("$rb.id $rb.desig", me, tid=rb.id, v=rb.ver) %].
+   ErsÃ¤tts av [% forward("$rb.id $rb.desig", me, tid=rb.id, v=rb.ver) %].
 [% END %]
 </p>
 
@@ -163,9 +163,9 @@ Vers. uppd. av [% t.updated_by.link %] [%+ t.updated %]
 
 [% IF cv %]
    <table border="0" cellspacing="5" width="100%">
-     <td><input type="button" class="togglep" value="visa/göm nytt" onclick="toggle_plus(); return false;" /></td><td width="10">&nbsp;</td>
-     <td><input type="button" class="togglem" value="visa/göm gammalt" onclick="toggle_minus(); return false;" /></td><td width="10">&nbsp;</td>
-     <td>Jämförelse med [% jump("version $cv.ver", me, tid=tid, v=cv.ver) %]</td>
+     <td><input type="button" class="togglep" value="visa/gÃ¶m nytt" onclick="toggle_plus(); return false;" /></td><td width="10">&nbsp;</td>
+     <td><input type="button" class="togglem" value="visa/gÃ¶m gammalt" onclick="toggle_minus(); return false;" /></td><td width="10">&nbsp;</td>
+     <td>JÃ¤mfÃ¶relse med [% jump("version $cv.ver", me, tid=tid, v=cv.ver) %]</td>
      <td>[% jump('Redigera', "/member/db/topic/edit/text.tt",  tid=tid, v=t.ver, href_class='link_button') %]</td>
    </table>
 

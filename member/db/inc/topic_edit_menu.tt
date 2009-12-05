@@ -13,40 +13,40 @@
 %]
 
 <p>Administrera
-[ [% jump('Översikt', "$base/view/", keep_params=keep) +%]
+[ [% jump('Ã–versikt', "$base/view/", keep_params=keep) +%]
 | [% jump('Text', "$base/edit/text.tt", keep_params=keep) +%]
 | [% jump('Metadata', "$base/edit/meta.tt", keep_params=keep) +%]
 | [% jump('Versioner', "$base/edit/versions.tt", keep_params=keep) +%]
 | [% jump('Alias', "$base/edit/aliases.tt", keep_params=keep) +%]
 | [% jump('TS', "$base/edit/topicstatements.tt", keep_params=keep) +%]
 | [% jump('URL', "$base/edit/media.tt", keep_params=keep) +%]
-| [% jump('Bokmärka', me, keep_params=keep) +%]
+| [% jump('BokmÃ¤rka', me, keep_params=keep) +%]
 ]<br>
 
 [% IF u.level > 10 %]
-För väktare
+FÃ¶r vÃ¤ktare
 [
   [%+ IF t.active %]
-       [% jump('Slå samman', "$base/edit/merge.tt", tid=tid, run='mark') %]
+       [% jump('SlÃ¥ samman', "$base/edit/merge.tt", tid=tid, run='mark') %]
      | [% jump('Publicera', "$base/view/", run='topic_publish' keep_params=keep) %]
   [% ELSE %]
-     Slå samman | Publicera
+     SlÃ¥ samman | Publicera
   [% END +%]
 | [% jump('Disposition', "$base/edit/outline.tt", keep_params=keep) +%]
-| [% jump('Städa', me, keep_params=keep, run='topic_vacuum') +%]
+| [% jump('StÃ¤da', me, keep_params=keep, run='topic_vacuum') +%]
 ]<br>
 [% END %]
 
 
 Visa
-[ [% jump('Redaktörer', "$base/view/editors.tt" tid=tid) +%]
-| [% jump('Hjälpare', "$base/view/helpers.tt" tid=tid) +%]
-| [% jump('Söker kontakt', "$base/view/meeters.tt" tid=tid) +%]
+[ [% jump('RedaktÃ¶rer', "$base/view/editors.tt" tid=tid) +%]
+| [% jump('HjÃ¤lpare', "$base/view/helpers.tt" tid=tid) +%]
+| [% jump('SÃ¶ker kontakt', "$base/view/meeters.tt" tid=tid) +%]
 | [% jump('Diskutanter', "$base/view/discussors.tt" tid=tid) +%]
 | [% jump('Statistik', "$base/view/stats.tt" tid=tid) +%]
 ]<br>
 
-Visa även
+Visa Ã¤ven
 [ 
 [%
 IF tfilter.include_inactive;
@@ -69,9 +69,9 @@ ELSE;
 END;
 ' | ';
 IF tfilter.include_rev;
-   jump('omvända', me, keep_params=keep, href_class='selected', include_rev=0);
+   jump('omvÃ¤nda', me, keep_params=keep, href_class='selected', include_rev=0);
 ELSE;
-   jump('omvända', me, keep_params=keep, href_class='', include_rev=1);
+   jump('omvÃ¤nda', me, keep_params=keep, href_class='', include_rev=1);
 END;
 END;
 +%]

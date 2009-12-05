@@ -1,12 +1,12 @@
 [% META
-	otitle = 'Inst‰llningar - Innersta v‰sen'
+	otitle = 'Inst√§llningar - Innersta v√§sen'
 	next_action = 'member_update'
 	level = 41
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Inst‰llningar - Innersta v‰sen: [% m.tlink %]</h1>
+<h1>Inst√§llningar - Innersta v√§sen: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
@@ -56,6 +56,6 @@
 
 <p>
  [% go("Uppdatera", me, 'member_update') %]
- [%+ go("St‰da", me, 'member_vacuum') %]
+ [%+ go("St√§da", me, 'member_vacuum') %]
  [%+ go("Radera", '/member/db/person/find/', 'member_delete') %]
  [%+ step %]

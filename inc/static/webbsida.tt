@@ -37,7 +37,7 @@
          <p class="slogan">A Swedish encyclopedia about Paranormal Phenomena</p>
       [% ELSE %]
          <h1><a href="/">Paranormal.se</a></h1>
-         <p class="slogan">Uppslagsverk för paranormala fenomen</p>
+         <p class="slogan">Uppslagsverk fÃ¶r paranormala fenomen</p>
       [% END %]
 
       <hr>
@@ -66,9 +66,9 @@
          [% END %]
          [% INCLUDE typelist.tt %]
          [% IF eng %]
-            [% jump('Go to site »', url) %]
+            [% jump('Go to site Â»', url) %]
          [% ELSE %]
-            [% jump('Gå till webbsidan', url) %]
+            [% jump('GÃ¥ till webbsidan', url) %]
          [% END %]
       </h2>
 
@@ -99,18 +99,18 @@
         <p>Sidan [% url %] lades ned [% t.arc('slut').value %]</p>
       [% END %]
    [% ELSE %]
-      [% UNLESS t.has_rel(28); # Tillåtelse %]
+      [% UNLESS t.has_rel(28); # TillÃ¥telse %]
          [% IF eng %]
             <p>This page is a reference to [% jump(url, url) %]. It exists because we want to say something <strong>about</strong> the site. It may have been used as a source of an article, citation or may just be recommended for it's content regarding a specific topic. <strong>Paranormal.se is not behind that site.</strong></p>
          [% ELSE %]
-            <p>Denna sida är en referens till [% jump(url, url) %]. <strong>Paranormal.se står inte bakom webbsidan.</strong></p>
+            <p>Denna sida Ã¤r en referens till [% jump(url, url) %]. <strong>Paranormal.se stÃ¥r inte bakom webbsidan.</strong></p>
          [% END %]
       [% END %]
 
       [% IF eng %]
          <p align="center">Follow the link to go to the site:</p>
       [% ELSE %]
-         <p align="center">Följ länken för att gå till webbsidan:</p>
+         <p align="center">FÃ¶lj lÃ¤nken fÃ¶r att gÃ¥ till webbsidan:</p>
       [% END %]
 
       <h2 align="center">[% jump(url, url, target='external') %]</h2>
@@ -118,7 +118,7 @@
    </div>
 
    <div class="entry">
-      <p>Se [% jump("arkivet hos WayBack Machine för denna webbplats", "http://web.archive.org/web/*/$url") %]
+      <p>Se [% jump("arkivet hos WayBack Machine fÃ¶r denna webbplats", "http://web.archive.org/web/*/$url") %]
    </div>
    <br clear="all">
    [% END %]

@@ -39,9 +39,9 @@
 [% IF m.name_given %]
    <tr><td>Namn <td>$m.name
 [% END %]
-<tr><td>[% jump('Nivå', '/topic/nivasystemet_for_paranormalse.html') %] <td>$m.member_level
+<tr><td>[% jump('NivÃ¥', '/topic/nivasystemet_for_paranormalse.html') %] <td>$m.member_level
 <tr><td>Medlem <td>$m.id
-<tr><td>Kön <td>
+<tr><td>KÃ¶n <td>
 [% IF m.gender == 'M' %]
    Man
 [% ELSIF m.gender == 'F' %]
@@ -53,11 +53,11 @@
 [% END %]
 
 [% IF m.bdate_ymd_year %]
-   <tr><td>Ålder <td>[% m.age %]
+   <tr><td>Ã…lder <td>[% m.age %]
 [% END %]
 [% IF m.home_online_email and m.newsmail > 0 and u.level > 5 %]
       <tr><td>E-post <td><a href="mailto:$m.home_online_email">$m.home_online_email</a>
-	([% jump('Skicka e-post', 'send_email.tt' mid=m.id) %] via formulär)
+	([% jump('Skicka e-post', 'send_email.tt' mid=m.id) %] via formulÃ¤r)
 [% ELSE %]
    [% IF m.newsmail > 2 or u.level > 40 or (m.newsmail > 0 and u.level > 5) %]
       <tr><td>E-post <td>[% jump('Skicka e-post', 'send_email.tt' mid=m.id) %]
@@ -65,9 +65,9 @@
 [% END %]
 
 [% IF u.level >= 41 %]
-      <tr><td>[% jump("Primär e-post", "../edit/email.tt", mid=mid) %]
+      <tr><td>[% jump("PrimÃ¤r e-post", "../edit/email.tt", mid=mid) %]
           <td><a href="mailto:$m.sys_email.as_string">$m.sys_email.as_string</a>
-      <tr><td>Mängd e-post         <td>$m.newsmail
+      <tr><td>MÃ¤ngd e-post         <td>$m.newsmail
       <tr><td>[% jump("Anonymitet", "../edit/privacy.tt", mid=mid) %]
           <td>$m.present_contact
       <tr><td>[% jump("Publik anonymitet", "../edit/privacy.tt", mid=mid) %]
@@ -139,8 +139,8 @@
 
 [% mt = m.topic %]
 [% IF 0 %]
-   <p>[% jump("Skriv i gästboken", "/member/db/topic/guestbook/add.tt", tid=mt.id) %]
-   <p>[% jump("Se gästboken", "/member/db/topic/guestbook/", tid=mt.id) %]
+   <p>[% jump("Skriv i gÃ¤stboken", "/member/db/topic/guestbook/add.tt", tid=mt.id) %]
+   <p>[% jump("Se gÃ¤stboken", "/member/db/topic/guestbook/", tid=mt.id) %]
 [% END %]
 
 
@@ -149,12 +149,12 @@
 
    [% pm = members.get_by_nickname(nick) %]
    [% IF pm %]
-      <p>Se [% jump(pm.name, me, mid=pm.id) %], som har detta användarnamn</p>
+      <p>Se [% jump(pm.name, me, mid=pm.id) %], som har detta anvÃ¤ndarnamn</p>
    [% END %]
 
 
    <table>
-   <tr><th>Användarnamn <th>Namn <th>Uppslagsord <th>Senast sedd
+   <tr><th>AnvÃ¤ndarnamn <th>Namn <th>Uppslagsord <th>Senast sedd
    [% FOREACH m IN found_members %]
       [% tr2 %]
       <td>[% jump(m.nickname, me, mid=m.id, href_class='msg') %]
@@ -167,7 +167,7 @@
 
 [% BLOCK member_not_found %]
    <h1>Jag hittar ingen <code>[% nick %]</code></h1>
-   <p>Sök igen: [% input('nick') %] [% go('Sök', me) %]</p>
+   <p>SÃ¶k igen: [% input('nick') %] [% go('SÃ¶k', me) %]</p>
 [% END %]
 
 <p>[% step %]

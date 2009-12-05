@@ -1,10 +1,10 @@
 [% META
-	title = 'Denna runda är klar'
+	title = 'Denna runda Ã¤r klar'
 	default_template = 'focus.tt'
 	level = 5
 %]
 
-<p>Det var allt för denna rundan. (Det här systemet är under
-utveckling.  Det är inte så mycket du kan göra ännu...)</p>
+<p>Det var allt fÃ¶r denna rundan. (Det hÃ¤r systemet Ã¤r under
+utveckling.  Det Ã¤r inte sÃ¥ mycket du kan gÃ¶ra Ã¤nnu...)</p>
 
 [% step %]

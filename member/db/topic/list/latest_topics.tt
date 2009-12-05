@@ -1,4 +1,4 @@
-[% META title="Senast uppdaterade ‰mnena (ej r‰knat texter)"
+[% META title="Senast uppdaterade √§mnena (ej r√§knat texter)"
 %]
 
 [% 
@@ -14,7 +14,7 @@
 [% recs = cached_select_list("select t FROM t WHERE t_status=4 AND t_entry IS FALSE AND t_published IS TRUE ORDER BY t_updated DESC limit 100") %]
 [% recs.set_page_size(step) %]
 
-<p align="center">[% recs.size %] tr‰ffar</p>
+<p align="center">[% recs.size %] tr√§ffar</p>
 <p align="center">[%recs.pagelist %]</p>
 
 <div class="entry">

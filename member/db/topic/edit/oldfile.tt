@@ -14,7 +14,7 @@
    PROCESS buttons.tt;
 %]
 
-<h1>[% PROCESS tlink_ver.tt %]: Importerad från...</h1>
+<h1>[% PROCESS tlink_ver.tt %]: Importerad frÃ¥n...</h1>
 
 [% PROCESS topic_edit_menu.tt %]
 

@@ -5,16 +5,16 @@
      [%- level = 41 %]
   [%- END %]
   [%- IF m.level < -1 and u.level < 41;
-         THROW denied "Det här är en zombie.\nEndast en livbringare kan uttyda något ur mörkret som råder här.";
+         THROW denied "Det hÃ¤r Ã¤r en zombie.\nEndast en livbringare kan uttyda nÃ¥got ur mÃ¶rkret som rÃ¥der hÃ¤r.";
       END;
   %]
   [%- IF m.present_contact < 2 and u.level < 41; m.nickname = 'Anonym'; END %]
   [%- THROW notfound "$mid existerar inte" IF m.present_contact < 1 and mid != u.id and u.level < 41 %]
   [%- IF level > 40 %]
-     [%- DEFAULT reason = "$m.nickname har valt att dölja sina uppgifter\n" %]
+     [%- DEFAULT reason = "$m.nickname har valt att dÃ¶lja sina uppgifter\n" %]
   [%- END %]
   <input type="hidden" name="mid" value="$m.id">
   [%- IF (u.level < level) and (u.id != mid);
-        THROW denied "$reason\nDu måste vara inloggad som $m.nickname\neller vara minst nivå $level för att se denna sida";
+        THROW denied "$reason\nDu mÃ¥ste vara inloggad som $m.nickname\neller vara minst nivÃ¥ $level fÃ¶r att se denna sida";
      END
   %]

@@ -1,5 +1,5 @@
 [% META
-	title = 'Ämnen'
+	title = 'Ã„mnen'
 	next_template = 'name.tt'
 	next_action = 'interest_update_multi'
 	level = 2
@@ -8,14 +8,14 @@
 
 [% PROCESS load_member.tt %]
 
-<p>Här är de huvudkategorier av ämnen som behandlas på
-<code>paranormal.se</code>.  Tänk dig att du spenderar 20 timmar om
-dagen med att studera och lära dig det du är intresserad av.  Om du är
+<p>HÃ¤r Ã¤r de huvudkategorier av Ã¤mnen som behandlas pÃ¥
+<code>paranormal.se</code>.  TÃ¤nk dig att du spenderar 20 timmar om
+dagen med att studera och lÃ¤ra dig det du Ã¤r intresserad av.  Om du Ã¤r
 mycket intresserad av Parapsykologi kommer du inte att ha lika mycket
-tid för att lära dig Magi, och vice versa.  Här nedan måste du
-<strong>prioritera</strong> vad du är extra intresserad av.  Om allt
-är lika intressant bör du placera dina svar någonstans i mitten. Några
-svar bör ligga mellan 1-3 och några mellan 4-6.</p>
+tid fÃ¶r att lÃ¤ra dig Magi, och vice versa.  HÃ¤r nedan mÃ¥ste du
+<strong>prioritera</strong> vad du Ã¤r extra intresserad av.  Om allt
+Ã¤r lika intressant bÃ¶r du placera dina svar nÃ¥gonstans i mitten. NÃ¥gra
+svar bÃ¶r ligga mellan 1-3 och nÃ¥gra mellan 4-6.</p>
 
 [% hr %]
 

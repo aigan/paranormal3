@@ -23,11 +23,11 @@
 <p>
 <input type="submit" name="do_move_branch" value="Flytta gren">
 <input type="submit" name="do_move_node" value="Flytta nod">
-<input type="submit" name="do_add" value="Lägg till">
+<input type="submit" name="do_add" value="LÃ¤gg till">
 <!--
 <input type="submit" name="do_delete" value="Ta bort">
 <input type="submit" name="do_split" value="Dela upp">
-<input type="submit" name="do_merge" value="Slå samman">
+<input type="submit" name="do_merge" value="SlÃ¥ samman">
 -->
 [%+ backstep %]
 [%+ regret %]
@@ -47,21 +47,21 @@
 [% WRAPPER instruction %]
 <p>Kryssa i den/de texter du vill flytta.  Pricka i den plats dit du vill flytta texten.</p>
 
-<p>En gren innefattar alla följande och undervarande texter. (Fram
-till eventuell HR på samma nivå.)</p>
+<p>En gren innefattar alla fÃ¶ljande och undervarande texter. (Fram
+till eventuell HR pÃ¥ samma nivÃ¥.)</p>
 
-<p>En gren kan inte flyttas till en plats på den gren som flyttas.
-Flytta nod för att plocka ut en text från en gren som ska placeras på
+<p>En gren kan inte flyttas till en plats pÃ¥ den gren som flyttas.
+Flytta nod fÃ¶r att plocka ut en text frÃ¥n en gren som ska placeras pÃ¥
 annan plats.</p>
 
-<p>"\ O" används om du vill placera en text under ovanstående del,
-utan att ange ordning bland de andra texterna på samma nivå.  För de
-fall då de inte hör ihop.</p>
+<p>"\ O" anvÃ¤nds om du vill placera en text under ovanstÃ¥ende del,
+utan att ange ordning bland de andra texterna pÃ¥ samma nivÃ¥.  FÃ¶r de
+fall dÃ¥ de inte hÃ¶r ihop.</p>
 
-<p>HR (horisontell avgränsare) används för att visa att de två
-texterna är undertext till samma övertext, men de har inte en
-innebördes ordning.  Det skulle exempelvis kunna röra sig om två
-kommentarer till samma text, snarare än en kommentar som fortsätter
+<p>HR (horisontell avgrÃ¤nsare) anvÃ¤nds fÃ¶r att visa att de tvÃ¥
+texterna Ã¤r undertext till samma Ã¶vertext, men de har inte en
+innebÃ¶rdes ordning.  Det skulle exempelvis kunna rÃ¶ra sig om tvÃ¥
+kommentarer till samma text, snarare Ã¤n en kommentar som fortsÃ¤tter
 med ny rubrik.</p>
 [% END %]
 
@@ -73,7 +73,7 @@ med ny rubrik.</p>
          IF tfilter.include_inactive;
             RETURN;
          ELSE;
-            "<tr><td colspan='10'><p class='important'>Rekursionsfel:<br>$e.id förekommer flera gånger.<br>Städa ämnet!</p></td></tr>";
+            "<tr><td colspan='10'><p class='important'>Rekursionsfel:<br>$e.id fÃ¶rekommer flera gÃ¥nger.<br>StÃ¤da Ã¤mnet!</p></td></tr>";
             RETURN;
          END;
       END;
@@ -139,7 +139,7 @@ med ny rubrik.</p>
    -
    [%+ e.outline | html %]
    [%# warn("$indent> $e.id\n") %]
-   <span style="font-size: small; vertical-align: text-middle;">- [% jump('ändra', '/member/db/topic/edit/text.tt', tid=e.id) %]</span>
+   <span style="font-size: small; vertical-align: text-middle;">- [% jump('Ã¤ndra', '/member/db/topic/edit/text.tt', tid=e.id) %]</span>
    </td></tr>
 [% END %]
 

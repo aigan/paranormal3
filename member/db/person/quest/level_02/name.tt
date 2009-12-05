@@ -9,15 +9,15 @@
 
 [% PROCESS load_member.tt %]
 
-<p>För att medlemsregistret ska vara användbart är det viktigt att
-veta vem som är vem.  Vi vill därför att du här anger ditt
+<p>FÃ¶r att medlemsregistret ska vara anvÃ¤ndbart Ã¤r det viktigt att
+veta vem som Ã¤r vem.  Vi vill dÃ¤rfÃ¶r att du hÃ¤r anger ditt
 <strong>verkliga</strong> namn.</p>
 
-<p>Om du vill vara anonym går det bra att hoppa över denna sida.</p>
+<p>Om du vill vara anonym gÃ¥r det bra att hoppa Ã¶ver denna sida.</p>
 
 <table>
   <tr>
-    <td>Förnamn</td>
+    <td>FÃ¶rnamn</td>
     <td>[% input('name_given', m.name_given) %]</td>
     <td>(Tilltalsnamn)</td>
   </tr>
@@ -28,8 +28,8 @@ veta vem som är vem.  Vi vill därför att du här anger ditt
   </tr>
 </table>
 
-<p>(Kom ihåg att alla uppgifter kommer att vara mer eller mindre
-sökbara för allmänheten.  Du kommer senare ha möjlighet att ändra och
+<p>(Kom ihÃ¥g att alla uppgifter kommer att vara mer eller mindre
+sÃ¶kbara fÃ¶r allmÃ¤nheten.  Du kommer senare ha mÃ¶jlighet att Ã¤ndra och
 komplettera uppgifterna.)</p>
 
  [% step %]

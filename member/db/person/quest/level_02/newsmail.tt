@@ -1,5 +1,5 @@
 [% META
-	title = 'E-postmängd'
+	title = 'E-postmÃ¤ngd'
 	next_template = 'topics.tt'
 	next_action = 'member_update'
 	level = 2
@@ -11,15 +11,15 @@
 <p>Hur mycket e-post vill du ha?
 
 <p>Vi kommer att skicka ut anpassade nyhetsbrev, information etc.  Vi
-bedömer hur intressant nyheten är just för dig.  Kanske du bara vill
-ha det mest intressanta eller kanske föredrar du att få mer e-post och
-solla själv?
+bedÃ¶mer hur intressant nyheten Ã¤r just fÃ¶r dig.  Kanske du bara vill
+ha det mest intressanta eller kanske fÃ¶redrar du att fÃ¥ mer e-post och
+solla sjÃ¤lv?
 
 <p><input type="radio" name="newsmail" value="1"[% ' checked' IF m.newsmail == 1 %]>
-Ett par gånger om året
+Ett par gÃ¥nger om Ã¥ret
 
 <br><input type="radio" name="newsmail" value="2"[% ' checked' IF m.newsmail == 2 %]>
-Varje månad
+Varje mÃ¥nad
 
 
 <br><input type="radio" name="newsmail" value="3"[% ' checked' IF m.newsmail == 3 or 

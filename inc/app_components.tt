@@ -31,7 +31,7 @@
 [% BLOCK draw_valuelist %]
   <h3>[% title || field %]</h3>
   <p>$content
-  <p><em><small>Detta är en lista av värden, där varje värde står på en egen rad.</small></em><br>
+  <p><em><small>Detta Ã¤r en lista av vÃ¤rden, dÃ¤r varje vÃ¤rde stÃ¥r pÃ¥ en egen rad.</small></em><br>
   <textarea cols="40" rows="4" name="$field">[%
   IF enumerate;
      FOREACH rec = list;
@@ -110,7 +110,7 @@
    [% DEFAULT label = "Instruktion" %]
 <div><a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');" id="fid_[% formcount %]_label" style="display:[% label_display %]">Visa [% label %]...</a></div>
 <div id="fid_$formcount" style="display:$display">
-<a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');">Dölj [% label %]...</a>
+<a href="javascript:showhide('fid_[% formcount %]');showhide('fid_[% formcount %]_label');">DÃ¶lj [% label %]...</a>
 $content
 </div>
 [% END %]

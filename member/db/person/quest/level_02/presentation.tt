@@ -15,27 +15,27 @@
 
 <p><input type="button" value="Snabbspara" OnClick="javascript:document.f.action='presentation.tt'; document.f.done_presentation.value=0; document.f.submit()" class="msg">
 eller
-[%+ submit("Klar!") %] <- Klicka <em>klar</em> när du är färdig med din presentation.
+[%+ submit("Klar!") %] <- Klicka <em>klar</em> nÃ¤r du Ã¤r fÃ¤rdig med din presentation.
 
-<p class="important">Du blev medlem när du valde ditt namn. Du behöver dock inte vara medlem eller ens logga in för att se uppslagsverket. Men för att komma åt det stora medlemsregistret behöver du en godkänd presentation. Utan en sådan kommer ditt medlemskap att raderas efter ett par månaders inaktivitet från din sida.</p>
+<p class="important">Du blev medlem nÃ¤r du valde ditt namn. Du behÃ¶ver dock inte vara medlem eller ens logga in fÃ¶r att se uppslagsverket. Men fÃ¶r att komma Ã¥t det stora medlemsregistret behÃ¶ver du en godkÃ¤nd presentation. Utan en sÃ¥dan kommer ditt medlemskap att raderas efter ett par mÃ¥naders inaktivitet frÃ¥n din sida.</p>
 
-<p>Det här är sista steget. Du kommer inte vidare förrän du skrivit en
-ganska lång presentation av dig själv.  Skriv <strong>inte</strong>
-vad du heter, hur du ser ut, hur gammal du är, var du bor, etc. (De
-sakerna har du redan svarat på.) Använd <strong>inte</strong> HTML.
+<p>Det hÃ¤r Ã¤r sista steget. Du kommer inte vidare fÃ¶rrÃ¤n du skrivit en
+ganska lÃ¥ng presentation av dig sjÃ¤lv.  Skriv <strong>inte</strong>
+vad du heter, hur du ser ut, hur gammal du Ã¤r, var du bor, etc. (De
+sakerna har du redan svarat pÃ¥.) AnvÃ¤nd <strong>inte</strong> HTML.
 Ha en tomrad mellan varje stycke. (<strong>Inte</strong> varje rad.)</p>
 
-<p>Du kan skriva om varför du är intresserad av det paranormala.  Vad
-är det du vill lära dig?  Vad söker du?  Skriv gärna också vad det är
-som definierar dig som människa. Exempelvis jobb, familj,
+<p>Du kan skriva om varfÃ¶r du Ã¤r intresserad av det paranormala.  Vad
+Ã¤r det du vill lÃ¤ra dig?  Vad sÃ¶ker du?  Skriv gÃ¤rna ocksÃ¥ vad det Ã¤r
+som definierar dig som mÃ¤nniska. Exempelvis jobb, familj,
 fitidsintressen, etc.</p>
 
 <p>Var uppriktig och sanningsenlig. Vi kommer att kontrollera dina
-uppgifter. Anledningen till kontrollen är att sortera bort de riktigt
-oseriösa registreringar.  Du behöver dock inte vara orolig över att ha
-<em>fel</em> intressen eller åsikter.</p>
+uppgifter. Anledningen till kontrollen Ã¤r att sortera bort de riktigt
+oseriÃ¶sa registreringar.  Du behÃ¶ver dock inte vara orolig Ã¶ver att ha
+<em>fel</em> intressen eller Ã¥sikter.</p>
 
-<p>(Tänk på att snabbspara lite då och då.  Om datorn krachar förlorar
-du inte allt du skrivit.  Om du vill kan du fortsätta i morgon eller
-nästa gång du loggar in.)</p>
+<p>(TÃ¤nk pÃ¥ att snabbspara lite dÃ¥ och dÃ¥.  Om datorn krachar fÃ¶rlorar
+du inte allt du skrivit.  Om du vill kan du fortsÃ¤tta i morgon eller
+nÃ¤sta gÃ¥ng du loggar in.)</p>
 

@@ -22,11 +22,11 @@
 [ [% jump('Lagom', me, mid=m.id) %]
 | [% jump('Flera', me, max=25, cutof=75, mid=m.id) %]
   [% IF m.equals(u) %]
-| [% jump('Visa detaljlista för intressena', '/member/db/person/edit/interest.tt') %]
+| [% jump('Visa detaljlista fÃ¶r intressena', '/member/db/person/edit/interest.tt') %]
   [% END %]
 ]</p>
 
-<p>Klicka på siffran för att säga hur intresserad du själv är i ämnet</p>
+<p>Klicka pÃ¥ siffran fÃ¶r att sÃ¤ga hur intresserad du sjÃ¤lv Ã¤r i Ã¤mnet</p>
 
 [% interests = m.interests.summary( max, cutof ) %]
 

@@ -9,9 +9,9 @@
 [% PROCESS load_member.tt %]
 <p align="right">Steg 9 av 10</p>
 
-<p>Hur kan andra medlemmar få tag på dig?</p>
+<p>Hur kan andra medlemmar fÃ¥ tag pÃ¥ dig?</p>
 
-<p>Den e-postadress du tidigare angivit är hemlig.  Här anger du den
+<p>Den e-postadress du tidigare angivit Ã¤r hemlig.  HÃ¤r anger du den
 adress du vill sprida till andra.  Om du vill kan du "spam-skydda"
 adressen.</p>
 

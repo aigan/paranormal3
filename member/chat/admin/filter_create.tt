@@ -7,18 +7,18 @@
 [% PROCESS chat_menu.tt %]
 
 <table>
-<tr><td>Mönster   <td>[% input('pattern') %]
+<tr><td>MÃ¶nster   <td>[% input('pattern') %]
 <tr><td>Anledning <td>[% input('reason') %]
-<tr><td>Utgår     <td>[% input('expire') %]
+<tr><td>UtgÃ¥r     <td>[% input('expire') %]
 </table>
 
 [% submit %]
 
 [% hr %]
 
-<p>Mönster är i formen <code>111.222.333.444</code> eller
+<p>MÃ¶nster Ã¤r i formen <code>111.222.333.444</code> eller
 <code>111.222.333.*</code></p>
 
-<p>När IP matchas spärras personen från cgi-chatten ifall han inte är
-inloggad.  För att spärra en inloggad medlem, placera medlemmen på
+<p>NÃ¤r IP matchas spÃ¤rras personen frÃ¥n cgi-chatten ifall han inte Ã¤r
+inloggad.  FÃ¶r att spÃ¤rra en inloggad medlem, placera medlemmen pÃ¥
 svarta listan.</p>

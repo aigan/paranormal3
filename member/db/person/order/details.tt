@@ -1,4 +1,4 @@
-[% META otitle="Best‰llningshistoria"
+[% META otitle="Best√§llningshistoria"
 	level = 5
 %]
 
@@ -7,7 +7,7 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Best‰llningshistoria: [% m.tlink %]</h1>
+<h1>Best√§llningshistoria: [% m.tlink %]</h1>
 
 [% keep = ['pid'] %]
 [% PROCESS person_view_menu.tt %]
@@ -32,12 +32,12 @@
 <div class="entry">
 <table>
 <tr><td>ID        <td>[% p.id %]
-<tr><td>Best‰lld  <td>[% p.order_date %]
+<tr><td>Best√§lld  <td>[% p.order_date %]
 <tr><td>Faktura   <td>[% p.invoice_date %]
 <tr><td>Betald    <td>[% p.payment_date %]
 <tr><td>Loggad    <td>[% p.log_date %]
 <tr><td>Medlem    <td>[% p.member.tlink %]
-<tr><td>Fˆretag   <td>[% IF p.company; p.company.link; END %]
+<tr><td>F√∂retag   <td>[% IF p.company; p.company.link; END %]
 <tr><td>Produkt   <td>[% p.product.link %]
 <tr><td>Pris      <td>[% p.price %] kr
 <tr><td>Varav moms<td>[% p.vat %] kr

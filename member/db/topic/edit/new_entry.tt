@@ -18,15 +18,15 @@
 
 [% WRAPPER instruction %]
    <p>
-     Observera att texter bör skrivas på speciellt sätt.  En text
+     Observera att texter bÃ¶r skrivas pÃ¥ speciellt sÃ¤tt.  En text
      skall behandla precis EN sak, delas upp i lagom stora delar.
-     Rubriker skapas för texten i efterhand, underrubriker görs genom
-     att lägga det som hör till underrubriken som en separat text och
-     därefter använda dispositionsverktyget för att lägga den som
-     under-text.  <strong>Skapa inga rubriker här</strong>.
+     Rubriker skapas fÃ¶r texten i efterhand, underrubriker gÃ¶rs genom
+     att lÃ¤gga det som hÃ¶r till underrubriken som en separat text och
+     dÃ¤refter anvÃ¤nda dispositionsverktyget fÃ¶r att lÃ¤gga den som
+     under-text.  <strong>Skapa inga rubriker hÃ¤r</strong>.
    </p>
    <p>
-     Se <a href="/topic/riktlinjer_for_skrivande_av_texter_till_paranormalse.html">Riktlinjer för skrivande av texter</a>.
+     Se <a href="/topic/riktlinjer_for_skrivande_av_texter_till_paranormalse.html">Riktlinjer fÃ¶r skrivande av texter</a>.
    </p>
 [% END %]
 

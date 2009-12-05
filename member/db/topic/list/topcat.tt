@@ -15,20 +15,20 @@
 </div>
 
 [% WRAPPER instruction %]
-<p>Dessa kategorier är tänkt att utgöra basen för ett träd av ämnen.
-Man ska kunna klicka sig fram till intressanta ämnen ungefär som i <a
+<p>Dessa kategorier Ã¤r tÃ¤nkt att utgÃ¶ra basen fÃ¶r ett trÃ¤d av Ã¤mnen.
+Man ska kunna klicka sig fram till intressanta Ã¤mnen ungefÃ¤r som i <a
 href="http://directory.google.com/" target="google">Google Web
 Directory</a>.
 
-<p>Alla ämnen ska vara underämne till en eller flera av dessa
-kategorier.  Senare förfinar vi trädet så att vi får fler
-nivåer. Kanske runt 4 nivåer kan vara lagom i gemonsnitt?  Förrutom
-dessa huvudkategorier får vi väl ha lista över personer, grupper,
-böcker, filmer, etc.
+<p>Alla Ã¤mnen ska vara underÃ¤mne till en eller flera av dessa
+kategorier.  Senare fÃ¶rfinar vi trÃ¤det sÃ¥ att vi fÃ¥r fler
+nivÃ¥er. Kanske runt 4 nivÃ¥er kan vara lagom i gemonsnitt?  FÃ¶rrutom
+dessa huvudkategorier fÃ¥r vi vÃ¤l ha lista Ã¶ver personer, grupper,
+bÃ¶cker, filmer, etc.
 
-<p>Kategorin <code>Underhållning</code> hette tidigare
-<code>Mystik</code>.  Den är tänkt att innefatta det som är "Coolt".
-Dvs sådant som folk utan "seriöst intresse" kan tycka är
-underhållande.  Vad vill en person läsa om hon/han är ung och gillar
-skräckfilmer?
+<p>Kategorin <code>UnderhÃ¥llning</code> hette tidigare
+<code>Mystik</code>.  Den Ã¤r tÃ¤nkt att innefatta det som Ã¤r "Coolt".
+Dvs sÃ¥dant som folk utan "seriÃ¶st intresse" kan tycka Ã¤r
+underhÃ¥llande.  Vad vill en person lÃ¤sa om hon/han Ã¤r ung och gillar
+skrÃ¤ckfilmer?
 [% END %]

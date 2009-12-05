@@ -1,4 +1,4 @@
-[% META title="Uppdatera beställning"
+[% META title="Uppdatera bestÃ¤llning"
         next_template = "details.tt"
 	next_action  = "payment_update"
 	level = 42
@@ -12,25 +12,25 @@
 [% PROCESS payment_menu.tt %]
 
 [% product_list = {} %]
-[% FOREACH product IN topic(422155).rev_arcs('är') %]
+[% FOREACH product IN topic(422155).rev_arcs('Ã¤r') %]
    [% product_list.${product.subj.id} = product.subj.desig %]
 [% END %]
 
 [% method_list = {} %]
-[% FOREACH method IN topic(422433).rev_arcs('är') %]
+[% FOREACH method IN topic(422433).rev_arcs('Ã¤r') %]
    [% method_list.${method.subj.id} = method.subj.desig %]
 [% END %]
 
 <div class="entry">
 <table align="left">
 <tr><td>ID        <td>[% p.id; hidden('pid', p.id) %]
-<tr><td>Beställd     <td>[% input('order_date', p.order_date) %]
+<tr><td>BestÃ¤lld     <td>[% input('order_date', p.order_date) %]
 <tr><td>Faktura     <td>[% input('invoice_date', p.invoice_date) %]
 <tr><td>Betald     <td>[% input('payment_date', p.payment_date) %]
 <tr><td>Loggad     <td>[% input('log_date', p.log_date) %]
 
 <tr><td>Medlem    <td>[% input('nickname', m.nickname) %]
-<tr><td>Företag   <td>[% input('company', p.company.sysdesig) %]
+<tr><td>FÃ¶retag   <td>[% input('company', p.company.sysdesig) %]
 <tr><td>Produkt   <td>[% select('product', p.product.id, product_list) %]
 <tr><td>Pris      <td>[% input('price', p.price) %] kr
 <tr><td>varav moms<td>[% input('vat', p.vat) %] kr

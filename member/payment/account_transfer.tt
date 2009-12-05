@@ -1,28 +1,28 @@
-[% META	otitle = "Gåvor till Paranormal.se: Insättning på konto"
+[% META	otitle = "GÃ¥vor till Paranormal.se: InsÃ¤ttning pÃ¥ konto"
 %]
 
 <h1><a href="/member/payment/"><img src="/images/icon/arrow.gif" alt=
-      "Meny"></a> Gåvor till Paranormal.se: Insättning på konto</h1>
+      "Meny"></a> GÃ¥vor till Paranormal.se: InsÃ¤ttning pÃ¥ konto</h1>
 
 [% PROCESS payment_menu.tt %]
 
-<p>Skicka mig ett meddelande när ni sätter in pengar på kontot.</p>
+<p>Skicka mig ett meddelande nÃ¤r ni sÃ¤tter in pengar pÃ¥ kontot.</p>
 
-<p>Nedan är kontonummer till Paranormal Sweden. Det här är inte
-postgiro och inte bankgiro. Det är ett kontonummer på
-<em>Föreningssparbanken</em>.</p>
+<p>Nedan Ã¤r kontonummer till Paranormal Sweden. Det hÃ¤r Ã¤r inte
+postgiro och inte bankgiro. Det Ã¤r ett kontonummer pÃ¥
+<em>FÃ¶reningssparbanken</em>.</p>
 
 <p class="important">
 Clearingnummer 8105-9, kontonummer 974.929.868-4 : Paranormal Sweden
 </p>
 
-<p>Det blir mycket enklare för mig om ni [% jump("använder paynova",
-"paynova.tt") %].  Men även [% jump("bankgiro", "/member/payment/") %]
-är bättre eftersom ni oftast då kan lämna ett meddelande till mig vid
-insättning (via internetbank, såvida ni inte själv använder
-Föreningssparbanken.</p>
+<p>Det blir mycket enklare fÃ¶r mig om ni [% jump("anvÃ¤nder paynova",
+"paynova.tt") %].  Men Ã¤ven [% jump("bankgiro", "/member/payment/") %]
+Ã¤r bÃ¤ttre eftersom ni oftast dÃ¥ kan lÃ¤mna ett meddelande till mig vid
+insÃ¤ttning (via internetbank, sÃ¥vida ni inte sjÃ¤lv anvÃ¤nder
+FÃ¶reningssparbanken.</p>
 
-<p>I samband med gåvor eller liknande, skicka ett meddelande via
+<p>I samband med gÃ¥vor eller liknande, skicka ett meddelande via
 e-post eller snigelpost.</p>
 
 <p>E-post: <em><a href="mailto:info@paranormal.se">info@paranormal.se</a></em></p>
@@ -30,8 +30,8 @@ e-post eller snigelpost.</p>
 <p>Snigelpost:<br>
 Paranormal Sweden<br>
 c/o Jonas Liljegren<br>
-Parmmätaregatan 10<br>
-S-417 04  Göteborg
+ParmmÃ¤taregatan 10<br>
+S-417 04  GÃ¶teborg
 </p>
 
 <p>Telefon: 070-670 85 68</p>

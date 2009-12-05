@@ -1,11 +1,11 @@
 [% META
-	otitle = 'Aktiva versioner av ändrade texter'
+	otitle = 'Aktiva versioner av Ã¤ndrade texter'
 	level = 5
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Aktiva versioner av ändrade texter: [% m.tlink %]</h1>
+<h1>Aktiva versioner av Ã¤ndrade texter: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 [% PROCESS person_activity_menu.tt %]

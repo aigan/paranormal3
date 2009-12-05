@@ -14,7 +14,7 @@
          <p class="slogan">A Swedish encyclopedia about Paranormal Phenomena</p>
       [% ELSE %]
          <h1><a href="/">Paranormal.se</a></h1>
-         <p class="slogan">Uppslagsverk för paranormala fenomen</p>
+         <p class="slogan">Uppslagsverk fÃ¶r paranormala fenomen</p>
       [% END %]
 
       <hr>
@@ -46,12 +46,12 @@
       </div>
 
       [% UNLESS t.arc('slut') %]
-      [% UNLESS t.has_rel(28); # Tillåtelse %]
+      [% UNLESS t.has_rel(28); # TillÃ¥telse %]
       <div class="entry">
          [% IF eng %]
             <p>This is the listing of <em>[% t.title %]</em> from the <a href="/">Paranormal.se encyclopedia</a>. This is an unofficial web page. <strong>Paranormal.se doesn not represent this group.</strong></p>
          [% ELSE %]
-            <p>Detta är uppslagsordet för <em>[% t.title %]</em>. <strong><a href="/">Paranormal.se</a> representerar inte denna grupp / [% t.type_list.first.link %].</strong></p>
+            <p>Detta Ã¤r uppslagsordet fÃ¶r <em>[% t.title %]</em>. <strong><a href="/">Paranormal.se</a> representerar inte denna grupp / [% t.type_list.first.link %].</strong></p>
          [% END %]
       </div>
       [% END %]
@@ -59,7 +59,7 @@
       [% FOREACH ts = select_list("from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'text/%' order by t_title", t.id) %]
          [% IF loop.first %]
          <div class="entry">
-            <h2>Besök</h2>
+            <h2>BesÃ¶k</h2>
          [% END %]
          <h2>[% jump(ts.t_title, ts.media_url, href_target="media") %]</h2>
 	 <p class="attatched">[% jump(ts.media_url, ts.media_url, href_target="media") %]</p>

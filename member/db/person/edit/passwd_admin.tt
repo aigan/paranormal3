@@ -1,13 +1,13 @@
 [% META
-	otitle = 'Inställningar - Lösenord'
+	otitle = 'InstÃ¤llningar - LÃ¶senord'
 	next_action = 'member_passwd_update'
 	level = 41
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - Lösenord: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - LÃ¶senord: [% m.tlink %]</h1>
 
-<p>Skriv in det nya lösenordet: [% input("passwd") %]
+<p>Skriv in det nya lÃ¶senordet: [% input("passwd") %]
 
 <p>[% step %]

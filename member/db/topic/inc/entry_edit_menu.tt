@@ -5,7 +5,7 @@
 %]
 
 <p>
-[ [% jump('L‰s', "$base/view/", tid=tid, v=v) +%]
+[ [% jump('L√§s', "$base/view/", tid=tid, v=v) +%]
 | [% jump('Metadata', "$base/edit/meta.tt", tid=tid, v=v) +%]
 | [% jump('Versioner', "$base/edit/versions.tt", tid=tid, v=v) +%]
 | [% jump('Skriv', "$base/edit/text.tt", tid=tid, v=v) +%]
@@ -14,7 +14,7 @@
 | [% jump('Flytta', "$base/edit/move.tt", tid=tid, v=v) +%]
 | [% jump('Disposition', "$base/edit/outline.tt", tid=tid, v=v) +%]
 [% END %]
-| [% jump('Bokm‰rka', me, tid=tid, v=v) +%]
+| [% jump('Bokm√§rka', me, tid=tid, v=v) +%]
 ]
 
 [% IF edit_arcs %] <br>
@@ -32,7 +32,7 @@
    hidden('include_indirect', tfilter.include_indirect);
    hidden('include_rev', tfilter.include_rev);
 %]
-Visa ‰ven
+Visa √§ven
 [ 
 [%
 IF tfilter.include_inactive;
@@ -54,9 +54,9 @@ ELSE;
 END;
 ' | ';
 IF tfilter.include_rev;
-   jump('omv‰nda', me, keep_params=keep, href_class='selected', include_rev=0);
+   jump('omv√§nda', me, keep_params=keep, href_class='selected', include_rev=0);
 ELSE;
-   jump('omv‰nda', me, keep_params=keep, include_rev=1);
+   jump('omv√§nda', me, keep_params=keep, include_rev=1);
 END;
 %]
 ]

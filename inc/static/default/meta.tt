@@ -2,7 +2,7 @@
 [% PROCESS topic/button_interest.tt %]
 
 <span class="meta">
-   Ämne [% entry.id %], v$entry.ver
+   Ã„mne [% entry.id %], v$entry.ver
    - Status: [% PROCESS topic_status.tt t_status=entry.status %].
    <br />
 </span>

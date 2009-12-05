@@ -1,12 +1,12 @@
 [% META title="Avbrutet" %]
 
-<p>Du avbröt innan några pengar skickades.
+<p>Du avbrÃ¶t innan nÃ¥gra pengar skickades.
 
 <ul>
 
-<li>Du kanske vill [% jump('börja om och justera värde eller längd', '/member/payment/paynova.tt') %]?
+<li>Du kanske vill [% jump('bÃ¶rja om och justera vÃ¤rde eller lÃ¤ngd', '/member/payment/paynova.tt') %]?
 
-<li>[% jump('Välja en annan betalmetod', '/member/payment/') %]?
+<li>[% jump('VÃ¤lja en annan betalmetod', '/member/payment/') %]?
 
 <li>Eller vill du [% jump('Skicka oss en kommentar', '/member/mail.cgi?G&aring;va') %]?
 

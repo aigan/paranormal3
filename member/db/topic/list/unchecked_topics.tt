@@ -1,4 +1,4 @@
-[% META title="Ämnen att kontrollera"
+[% META title="Ã„mnen att kontrollera"
         level = 11
 %]
 
@@ -10,7 +10,7 @@
 
 <div class="entry">
 <table>
-   <tr><th>A</th><th>S</th><th>T</th><th>Ver</th><th>Ämne</th><th>Är</th><th colspan="2">Skapad av</th></tr>
+   <tr><th>A</th><th>S</th><th>T</th><th>Ver</th><th>Ã„mne</th><th>Ã„r</th><th colspan="2">Skapad av</th></tr>
 [% FOREACH select_list("from t LEFT JOIN member ON t_createdby=member WHERE (t_status=2 or t_status=3) and t_entry is false order by t_active desc, t_status, t_updated") %]
    [% tr2 %]
       [% t = topic(t) %]
@@ -28,7 +28,7 @@
 </div>
 
 [% WRAPPER instruction %]
-<p>Se [% jump("hur väktare bedömer ämnen och texter", "/topic/hur_vaktare_bedommer_amnen_och_texter.html" ) %]</p>
+<p>Se [% jump("hur vÃ¤ktare bedÃ¶mer Ã¤mnen och texter", "/topic/hur_vaktare_bedommer_amnen_och_texter.html" ) %]</p>
 [% END %]
 
 <p>[% nostep %]

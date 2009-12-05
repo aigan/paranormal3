@@ -18,7 +18,7 @@
    [% END %]
    </div>
    [% IF t.arc(24).value %]
-      Besöksadress:
+      BesÃ¶ksadress:
       <div class="address">
       [%  t.arc(24).value %]
       </div>

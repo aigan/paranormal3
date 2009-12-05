@@ -5,7 +5,7 @@
 <ul>
 
 [% nov = select_record('select count(member) as cnt from member where member_level = 2 or member_level=3') %]
-<li>[% nov.cnt %] sökanden
+<li>[% nov.cnt %] sÃ¶kanden
 
 
 [% ord = select_record('select count(member) as cnt from member where member_level > 4 and member_level < 11') %]
@@ -13,19 +13,19 @@
 
 [% aka = select_record('select count(member)-1 as cnt from member where member_level > 10 and member > 0') %]
 
-<li>[% jump("$aka.cnt väktare", '/member/db/person/find/result.tt', _level_min=11) %]
+<li>[% jump("$aka.cnt vÃ¤ktare", '/member/db/person/find/result.tt', _level_min=11) %]
 
 [% pre1 = select_record('select count(member) as cnt from member where member > 0') %]
 <li>[% pre1.cnt %] medlemmar
 
 [% ta = select_record('select count(t) as cnt from t where t_entry is false and t_active is true') %]
-<li>[% ta.cnt %] ämnen
+<li>[% ta.cnt %] Ã¤mnen
 
 [% tns = select_record('select count(t) as cnt from t where t_active is true and t_text is null and t_entry is false and not exists (select 1 from media where media = t)') %]
-<li>[% jump("$tns.cnt ämnen utan kortbeskrivning", '/member/db/topic/list/no_description.tt') %]
+<li>[% jump("$tns.cnt Ã¤mnen utan kortbeskrivning", '/member/db/topic/list/no_description.tt') %]
 
 [% tnr = select_record('select count(t) as cnt from t main where t_active is true and t_entry is false and not exists (select 1 from rel where (rev=main.t or rel=main.t) and rel_active is true and rel_strength >= 30)') %]
-<li>[% jump("$tnr.cnt ämnen utan kopplingar", '/member/db/topic/list/no_relations.tt') %]
+<li>[% jump("$tnr.cnt Ã¤mnen utan kopplingar", '/member/db/topic/list/no_relations.tt') %]
 
 [% ea = select_record('select count(t) as cnt from t where t_entry is true and t_active is true') %]
 <li>[% ea.cnt %] texter
@@ -33,7 +33,7 @@
 [% aa = select_record('select count(talias) as cnt from talias where talias_active is true') %]
 <li>[% aa.cnt %] uppslagsord
 
-<li>[% jump('Besöksstatistik', '/webalizer/') %]
+<li>[% jump('BesÃ¶ksstatistik', '/webalizer/') %]
 
 [% cnt_online = members.count_currently_online %]
 <li>Vi har just nu [% cnt_online %] medlem[% 'mar' IF cnt_online > 1 %] online

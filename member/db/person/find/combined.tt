@@ -1,5 +1,5 @@
 [% META
-	title = 'Hitta medlemmar: Kombinerad sökning'
+	title = 'Hitta medlemmar: Kombinerad sÃ¶kning'
 	next_template = 'result.tt'
 	level = 5
 %]
@@ -22,7 +22,7 @@
 [% WRAPPER viewbox label='Tro' %]
 <p>
 [% radio('_belief', -1) %] Skeptiker<br>
-[% radio('_belief', 0) %] Både och<br>
+[% radio('_belief', 0) %] BÃ¥de och<br>
 [% radio('_belief', 1) %] Troende<br>
 </p>
 [% END %]
@@ -30,35 +30,35 @@
 [% WRAPPER viewbox label='Teori' %]
 <p>
 [% checkbox('_knowledge', 1) %] Kan<br>
-[% checkbox('_theory', 1) %] Vill lära<br>
+[% checkbox('_theory', 1) %] Vill lÃ¤ra<br>
 </p>
 [% END %]
 
 [% WRAPPER viewbox label="Praktik" %]
 <p>
 [% checkbox('_skill', 1) %] Kan<br>
-[% checkbox('_practice', 1) %] Vill lära<br>
+[% checkbox('_practice', 1) %] Vill lÃ¤ra<br>
 </p>
 [% END %]
 
 [% WRAPPER viewbox %]
 <p>
-[% checkbox('_bookmark', 1) %] Vill läsa<br>
-[% checkbox('_editor', 1) %] Redaktör<br>
+[% checkbox('_bookmark', 1) %] Vill lÃ¤sa<br>
+[% checkbox('_editor', 1) %] RedaktÃ¶r<br>
 [% checkbox('_discussion', 1) %] Vill diskutera<br>
-[% checkbox('_meeter', 1) %] Vill mötas<br>
+[% checkbox('_meeter', 1) %] Vill mÃ¶tas<br>
 [% checkbox('_experience', 1) %] har upplevt<br>
-[% checkbox('_helper', 1) %] Vill hjälpa<br>
+[% checkbox('_helper', 1) %] Vill hjÃ¤lpa<br>
 </p>
 [% END %]
 
 [% WRAPPER viewbox %]
 <p>Vill ha brev [% select("_newsmail", 2,
 {
-	'1' = "ett par gånger om året",
-	'2' = "varje månad",
+	'1' = "ett par gÃ¥nger om Ã¥ret",
+	'2' = "varje mÃ¥nad",
 	'3' = "varje vecka",
-	'4' = "ett par gånger i veckan",
+	'4' = "ett par gÃ¥nger i veckan",
 	'5' = "varje dag",
 	'6' = "hela tiden",
 }) %] eller mer
@@ -69,7 +69,7 @@
 <p>Bor inom 
 [% select("dist", "",
 {
-	''     = "7 ljusår",
+	''     = "7 ljusÃ¥r",
 	'0002' = "2 km",
 	'0005' = "5 km",
 	'0010' = "10 km",
@@ -87,7 +87,7 @@
 
 }) %]
 
-från
+frÃ¥n
 
 [% input("place", "mig", size=20) %]
 <br><small>(Ange person eller ort)</small>
@@ -96,16 +96,16 @@ från
 
 [% WRAPPER viewbox %]
 <table>
-<tr><td>Som minst   <td>[% input("_age_min", "", size="3") %] år    
-<tr><td>Som mest    <td>[% input("_age_max", "" size="3") %] år
-<tr><td>Lägst nivå  <td>[% input("_level_min", "" size="3") %]
-<tr><td>Högsta nivå <td>[% input("_level_max", "" size="3") %]
+<tr><td>Som minst   <td>[% input("_age_min", "", size="3") %] Ã¥r    
+<tr><td>Som mest    <td>[% input("_age_max", "" size="3") %] Ã¥r
+<tr><td>LÃ¤gst nivÃ¥  <td>[% input("_level_min", "" size="3") %]
+<tr><td>HÃ¶gsta nivÃ¥ <td>[% input("_level_max", "" size="3") %]
 </table>
 [% END %]
 
-[% WRAPPER viewbox label="Kön" %]
+[% WRAPPER viewbox label="KÃ¶n" %]
 <p>
-[% checkbox("_sex_m", 1) %] män<br>
+[% checkbox("_sex_m", 1) %] mÃ¤n<br>
 [% checkbox("_sex_f", 1) %] kvinnor<br>
 </p>
 [% END %]
@@ -118,7 +118,7 @@ från
 </p>
 [% END %]
 
-[% WRAPPER viewbox label="Presentationen innehåller" %]
+[% WRAPPER viewbox label="Presentationen innehÃ¥ller" %]
 <p>[% input('_presentation') %]</p>
 [% END %]
 
@@ -132,11 +132,11 @@ från
 </p>
 [% END %]
 
-[% WRAPPER viewbox label="Sortera på" %]
+[% WRAPPER viewbox label="Sortera pÃ¥" %]
 <p>
-[% radio("order", "dist", 'dist') %] Avstånd<br>
+[% radio("order", "dist", 'dist') %] AvstÃ¥nd<br>
 [% radio("order", "latest_in desc") %] Senast inloggad<br>
-[% radio("order", "member_level desc") %] Nivå<br>
+[% radio("order", "member_level desc") %] NivÃ¥<br>
 [% radio("order", "nickname") %] Namn<br>
 [% radio("order", "member") %] Mnr<br>
 [% END %]
@@ -163,7 +163,7 @@ från
 	'00050' = 50,
 }) %]	
 [% END +%]
-träffar
+trÃ¤ffar
 </p>
 [% END %]
 <br clear="all">

@@ -1,12 +1,12 @@
    [% IF t.parent %]
-      <p>(Den h‰r texten hˆr till [% jump(t.parent.desig, '/member/db/topic/view/', tid=t.parent.id) %].
+      <p>(Den h√§r texten h√∂r till [% jump(t.parent.desig, '/member/db/topic/view/', tid=t.parent.id) %].
       [%+ INCLUDE publish_status.tt %]
       )
    [% ELSIF t.previous %]
-      <p>(Den h‰r texten ‰r en forts‰ttning pÂ
+      <p>(Den h√§r texten √§r en forts√§ttning p√•
           [% jump(t.previous.desig, me, tid=t.previous.id) %].
       [% INCLUDE publish_status.tt %]
       )
    [% ELSE %]
-      <p>(Den h‰r texten hˆr inte till nÂgot specifikt ‰mne)
+      <p>(Den h√§r texten h√∂r inte till n√•got specifikt √§mne)
    [% END %]

@@ -1,49 +1,49 @@
-[% META title = 'Välkommen till nivå 5'
+[% META title = 'VÃ¤lkommen till nivÃ¥ 5'
         level = 5
 %]
 
-<p>Nu är det dags att berätta mer om de intressen du har.  Det här är
-nödvändigt:
+<p>Nu Ã¤r det dags att berÃ¤tta mer om de intressen du har.  Det hÃ¤r Ã¤r
+nÃ¶dvÃ¤ndigt:
 
 <ol>
-  <li>för att vi ska kunna anpassa webbplatsen efter dina önskemål
+  <li>fÃ¶r att vi ska kunna anpassa webbplatsen efter dina Ã¶nskemÃ¥l
 
-  <li>för att du ska kunna hitta medborgare med samma intressen
+  <li>fÃ¶r att du ska kunna hitta medborgare med samma intressen
 
 </ol>
 
-<p>Ett ämne är ett uppslagsord här på webbplatsen.  Du kan ange hur
-intresserad du är i vart och ett av alla ämnen som vi har i vår
-databas.  Är det något ämne vi inte har, kan du skapa det direkt.
+<p>Ett Ã¤mne Ã¤r ett uppslagsord hÃ¤r pÃ¥ webbplatsen.  Du kan ange hur
+intresserad du Ã¤r i vart och ett av alla Ã¤mnen som vi har i vÃ¥r
+databas.  Ã„r det nÃ¥got Ã¤mne vi inte har, kan du skapa det direkt.
 
-<p>För att gruppera intressen måste vi veta hur ämnena är relaterade
-till varandra.  En person som är intresserad av parapsykologi är
-troligen också intresserad av telepati.  Därför behöver vi veta att
-parapsykologi och telepati är relaterade till varandra.
+<p>FÃ¶r att gruppera intressen mÃ¥ste vi veta hur Ã¤mnena Ã¤r relaterade
+till varandra.  En person som Ã¤r intresserad av parapsykologi Ã¤r
+troligen ocksÃ¥ intresserad av telepati.  DÃ¤rfÃ¶r behÃ¶ver vi veta att
+parapsykologi och telepati Ã¤r relaterade till varandra.
 
-<p>Om du är den första personen som specifierar ditt intresse för ett
-ämne behöver du också hjälpa oss med att tala om hur ämnet relaterar
-sig till andra ämnen.  Ju högre värde du anger på "Redaktör", desto
-fler frågor om ämnet får du svara på.
+<p>Om du Ã¤r den fÃ¶rsta personen som specifierar ditt intresse fÃ¶r ett
+Ã¤mne behÃ¶ver du ocksÃ¥ hjÃ¤lpa oss med att tala om hur Ã¤mnet relaterar
+sig till andra Ã¤mnen.  Ju hÃ¶gre vÃ¤rde du anger pÃ¥ "RedaktÃ¶r", desto
+fler frÃ¥gor om Ã¤mnet fÃ¥r du svara pÃ¥.
 
-<p>Alla dina svar kommer slutligen att kontrolleras av en gesäll eller
-mästare.  Du kommer att få plus- eller minuspoäng beroende på om vi
-anser att ditt svar är rätt eller fel.  Vad du säger om ditt intresse
-kontrolleras förståss inte.  Bara det du säger om ämnet i sig självt.
+<p>Alla dina svar kommer slutligen att kontrolleras av en gesÃ¤ll eller
+mÃ¤stare.  Du kommer att fÃ¥ plus- eller minuspoÃ¤ng beroende pÃ¥ om vi
+anser att ditt svar Ã¤r rÃ¤tt eller fel.  Vad du sÃ¤ger om ditt intresse
+kontrolleras fÃ¶rstÃ¥ss inte.  Bara det du sÃ¤ger om Ã¤mnet i sig sjÃ¤lvt.
 
-<p>Det här är inte allt. För var och ett av ämnena kommer du senare
-kunna diskutera, ställa frågor eller bidra med information.  Du kommer
-kunna få listor på webbsidor, böcker, filmer, grupper, medborgare osv
-för det ämne du är intresserad av.
+<p>Det hÃ¤r Ã¤r inte allt. FÃ¶r var och ett av Ã¤mnena kommer du senare
+kunna diskutera, stÃ¤lla frÃ¥gor eller bidra med information.  Du kommer
+kunna fÃ¥ listor pÃ¥ webbsidor, bÃ¶cker, filmer, grupper, medborgare osv
+fÃ¶r det Ã¤mne du Ã¤r intresserad av.
 
 [% hr %]
 
-<p>Men låt oss börja med ett par grundinställningar.
+<p>Men lÃ¥t oss bÃ¶rja med ett par grundinstÃ¤llningar.
 
 <p>
 [% hidden('plan_after', "/member/db/person/edit/general_interest.tt");
    hidden('plan_after', uri('/member/db/person/interest/enter_list.tt',
 		     	 run='member_presentation_topics') );
-   step('Börja', '/member/db/person/edit/email.tt');
+   step('BÃ¶rja', '/member/db/person/edit/email.tt');
 %]
 

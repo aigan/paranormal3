@@ -1,37 +1,37 @@
-[% META title = 'Välkommen till nivå 2'
+[% META title = 'VÃ¤lkommen till nivÃ¥ 2'
         level = 2
 	next_template = "privacy.tt"
 %]
 
 <p>Grattis, novis [% u.nickname %]!</p>
 
-<p>Du har nu tagit andra steget på vägen mot att bli [%
+<p>Du har nu tagit andra steget pÃ¥ vÃ¤gen mot att bli [%
 jump('medborgare', '/topic/medborgare_i_paranormalse.html', href_target='published') %].</p>
 
-<p>Alla medlemmar [% jump('har en teknik-nivå',
+<p>Alla medlemmar [% jump('har en teknik-nivÃ¥',
 '/topic/nivasystemet_for_paranormalse.html', href_target='published') %].
-Teknik-nivån är ett mått på hur involverad du är i webbplatsen och hur
-stort ansvar du åtagit dig för innehållet här.</p>
+Teknik-nivÃ¥n Ã¤r ett mÃ¥tt pÃ¥ hur involverad du Ã¤r i webbplatsen och hur
+stort ansvar du Ã¥tagit dig fÃ¶r innehÃ¥llet hÃ¤r.</p>
 
 <p>[% jump('Medborgare', '/topic/medborgare_i_paranormalse.html',
-href_target='published') %] är en medlem som fullfört registreringen och
-skrivit en presentation av sig själv.</p>
+href_target='published') %] Ã¤r en medlem som fullfÃ¶rt registreringen och
+skrivit en presentation av sig sjÃ¤lv.</p>
 
-<p>Överst på sidan ser du några länkar. [% jump('Hem', '/index.tt',
+<p>Ã–verst pÃ¥ sidan ser du nÃ¥gra lÃ¤nkar. [% jump('Hem', '/index.tt',
 href_target='published') %] tar dig till startsidan. [% jump('Torget',
-'/member/db/', href_target='published') %] är platsen du går till för att
-arbeta med webbplatsen utifrån <em>dina</em> intressen. Du kan när som
-helst fortsätta din registrering via en länk på  [% jump('Torget',
+'/member/db/', href_target='published') %] Ã¤r platsen du gÃ¥r till fÃ¶r att
+arbeta med webbplatsen utifrÃ¥n <em>dina</em> intressen. Du kan nÃ¤r som
+helst fortsÃ¤tta din registrering via en lÃ¤nk pÃ¥  [% jump('Torget',
 '/member/db/', href_target='published') %].</p>
 
-<p>Om du vill kan du välja [% jump('ett eget lösenord',
+<p>Om du vill kan du vÃ¤lja [% jump('ett eget lÃ¶senord',
 '/member/db/person/edit/passwd.tt', plan_after=me) %] nu...</p>
 
-<p>Kom ihåg. Alla uppgifter är frivilliga. De är till för dina
-medmänniskor.</p>
+<p>Kom ihÃ¥g. Alla uppgifter Ã¤r frivilliga. De Ã¤r till fÃ¶r dina
+medmÃ¤nniskor.</p>
 
 [% hr %]
 
 <p>Tag ett djupt andetag.</p>
 
-<p>När du är redo; [% submit('gå vidare') %]</p>
+<p>NÃ¤r du Ã¤r redo; [% submit('gÃ¥ vidare') %]</p>

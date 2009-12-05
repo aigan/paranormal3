@@ -1,17 +1,17 @@
 [% META
-	otitle = 'Otillräcklig behörighet'
+	otitle = 'OtillrÃ¤cklig behÃ¶righet'
 %]
 
-<p>Det val du gjort kräver en högre behörighet än den du har nu.
+<p>Det val du gjort krÃ¤ver en hÃ¶gre behÃ¶righet Ã¤n den du har nu.
 
 [% IF u.level < 3 %]
-<p>[% jump('Fortsätt med din registrering','/member/db/person/quest/level_02/') %]
+<p>[% jump('FortsÃ¤tt med din registrering','/member/db/person/quest/level_02/') %]
 [% END %]
 [% IF u.level > 2 and u.level < 5 %]
-<p>[% jump('Se instruktioner för nivå 3', '/member/db/person/quest/level_03/welcome.tt') %]
-<p>[% jump('Fortsätt med din registrering','/member/db/person/quest/level_02/') %]
+<p>[% jump('Se instruktioner fÃ¶r nivÃ¥ 3', '/member/db/person/quest/level_03/welcome.tt') %]
+<p>[% jump('FortsÃ¤tt med din registrering','/member/db/person/quest/level_02/') %]
 [% END %]
 
-<p>[% jump("Läs mer om nivåsystemet", "/topic/nivasystemet_for_paranormalse.html") %]
+<p>[% jump("LÃ¤s mer om nivÃ¥systemet", "/topic/nivasystemet_for_paranormalse.html") %]
 
 <p>[% regret %]

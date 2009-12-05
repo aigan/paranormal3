@@ -4,12 +4,12 @@
 
 <table class="login">
 <tr><td>Namn </td><td><input name="username"></td></tr>
-<tr><td>Lösenord </td><td><input type="password" name="password"></td></tr>
+<tr><td>LÃ¶senord </td><td><input type="password" name="password"></td></tr>
 <tr><td colspan="2" align="right"><input type="submit" border="0" value="Login"></td></tr>
 </table>
 
-<p align="center"><input type='checkbox' name="remember_login" value="1"> Kom ihåg inloggningen</p>
+<p align="center"><input type='checkbox' name="remember_login" value="1"> Kom ihÃ¥g inloggningen</p>
 
-<p align="center">[% jump('Skriv in dig','/member/db/person/quest/level_00/') %] om du är nykomling</p>
+<p align="center">[% jump('Skriv in dig','/member/db/person/quest/level_00/') %] om du Ã¤r nykomling</p>
 
-<p align="center"><a href="/member/db/person/find/password.tt">E-posta lösenord</a> som påminnelse</p>
+<p align="center"><a href="/member/db/person/find/password.tt">E-posta lÃ¶senord</a> som pÃ¥minnelse</p>

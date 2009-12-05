@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Redigera URL för media'
+	otitle = 'Redigera URL fÃ¶r media'
 	next_action = 'topic_update'
 	next_template = '/member/db/topic/view/'
 %]
@@ -11,7 +11,7 @@
    PROCESS buttons.tt;
 %]
 
-<h1>[% PROCESS tlink.tt %]: URL för media</h1>
+<h1>[% PROCESS tlink.tt %]: URL fÃ¶r media</h1>
 
 [% PROCESS edit_menu.tt %]
 
@@ -34,22 +34,22 @@
 </table>
 
 
-<p>[% step('Ändra') %]
+<p>[% step('Ã„ndra') %]
 
 [% WRAPPER instruction %]
-<p>Även ämnen som representerar något med en URL (dvs en webbsida, etc) ska ha alias</p>
+<p>Ã„ven Ã¤mnen som representerar nÃ¥got med en URL (dvs en webbsida, etc) ska ha alias</p>
 
-<h2>Guide för att lägga in en bild på ett uppslagsord</h2>
+<h2>Guide fÃ¶r att lÃ¤gga in en bild pÃ¥ ett uppslagsord</h2>
 
 <ol>
-<li>KLicka på Admin.
-<li>Klicka på Skapa ämne.
-<li>Bildämnets namn, ex "Solrosbild" om det är en bild på en solros.
-<li>Under Metadata (du kommer hit automatiskt), ange ÄR (1) bild.
-<li>Under TS, skriv in ämnet där bilden skall presenteras.
-<li>Under URL, skriv adressen till bilden. Ligger den i /images i pi så kommer adressen vara http://paranormal.se/images/bildnamn.jpg
+<li>KLicka pÃ¥ Admin.
+<li>Klicka pÃ¥ Skapa Ã¤mne.
+<li>BildÃ¤mnets namn, ex "Solrosbild" om det Ã¤r en bild pÃ¥ en solros.
+<li>Under Metadata (du kommer hit automatiskt), ange Ã„R (1) bild.
+<li>Under TS, skriv in Ã¤mnet dÃ¤r bilden skall presenteras.
+<li>Under URL, skriv adressen till bilden. Ligger den i /images i pi sÃ¥ kommer adressen vara http://paranormal.se/images/bildnamn.jpg
 <li>Under Text kan du skriva kortbeskrivningen, som kommer att hamna som informationstext under texten om du vill.
-<li>Klart! Bilden kommer dock inte synas förän du publicerar det ämne som bilden skall visas under. Så byt till detta ämne och klicka på Publicera.
+<li>Klart! Bilden kommer dock inte synas fÃ¶rÃ¤n du publicerar det Ã¤mne som bilden skall visas under. SÃ¥ byt till detta Ã¤mne och klicka pÃ¥ Publicera.
 </ol>
 [% END %]
 

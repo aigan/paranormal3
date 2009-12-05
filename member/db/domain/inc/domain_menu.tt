@@ -5,7 +5,7 @@
 
 [% IF u.level > 40 %]
 <p>
-[ [% jump("Domäner", "$base/") +%]
+[ [% jump("DomÃ¤ner", "$base/") +%]
 | [% jump(d.name, "$base/info.tt", did=d.id) +%]
 ]</p>
 [% END %]

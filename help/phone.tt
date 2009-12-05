@@ -4,19 +4,19 @@
 
 [% tid = q.param('tid') %]
 [% t = topic(tid) %]
-[% sjn = topic(428516); # Spökjägarnätverket %]
+[% sjn = topic(428516); # SpÃ¶kjÃ¤garnÃ¤tverket %]
 [% PROCESS load_member.tt %]
 
-<h1>Hjälp-linjen</h1>
+<h1>HjÃ¤lp-linjen</h1>
 
-<p>Medlemmar på paranormal.se har kontakter med många andra organisationer och nätverk.  Vi kallar oss [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %] och ställer upp för att lösa problem där du har drabbats av andliga eller övernaturliga fenomen.</p>
+<p>Medlemmar pÃ¥ paranormal.se har kontakter med mÃ¥nga andra organisationer och nÃ¤tverk.  Vi kallar oss [% jump("Sveriges spÃ¶kjÃ¤garnÃ¤tverk", "/topic/sveriges_spokjagarnatverk.html") %] och stÃ¤ller upp fÃ¶r att lÃ¶sa problem dÃ¤r du har drabbats av andliga eller Ã¶vernaturliga fenomen.</p>
 
-<p>Dessa personer ställer upp med sina privata telefonnummer.  Avgör
-själv ifall du tror att han/hon kan hjälpa dig.  När du ringer,
-berätta att du fick numret från hjälp-linjen på Paranormal.  Visa
-hänsyn.</p>
+<p>Dessa personer stÃ¤ller upp med sina privata telefonnummer.  AvgÃ¶r
+sjÃ¤lv ifall du tror att han/hon kan hjÃ¤lpa dig.  NÃ¤r du ringer,
+berÃ¤tta att du fick numret frÃ¥n hjÃ¤lp-linjen pÃ¥ Paranormal.  Visa
+hÃ¤nsyn.</p>
 
-<p>Kanske du vill [% jump("skicka e-post", '/help/', tid=tid) %] istället?
+<p>Kanske du vill [% jump("skicka e-post", '/help/', tid=tid) %] istÃ¤llet?
 
 [% helprecs = select_list("select member from intrest join member on member=intrest_member where intrest_topic=? and helper>75 and intrest_defined > 50 and present_contact_public >= 20 and ( home_tele_phone is not null or home_tele_mobile is not null) and length(intrest_description) > 20 ", sjn.id) %]
 
@@ -27,7 +27,7 @@ hänsyn.</p>
 
 
    <tr><td>
-<p>[% m.city || 'Hjälpare' %]: [% m.link %]
+<p>[% m.city || 'HjÃ¤lpare' %]: [% m.link %]
 <p>[% m.interest(sjn).comment | html %]
 [% IF t; IF m.interest(t) and m.interest(t).comment and tid != sjn.id %]
 <p>Om [% t.title %]: [% m.interest(t).comment | html %]

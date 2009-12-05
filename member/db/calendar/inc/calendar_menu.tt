@@ -1,5 +1,5 @@
 <p>
 [ [% jump('Index', '/member/db/calendar/') +%]
 | [% jump('Lista', '/member/db/calendar/list.tt') +%]
-| [% jump('Lägg till', 'edit.tt') +%]
+| [% jump('LÃ¤gg till', 'edit.tt') +%]
 ]</p>

@@ -1,48 +1,48 @@
 [% META
-	otitle = 'Inställningar - Anonymitet'
+	otitle = 'InstÃ¤llningar - Anonymitet'
 	next_action = 'member_update'
 	level = 2
 %]
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - Anonymitet: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - Anonymitet: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
-<p>Dessa funktioner är under konstruktion.  Under införandet kommer
-det finnas sätt att komma runt de begränsningar som här önskas.  Hjälp
-oss att identifiera dessa hål.  Meddela oss var på webbplatsen en
-uppgift visas när den inte borde visas.  Detta kan göras genom att se
-hur det ser ut när du är inloggad som testanvändaren "John Doe" som
-har lösenordet "psicat".</p>
+<p>Dessa funktioner Ã¤r under konstruktion.  Under infÃ¶randet kommer
+det finnas sÃ¤tt att komma runt de begrÃ¤nsningar som hÃ¤r Ã¶nskas.  HjÃ¤lp
+oss att identifiera dessa hÃ¥l.  Meddela oss var pÃ¥ webbplatsen en
+uppgift visas nÃ¤r den inte borde visas.  Detta kan gÃ¶ras genom att se
+hur det ser ut nÃ¤r du Ã¤r inloggad som testanvÃ¤ndaren "John Doe" som
+har lÃ¶senordet "psicat".</p>
 
-<p>Det översta värdet (0) är det mest anonyma som gör dig som mest
-osynlig. Varje värde under gör dig mer offentlig. För varje steg
-tillkommer fler saker som hålls offentliga. Sista värdet (30) är minst
-anonyma och mest öppna.</p>
+<p>Det Ã¶versta vÃ¤rdet (0) Ã¤r det mest anonyma som gÃ¶r dig som mest
+osynlig. Varje vÃ¤rde under gÃ¶r dig mer offentlig. FÃ¶r varje steg
+tillkommer fler saker som hÃ¥lls offentliga. Sista vÃ¤rdet (30) Ã¤r minst
+anonyma och mest Ã¶ppna.</p>
 
-[% WRAPPER draw_alt title='Visande av kontaktinformation för medlemmar' field='present_contact' min='MIN' max='MAX'
+[% WRAPPER draw_alt title='Visande av kontaktinformation fÃ¶r medlemmar' field='present_contact' min='MIN' max='MAX'
    values = 
    {
-	'00' => '0. Bli totalt osynlig.  Som om du aldrig varit här'
+	'00' => '0. Bli totalt osynlig.  Som om du aldrig varit hÃ¤r'
 	'01' => '1. Texter, etc anges vara skrivna av "Anonym"'
-	'02' => '2. Visa ditt primära alias (namn), men inget annat'
-	'05' => '5. Visa medlemsnummer, webbadress, publik e-post, IM och ålder'
+	'02' => '2. Visa ditt primÃ¤ra alias (namn), men inget annat'
+	'05' => '5. Visa medlemsnummer, webbadress, publik e-post, IM och Ã¥lder'
 	'10' => '10. Visa presentation'
-        '12' => '12. Visa angivet för- och efternamn'
-	'15' => '15. Bostadsort och avstånd'
+        '12' => '12. Visa angivet fÃ¶r- och efternamn'
+	'15' => '15. Bostadsort och avstÃ¥nd'
 	'20' => '20. Adress, telefonnummer, etc'
 	'30' => '30. Allt'
    }
 %]
 
-Hur mycket av din identitet vill du avslöja?  Vi har begränsat
-möjligheten att se presentationssidan.  Vad som visas för andra
-medlemmar är en kombination av din inställning här och medlemmens
-tekniknivå. Det innebär att vi visar fler uppgifter för aktiva medlemmar,
-men inte mer än vad som är angivet här. Skrivna texter, gjorda
-kopplingar etc är inte dolda.
+Hur mycket av din identitet vill du avslÃ¶ja?  Vi har begrÃ¤nsat
+mÃ¶jligheten att se presentationssidan.  Vad som visas fÃ¶r andra
+medlemmar Ã¤r en kombination av din instÃ¤llning hÃ¤r och medlemmens
+tekniknivÃ¥. Det innebÃ¤r att vi visar fler uppgifter fÃ¶r aktiva medlemmar,
+men inte mer Ã¤n vad som Ã¤r angivet hÃ¤r. Skrivna texter, gjorda
+kopplingar etc Ã¤r inte dolda.
 
 [% END %]
 
@@ -50,22 +50,22 @@ kopplingar etc är inte dolda.
 [% WRAPPER draw_alt title='Visande av kontaktinformation i uppslagsverket' field='present_contact_public' min='MIN' max='MAX'
    values = 
    {
-	'00' => '0. Bli totalt osynlig.  Som om du aldrig varit här'
+	'00' => '0. Bli totalt osynlig.  Som om du aldrig varit hÃ¤r'
 	'01' => '1. Texter, etc anges vara skrivna av "Anonym"'
-	'02' => '2. Visa ditt primära alias (namn), men inget annat'
-	'05' => '5. Visa medlemsnummer, webbadress, publik e-post, IM och ålder'
+	'02' => '2. Visa ditt primÃ¤ra alias (namn), men inget annat'
+	'05' => '5. Visa medlemsnummer, webbadress, publik e-post, IM och Ã¥lder'
 	'10' => '10. Visa presentation'
-        '12' => '12. Visa angivet för- och efternamn'
-	'15' => '15. Bostadsort och avstånd'
+        '12' => '12. Visa angivet fÃ¶r- och efternamn'
+	'15' => '15. Bostadsort och avstÃ¥nd'
 	'20' => '20. Adress, telefonnummer, etc'
 	'30' => '30. Allt'
    }
 %]
 
-Detta är samma som visande av kontaktinformation för medlemmar, men
-syftar på vilka uppgifter som kommer att publiceras i uppslagsverket
-och som därför kommer att vara fritt tillgängliga för alla och öven
-kommer att indexeras i globala sökmotorer.
+Detta Ã¤r samma som visande av kontaktinformation fÃ¶r medlemmar, men
+syftar pÃ¥ vilka uppgifter som kommer att publiceras i uppslagsverket
+och som dÃ¤rfÃ¶r kommer att vara fritt tillgÃ¤ngliga fÃ¶r alla och Ã¶ven
+kommer att indexeras i globala sÃ¶kmotorer.
 
 [% END %]
 
@@ -73,29 +73,29 @@ kommer att indexeras i globala sökmotorer.
 [% WRAPPER draw_alt title='Visande av intressen och engagemang' field='present_intrests' min='MIN' max='MAX'
    values = 
    {
-	'00' => '0. Göm tekniknivå för andra'
-	'05' => '5. Visa tekniknivå'
+	'00' => '0. GÃ¶m tekniknivÃ¥ fÃ¶r andra'
+	'05' => '5. Visa tekniknivÃ¥'
 	'10' => '10. Sammanfattning av intressen'
-	'15' => '15. Full lista på intressen'
-	'20' => '20. Sammanfattning för varje intresse'
+	'15' => '15. Full lista pÃ¥ intressen'
+	'20' => '20. Sammanfattning fÃ¶r varje intresse'
 	'25' => '25. Alla detaljer om intressen'
-	'30' => '30. Övriga detaljer'
+	'30' => '30. Ã–vriga detaljer'
    }
 %]
 
-Hur mycket av dina intressen vill du avslöja?
+Hur mycket av dina intressen vill du avslÃ¶ja?
 
 [% END %]
 
 	
-[% WRAPPER draw_alt title='Visande av vad du gör' field='present_activity' min='MIN' max='MAX'
+[% WRAPPER draw_alt title='Visande av vad du gÃ¶r' field='present_activity' min='MIN' max='MAX'
    values = 
    {
-	'00' => '0. Inget förrutom explicita aktiviteter'
+	'00' => '0. Inget fÃ¶rrutom explicita aktiviteter'
 	'05' => '5. Visa statistik'
-	'10' => '10. Visa för andra när du är påloggad'
-	'15' => '15. Visa var du är'
-	'20' => '20. Visa vad du gör'
+	'10' => '10. Visa fÃ¶r andra nÃ¤r du Ã¤r pÃ¥loggad'
+	'15' => '15. Visa var du Ã¤r'
+	'20' => '20. Visa vad du gÃ¶r'
         '30' => '30. Allt'
    }
 %]
@@ -108,16 +108,16 @@ Visa dina aktiviteter?
    values = 
    {
 	'00' => '0. Inga aktiviteter'
-	'05' => '5. På/avloggning'
-	'10' => '10. Besökta sidor'
+	'05' => '5. PÃ¥/avloggning'
+	'10' => '10. BesÃ¶kta sidor'
         '30' => '30. Allt'
    }
 %]
 
-Även om du är helt anonym för andra kan skapelsen (webbplatsen) spara
-information om vad du gör, för att förenkla för dig själv.  Exempelvis
-kan vi hålla reda på när du senast besökte en viss sida så att vi kan
-uppmärksamma dig om sidan har nytt innehåll.
+Ã„ven om du Ã¤r helt anonym fÃ¶r andra kan skapelsen (webbplatsen) spara
+information om vad du gÃ¶r, fÃ¶r att fÃ¶renkla fÃ¶r dig sjÃ¤lv.  Exempelvis
+kan vi hÃ¥lla reda pÃ¥ nÃ¤r du senast besÃ¶kte en viss sida sÃ¥ att vi kan
+uppmÃ¤rksamma dig om sidan har nytt innehÃ¥ll.
 
 [% END %]
 
@@ -125,14 +125,14 @@ uppmärksamma dig om sidan har nytt innehåll.
    values = 
    {
 	'00' => '0. Visa inget'
-	'01' => '1. Visa om du är stödmedlem'
-	'05' => '5. Visa gåvornas storlek i din översikt'
+	'01' => '1. Visa om du Ã¤r stÃ¶dmedlem'
+	'05' => '5. Visa gÃ¥vornas storlek i din Ã¶versikt'
         '30' => '30. Visa allt'
    }
 %]
 
-Vi vill gärna visa upp vilka som stöder webbplatsen.  Men vill du ge
-gåvorna anonymt så är det också okej.
+Vi vill gÃ¤rna visa upp vilka som stÃ¶der webbplatsen.  Men vill du ge
+gÃ¥vorna anonymt sÃ¥ Ã¤r det ocksÃ¥ okej.
 
 [% END %]
 
@@ -141,7 +141,7 @@ gåvorna anonymt så är det också okej.
    {
 	'0' => '0. Visa inget'
 	'1' => '1. Endast medlemmar'
-	'2' => '2. Öppen'
+	'2' => '2. Ã–ppen'
    }
 %]
 

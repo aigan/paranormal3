@@ -1,5 +1,5 @@
 [% META
-	title = 'Kalendarium - Lägg till'
+	title = 'Kalendarium - LÃ¤gg till'
 	default_template = 'list.tt'
 	next_action = 'event_update'
 %]
@@ -14,7 +14,7 @@
 
 <div class="entry">
 <table>
-<tr><th>Fält        <th>Värde
+<tr><th>FÃ¤lt        <th>VÃ¤rde
 <tr><th>id          <td>[% e.id %]
 <tr><th>topic       <td>[% input('topic', e.topic.sysdesig) %]
 <tr><th>type        <td>[% input('rule_type', e.rule_type) %]

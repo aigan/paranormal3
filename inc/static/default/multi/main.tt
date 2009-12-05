@@ -4,7 +4,7 @@
 [% END %]
 
 [% IF multi_letters %]
-<p>Här listas de [% multi_plural %] som finns i uppslagsverket</p>
+<p>HÃ¤r listas de [% multi_plural %] som finns i uppslagsverket</p>
 <p>[
 [% IF multi_letter %]
    [% jump('Hem', t.file) %]
@@ -22,17 +22,17 @@
 [% END %]
 ]</p>
 [% ELSE %]
-<p>För många för att räknas upp här</p>
+<p>FÃ¶r mÃ¥nga fÃ¶r att rÃ¤knas upp hÃ¤r</p>
 [% END %]
 
-<p>Sök bland [% multi_cnt %] [% multi_plural %]</p>
+<p>SÃ¶k bland [% multi_cnt %] [% multi_plural %]</p>
 <p>
 <form action="/search/alternatives.tt">
 <input type="hidden" name="run" value="topic_search_published">
 [% hidden("constraint", multi) %]
 [% hidden("constraint_target", tid) %]
 [% input('talias',"") %]
-[% submit('Sök') %]
+[% submit('SÃ¶k') %]
 </form>
 </p>
 

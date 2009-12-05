@@ -1,17 +1,17 @@
-    <form action="/search/alternatives.tt"><div id="search_field"><input type="hidden" name="run" value="topic_search_published">Sök <input size="10" name="talias"></div></form>
+    <form action="/search/alternatives.tt"><div id="search_field"><input type="hidden" name="run" value="topic_search_published">SÃ¶k <input size="10" name="talias"></div></form>
 
 <div id="footer">
-<p>Detta är en sida från webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.
-Materialet kommer från flera olika författare och medarbetare.  Du kan
+<p>Detta Ã¤r en sida frÃ¥n webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.
+Materialet kommer frÃ¥n flera olika fÃ¶rfattare och medarbetare.  Du kan
 <a href="/member/db/person/quest/level_00/">vara en del av denna
 webbplats</a>.</p>
 
 <p><a href="/">Hem</a> |
 <a href="/login.tt">Logga in</a> |
 <a href="/topic/">Index</a> |
-<a href="/search/">Sök</a> |
-<a href="/member/payment/">Gåvor</a> |
-<a href="[% uri("/contact/", subject=t.desig) %]">Hjälp</a>
+<a href="/search/">SÃ¶k</a> |
+<a href="/member/payment/">GÃ¥vor</a> |
+<a href="[% uri("/contact/", subject=t.desig) %]">HjÃ¤lp</a>
 </p>
 
 <p id="pi"><a href="[% IF tid; "/member/db/topic/view/?tid=$tid"; ELSE; "/admin/update/update.cgi$me"; END %]"><img

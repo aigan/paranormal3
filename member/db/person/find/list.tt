@@ -23,11 +23,11 @@
 [% recs = cached_select_list("from nick, member where member=nick_member and member_level>0 and present_contact > 4 and uid $sel order by uid") %]
 [% recs.set_page_size(10) %]
 
-<p>[% recs.size %] tr‰ffar
+<p>[% recs.size %] tr√§ffar
 <p>[%recs.pagelist %]
 
 <table>
-<tr><th>Nr</th><th>Alias</th><th>Namn</th><th>NivÂ</th></tr>
+<tr><th>Nr</th><th>Alias</th><th>Namn</th><th>Niv√•</th></tr>
 [% FOREACH rec IN recs.from_page %]
    [% tr2 %]
        <td>$rec.nick_member</td>

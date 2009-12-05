@@ -1,4 +1,4 @@
-[% META	otitle = "Gåvor till Paranormal.se: Paynova"
+[% META	otitle = "GÃ¥vor till Paranormal.se: Paynova"
 	onsubmit = 'open_window()'
 	next_handler = '/member/db/'
 	level=1
@@ -22,71 +22,71 @@ function open_window()
 
 <div id="sidebar">
 
-<h2>Betala säkert, snabbt och enkelt med Paynovaplånboken!</h2>
+<h2>Betala sÃ¤kert, snabbt och enkelt med PaynovaplÃ¥nboken!</h2>
 
-<p>Paynovaplånboken är en säker och snabb betalmetod. Det tar inte mer
-än 30 sekunder att skaffa en Plånbok direkt på nätet gratis. Via
-plånboken kan du betala med VISA, Mastercard, Eurocard, Diners,
-Föreningssparbanken, Handelsbanken, Nordea och post- eller
+<p>PaynovaplÃ¥nboken Ã¤r en sÃ¤ker och snabb betalmetod. Det tar inte mer
+Ã¤n 30 sekunder att skaffa en PlÃ¥nbok direkt pÃ¥ nÃ¤tet gratis. Via
+plÃ¥nboken kan du betala med VISA, Mastercard, Eurocard, Diners,
+FÃ¶reningssparbanken, Handelsbanken, Nordea och post- eller
 bankgiro.</p>
 
 
 <ul>
-<li><a href="https://www.paynova.com/swe/registration/?ICP=D6CC0D66CABD4A65" target="paynova">Skaffa plånboken</a></li>
-<li><a href="https://www.paynova.com/wallet/swe/?ICP=D6CC0D66CABD4A65" target="paynova">Fyll på plånboken</a></li>
-<li><a href="http://www.paynova.com/swe/?ICP=D6CC0D66CABD4A65" target="paynova">Läs mer om Paynovaplånboken</a></li>
+<li><a href="https://www.paynova.com/swe/registration/?ICP=D6CC0D66CABD4A65" target="paynova">Skaffa plÃ¥nboken</a></li>
+<li><a href="https://www.paynova.com/wallet/swe/?ICP=D6CC0D66CABD4A65" target="paynova">Fyll pÃ¥ plÃ¥nboken</a></li>
+<li><a href="http://www.paynova.com/swe/?ICP=D6CC0D66CABD4A65" target="paynova">LÃ¤s mer om PaynovaplÃ¥nboken</a></li>
 </ul>
-<a href="http://www.paynova.com/swe/?ICP=D6CC0D66CABD4A65"><img align="right" alt="Paynova - din plånbok på nätet" src="/images/logo/paynovasymbolen.gif" border="0"></a>
+<a href="http://www.paynova.com/swe/?ICP=D6CC0D66CABD4A65"><img align="right" alt="Paynova - din plÃ¥nbok pÃ¥ nÃ¤tet" src="/images/logo/paynovasymbolen.gif" border="0"></a>
 </div>
 
 <h1><a href="/member/payment/"><img src="/images/icon/arrow.gif" alt=
-      "Meny"></a> Gåvor till Paranormal.se: Paynova</h1>
+      "Meny"></a> GÃ¥vor till Paranormal.se: Paynova</h1>
 
-<p>Val av period innebär inte några åtaganden.  Du avgör själv vid
-varje tillfälle om, när och hur mycket du vill ge.  Om du inte loggar in
-kommer du heller inte höra något från oss.</p>
+<p>Val av period innebÃ¤r inte nÃ¥gra Ã¥taganden.  Du avgÃ¶r sjÃ¤lv vid
+varje tillfÃ¤lle om, nÃ¤r och hur mycket du vill ge.  Om du inte loggar in
+kommer du heller inte hÃ¶ra nÃ¥got frÃ¥n oss.</p>
 
-<p>[% jump('Hur mycket har de andra pröjsat? Se statistiken.', '/member/db/stats/payment/') %]</p>
+<p>[% jump('Hur mycket har de andra prÃ¶jsat? Se statistiken.', '/member/db/stats/payment/') %]</p>
 
 <table cellpadding="3">
-<tr><td width="25%">Värde
+<tr><td width="25%">VÃ¤rde
 <td>[% select('worth','020',
    {
-      '005'  => " &nbsp;&nbsp;&nbsp;&nbsp;5 kr / månad",
-      '010'  => " &nbsp;&nbsp;10 kr / månad",
-      '020'  => " &nbsp;&nbsp;20 kr / månad",
-      '030'  => " &nbsp;&nbsp;30 kr / månad",
-      '040'  => " &nbsp;&nbsp;40 kr / månad",
-      '050'  => " &nbsp;&nbsp;50 kr / månad",
-      '075'  => " &nbsp;&nbsp;75 kr / månad",
-      '100'  => " 100 kr / månad",
-      '150'  => " 150 kr / månad",
-      '200'  => " 200 kr / månad",
-      '250'  => " 250 kr / månad",
+      '005'  => " &nbsp;&nbsp;&nbsp;&nbsp;5 kr / mÃ¥nad",
+      '010'  => " &nbsp;&nbsp;10 kr / mÃ¥nad",
+      '020'  => " &nbsp;&nbsp;20 kr / mÃ¥nad",
+      '030'  => " &nbsp;&nbsp;30 kr / mÃ¥nad",
+      '040'  => " &nbsp;&nbsp;40 kr / mÃ¥nad",
+      '050'  => " &nbsp;&nbsp;50 kr / mÃ¥nad",
+      '075'  => " &nbsp;&nbsp;75 kr / mÃ¥nad",
+      '100'  => " 100 kr / mÃ¥nad",
+      '150'  => " 150 kr / mÃ¥nad",
+      '200'  => " 200 kr / mÃ¥nad",
+      '250'  => " 250 kr / mÃ¥nad",
    })
 %]
 <td>
 
-<tr><td width="25%">Betala för
+<tr><td width="25%">Betala fÃ¶r
 <td>[% select('length','0092',
    {
       '0001'  => " 1 dag",
       '0007'  => " 1 vecka",
       '0014'  => " 2 veckor",
       '0021'  => " 3 veckor",
-      '0031'  => " 1 månad",
-      '0061'  => " 2 månader",
-      '0092'  => " 3 månader",
-      '0123'  => " 4 månader",
-      '0153'  => " 5 månader",
-      '0184'  => " 6 månader",
-      '0366'  => " 1 år",
-      '0730'  => " 2 år",
-      '1095'  => " 3 år",
-      '1460'  => " 4 år",
-      '1825'  => " 5 år",
+      '0031'  => " 1 mÃ¥nad",
+      '0061'  => " 2 mÃ¥nader",
+      '0092'  => " 3 mÃ¥nader",
+      '0123'  => " 4 mÃ¥nader",
+      '0153'  => " 5 mÃ¥nader",
+      '0184'  => " 6 mÃ¥nader",
+      '0366'  => " 1 Ã¥r",
+      '0730'  => " 2 Ã¥r",
+      '1095'  => " 3 Ã¥r",
+      '1460'  => " 4 Ã¥r",
+      '1825'  => " 5 Ã¥r",
    })
-%] i taget, <strong>en</strong> gång
+%] i taget, <strong>en</strong> gÃ¥ng
 <td>
 
 <tr><td colspan="3">Meddelande till Paranormal Sweden:<br>
@@ -96,10 +96,10 @@ kommer du heller inte höra något från oss.</p>
 
 </table>
 
-<p>[% jump('Går det att lita på Paynova? Är det krångligt? Läs mer.', '/topic/paynovaplanboken.html') %]
+<p>[% jump('GÃ¥r det att lita pÃ¥ Paynova? Ã„r det krÃ¥ngligt? LÃ¤s mer.', '/topic/paynovaplanboken.html') %]
 
-<p>Om du exempelvis väljer att betala för 2 månader, kommer vi, nästa
-gång du loggar in efter två månader, be om en ny gåva för fortsatt
-stöd. (Du kommer då kunna välja att aldrig mer bli påmind.)</p>
+<p>Om du exempelvis vÃ¤ljer att betala fÃ¶r 2 mÃ¥nader, kommer vi, nÃ¤sta
+gÃ¥ng du loggar in efter tvÃ¥ mÃ¥nader, be om en ny gÃ¥va fÃ¶r fortsatt
+stÃ¶d. (Du kommer dÃ¥ kunna vÃ¤lja att aldrig mer bli pÃ¥mind.)</p>
 
-<p>Precis samma system gäller, oavsett betalmetod.</p>
+<p>Precis samma system gÃ¤ller, oavsett betalmetod.</p>

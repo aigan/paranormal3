@@ -13,13 +13,13 @@
 
 <div class="entry" align="center">
 <table>
-<tr><th>Medlem</th><th>UIN (ICQ-nr)</th><th>Lägg till</th><th>Skicka meddelande</th></tr>
+<tr><th>Medlem</th><th>UIN (ICQ-nr)</th><th>LÃ¤gg till</th><th>Skicka meddelande</th></tr>
 
 [% FOREACH select_list("SELECT member, nickname, home_online_icq FROM member WHERE member_level >= 5 AND home_online_icq IS NOT NULL ORDER BY nickname LIMIT $step OFFSET $part_offset") %]
     [% tr2 %]
     <td>[% jump(nickname, '/member/db/person/view/', mid=member) %]</td>
     <td><a href="http://web.icq.com/wwp?Uin=$home_online_icq" target="_blank">$home_online_icq</a></td>
-    <td><a href="http://web.icq.com/whitepages/add_me?uin=$home_online_icq&action=add" target="_blank">Lägg till</a></td>
+    <td><a href="http://web.icq.com/whitepages/add_me?uin=$home_online_icq&action=add" target="_blank">LÃ¤gg till</a></td>
     <td><a href="http://web.icq.com/whitepages/message_me?uin=$home_online_icq&action=message" target="_blank">Skicka meddelande</a></td>
     </tr>
    [% subpart.shown = loop.size %]

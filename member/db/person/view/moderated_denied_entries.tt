@@ -24,7 +24,7 @@
     <th>Titel
     <th>[% sort('ver', 't_ver') %]
     <th>[% sort('Datum', 't_updated') %]
-    <th>[% sort('Från', 't_createdby') %]
+    <th>[% sort('FrÃ¥n', 't_createdby') %]
     <th>Status
 </tr>
 
@@ -39,7 +39,7 @@
 	<td>[% t.created_by.link %]</td>
 	<td>
         [% IF t.active_ver %]
-           Ändring av text avslagen
+           Ã„ndring av text avslagen
         [% ELSE %]
            Texten inaktiverat
         [% END %]</td>

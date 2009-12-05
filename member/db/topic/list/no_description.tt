@@ -1,15 +1,15 @@
-[% META title="Ämnen utan kortbeskrivning"
+[% META title="Ã„mnen utan kortbeskrivning"
         level = 5
 %]
 <p>
 [ [% jump('Ladda om sidan', me) +%]
 ]</p>
 
-<p>25 utvalda ämnen, exklusive medlemsämnen</p>
+<p>25 utvalda Ã¤mnen, exklusive medlemsÃ¤mnen</p>
 
 <div class="entry">
 <table>
-   <tr><th>S</th><th>Ämne</th><th>Skapad</th></tr>
+   <tr><th>S</th><th>Ã„mne</th><th>Skapad</th></tr>
 [% FOREACH rec = select_list("select t from t main where t_active is true and t_text is null and t_entry is false EXCEPT select media from media EXCEPT select member_topic from member limit 25" ) %]
    [% t = topic(rec.t) %]
    [% tr2 %]

@@ -1,5 +1,5 @@
 <div id="admin_menu">
-<div style="float: right"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published"/><label for="top_talias">Sök <input size="10" name="talias" id="top_talias"/></form></div>
+<div style="float: right"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published"/><label for="top_talias">SÃ¶k <input size="10" name="talias" id="top_talias"/></form></div>
 
 <form action="/member/db/topic/view/">
  [ [% u.level +%] [%+ jump('Hem', '/') %]
@@ -15,7 +15,7 @@
   [% IF u.complexity >= 10 %]
      |  <input name="search" size="10">
   [% END %]
- |  [% jump('Inställningar', '/member/db/person/edit/') %]
+ |  [% jump('InstÃ¤llningar', '/member/db/person/edit/') %]
  |  [% jump('Logga ut', '/', run='user_logout', href_class="") %]
  ]
 [% ELSE %]

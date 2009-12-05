@@ -1,5 +1,5 @@
 [% META
-	otitle = 'Inställningar - Adressuppgifter'
+	otitle = 'InstÃ¤llningar - Adressuppgifter'
 	next_action = 'member_update'
 	focus = 'home_postal_code'
 	level = 2
@@ -7,20 +7,20 @@
 
 [% PROCESS load_member.tt %]
 
-<h1>Inställningar - Adressuppgifter: [% m.tlink %]</h1>
+<h1>InstÃ¤llningar - Adressuppgifter: [% m.tlink %]</h1>
 
 [% PROCESS person_view_menu.tt %]
 
-<p>Tills vidare kommer enbart postort att visas för andra medlemmar.
-Innan vi släpper andra uppgifter kommer du ha möjlighet att välja din
-grad av anonymitet.  <em>Lämna inga uppgifter du inte vill ska vara
-allmänt kända.</em> </p>
+<p>Tills vidare kommer enbart postort att visas fÃ¶r andra medlemmar.
+Innan vi slÃ¤pper andra uppgifter kommer du ha mÃ¶jlighet att vÃ¤lja din
+grad av anonymitet.  <em>LÃ¤mna inga uppgifter du inte vill ska vara
+allmÃ¤nt kÃ¤nda.</em> </p>
 
 
 <h3>Adress</h3>
 
-<p>Postnumret används för att beräkna avstånd mellan två medlemmar.  Vi
-kan också sluta oss till på villken ort du bor utifrån denna uppgift.
+<p>Postnumret anvÃ¤nds fÃ¶r att berÃ¤kna avstÃ¥nd mellan tvÃ¥ medlemmar.  Vi
+kan ocksÃ¥ sluta oss till pÃ¥ villken ort du bor utifrÃ¥n denna uppgift.
 Detta fungerar dock bara om du bor i Sverige.  Saknas ditt postnummer
 i registret kommer det att ta en kvart innan koordinaterna
 laddats ned.</p>
@@ -31,9 +31,9 @@ laddats ned.</p>
 [%# default_name = m.home_postal_name || "$m.name_given $m.name_middle $m.name_family" %]
 <tr><td>Namn (c/o) <td>[% input('home_postal_name', m.home_postal_name) %]
 
-<tr><td>Gatuadress / Postlåda <td>[% input('home_postal_street', m.home_postal_street) %]
+<tr><td>Gatuadress / PostlÃ¥da <td>[% input('home_postal_street', m.home_postal_street) %]
 
-<tr><td>Besöksadress <td>[% input('home_postal_visiting', m.home_postal_visiting) %] <td> (Om den skiljer sig från gatuadressen)
+<tr><td>BesÃ¶ksadress <td>[% input('home_postal_visiting', m.home_postal_visiting) %] <td> (Om den skiljer sig frÃ¥n gatuadressen)
 
 <tr><td>Postadress <td>[% input('home_postal_code', m.home_postal_code, size=8) %]
                         &nbsp; <code><strong>$m.home_postal_city</strong></code> <td>Ange postnummer!
@@ -46,8 +46,8 @@ laddats ned.</p>
 
 [% WRAPPER draw_string title='Hemsida' field='home_online_uri' size=64 %]
 
-URL till den sida som beskriver dig.  En presentationssida på din
-webbplats eller en annan sida som ger mer information om dig själv.
+URL till den sida som beskriver dig.  En presentationssida pÃ¥ din
+webbplats eller en annan sida som ger mer information om dig sjÃ¤lv.
 
 [% END %]
 

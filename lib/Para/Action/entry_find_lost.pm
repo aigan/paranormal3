@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::entry_find_lost;
 
 use strict;

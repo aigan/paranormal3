@@ -2,6 +2,7 @@
 	otitle = 'Inställningar - E-post'
 	next_action = 'member_update'
 	focus = 'sys_email'
+	default_template = 'email.tt'
 	level = 2
 %]
 
@@ -35,8 +36,6 @@ din primära e-postadress. ... Dvs ditt namn efter att mellanslag etc konvertera
 [% END %]
 
 
-
-
 [% WRAPPER draw_valuelist 
            title='E-postadresser' 
            field='_meta_mailalias' 
@@ -49,6 +48,14 @@ av de andra adresserna.  Ange bara dina egna adresser eftersom
 lösenord kan komma att postas hit.
 
 [% END %]
+
+
+<h3>Vidaresändningar</h3>
+<p>E-post till dessa adresser skickas vidare till din primära e-postadress
+
+<p>fixme...
+[% hr %]
+
 
 
 [% WRAPPER draw_string title='Publik e-postadress'

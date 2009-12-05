@@ -23,11 +23,15 @@
    [% PROCESS option value="image/gif" %]
    [% PROCESS option value="image/jpeg" %]
    [% PROCESS option value="image/png" %]
+   [% PROCESS option value="image/svg+xml" %]
    [% PROCESS option value="application/pdf" %]
    [% PROCESS option value="text/html" %]
    [% PROCESS option value="text/plain" %]
    [% PROCESS option value="email" %]
    </select>
+   [% UNLESS t.media_url %]
+      ... [% jump("Ladda upp bild", "upload.tt", tid=tid) %]
+   [% END %]
 </td>
 </tr>
 <tr><td>URL</td><td>[% input('media_url', t.media_url, size=75) %]</td></tr>

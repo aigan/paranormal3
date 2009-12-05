@@ -11,7 +11,8 @@
 
 <h1>Hjälp-linjen</h1>
 
-<p>Medlemmar på paranormal.se har kontakter med många andra organisationer och nätverk.  Vi kallar oss [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %] och ställer upp för att lösa problem där du har drabbats av andliga eller övernaturliga fenomen.  Vad det än gäller, leder vi dig rätt efter bästa förmåga.</p>
+<p>Denna tjänst är nedlagd på grund av bristande intresse. Vi kanske startar upp i annan form någon gång i framtiden. Se vidare [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %]
+</p>
 
 <p>Men:
 <ul>
@@ -19,25 +20,6 @@
 <li>Är du på jakt efter kunskap eller information om något bör du istället fråga någon av de enskilda hjälparna under hjälpare [% jump('under respektive uppslagsord', '/index.tt') %]. Dessa frågor är för många för att vi ska kunna ta hand om dem här.</li>
 <li>Har du andra typer av frågor eller annan anledning att kontakta oss, se [% jump('våra kontaktuppgifter', '/topic/kontaktuppgifter_for_paranormalse.html') %].</li>
 </ul>
-
-<table>
-[% IF u.level %]
-<tr><td>Från <td>: [% input('from', "\"$m.name\" <$m.sys_email>" size=50) %]
-[% ELSE %]
-<tr><td>Från <td>: [% input('from', '' size=50) %]
-[% END %]
-<tr><td>Till <td>: <big><a href="mailto:help@paranormal.se">help@paranormal.se</a></big>[% hidden('to', "help@paranormal.se") %]
-<tr><td>Rubrik <td>: [% input('subject', t.desig, size=50) %]
-</table>
-
-<p>[% textarea('body','' ) %]
-
-[% IF u.level %] <p>(Mottagaren kommer att se ditt användarnamn) [% END %]
-
-<p>[% step('Skicka brevet') %]
-
-[% DEFAULT tid = 428516 %]
-[% hidden('tid',tid) %]
 
 [% hr %]
 

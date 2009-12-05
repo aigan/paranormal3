@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Calendar;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Calendar;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,13 +17,9 @@ package Para::Calendar;
 #=====================================================================
 
 use strict;
-use DateTime::Span;
+use warnings;
 
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
+use DateTime::Span;
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( throw debug trim );

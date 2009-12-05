@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::arctype_update;
 
 use strict;

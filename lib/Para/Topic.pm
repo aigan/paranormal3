@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Topic;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Topic;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,7 +17,11 @@ package Para::Topic;
 #=====================================================================
 
 use strict;
+use utf8;
+use warnings;
 use base qw( Exporter );
+
+use Encode;
 use Data::Dumper;
 use Carp qw( cluck croak confess shortmess carp );
 use locale;
@@ -32,12 +36,10 @@ use List::Util qw( min );
 BEGIN
 {
     our @EXPORT_OK = qw( title2url );
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Reload;
-use Para::Frame::DBIx qw( pgbool );
+use Para::Frame::DBIx;
 use Para::Frame::Utils qw( deunicode trim throw debug create_file );
 use Para::Frame::Time qw( now date );
 use Para::Frame::Widget qw( jump forward );
@@ -143,13 +145,13 @@ sub create
 
     if( $m->level < 5 )
     {
-	throw('denied', "Du måste bli medborgare för att få skapa nya ämnen.");
+	throw('denied', "Du mÃ¥ste bli medborgare fÃ¶r att fÃ¥ skapa nya Ã¤mnen.");
     }
 
     # Do not allow duplicated
     if( $m->level < 11 and $Para::dbix->select_possible_record('from t where t_title = ?', $title) )
     {
-	throw('denied', "Det finns redan ett ämne med denna titel.\n");
+	throw('denied', "Det finns redan ett Ã¤mne med denna titel.\n");
     }
 
     my $tid = $Para::dbix->get_nextval( "t_seq" );
@@ -177,7 +179,7 @@ sub create_entry
 
     if( $m->level < 5 )
     {
-	throw('denied', "Du måste bli medborgare för att få skapa nya texter");
+	throw('denied', "Du mÃ¥ste bli medborgare fÃ¶r att fÃ¥ skapa nya texter");
     }
 
     trim( $textref );
@@ -190,7 +192,7 @@ sub create_entry
     # Do not allow duplicated
     if( $Para::dbix->select_possible_record('from t where t_entry_parent=? and t_text=?', $pid, $$textref) )
     {
-	throw('validation', "Denna text finns redan kopplad till detta ämne");
+	throw('validation', "Denna text finns redan kopplad till detta Ã¤mne");
     }
 
     my $tid = $Para::dbix->get_nextval( "t_seq" );
@@ -219,7 +221,7 @@ sub find_urlpart
 
     trim( \$name );
     my $recs = $Para::dbix->select_list('select distinct t from t, talias where t=talias_t and talias_urlpart = lower(?) and t_active is true and t_entry is false and talias_active is true', $name );
-    my @topics = map Para::Topic->get_by_id( $_->{'t'} ), @$recs;
+    my @topics = map Para::Topic->get_by_id( $_->{'t'} ), $recs->as_array;
 
     return \@topics;
 }
@@ -297,7 +299,7 @@ sub find
     }
     elsif( $recs = $Para::dbix->select_list('from t, talias where t=talias_t and talias = lower(?)
                                 and t_active is true and t_entry is false
-                                and talias_active is true', $name )
+                                and talias_active is true', $name )->as_arrayref
 	   and @$recs)
     {
 	if(debug)
@@ -313,7 +315,7 @@ sub find
     # include inactive topics
     elsif( $recs = $Para::dbix->select_list('from t as main, talias where t=talias_t and talias = lower(?)
                                 and t_entry is false and t_active is false
-                                and t_ver=(select max(t_ver) from t where t=main.t)', $name )
+                                and t_ver=(select max(t_ver) from t where t=main.t)', $name )->as_arrayref
 	   and @$recs)
     {
 	my @res = @$recs;
@@ -346,7 +348,7 @@ sub find
     }
     # last resort
     elsif( $recs = $Para::dbix->select_list('from t where lower(t_title)=lower(?)
-                                and t_active is true and t_entry is false', $name )
+                                and t_active is true and t_entry is false', $name )->as_arrayref
 	   and @$recs)
     {
 	debug(1,"found '$name' as topic title");
@@ -385,7 +387,7 @@ sub find_one
 	    my $view = $alt->{'view'} || $req->page->url_path;
 
 	    return sprintf( "<td>%s <td>%d v%d <td>%s <td>%s",
-			    jump('välj',
+			    jump('vÃ¤lj',
 				 $view,
 				 {
 				     step_replace_params => $replace,
@@ -401,12 +403,12 @@ sub find_one
 	};
 	$alt->{'title'} = "Flera alternativ";
 
-	throw('alternatives', "Välj ett av dessa alternativ för ämnet '$name'");
+	throw('alternatives', "VÃ¤lj ett av dessa alternativ fÃ¶r Ã¤mnet '$name'");
     }
     unless( $topics->[0] )
     {
 	$Para::Frame::REQ->result->{'info'}{'create_confirm'} = $name;
-	throw('notfound', "Ämnet '$name' finns inte");
+	throw('notfound', "Ã„mnet '$name' finns inte");
     }
 
     return $topics->[0];
@@ -425,7 +427,7 @@ sub vacuum_from_queue
     foreach my $rec ( @$vts )
     {
 	my $t = Para::Topic->get_by_id( $rec->{'t'} );
-	$req->add_job('run_code', sub
+	$req->add_job('run_code', 'vacuum', sub
 		      {
 			  $t->vacuum($seen);
 		      });
@@ -446,12 +448,12 @@ sub publish_from_queue
     $req->set_site($site);
 
     my $topics =  $Para::dbix->select_list("select t from t where t_published is false and t_active is true and t_entry is false order by t_updated limit ?", $limit);
-    foreach my $rec ( @$topics )
+    foreach my $rec ( $topics->as_array )
     {
 	my $tid = $rec->{'t'};
 	my $t = Para::Topic->get_by_id( $tid );
 #	debug "Adding publish from queue for $t->{t} ($t)";
-	$req->add_job('run_code', sub
+	$req->add_job('run_code', 'publish', sub
 		      {
 			  $t->publish;
 		      });
@@ -463,7 +465,8 @@ sub publish_from_queue
 sub publish_urgent
 {
     $BATCHCOUNT ||= 1;
-    foreach my $t ( values %$TO_PUBLISH_NOW )
+    my @to_publish =  values %$TO_PUBLISH_NOW;
+    foreach my $t ( @to_publish )
     {
 	$t->publish;
 	unless( $BATCHCOUNT++ % BATCH )
@@ -767,19 +770,20 @@ sub previous
     {
 	debug(2,"getting previous of $t->{t} from db");
 	my $recs = $Para::dbix->select_list("from t where t_entry_next=? and t_status>=?", $t->id, $C_S_PROPOSED );
-	if( @$recs == 0 )
+	if( $recs->size == 0 )
 	{
 	    return $t->{'previous'} = undef;
 	}
 
-	my $previous = $t->get_by_id( $recs->[0]{'t'}, $recs->[0]{'t_ver'} );
+	my $rec_first = $recs->get_first_nos;
+	my $previous = $t->get_by_id( $rec_first->{'t'}, $rec_first->{'t_ver'} );
 
 	# First try sorting out the official connection
-	if( @$recs > 1 )
+	if( $recs->size > 1 )
 	{
 	    my $active = [];
 	    my $proposed = [];
-	    foreach my $rec ( @$recs )
+	    foreach my $rec ( $recs->as_array )
 	    {
 		my $v = $t->get_by_id( $rec->{'t'}, $rec->{'t_ver'} );
 		if( $v->active )
@@ -1033,7 +1037,7 @@ sub desig
 	    }
 	    else
 	    {
-		$t->{'desig'} = "Ämne $t->{t}";
+		$t->{'desig'} = "Ã„mne $t->{t}";
 	    }
 	}
 
@@ -1918,7 +1922,7 @@ sub move_branch
 
     if( $d->child_of( $e ) )
     {
-	return "Kan inte flytta grenen $eid till en del av sig själv\n";
+	return "Kan inte flytta grenen $eid till en del av sig sjÃ¤lv\n";
     }
 
     if( $follows )
@@ -2277,6 +2281,20 @@ sub ts_revlist
 }
 
 sub media_url { shift->{'media_url'} }
+
+sub media_url_full
+{
+    my( $t ) = @_;
+    # Currently just for uploaded images...
+    my $media_url = $t->{'media_url'};
+    if( $media_url and $media_url =~ /^\/images\/db\/(\d+)\/scaled\.png$/ )
+    {
+	return "/images/db/$1/orig.png";
+    }
+    return undef;
+}
+
+
 sub media_type { shift->{'media_mimetype'} }
 sub media { shift->{'media'} } # boolean (use $t->is_url_media instead)
 
@@ -2288,7 +2306,7 @@ sub media_remove
 
     if( $Para::Frame::U->status < $t->status )
     {
-	throw('denied', "Din status är lägre än ämnets");
+	throw('denied', "Din status Ã¤r lÃ¤gre Ã¤n Ã¤mnets");
     }
 
     my $sth = $Para::dbh->prepare("delete from media where media=?");
@@ -2312,7 +2330,7 @@ sub media_set
 
     if( $Para::Frame::U->status < $t->status )
     {
-	throw('denied', "Din status är lägre än ämnets");
+	throw('denied', "Din status Ã¤r lÃ¤gre Ã¤n Ã¤mnets");
     }
 
     return 1 if $url eq $t->{'media_url'} and $mime eq $t->{'media_mimetype'};
@@ -2491,7 +2509,7 @@ sub entry_list
 	my $list = $Para::dbix->select_list("select t, max(t_status) as max_status from t where t_entry_parent=? group by t order by max_status desc, t asc", $t->id);
 
 	my @childs;
-	foreach my $rec ( @$list )
+	foreach my $rec ( $list->as_array )
 	{
 	    # Get entry with highest status or highest version
 	    if( my $c = Para::Topic->get_by_id( $rec->{'t'} ) )
@@ -2831,9 +2849,9 @@ sub delete_cascade
 
     # Authorization
     #
-    if( $Para::Frame::U->level < 100 )
+    if( $Para::Frame::U->level < 42 )
     {
-	throw('denied', "Renskriv koden först");
+	throw('denied', "Renskriv koden fÃ¶rst");
     }
 
     # Things to delete
@@ -3254,7 +3272,7 @@ sub merge
     # Check if we are merging member topics
     if( $t2->member )
     {
-	throw('denied', "Ämne $tid2 är kopplat till medlem.\nSlå samman åt andra hållet.");
+	throw('denied', "Ã„mne $tid2 Ã¤r kopplat till medlem.\nSlÃ¥ samman Ã¥t andra hÃ¥llet.");
     }
 
     my $u_status = $u->status;
@@ -3272,17 +3290,17 @@ sub merge
     {
         if( $t1->status > $u_status )
         {
-	    throw('denied', "Du har inte access att göra detta");
+	    throw('denied', "Du har inte access att gÃ¶ra detta");
 	}
 	else
 	{
-	    throw('denied', "Slå samman åt andra hållet istället");
+	    throw('denied', "SlÃ¥ samman Ã¥t andra hÃ¥llet istÃ¤llet");
 	}
     }
 
     unless( $t1->active )
     {
-	throw('validation', "Ämne $tid1 är inte aktivt");
+	throw('validation', "Ã„mne $tid1 Ã¤r inte aktivt");
     }
 
 
@@ -3766,7 +3784,7 @@ sub publish
 		my $name = lc( $alias->name );
 
 		my $first = substr( $name, 0, 1);
-		if( $first =~ /^[a-zåäö]$/i )
+		if( $first =~ /^[a-zÃ¥Ã¤Ã¶]$/i )
 		{
 		    $letter = $first;
 		}
@@ -3785,7 +3803,7 @@ sub publish
 	$urldir =~ s/\.html$//;
 	$params->{'multi_dir'} = $urldir;
 
-	my $letters = ['-','a'..'z','å','ä','ö'];
+	my $letters = ['-','a'..'z','Ã¥','Ã¤','Ã¶'];
 
 	if( $cnt < 300 )
 	{
@@ -3894,6 +3912,7 @@ sub write_page
 	 POST_CHOMP   => 0,
 	 TRIM         => 1,
 	 EVAL_PERL    => 0,
+	 STASH => Para::Frame::Template::Stash::CheckUTF8->new,
 	 FILTERS      =>
 	 {
 	     'uri' => sub { CGI::escape($_[0]) },
@@ -3906,7 +3925,8 @@ sub write_page
     eval
     {
 	my $page = $th->process($template_file, $params);
- 
+	utf8::encode($page);
+
 	my $sysfile = sysfile( $file );
 
 	create_file( $sysfile, $page,
@@ -3916,7 +3936,7 @@ sub write_page
     };
     if( $@ )
     {
-	$req->result->message("Fel uppstod när vi försökte skapa\n$file\nmed hjälp av $template_file");
+	$req->result->message("Fel uppstod nÃ¤r vi fÃ¶rsÃ¶kte skapa\n$file\nmed hjÃ¤lp av $template_file");
     }
 
 
@@ -3966,7 +3986,7 @@ sub set_published
 {
     my( $t ) = @_;
 
-    $t->{'t_published'} ||= pgbool(1); #may already be
+    $t->{'t_published'} ||= $Para::dbix->bool(1); #may already be
     $t->mark_unsaved;
 
     # Och publicera nu alla aktiva barn
@@ -4008,7 +4028,7 @@ sub type_list
                             and rel_strength >= 30
                             and t not in ($exclude)", $rel );
 #    warn "returnted @$list";
-    return [ map Para::Topic->get_by_id( $_->{t} ), @$list ];
+    return [ map Para::Topic->get_by_id( $_->{t} ), $list->as_array ];
 }
 
 sub type_list_string
@@ -4029,15 +4049,26 @@ sub title2url
 {
     my( $title ) = @_;
 
-    deunicode( $title );
+#    deunicode( $title );
+
+#    if( utf8::is_utf8($title) )
+#    {
+#	Encode::from_to($title, "utf8", "iso-8859-1");
+#    }
 
     my $url = lc($title);
 
-    $url =~ tr[àáâäãåæéèêëíìïîóòöôõøúùüûıÿ]
-	      [aaaaaaaeeeeiiiioooooouuuuyy];
-    $url =~ s/[^\w\s-]//g;
+    $url =~ tr[Ã Ã¡Ã¢Ã¤Ã£Ã¥Ã¦Ã©Ã¨ÃªÃ«Ã­Ã¬Ã¯Ã®Ã³Ã²Ã¶Ã´ÃµÃ¸ÃºÃ¹Ã¼Ã»Ã½Ã¿Ã°Ã¾]
+	      [aaaaaaaeeeeiiiioooooouuuuyydp];
+    $url =~ s/[^a-z \-_]//g;
     $url =~ s/\s+/_/g;
     $url =~ s/( ^_+ | _+$ )//gx;
+
+    debug "URL for '$title' is '$url'";
+    my $firstchar = substr($title,0,1);
+    my $num = ord($firstchar);
+    debug "Firstchar '$firstchar' has ord $num";
+
     return $url;
 }
 

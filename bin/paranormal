@@ -1,5 +1,5 @@
 #!/bin/bash
-#  $Id$  -*-cperl-*-
+# -*-cperl-*-
 
 APPROOT=/var/www/test.paranormal.se
 

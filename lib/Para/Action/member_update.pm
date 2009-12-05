@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::member_update;
 
 use strict;

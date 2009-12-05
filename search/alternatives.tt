@@ -1,4 +1,4 @@
-﻿[% META
+[% META
    otitle = 'Sökresultat'
    hide='notfound'
    next_template = '/search/alternatives.tt'
@@ -23,15 +23,15 @@
    <table cellpadding="10">
    [% FOREACH t IN a.alts %]
       [% tr2 %]
-         <td valign="top">[% jump(t.desig, me, tid=t.id, run='topic_search_published') %] [% PROCESS typelist.tt %]</td><td valign="top">[% t.text | html %]</td>
+         <td valign="top">[% jump(t.desig, '/search/alternatives.tt', tid=t.id, run='topic_search_published') %] [% PROCESS typelist.tt %]</td><td valign="top">[% t.text | html %]</td>
       </tr>
    [% END %]
    </table>
 </div>
 
 [% ELSIF req.result.parts.0.type == 'notfound' %]
-   [% info = result.info.notfound %]
-   [% CALL req.set_http_status(404) %]
+   [% info = req.result.info.notfound %]
+   [% CALL req.response.set_http_status(404) %]
 <h1 align="center">404 - Vilse i det okända</h1>
 
 <div id="topic_header">
@@ -73,7 +73,7 @@
 [% submit('Sök') %]
 <script language="javascript">
 <!--
-document.f.talias.focus();
+document.forms['f'].talias.focus();
 //-->
 </script>
 

@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::paynova_begin;
 
 use strict;
@@ -168,7 +168,7 @@ sub handler
 
     if( length($session_key) == 37 )
     {
-	$req->page->redirect($paynova_server_url
+	$req->response->redirect($paynova_server_url
 			     . "/wallet/default.asp?sessionKey="
 			     . $session_key);
     }

@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Arcs;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Arcs;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,14 +17,10 @@ package Para::Arcs;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use Carp qw( confess );
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( trim debug );
@@ -73,7 +69,7 @@ sub init_rel
     # Could include active relations to inactive topics
     my $rels = $Para::dbix->select_list("from rel where rev=? and rel_active is true
                             and rel_strength >= ?", $t->id, $C_TRUE_MIN);
-    foreach my $rel ( @$rels )
+    foreach my $rel ( $rels->as_array )
     {
 	defined $rel->{'rel_type'} or die "rel_type undef: ".Dumper( $rel );
 	my $type = $rel->{'rel_type'};
@@ -146,7 +142,7 @@ sub init_rev
 
     my $revs = $Para::dbix->select_list("from rel where rel=? and rel_active is true
                             and rel_strength >= ?", $t->id, $C_TRUE_MIN);
-    foreach my $rev ( @$revs )
+    foreach my $rev ( $revs->as_array )
     {
 	defined $rev->{'rel_type'} or die "rel_type undef: ".Dumper( $rev );
 	my $type = $rev->{'rel_type'};

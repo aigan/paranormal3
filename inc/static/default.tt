@@ -38,8 +38,16 @@
 
       [% IF t.is_image %]
          <div  class="spacy_image">
-            <img alt="[% t.desig | html %]" 
-                 src="[% t.media_url | html %]">
+         [% IF t.media_url_full %]
+            <a href="[% t.media_url_full %]"><img alt="[% t.desig | html %]" src="[% t.media_url | html %]"></a>
+         [% ELSE %]
+	    [% IF t.media_type == 'image/svg+xml' %]
+	      <embed alt="[% t.desig | html %]" src="[% t.media_url | html %]" style="width: auto; height: auto"
+		     type="image/svg+xml" pluginspage="http://www.adobe.com/svg/viewer/install/" />
+	    [% ELSE %]
+	      <img alt="[% t.desig | html %]" src="[% t.media_url | html %]"/>
+	    [% END %]
+         [% END %]
          </div>
       [% END %]
 

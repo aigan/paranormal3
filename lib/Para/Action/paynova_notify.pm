@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::paynova_notify;
 #=====================================================================
 #
@@ -22,19 +22,20 @@ use strict;
 use Digest::MD5  qw(md5_hex);
 use CGI;
 use MIME::Lite;
-use Data::Dumper;
-use Unicode::MapUTF8 qw( to_utf8 );
+#use Data::Dumper;
+#use Unicode::MapUTF8 qw( to_utf8 );
 
 BEGIN
 {
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
+    our $VERSION  = sprintf("%d.%02d", q$Revision: 1.7 $ =~ /(\d+)\.(\d+)/);
     print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
-use Para::Frame::Utils qw( debug );
+use Para::Frame::Utils qw( debug datadump );
 use Para::Frame::Time;
 
 use Para::Payment;
+use Para::Frame::Renderer::Custom;
 
 sub handler
 {
@@ -50,7 +51,7 @@ sub handler
     my $secret_key = $Para::SITE_CFG->{'paynova'}{'secret_key'};
 
 
-    my $trans_id = $q->param("trans_id");
+    my $trans_id = $q->param("trans_id") || '';
     # The Paynova transaction ID. Length 18 characters.
 
     my $status = $q->param("paymentstatus") || -1;
@@ -115,17 +116,12 @@ sub handler
 
     }
 
-    $req->page->set_renderer(sub {
-	my $page = shift->page;
-	$page->{'page_content'} = \$out;
-	$page->{'page_sender'} = 'bytes';
-    });
 
-#    $r->status(200);
-#    $r->header_out( 'Connection', 'close' );
-#    $r->header_out( 'Content-Length', length($out) );
-#    $r->send_http_header('text/html');
-#    $r->print( to_utf8({ -string => $out, -charset => 'ISO-8859-1'}) );
+#    $req->response->set_content( \$out );
+
+    my $renderer = Para::Frame::Renderer::Custom->new({content=>\$out});
+    $req->response->set_renderer($renderer);
+
     debug "$out\n";
 
     return "";

@@ -30,12 +30,12 @@
 [% END %]
 
 <tr><td>DBM Passwd <td>
-   [% IF m.dbm_passwd_check %]
-      samma
-   [% ELSIF m.dbm_passwd_exist %]
-      skiljer
-   [% ELSE %]
+   [% IF !m.dbm_passwd_exist %]
       finns inte
+   [% ELSIF m.dbm_passwd_check %]
+      samma
+   [% ELSE %]
+      skiljer
    [% END %]
 
 

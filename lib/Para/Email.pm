@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Email;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Email;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -23,19 +23,13 @@ Para::Email - Sending emails
 =cut
 
 use strict;
-use vars qw( $VERSION );
-
-BEGIN
-{
-    $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
+use warnings;
 
 use Para::Frame::Reload;
 
 use Para::Frame::Utils qw( debug in datadump );
 
-use base 'Para::Frame::Email';
+use base 'Para::Frame::Email::Sending';
 
 sub set
 {
@@ -99,6 +93,7 @@ sub send
 {
     my( $e, @args ) = @_;
 
+    $e = $e->new unless ref $e;
     my $res = $e->SUPER::send( @args );
 
     $e->handle_result;

@@ -2,6 +2,8 @@
 # deny from all
 # allow from 213.88.136.
 
+PerlSetVar loadpage no
+
 <Files notify.cgi>
         SetHandler perl-script
 	PerlSetVar action paynova_notify

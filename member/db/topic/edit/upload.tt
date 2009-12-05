@@ -1,6 +1,7 @@
 ﻿[% META
-	title = 'Ladda upp bild'
+	otitle = 'Ladda upp bild'
 	next_action = 'upload_image'
+	default_template = '/member/db/topic/edit/media.tt'
 %]
 
 [%
@@ -8,6 +9,10 @@
    hidden('tid', tid);
    t = topic(tid);
 %]
+
+<h1>[% PROCESS tlink.tt %]: Ladda upp bild</h1>
+
+[% PROCESS edit_menu.tt %]
 
 <p>Filnamn: <input type="file" name="file_name">
 

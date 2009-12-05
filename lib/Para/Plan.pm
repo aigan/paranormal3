@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Plan;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Plan;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,17 +17,12 @@ package Para::Plan;
 #=====================================================================
 
 use strict;
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
+use warnings;
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( throw debug );
 use Para::Frame::Time qw( now );
-use Para::Frame::DBIx qw( pgbool );
+use Para::Frame::DBIx;
 
 use Para::Event;
 
@@ -164,7 +159,7 @@ sub execute_as_job
     my( $plan ) = @_;
 
     my $req = $Para::Frame::REQ;
-    $req->add_job('run_code', sub {
+    $req->add_job('run_code', 'plan execute_as_job', sub {
 	$plan->execute(@_);
     });
 }
@@ -236,7 +231,7 @@ sub set_finished
 
     my $params =
     {
-	plan_finished => pgbool(1),
+	plan_finished => $Para::dbix->bool(1),
     };
 
     if( $plan->started )

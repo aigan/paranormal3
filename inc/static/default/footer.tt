@@ -1,4 +1,5 @@
-﻿    <form action="/search/alternatives.tt"><div id="search_field"><input type="hidden" name="run" value="topic_search_published">Sök <input size="10" name="talias"></div></form>
+﻿<!-- google_ad_section_start(weight=ignore) -->
+    <form action="/search/alternatives.tt"><div id="search_field"><input type="hidden" name="run" value="topic_search_published">Sök <input size="10" name="talias"></div></form>
 
 <div id="footer">
 <p>Detta är en sida från webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.
@@ -18,3 +19,4 @@ webbplats</a>.</p>
 alt="pi" src="/images/g/pi.gif"/></a></p>
 
 </div>
+<!-- google_ad_section_end -->

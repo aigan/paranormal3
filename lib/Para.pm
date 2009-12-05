@@ -1,4 +1,4 @@
-#  $Id$  -*-cperl-*-
+# -*-cperl-*-
 package Para;
 
 #=====================================================================
@@ -10,7 +10,7 @@ package Para;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2005-2007 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2005-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -18,19 +18,16 @@ package Para;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use File::stat;
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( debug paraframe_dbm_open );
 use Para::Frame::Time qw( now duration );
 
+use Para::Utils;
 use Para::Constants qw( $C_DB_ONLINE );
 use Para::Member;
 use Para::Topic;
@@ -134,7 +131,7 @@ sub add_background_jobs
     foreach my $t ( values %$Para::Topic::TO_PUBLISH_NOW,
 		    values %$Para::Topic::TO_PUBLISH )
     {
-	$req->add_job('run_code', sub
+	$req->add_job('run_code', 'publish', sub
 		      {
 			  $t->publish;
 		      });
@@ -147,9 +144,9 @@ sub add_background_jobs
     &timeout_login;
     &clear_tempfiles;
 
-    $req->add_job('run_code', \&Para::Place::fix_zipcodes);
+    $req->add_job('run_code', 'fix_zipcodes', \&Para::Place::fix_zipcodes);
 
-    $req->add_job('run_code', \&Para::Calendar::do_planned_actions);
+    $req->add_job('run_code', 'do_planned_actions', \&Para::Calendar::do_planned_actions);
 
     eval
     {
@@ -186,7 +183,7 @@ sub timeout_login
 
     my $now = now();
 
-    foreach my $rec ( @$recs, @$online )
+    foreach my $rec ( $recs->as_array, @$online )
     {
 	my $mid = $rec->{'member'};
 	my $m = Para::Member->get_by_id( $mid );
@@ -250,21 +247,8 @@ sub display_slogan
 {
     unless( @Para::slogans )
     {
-#	open FILE, "/var/www/old.paranormal.se/cgi/slogans.txt";
-#	@Para::slogans = <FILE>;
-#	close FILE;
-#
-#	my $sth = $Para::dbh->prepare("insert into slogan (slogan, slogan_text) values (?,?)");
-#
-#	foreach my $slogan (@Para::slogans )
-#	{
-#	    my $id = $Para::dbix->get_nextval( "slogan_seq" );
-#	    $sth->execute($id, $slogan);
-#	}
-#	$Para::dbh->commit;
-
 	my $recs = $Para::dbix->select_list('from slogan');
-	foreach my $rec (@$recs )
+	foreach my $rec ($recs->as_array )
 	{
 	    push @Para::slogans, $rec->{'slogan_text'};
 	}

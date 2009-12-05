@@ -15,11 +15,11 @@ webbplats</a>.</p>
 
 </div>
 
-</form>
+</div></form>
 
 [% IF u.complexity > 15 %]
 [% PROCESS menu_admin_pf.tt %]
-[% IF debug %]
+[% IF debug_level %]
    [% PROCESS debug.tt %]
 [% END %]
 [% END %]

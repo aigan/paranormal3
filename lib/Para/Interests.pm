@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Interests;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Interests;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,16 +17,12 @@ package Para::Interests;
 #=====================================================================
 
 use strict;
+use warnings;
+use locale;
+
 use Data::Dumper;
 use Carp qw( carp confess );
-use locale;
 use Date::Manip;
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Reload;
 use Para::Frame::DBIx;
@@ -96,7 +92,7 @@ sub count_real
     my $m = $ins->member;
     my $cnt = 0;
     my $total = scalar @{ $ins->{'list'} };
-    for( my $n=0; $n <= $total; $n++ )
+    for( my $n=0; $n < $total; $n++ )
     {
 	my $rec = $ins->{'list'}[$n];
 	my $in = Para::Interest->get( $m, $rec->{'intrest_topic'}, $rec);
@@ -209,9 +205,9 @@ sub list_item
 {
     my( $ins, $item ) = @_;
 
-    $ins->init_list unless $ins->{'list'};
+    $ins->init_list unless ref $ins->{'list'};
 
-    my $rec = $ins->{'list'}[ $item ];
+    my $rec = $ins->{'list'}->get_by_index( $item );
 #    warn "Returning interest no $item: ".Dumper($rec);
 
     return undef unless $rec;

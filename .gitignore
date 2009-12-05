@@ -1,0 +1,16 @@
+.htaccess
+/admin
+/article
+/faq
+/files
+/images
+/logs
+/meta
+/mirror
+/news
+/old2
+/pf
+/pub
+/topic
+/var
+/webalizer

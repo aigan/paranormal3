@@ -70,7 +70,7 @@ END;
       [%tr2%]
       <td>[% jump(am.desig,"/member/db/person/view/", mid=am.id, href_target='_blank') %]
       <td>[% am.sys_email %]
-      <td><a href="#" onclick="javascript:document.f.member.value='[% am.nickname_trimmed %]';return(false);">välj</a>
+      <td><a href="#" onclick="javascript:document.forms['f'].member.value='[% am.nickname_trimmed %]';return(false);">välj</a>
    [% END %]
    </table>
 [% ELSE %]
@@ -79,7 +79,7 @@ END;
    [% FOREACH nick IN members.suggest_nicknames([r.alias], [dest_str]) %]
       [%tr2%]
       <td>[% nick %]
-      <td><a href="#" onclick="javascript:document.f.member.value='[% nick %]';return(false);">välj</a>
+      <td><a href="#" onclick="javascript:document.forms['f'].member.value='[% nick %]';return(false);">välj</a>
    [% END %]
    </table>
 [% END %]

@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Constants;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Constants;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,14 +17,9 @@ package Para::Constants;
 #=====================================================================
 
 use strict;
+use warnings;
 use base 'Exporter';
 use vars qw( @EXPORT_OK %EXPORT_TAGS @ALL $AUTOLOAD $INITIALIZED %Constants @Constants_keys );
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 #use Para::Frame::Reload;
 use Para::Frame::Utils qw( debug );

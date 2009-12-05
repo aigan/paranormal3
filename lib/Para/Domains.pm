@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Domains;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Domains;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2006 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2006-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,14 +17,13 @@ package Para::Domains;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use Carp qw( confess );
 
 BEGIN
 {
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-
     # Export before pulling in more modules
     #
     use constant DB_DOMAINS => "$WA::APPROOT/var/domains.db";
@@ -45,6 +44,8 @@ use base 'Para::Frame::List';
 
 our $INITIATED;
 
+# TODO: Sync properly with Para::Frame::List
+
 sub init
 {
     my( $ds ) = @_;
@@ -57,21 +58,22 @@ sub init
     my $db = paraframe_dbm_open( DB_DOMAINS );
     debug "Opening domain list";
 
-    my $obj = $ds->hashref;
-    $obj->{by_id} = {};
-    $obj->{not_in_dbm} = [];
-    my $by_id   = $obj->{by_id};
-    my $not_in_dbm = $obj->{not_in_dbm};
+    $ds->{by_id} = {};
+    $ds->{not_in_dbm} = [];
+    my $by_id   = $ds->{by_id};
+    my $not_in_dbm = $ds->{not_in_dbm};
 
+    my @list;
     foreach my $name ( sort keys %$db )
     {
+	utf8::upgrade($name);
 	my $type = $db->{$name};
 	my $d = Para::Domain->new( $name, $type, 1 );
-	push @$ds, $d;
+	push @list, $d;
 	$by_id->{$name} = $d;
     }
 
-    foreach my $rec ( $Para::dbix->select_list("from domain")->as_list )
+    foreach my $rec ( $Para::dbix->select_list("from domain")->as_array )
     {
 	my $name = $rec->{'domain'};
 	unless( $by_id->{$name} )
@@ -82,6 +84,8 @@ sub init
 	    $by_id->{$name} = $d;
 	}
     }
+
+    $ds->{'_DATA'} = \@list;
 
     $INITIATED ++;
 }

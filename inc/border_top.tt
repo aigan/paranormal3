@@ -1,8 +1,9 @@
 ﻿<div id="admin_menu">
-<div style="float: right"><form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published"/><label for="top_talias">Sök <input size="10" name="talias" id="top_talias"/></form></div>
+<form action="/search/alternatives.tt"><div style="float: right"><input type="hidden" name="run" value="topic_search_published"/><label for="top_talias">Sök <input size="10" name="talias" id="top_talias"/></label></div></form>
 
 <form action="/member/db/topic/view/">
- [ [% u.level +%] [%+ jump('Hem', '/') %]
+<div>
+  [[% u.level +%] [%+ jump('Hem', '/') %]
  | [%+ jump('Index', '/topic/') %]
 [% IF u.level >= 2 %]
   |  [% jump('Torget', '/member/db/') %]
@@ -23,6 +24,7 @@
  |  [% jump('Bli medlem','/member/db/person/quest/level_00/') %]
  ]
 [% END %]
+</div>
 </form>
 </div>
 

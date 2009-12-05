@@ -29,7 +29,7 @@
       sel = "< 'a'";
    END;
 
-   order = q.param('order') || 'intrest_topic';
+   order = q.param('order') || 't_title';
    direction = q.param('direction') || 'asc';
 
 %]
@@ -100,7 +100,7 @@
       <div class="entry">
       <table>
       <tr>
-         <th>[% sort('Ämne', 'intrest_topic') %]
+         <th>[% sort('Ämne', 't_title') %]
          <th>[% sort('%', 'intrest') %]
          <th>[% sort('S', 'intrest_defined') %]
       [% IF ifilter.include_date %]

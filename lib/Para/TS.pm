@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::TS;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::TS;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,18 +17,14 @@ package Para::TS;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use List::Util qw( max );
 
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
-
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( debug );
-use Para::Frame::DBIx qw( pgbool );
+use Para::Frame::DBIx;
 
 use Para::Topic;
 use Para::Constants qw( $C_S_REPLACED );
@@ -99,7 +95,7 @@ sub rel_list
 
     my @tss;
 
-    foreach my $rec ( @$recs )
+    foreach my $rec ( $recs->as_array )
     {
 	push @tss, Para::TS->new( $rec );
     }
@@ -133,7 +129,7 @@ sub rev_list
 
     my @tss;
 
-    foreach my $rec ( @$recs )
+    foreach my $rec ( $recs->as_array )
     {
 	push @tss, Para::TS->new( $rec );
     }
@@ -184,7 +180,7 @@ sub set
 		my $st_u = "update ts set ts_active=?, ts_status=?, ts_updated=now(), ".
 		    "ts_changedby=? where ts_entry=? and ts_topic=?";
 		my $sth_u = $dbh->prepare( $st_u );
-		$sth_u->execute( pgbool($active), $new_status, $mid, $eid, $tid );
+		$sth_u->execute( $Para::dbix->bool($active), $new_status, $mid, $eid, $tid );
 		$change ++;
 	    }
 	}
@@ -197,7 +193,7 @@ sub set
 		"ts_status, ts_active ) values ( ?, ?, ?, ?, ?, ? )";
 	    warn "$st_add ($eid, $tid, $mid, $mid, $new_status, $active)\n";
 	    my $sth_add = $dbh->prepare( $st_add );
-	    $sth_add->execute($eid, $tid, $mid, $mid, $new_status, pgbool($active));
+	    $sth_add->execute($eid, $tid, $mid, $mid, $new_status, $Para::dbix->bool($active));
 	    $change ++;
 	}
     }

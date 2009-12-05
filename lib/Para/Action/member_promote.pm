@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::member_promote;
 #=====================================================================
 #
@@ -32,7 +32,7 @@ sub handler
     {
 	my $sys = Para::Member->get(-1);
 	$u->level( 2, $sys );
-	$req->page->set_template("/member/db/person/quest/level_02/welcome.tt");
+	$req->set_page("/member/db/person/quest/level_02/welcome.tt");
 	return "Nivå 2";
     }
 

@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Member::Email::Address;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Member::Email::Address;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,18 +17,14 @@ package Para::Member::Email::Address;
 #=====================================================================
 
 use strict;
-use Data::Dumper;
-use Carp qw( confess croak );
+use warnings;
 
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
+use Data::Dumper;
+use Carp qw( confess croak cluck );
 
 use Para::Frame::Reload;
 use Para::Frame::Time;
-use Para::Frame::Utils qw( throw );
+use Para::Frame::Utils qw( throw catch );
 
 use Para::Member;
 
@@ -46,7 +42,7 @@ sub new
 
     if( $rec )
     {
-	$ea->equals( $rec->{mailalias} ) or die "record mismatch";
+	$ea->equals( $rec->{mailalias} ) or die "record mismatch for $ea in ".$m->sysdesig."\n";
 	$rec->{mailalias_member} == $m->id or die "record mismatch";
     }
     else
@@ -59,7 +55,14 @@ sub new
 	    if( $m->{'sys_email'} eq $email_str )
 	    {
 		# Add the address
-		$this->add( $m, $ea );
+		eval
+		{
+		    $this->add( $m, $ea );
+		};
+		if( my $err = catch($@) )
+		{
+		    $Para::Frame::REQ->result->message($err->info);
+		}
 	    }
 	    else
 	    {
@@ -94,13 +97,13 @@ sub add
     };
     if( $@ )
     {
-	warn "Error: $@";
+	cluck "Error: $@";
 	if( $Para::dbh->errstr and $Para::dbh->errstr =~ /duplicate key/ )
 	{
 	    if( $Para::dbh->errstr =~ /mailalias_pkey/ )
 	    {
 		# Must throw an error
-		throw('validation', "E-postadressen '$email_address_in' är knuten till en annan medlems alternativa e-postadresser\nÄr det din adress kan du få lösenordet postat till dig för det existerande medlemskapet");
+		throw('validation', "E-postadressen '$email_address_in' Ã¤r knuten till en annan medlems alternativa e-postadresser\nÃ„r det din adress kan du fÃ¥ lÃ¶senordet postat till dig fÃ¶r det existerande medlemskapet");
 	    }
 	}
 	die $@;
@@ -121,7 +124,7 @@ sub delete
     # Do not allow to remove an alias if its the sys_email
     if( $m->sys_email and $m->sys_email->equals($e) )
     {
-	throw('email', "Du kan inte ta bort din primära e-postadress");
+	throw('email', "Du kan inte ta bort din primÃ¤ra e-postadress");
     }
 
     my $st = "delete from mailalias where

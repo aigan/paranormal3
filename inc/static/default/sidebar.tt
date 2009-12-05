@@ -39,6 +39,9 @@
 [% INCLUDE present_rel_links type=44 %]
 [% INCLUDE present_rev_links type=44 %]
 [% INCLUDE present_rev_links type=45 %]
+[% INCLUDE present_rel_links type=47 %]
+[% INCLUDE present_rev_links type=47 %]
+[% INCLUDE present_rev_links type=48 %]
 
 <h2>Ditt kontaktnät</h2>
 
@@ -52,4 +55,18 @@
 [% PROCESS topic/list_pdfs.tt UNLESS multi == 'rev_ts' %]
 [% PROCESS topic/ts_rev.tt UNLESS multi == 'rev_ts' %]
 
+  <div id="googlead" style="margin-top: 2em; margin-bottom: 1em; widht: 100%">
+    <script type="text/javascript">
+      <!--
+	  google_ad_client = "pub-3489621922353147";
+	  //180x90, skapad 2008-01-23
+	  google_ad_slot = "8042065329";
+	  google_ad_width = 180;
+	  google_ad_height = 90;
+	  //-->
+    </script>
+    <script type="text/javascript"
+	    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  </div>
 </div>

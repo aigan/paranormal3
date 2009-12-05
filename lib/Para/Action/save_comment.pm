@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::save_comment;
 
 use strict;
@@ -17,9 +17,9 @@ sub handler
     my $comment  = $q->param('comment');
     my $path     = $home_path.$dir_path.'/'.$base.'.txt';
 
-    unless( $dir_path =~ m(^(/member/photo/img/|/PA-stockholm/photo/)) )
+    unless( $req->dirconfig->{'photodir'} )
     {
-	die "path out of bound";
+	die "path out of bound ($dir_path)";
     }
 
     open(FILE, '>', $path) or die "Couldn't save '$path': $!";

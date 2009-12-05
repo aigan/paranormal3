@@ -1,4 +1,4 @@
-#  $Id$  -*-cperl-*-
+# -*-cperl-*-
 package Para::Action::cron_daily_test;
 
 use strict;
@@ -27,6 +27,12 @@ sub handler
     my $db = paraframe_dbm_open( $C_DB_PASSWD );
     foreach my $key ( keys %$db )
     {
+	unless( $key )
+	{
+	    delete $db->{$key};
+	    next;
+	}
+
 	print FILE $key."\n";
     }
     close FILE;

@@ -1,9 +1,9 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::email_combined_list;
 
 use strict;
 
-use Para::Frame::Utils qw( throw );
+use Para::Frame::Utils qw( throw debug );
 
 use Para::Member;
 
@@ -31,9 +31,9 @@ sub handler
 	cnt => scalar(@$list),
     });
 
-    $req->add_background_job(\&send_to_list, $e, $list);
+    $req->add_background_job('send_to_list', \&send_to_list, $e, $list);
 
-    return "Skickar breveven i bakgrunden i fork ...";
+    return "Skickar breven i bakgrunden i fork ...";
 }
 
 sub send_to_list
@@ -45,10 +45,14 @@ sub send_to_list
     {
 	foreach my $rec ( @$list )
 	{
-	    my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
-	    $e->send({ m => $m }); # Ignoring errors
-	    # ... or throw('email', $e->error_msg);
-	    # TODO: Report errors to sending member
+	    eval
+	    {
+		my $m = Para::Member->get_by_id( $rec->{'member'}, $rec );
+		$e->send({ m => $m })
+		  or debug( $e->error_msg );
+		# ... or throw('email', $e->error_msg);
+		# TODO: Report errors to sending member
+	    };
 	}
 	$fork->return('Sent e-mail to all of list');
     }

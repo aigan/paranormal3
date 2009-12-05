@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::interest_find_new;
 
 use strict;
@@ -60,7 +60,7 @@ sub handler
 	my $alts = Para::Topic->find_by_alias($line, {status_min=>2});
 	foreach my $t ( @$alts )
 	{
-	    $m->interest( $t ); # Mark interest
+	    $m->interests->getset( $t ); # Mark interest
 	}
 
 	if( @$alts )
@@ -105,7 +105,7 @@ sub handler
 	$q->param('_name', ucfirst $alias);
 	delete $news->{$alias};
 
-	$req->page->set_template('/member/db/topic/create/maby.tt');
+	$req->set_page('/member/db/topic/create/maby.tt');
     }
     else
     {

@@ -1,7 +1,9 @@
 ﻿[% FOREACH e = t.entry_list %]
    [% NEXT UNLESS e.active %]
    <div class="entry">
+   <!-- google_ad_section_start(weight=ignore) -->
    <a id="[% e.t %]" href="[% e.file %]" class="topic_status">[% INCLUDE topic_status.tt t=e%]</a>
+   <!-- google_ad_section_end -->
 
    [% CALL new_entry(tid) %]
    [% IF e.title %]

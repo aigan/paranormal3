@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::ts_update;
 
 use strict;
@@ -125,8 +125,8 @@ sub check_ts_create
 					);
 		    };
 
-		    $req->page->set_error_template('/alternatives.tt');
 		    $req->s->route->bookmark;
+		    $req->set_error_response_path('/alternatives.tt');
 		}
 		die $@; # Propagate error
 	    }

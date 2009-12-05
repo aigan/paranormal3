@@ -1,0 +1,7 @@
+﻿[% META title="Resultat"
+        level = 41
+%]
+
+<pre>
+[% u.session.combined_email | html %]
+</pre>

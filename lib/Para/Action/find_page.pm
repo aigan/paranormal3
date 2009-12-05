@@ -1,10 +1,10 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::find_page;
 
 use strict;
-use Data::Dumper;
+use utf8;
 
-use Para::Frame::Utils qw( throw deunicode catch debug );
+use Para::Frame::Utils qw( throw deunicode catch debug validate_utf8 );
 use Para::Frame::DBIx;
 
 use Para::Topic qw( title2url );
@@ -19,9 +19,9 @@ my $oldtypes =
 
 my $oldchars =
 {
-    aa       => 'å',
-    ae       => 'ä',
-    oe       => 'ö',
+    aa       => 'Ã¥',
+    ae       => 'Ã¤',
+    oe       => 'Ã¶',
 };
 
 
@@ -33,6 +33,7 @@ sub handler
     my $q = $req->q;
     my $u = $req->s->u;
     my $res = $req->result;
+    my $response = $req->response;
 
     my $uri = $ENV{'REDIRECT_SCRIPT_URI'} or
 	throw('denied',"You should not be here!!!");
@@ -41,6 +42,7 @@ sub handler
     $uri =~ s/^https?:\/\/$host//;
 
     $uri =~ s/^\/topic\/(\w\w\/)/\/topic\//;
+
     debug "Prev URI: $uri";
 
 
@@ -65,7 +67,7 @@ sub handler
     #
     # Start by checking coding variants
     #
-    if( $uri =~ /Ã/ )
+    if( $uri =~ /Ãƒ/ )
     {
 	$uri = deunicode( $uri );
 
@@ -75,16 +77,22 @@ sub handler
 	my $filename = $req->uri2file( $uri );
 	if( -r $filename ) # Realy existing?
 	{
-	    $page->redirect($uri, 1);
+	    $response->redirect($uri, 1);
 	    return "Redirecting";
 	}
     }
 
+    # Handle string as UTF8
+    #
+    utf8::upgrade( $uri );
+
+#    $uri =~ s/\.htm$/.html/;
 
     # 1. lookup t_oldfile in t
     #
     # oldfile ?
     #
+    debug validate_utf8(\$uri);
     if( my $rec = $Para::dbix->select_possible_record("from t where t_oldfile=? and t_active is true and t_file is not null", $uri) )
     {
 	my $newuri = $rec->{'t_file'};
@@ -93,7 +101,7 @@ sub handler
 	my $filename =  $req->uri2file( $newuri );
 	if( -r $filename ) # Realy existing?
 	{
-	    $page->redirect( $newuri, 1 );
+	    $response->redirect( $newuri, 1 );
 	    return "Redirecting";
 	}
     }
@@ -102,9 +110,9 @@ sub handler
     # 2. If this is in one of the old sections we will try converting
     #    path to title
     #
-    $uri =~ m!^(.*?)(?:\.(html|txt))?$! or die "That was strange";
+    $uri =~ m!^(.*?)(?:\.(html?|txt))?$! or die "That was strange";
     my $path = lc($1);
-    my $format = $2;
+    my $format = $2||'';
     my $section = '';
 
     if( $path =~ m!^/([^/]+)/(.*?)$! )
@@ -175,7 +183,8 @@ sub handler
 	    $res->{'info'}{'notfound'}{'uri'} = deunicode($uri);
 	    my $name = url2title( $uri );
 	    $res->{'info'}{'notfound'}{'name'} = $name;
-	    throw('notfound', "Adressen är för lång för att vi ska kunna använda den för att hitta motsvarande ord i uppslagsverket.");
+	    $req->set_error_response_path("/search/alternatives.tt");
+	    throw('notfound', "Adressen Ã¤r fÃ¶r lÃ¥ng fÃ¶r att vi ska kunna anvÃ¤nda den fÃ¶r att hitta motsvarande ord i uppslagsverket.");
 	}
     }
     elsif( $second )
@@ -273,7 +282,8 @@ sub handler
     {
 	$res->{'info'}{'alternatives'}{'alts'} = \@topics;
 	my $euri = $q->escapeHTML( $uri );
-	throw('alternatives', "Välj ett av dessa alternativ för <code>$euri</code>");
+	$req->set_error_response_path('/search/alternatives.tt');
+	throw('alternatives', "VÃ¤lj ett av dessa alternativ fÃ¶r <code>$euri</code>");
     }
 
     unless( $topics[0] )
@@ -284,7 +294,7 @@ sub handler
 	my $name = url2title( $uri );
 	$res->{'info'}{'notfound'}{'name'} = $name;
 	$res->hide_part('notfound');
-
+	$req->set_error_response_path("/search/alternatives.tt");
 	throw('notfound',"");
     }
 
@@ -299,7 +309,8 @@ sub handler
 	$res->{'info'}{'notfound'}{'name'} = $name;
 	$res->{'info'}{'notfound'}{'tid'} = $t->id;
 	$res->{'info'}{'notfound'}{'uri'} = "";
-	throw('notfound', "Hittade $title, men det uppslagsordet är hemligt.");
+	$req->set_error_response_path("/search/alternatives.tt");
+	throw('notfound', "Hittade $title, men det uppslagsordet Ã¤r hemligt.");
     }
 
     # Lookup corresponding filename
@@ -307,7 +318,7 @@ sub handler
     debug "Trying $filename";
     if( -r $filename ) # Realy existing?
     {
-	$page->redirect( $newuri, 1 );
+	$response->redirect( $newuri, 1 );
     }
     else
     {
@@ -315,7 +326,7 @@ sub handler
 	$t->publish;
 	if( -r $filename ) # Exists now?!?
 	{
-	    $page->redirect( $newuri, 1 );
+	    $response->redirect( $newuri, 1 );
 	}
 	else
 	{
@@ -323,11 +334,12 @@ sub handler
 	    $res->{'info'}{'notfound'}{'uri'} = $newuri;
 	    $res->{'info'}{'notfound'}{'tid'} = $t->id;
 	    $res->{'info'}{'notfound'}{'name'} = $name;
+	    $req->set_error_response_path("/search/alternatives.tt");
 	    throw('notfound', "Den finns dock i databasen");
 	}
     }
 
-    return "What happend?";
+    return "Redirecting to $newuri";
 }
 
 sub variations_slash

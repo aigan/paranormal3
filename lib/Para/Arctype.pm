@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Arctype;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Arctype;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,17 +17,14 @@ package Para::Arctype;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use Carp;
 
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
-
 use Para::Frame::Reload;
 use Para::Frame::Time qw( now );
+use Para::Frame::List;
 
 use Para::Topic;
 
@@ -58,6 +55,11 @@ sub new
 	die "Arctype '$name' doesn't exist\n";
     }
 
+    # Marks as utf8
+    foreach my $key (keys %$rec)
+    {
+	utf8::decode( $rec->{$key} );
+    }
 
     return bless( $rec, $class );
 }
@@ -73,7 +75,7 @@ sub list
     {
 	if( ref $crits eq 'ARRAY' )
 	{
-	    $recs = $crits;
+	    $recs = Para::Frame::List->new($crits);
 	}
 	elsif( $crits eq 'literals' )
 	{
@@ -89,7 +91,7 @@ sub list
 	$recs = $Para::dbix->select_list('from reltype order by reltype');
     }
 
-    foreach my $rec (@$recs)
+    foreach my $rec ($recs->as_array)
     {
 	push @list, $class->new( $rec );
     }

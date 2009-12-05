@@ -2,3 +2,5 @@ AuthName "private photo album"
 AuthType Basic
 AuthUserFile /var/www/paranormal.se/member/photo/.htpasswd
 require user para
+
+PerlSetVar photodir 1

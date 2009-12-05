@@ -1,4 +1,4 @@
-#  $Id$  -*-cperl-*-
+# -*-cperl-*-
 package Para::Member;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Member;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2006 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,17 +17,13 @@ package Para::Member;
 #=====================================================================
 
 use strict;
+use warnings;
+use locale;
+
 use Data::Dumper;
 use Mail::Address;
 use Carp;
 use Time::Seconds;
-use locale;
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Reload;
 use Para::Frame::Time qw( now date duration );
@@ -35,6 +31,7 @@ use Para::Frame::Utils qw( throw trim passwd_crypt paraframe_dbm_open make_passw
 use Para::Frame::Email;
 use Para::Frame::Change;
 
+use Para::Utils qw( trim_text );
 use Para::Topic;
 use Para::Interests;
 use Para::Interest;
@@ -45,7 +42,6 @@ use Para::Payment;
 use Para::Email::Address;
 use Para::Member::Email::Address;
 use Para::Place;
-use Para::Utils qw( trim_text );
 
 use base qw( Para::Frame::User );
 use base qw( Exporter );
@@ -362,7 +358,7 @@ sub on_login
 	my $sys = Para::Member->get(-1);
 	$u->level( 2, $sys );
 	my $req = $Para::Frame::REQ;
-	$req->page->set_template("/member/db/person/quest/level_02/welcome.tt");
+	$req->set_page("/member/db/person/quest/level_02/welcome.tt");
 	$u->changes->report;
     }
 }
@@ -729,13 +725,23 @@ sub tlink  # Link to page with title. No link to adminpage
 {
     my( $m ) = @_;
 
-    if( my $file = $m->file )
+    my $desig;
+    if( my $title = $m->title )
     {
-	return &Para::Frame::Widget::jump( $m->title .' '. $m->{'nickname'}, $m->file );
+	$desig =  $m->title .' '. $m->{'nickname'};
     }
     else
     {
-	return $m->title .' '. $m->{'nickname'};
+	$desig = $m->{'nickname'};
+    }
+
+    if( my $file = $m->file )
+    {
+	return &Para::Frame::Widget::jump( $desig, $m->file );
+    }
+    else
+    {
+	return $desig;
     }
 }
 
@@ -1481,7 +1487,7 @@ sub set_home_online_msn
     {
 	### TODO: FIXME
 	my $ea = Para::Email::Address->parse( $email );
-	unless( $ea->validate )
+	unless( $ea->validate( $m ) )
 	{
 	    return $m->change->fail("$email är inte en korrekt e-postadress");
 	}
@@ -1532,7 +1538,7 @@ sub set_sys_email
     if( $@ )
     {
 	debug(0,"Error: $@");
-	if( $Para::dbh->errstr and $Para::dbh->errstr =~ /duplicate key/ )
+	if( $Para::dbh->errstr and $Para::dbh->errstr =~ /duplicerad nyckel/ )
 	{
 	    if( $Para::dbh->errstr =~ /member_sys_email_key/ )
 	    {
@@ -3496,7 +3502,6 @@ sub search
 	}
     }
 
-
     my $where_string = join " and ", @where_part;
 
     my $part_select = join ", ", 'member', @select;
@@ -3724,6 +3729,63 @@ sub trim_name
 	$ref = substr($ref,0,24);
 	return $ref;
     }
+}
+
+sub has_page_update_access
+{
+    my( $u, $file ) = @_;
+
+    if( $file )
+    {
+	unless( UNIVERSAL::isa( $file, 'Para::Frame::File' ) )
+	{
+	    throw('action', "File param not a Para::Frame::File object");
+	}
+    }
+
+    my $site_code = $file->site->code;
+    my $uname = $u->name;
+    debug "Checking update access right for $uname";
+    debug "  In $site_code";
+
+    if( $file->site->code eq 'emelie' )
+    {
+	if( $u->id == 49014 ) # Mohline
+	{
+	    return 1;
+	}
+	else
+	{
+	    return 0;
+	}
+    }
+
+
+    if( $file->site->code eq 'goteborg' )
+    {
+	my $fpath = $file->path;
+	debug "    for $fpath";
+	if( $file->name =~ /^cf_(.*)\.tt$/ )
+	{
+	    if( $u->level >= 30 )
+	    {
+		return 1;
+	    }
+	}
+    }
+
+    if( $file->site->code eq 'frame.para.se' )
+    {
+	my $fpath = $file->path;
+	debug "    for $fpath";
+	if( $u->level >= 30 )
+	{
+	  return 1;
+	}
+    }
+
+
+    return 0;
 }
 
 # warn "Loaded Para::Member\n";

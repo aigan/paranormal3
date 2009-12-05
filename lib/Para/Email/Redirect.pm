@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Email::Redirect;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Email::Redirect;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2006 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2006-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,14 +17,10 @@ package Para::Email::Redirect;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use Carp;
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( paraframe_dbm_open trim throw debug );

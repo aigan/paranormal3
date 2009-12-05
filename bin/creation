@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#  $Id$  -*-cperl-*-
+# -*-cperl-*-
 package Para;
 
 #=====================================================================
@@ -11,7 +11,7 @@ package Para;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -20,7 +20,7 @@ package Para;
 
 BEGIN
 {
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
+    our $VERSION  = 1.73;
     print "Starting creation $VERSION\n";
 
     use FindBin;
@@ -37,12 +37,10 @@ our $SITE_CFG;  # Hashref with rest of config
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
 use lib "$WA::APPROOT/lib";
-use lib "$Ekoby::APPROOT/lib";
-use lib "$Para::Healing::APPROOT/lib";
-
 
 use locale;
 use Data::Dumper;
+use Scalar::Util qw( looks_like_number );
 
 use Para::Frame;
 use Para::Frame::DBIx;
@@ -57,21 +55,27 @@ use Para;
 use Para::Member;
 use Para::Domains;
 
-use Ekoby::Ekonomi;
-use Ekoby::Library;
-
-use Para::Healing;
-
 use WA::Domains;
 
 {
     # Do not daemonize if run with cmdline argument
-    my $daemonize = @ARGV ? 0 : 1;
+    my $daemonize = $ARGV[0] ? 0 : 1;
     my $watchdog = 1;   # Use watchdog
 
     unless( $SITE_CFG )
     {
 	die "Site configuration missing";
+    }
+
+    if( looks_like_number($ARGV[1]) )
+    {
+	$SITE_CFG->{'port'} = $ARGV[1];
+    }
+
+    my $logfile = "$APPROOT/logs/creation.log";
+    if( looks_like_number($ARGV[1]) )
+    {
+	$logfile =~ s/\.log$/.$ARGV[1].log/;
     }
 
     my $cfg =
@@ -85,7 +89,7 @@ use WA::Domains;
 
 	'user_class'   => 'Para::Member',
 	'bg_user_code' => sub{ Para::Member->skapelsen },
-	'logfile'      => "$APPROOT/logs/creation.log",
+	'logfile'      => $logfile,
 	'pidfile'      => "$APPROOT/var/creation.pid",
 
 	'port'         => $SITE_CFG->{'port'},
@@ -98,6 +102,7 @@ use WA::Domains;
     };
     Para::Frame->configure( $cfg );
 
+    debug "ttcdir is ".$cfg->{ttcdir};
 
     # Configure database
     #
@@ -107,24 +112,6 @@ use WA::Domains;
 	    bind_dbh => \ $Para::dbh,
 	    import_tt_params => 1,
 	});
-
-
-    # Configure Ekoby database
-    #
-    $Ekoby::dbix = Para::Frame::DBIx ->
-	new({
-	    connect => ["DBI:Pg:dbname=ekoby;port=5433"],
-	});
-
-    # Configure Healing database
-    #
-    $Para::Healing::dbix = Para::Frame::DBIx ->
-	new({
-	     connect            =>  ["dbi:Pg:dbname=healing;port=5433"],
-	     datetime_formatter => 'DateTime::Format::Pg',
-	});
-
-
 
 
     my $para_css =
@@ -144,36 +131,22 @@ use WA::Domains;
 	# Path in  URL to website
 	'webhome'    => '',
 	'webhost'    => $SITE_CFG->{'webhost'},
+	'aliases'    => ['paranormal.se:443'],
 	'last_step'  => "/member/db/",
 	'static_ttc' => "$APPROOT/var/ttc/static",
 	'backup_host'=> $SITE_CFG->{'backup_host'},
 	'loadpage'    => "/meta/loading.html",
+        'languages' => ['sv'],
+	'recaptcha_key_public' => '6Ld-QgIAAAAAAKUksT_YuiLFfJbwEgXSWw-ItCSB',
+	'recaptcha_key_private' => '6Ld-QgIAAAAAAF6picXEcioZgeGl-et9NaC9qdwC',
+        'name'       => 'Paranormal.se',
+	'email'      => 'jonas@paranormal.se',
 	'params'     =>
 	{
 	    'css'        => $para_css,
 	},
     });
 
-    Para::Frame::Site->add({
-			    'aliases'     => ['healing'],
-			    'code'        => 'healing',
-			    'name'        => 'Healing',
-			    'webhome'     => $Para::Healing::WEBHOME,
-			    'webhost'     => $Para::Healing::WEBHOST,
-			    'appbase'     => 'Para::Healing',
-			    'is_compiled' => 0,
-			    'time_format' => "%Y-%m-%d kl %H:%M:%S",
-			    'params' 	  =>
-			    {
- 			     'is_forummember' => \&Para::Healing::is_forummember,
-		             'hdb'        => $Para::Healing::dbix,
-			     'css'	  => 'style.css',
-			     'favicon'    => 'images/hjarta2c.ico',
-			     'description' => 'Hemsidan om olika healing-stilar såsom Reiki, Kundalini Reiki, Imara Reiki m.fl samt Indigo och
-			     en avdelning för personlig/andlig utveckling. Vi har även ett forum som behandlar ett flertal ämnen.',
-			     'keywords'    => 'reiki, taz, usui reiki, meditation, energi, manual, reiki manual, reiki forum, forum, reiki sweden, reiki sverige, indigo, nordisk reiki/indigo, nordisk reiki indigo, the-taz.net, hikkei, initieringar, indigobarn, indigovuxna, chakra, chakras, själsfärg, balansera, balans, universell energi, ki, chi, qi, livsenergi, indigoväg, indigovägen, indigovuxen, spirituell utveckling, personlig utveckling, meditation, mikao usui, dr usui, healing, självhealing, distanshealing, andlig utveckling, andlig, spirituell, kundalini reiki, tacyon reiki, past life reiki, birth trauma reiki, dna reiki, indigo reiki, diamond reiki, eteriska kristaller, location reiki, crystalline reiki, ethereal crystals, gold reiki, guld reiki, andlighet, bates metod, kärlek, nionde chakra, tionde chakra, åttonde chakra, jorda sig, jord, balansera aura, mental sköld, mental skydd, tam a ra sha, tamarasha, tars, chokurei, cho ku rei, ckr, dai ko myo, daikomyo, dkm, hon sha ze sho nen, honshazeshonen, hszsn, sei he ki, seiheki, shk, reiki dummies',
-			    }
-			   });
 
     Para::Frame::Site->add({
 	'webhost'    => $WA::HOST,
@@ -194,45 +167,16 @@ use WA::Domains;
     });
 
     Para::Frame::Site->add({
-	'webhost'    => "mystica.magi.se",
+#	'webhost'    => "gÃ¶teborg.para.se",
+	'webhost'    => "xn--gteborg-90a.para.se",
+	'code'       => 'goteborg',
 	'css'        =>
 	{
-	    persistent => ["pf/css/paraframe.css",
-			   "css/myst.css"],
+	    persistent => ["pf/css/paraframe.css_tt",
+			   "css/goteborg.css"],
 	},
 	'params'     =>
 	{
-	},
-    });
-
-    Para::Frame::Site->add({
-	'webhost'    => $Ekoby::HOST,
-	'aliases'    => ['ekoby'],
-	'code'       => 'eboby',
-	'name'       => 'Ekobyn',
-	'params' =>
-	{
-	    'css'               =>
-	    {
-		alternate =>
-		{
-		    Default => ["/style/main.css"],
-		    Sara => ["/style/sara.css"],
-		    Green => ["/style/green.css"],
-		},
-		default => 'Default',
-	    },
-	    'ekonomi' => \&Ekoby::Ekonomi::ekonomi,
-	    'hyra' => \&Ekoby::Ekonomi::hyra,
-	    'transtypnamn' => \&Ekoby::Ekonomi::transtypnamn,
-	    'levnamn' => \&Ekoby::Ekonomi::levnamn,
-	    'kontonamn' => \&Ekoby::Ekonomi::kontonamn,
-	    'kontolista' => \&Ekoby::Ekonomi::kontolista,
-	    'lista_belopp' => \&Ekoby::Ekonomi::lista_belopp,
-	    'lista_tillgangar' => \&Ekoby::Ekonomi::lista_tillgangar,
-	    'authorized_level' => \&Ekoby::Ekonomi::authorized_level,
-	    'ekodbix'          => $Ekoby::dbix,
-	    'library'          => sub{ Ekoby::Library->new( @_ ) },
 	},
     });
 
@@ -244,37 +188,39 @@ use WA::Domains;
     });
 
     Para::Frame::Site->add({
-	'webhost'    => "brisingasmycket.se",
-	'params' =>
-	{
-	},
-    });
-
-    Para::Frame::Site->add({
-	'webhost'    => "parapsykologi.se",
-	'webhome'    => "/new",
-	'css'        =>
-	{
-	    persistent => ["pf/css/paraframe.css",
-			   "css/psi.css"],
-	},
-	'params' =>
-	{
-	},
-    });
-
-    Para::Frame::Site->add({
 	'webhost'    => "parapsychology.se",
 	'webhome'    => "/PA-stockholm/photo",
 	'css'        =>
 	{
 	    persistent => ["/PA-stockholm/css_styles/ordinary.css",
-			   "pf/css/paraframe.css"],
+			   "pf/css/paraframe.css_tt"],
 	},
 	'params' =>
 	{
 	},
     });
+
+    Para::Frame::Site->add({
+			    'code'        => 'emelie',
+			    'webhome'     => '',
+#			    'webhome'     => '/test',
+			    'webhost'     => 'www.emelie.tangelin.se',
+#			    'appbase'     => 'Emelie',
+#			    'approot'     => $Emelie::APPROOT,
+			    'is_compiled' => 0,
+			    'css'         =>
+			    {
+			     persistent =>
+			     [
+			      "pref/styles.css",
+			     ],
+			    },
+			    'params' 	  =>
+			    {
+			     'favicon'           => "/pref/images/orb.ico",
+			    },
+			   });
+
 
     # Make sure we can read/write generated files
     chmod_tree( "$APPROOT/var" );
@@ -293,11 +239,6 @@ use WA::Domains;
 	'html_psi' => \&Para::Widget::html_psi_factory,
 	'html_psi_nolinks' => \&Para::Widget::html_psi_nolinks_factory,
     }, 1);
-
-    # Used in healing.se
-    Para::Frame::Burner->get_by_type('html')->add_filters({
-	'alink' => \&Para::Widget::autolink,
-     });
 
     # Attatch code to hooks
     #
@@ -331,8 +272,6 @@ use WA::Domains;
     Para::Frame->add_hook('on_startup', sub
 			  {
 			      $Para::dbix->connect;
-			      $Ekoby::dbix->connect;
-			      $Para::Healing::dbix->connect;
 
 			      Para::Constants->init;
 
@@ -397,6 +336,13 @@ use WA::Domains;
 
     $Data::Dumper::Maxdepth = 5;
 
+    if( $ARGV[0] and not looks_like_number($ARGV[0]) )
+    {
+	Para::Frame->startup;
+	Para::Frame::main_loop() if $ARGV[0] eq 'no_watchdog';
+        print "Server stops\n";
+        exit;
+    }
 
     if( $daemonize )
     {

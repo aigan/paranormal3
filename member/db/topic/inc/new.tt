@@ -5,6 +5,6 @@
    <p>Eller [% go('skapa ämnet', '/member/db/topic/create/maby.tt') %]
 
    <script>
-      document.f.talias.focus();
-      document.f.talias.select();
+      document.forms['f'].talias.focus();
+      document.forms['f'].talias.select();
    </script>

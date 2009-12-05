@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Arc;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Arc;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,25 +17,21 @@ package Para::Arc;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use Carp qw( cluck carp croak confess );
 use List::Util qw( min );
 
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
-
 use Para::Frame::Reload;
 use Para::Frame::Time qw( date now );
 use Para::Frame::Utils qw( throw debug );
-use Para::Frame::DBIx qw( pgbool );
+use Para::Frame::DBIx;
 
+use Para::Utils qw( cache_update );
 use Para::Constants qw( :all );
 use Para::Topic;
 use Para::Arctype;
-use Para::Utils qw( cache_update );
 
 # This will make "if($arc)" false if the arc is 'removed'
 #
@@ -280,7 +276,7 @@ sub find
 	debug(3,"Finding all arcs $explain_string");
 
 	my $list = [];
-	foreach my $rec ( @$recs )
+	foreach my $rec ( $recs->as_array )
 	{
 	    push @$list, Para::Arc->new( $rec );
 	}
@@ -289,8 +285,8 @@ sub find
 
     debug(4,"Finding the first arc $explain_string");
 
-    return undef unless @$recs;
-    return Para::Arc->new( $recs->[0] );
+    return undef unless $recs->size;
+    return Para::Arc->new( $recs->get_first_nos );
 }
 
 sub create
@@ -450,8 +446,8 @@ sub create
     my $rid = $Para::dbix->get_nextval('t_seq');
     $sth->execute( $rid, $subj->id, $rel, $pred->id,
 		   $Para::Frame::U->new_status, $by->id, $by->id,
-		   $strength, pgbool($active), $literal,
-		   $comment, pgbool($implicit), pgbool($indirect) );
+		   $strength, $Para::dbix->bool($active), $literal,
+		   $comment, $Para::dbix->bool($implicit), $Para::dbix->bool($indirect) );
 
     $subj->mark_publish;
 
@@ -632,13 +628,13 @@ sub set_implicit
     my $sth = $Para::dbh->prepare("update rel set rel_implicit=?, ".
 				   "rel_updated=?, rel_changedby=? ".
 				   "where rel_topic=?");
-    $sth->execute(pgbool($val), $now_out, $mid, $arc_id);
+    $sth->execute($Para::dbix->bool($val), $now_out, $mid, $arc_id);
 
     $arc->{'rel_updated'} = $arc->{'updated'} = $now;
     $arc->{'rel_changedby'} = $mid;
     $arc->{'rel_implicit'} = $val;
 
-    cache_update;
+    &cache_update;
 
     return $val;
 }
@@ -681,7 +677,7 @@ sub set_indirect
     my $sth = $Para::dbh->prepare("update rel set rel_indirect=?, ".
 				   "rel_updated=?, rel_changedby=? ".
 				   "where rel_topic=?");
-    $sth->execute(pgbool($val), $now_out, $mid, $arc_id);
+    $sth->execute($Para::dbix->bool($val), $now_out, $mid, $arc_id);
 
     $arc->{'rel_updated'} = $arc->{'updated'} = $now;
     $arc->{'rel_changedby'} = $mid;
@@ -696,7 +692,7 @@ sub set_indirect
 #	warn "$$:   This arc must change or be removed now!\n";
 #    }
 
-    cache_update;
+    &cache_update;
 
     return $val;
 }
@@ -791,7 +787,7 @@ sub activate
     }
     $arc->create_check;
 
-    cache_update();
+    &cache_update();
 }
 
 sub reject_other_versions
@@ -899,7 +895,7 @@ sub deactivate
 	}
     }
 
-    cache_update();
+    &cache_update();
 }
 
 # Remove arc if it was implicit but isn't anymore

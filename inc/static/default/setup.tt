@@ -2,18 +2,29 @@
 [% PROCESS app_components.tt %]
 
 [% ill.recs = select_list("select t from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'image/%' order by ts_status desc, ontopic desc, completeness desc, delight desc, correctness desc, ts_score desc, t asc", tid) %]
-[% ill.count = 0 %]
+[% ill.index = 0 %]
 
 [% BLOCK illustration %]
-   [% IF ill.recs.${ill.count} %]
-      [% it = topic(ill.recs.${ill.count}.t) %]
+   [% IF ill.recs.max >= ill.index %]
+      [% warn("Getting ill $ill.index of $ill.recs.max") %]
+      [% it = topic(ill.recs.get_by_index(ill.index).t) %]
       [% IF it.image_size_x %]
          [% width_str = " width='$it.image_size_x'" %]
          [% hight_str = " hight='$it.image_size_y'" %]
          [% width_str_css = " style='width: ${it.image_size_x}px'" %]
       [% END %]
       <div class="illustration" [% width_str_css %]>
-         <img alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url %]"><br>
+         [% IF it.media_url_full %]
+            <a href="[% it.media_url_full %]"><img alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url %]"></a>
+         [% ELSE %]
+	    [% IF it.media_type == 'image/svg+xml' %]
+	      <embed alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url | html %]" 
+		     type="image/svg+xml" pluginspage="http://www.adobe.com/svg/viewer/install/" />
+	    [% ELSE %]
+	      <img alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url %]">
+	    [% END %]
+         [% END %]
+         <br>
          <div class="details">[% it.text | html %]</div>
          <div class="details">
             [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
@@ -23,24 +34,7 @@
          </div>
       </div>
    [% END %]
-   [% ill.count = ill.count + 1 %]
-[% END %]
-[% BLOCK illustration_orig %]
-   [% IF ill.recs.${ill.count} %]
-      [% i = ill.recs.${ill.count} %]
-      [% it = topic(i.t) %]
-      <table id="illustration" width="5%">
-         <tr><td><img alt="[% i.t_title | html %]" src="[% i.media_url %]"></td></tr>
-         <tr><td class="details">[% i.t_text | html %]</td></tr>
-         <tr><td class="details">
-            [% INCLUDE rel_list.tt t=it reltype=6 prefix="Ur " suffix=", "%]
-            [% INCLUDE rel_list.tt t=it reltype=23 prefix="&copy; " suffix=" - " %]
-            <em>[% INCLUDE rel_list.tt t=it reltype=22 %]</em>
-            <em>([% jump('detaljer', '/member/db/topic/view/', tid=it.id) %])</em>
-         </td></tr>
-      </table>
-   [% END %]
-   [% ill.count = ill.count + 1 %]
+   [% ill.index = ill.index + 1 %]
 [% END %]
 [% BLOCK metadata %]
   <ul class="entry_meta">

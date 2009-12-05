@@ -150,8 +150,8 @@ body.with_sidebar div#main
 	clear: left;
 	float: left;
 	margin-right: 1em;
-	paddin: 0;
-	width: min-intrinsic;
+	padding: 0;
+/*	width: min-intrinsic;*/
 }
 
 .illustration .details
@@ -446,16 +446,6 @@ body.with_sidebar div#footer p
 	border-width: 0 0 1px;
 }
 
-p#pi
-{
-	text-align: right;
-}
-
-p#pi img
-{
-	border: 0;
-}
-
 td.plain
 {
 	vertical-align: top;
@@ -498,7 +488,7 @@ h1 .typelist     { font-size: 50% }
 
 img
 {
-	margin 0;
+	margin: 0;
 }
 
 div#topic_header img
@@ -654,16 +644,6 @@ TEXTAREA.big_input
 }
 
 
-TR.even
-{
-	BACKGROUND: #eeeeee
-}
-
-TR.odd
-{
-	BACKGROUND: #dddddd
-}
-
 .selected
 {
 	BORDER: 0.1em groove;
@@ -794,24 +774,6 @@ form
 	margin: 0;
 }
 
-.paraframe_box
-{
-  border-style: outset;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.paraframe_box table
-{
-  border-style: inset;
-}
-
-.paraframe_info
-{
-  font-weight: bold;
-  font-family:  verdana, Arial, helvetica, san-serif;
-  font-size: 10pt;
-}
 
 label { margin-right: 1em }
 td label
@@ -828,4 +790,146 @@ table.minimal
 table.minimal td
 {
 	padding: 0;
+}
+
+
+
+  /*******************************************************/
+ /***  PARAFRAME STANDARD CSS - COPY  *******************/
+/*******************************************************/
+
+/************ GENERAL FORMATTING *******************/
+
+label:hover+input,
+label:hover+br+input,
+label:hover,
+input:hover,
+label:hover+textarea,
+label:hover+br+textarea
+{
+  background-color: #FFFFF8;
+  color: black;
+}
+
+form
+{
+	margin-bottom: 0em; /* Konqueror */
+}
+
+
+/****** GENERAL PARAFRAME STYLES ****************************/
+
+.debug
+{
+  padding: 1em;
+  border-style: dotted;
+  border-width: 0.0em 0.2em 0.2em 0.2em;
+}
+
+tr.even
+{
+  background: #E0E0E0;
+}
+
+tr.odd
+{
+  background: #D0D0D0;
+}
+
+
+/****** SPECIFIC PARAFRAME STYLES ***************************/
+
+.paraframe_menu_top p
+{
+  margin-top: 0em;
+  margin-bottom: 0em;
+  text-align: center;
+  padding: 0.2em;
+}
+
+.paraframe_pagelist
+{
+  font-weight: bold;
+}
+
+.paraframe_pagelist .same_place
+{
+  background: inherit;
+}
+
+.paraframe_pagelist .selected
+{
+  font-weight: bold;
+  background: none;
+}
+
+.paraframe_previous, .paraframe_next
+{
+  text-decoration: none;
+}
+
+.paraframe_info
+{
+  font-weight: bold;
+  font-family:  verdana, Arial, helvetica, san-serif;
+  font-size: 10pt;
+}
+
+.paraframe_box
+{
+  border-style: outset;
+}
+
+.paraframe_box table
+{
+  border-style: inset;
+}
+
+.paraframe_menu_admin input[type="button"]
+{
+    border-width: 0.2em;
+    padding: 2px 6px 2px 6px;
+}
+
+.paraframe_menu_admin input[type="button"]:hover
+{
+    background-color: #FFFFF8;	
+}
+
+.paraframe_menu_admin
+{
+	margin: 0;
+}
+
+/********* imgexpand **************/
+
+.paraframe_imgexpanded
+{
+      background: #EEFFEE;
+      border: 2px solid black;
+      padding: 0.5em 0em 0em 1em;
+/*      -moz-border-radius: 0.5em;*/
+}
+
+.paraframe_imgexpand
+{
+      background: #E0E0A0;
+      padding: 0.2em;
+}
+
+.paraframe_imgexpand img         { vertical-align: middle }
+.paraframe_imgexpand a:hover img { background: #FFFF00 }
+.paraframe_imgexpand a           { color: black }
+.paraframe_imgexpand a:hover     { background: #F0F0D0 }
+
+/****************************/
+
+p#pi
+{
+	text-align: right;
+}
+
+p#pi img
+{
+	border: 0;
 }

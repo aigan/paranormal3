@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::multi_set_talias;
 
 use strict;
@@ -32,7 +32,8 @@ sub handler
 	my $tid = $q->param("_talias__${row}_topic")
 	    or die "no topic for $row\n";
 
-	my $a = Para::Topic->get_by_id($tid)->alias( $talias ) or die;
+	my $t = Para::Topic->get_by_id($tid) or die "Can't find topic $tid";
+	my $a = $t->alias( $talias ) or die "Topic $tid has no alias $talias";
 
 	my $verdict = $q->param("_talias__${row}_keep")||'';
 

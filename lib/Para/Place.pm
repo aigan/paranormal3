@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Place;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Place;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,14 +17,10 @@ package Para::Place;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use Carp;
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Utils qw( trim throw debug retrieve_from_url );
 
@@ -558,6 +554,10 @@ sub import_zip
 	my $lan = $5;
 	$lk = $6; # Kommun
 	my $areg = $7;
+
+	utf8::upgrade( $gatunamn );
+	utf8::upgrade( $city_name );
+
 
 #	print "($gatunamn)($gatunr)($postnr)($lan)($lk)($areg)\n";
 

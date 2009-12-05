@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Alias;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Alias;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2006 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -17,18 +17,14 @@ package Para::Alias;
 #=====================================================================
 
 use strict;
+use warnings;
+
 use Data::Dumper;
 use List::Util qw( min );
 
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
-
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( throw debug trim reset_hashref );
-use Para::Frame::DBIx qw( pgbool );
+use Para::Frame::DBIx;
 use Para::Frame::Time qw( date );
 
 use Para::Topic qw( title2url );
@@ -141,7 +137,7 @@ sub find_by_tid
 	$Para::Topic::ALIASES{$tid} = {};
 
 	my $list = $Para::dbix->select_list("from talias where talias_t=?", $tid);
-	foreach my $rec ( @$list )
+	foreach my $rec ( $list->as_array )
 	{
 	    my $a = $class->_new( $rec );
 	    debug(5,"    Adding $a->{talias}");
@@ -298,9 +294,11 @@ sub add
 
     $sth_alias_add->execute( $talias_t, $talias, $talias_urlpart,
 			     $talias_createdby, $talias_changedby,
-			     $talias_status, pgbool($talias_autolink),
-			     pgbool($talias_index), $talias_language,
-			     pgbool($talias_active) );
+			     $talias_status,
+			     $Para::dbix->bool($talias_autolink),
+			     $Para::dbix->bool($talias_index),
+			     $talias_language,
+			     $Para::dbix->bool($talias_active) );
 
     Para::History->add('talias', $C_HA_CREATE,
 		      {
@@ -424,8 +422,8 @@ sub update
     # The variables that can be changed
     #
     my $changedby = $m->id;
-    my $autolink  = pgbool( exists $props->{'autolink'} ? $props->{'autolink'} : $a->autolink );
-    my $index     = pgbool( exists $props->{'index'} ? $props->{'index'} : $a->index );
+    my $autolink  = $Para::dbix->bool( exists $props->{'autolink'} ? $props->{'autolink'} : $a->autolink );
+    my $index     = $Para::dbix->bool( exists $props->{'index'} ? $props->{'index'} : $a->index );
     my $language = exists $props->{'language'} ? $props->{'language'} : $a->language_id;
 
 
@@ -524,7 +522,7 @@ sub update
     my $talias = $a->alias;
     $active = $a->active unless defined $active;
     $status = $a->status unless defined $status;
-    $active = pgbool( $active );
+    $active = $Para::dbix->bool( $active );
 
 
     if( $status > $a->status )

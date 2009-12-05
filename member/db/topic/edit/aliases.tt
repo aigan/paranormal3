@@ -1,7 +1,7 @@
 ﻿[% META
 	otitle = 'Ändra alias'
 	next_action = 'topic_update'
-	next_template = '/member/db/topic/view/'
+	default_template = '/member/db/topic/edit/aliases.tt'
 	level = 5
 %]
 [%

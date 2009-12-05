@@ -5,7 +5,7 @@
 	body_class = "front"
 %]
 <table>
-<tr><td width="75"><a href="/topic/bilden_pa_boken.html"><img src="/images/icon/paranormala_fenomen_icon.jpg" alt="" border="0" /></a></td><td style="vertical-align: bottom">
+<tr><td style="width:75px"><a href="/topic/bilden_pa_boken.html"><img src="/images/icon/paranormala_fenomen_icon.jpg" alt="" style="border:0" /></a></td><td style="vertical-align: bottom">
 <h1><a href="/">Paranormal.se</a></h1>
 <p class="slogan">[% display_slogan %]</p>
 
@@ -58,6 +58,7 @@
 
 <h2><a href="/topic/kontaktuppgifter_for_paranormalse.html">DITT KONTAKTNÄT:</a></h2>
 <div class="indent">
+<a href="/topic/paratraff.html">Träffas</a><br/>
 <a href="/help/">Hjälp-linjen</a><br/>
 <a href="/member/db/">Medlemssida</a><br/>
 <a href="/topic/diskussionslistan_for_paranormalse.html">Diskussionslista</a><br/>
@@ -78,7 +79,6 @@
 <div class="indent">
 <a href="/meta/banners.html">Banners</a><br/>
 <a href="http://parapsykologi.se/">SPF</a><br/>
-<a href="/meta/webring.html">Webbringar</a><br/>
 <a href="/topic/lankbyte.html">L&auml;nkbyte</a><br/>
 </div>
 

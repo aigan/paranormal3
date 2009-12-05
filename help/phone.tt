@@ -16,8 +16,6 @@ själv ifall du tror att han/hon kan hjälpa dig.  När du ringer,
 berätta att du fick numret från hjälp-linjen på Paranormal.  Visa
 hänsyn.</p>
 
-<p>Kanske du vill [% jump("skicka e-post", '/help/', tid=tid) %] istället?
-
 [% helprecs = select_list("select member from intrest join member on member=intrest_member where intrest_topic=? and helper>75 and intrest_defined > 50 and present_contact_public >= 20 and ( home_tele_phone is not null or home_tele_mobile is not null) and length(intrest_description) > 20 ", sjn.id) %]
 
 <div class="entry">

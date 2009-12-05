@@ -44,8 +44,8 @@ a.link_button
 {
 	color: black;
 	background: #84D084;
-	border-color: brown;
-	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#84D084,endColorStr=#427042);
+	border-color: #A52A2A;
+/*	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#84D084,endColorStr=#427042);*/
 }
 
 a.link_button:link
@@ -66,11 +66,12 @@ a.link_button:active
 a.link_button:hover
 {
 	background: #80F080;
-	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#80F080,endColorStr=#60A060);}
+/*	filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#80F080,endColorStr=#60A060);*/
+}
 
 div#sidebar .link
 {
-	border-color: #CCC;
+	border-color: #C0C0C0;
 }
 
 div#sidebar
@@ -161,7 +162,6 @@ td
       font-style: italic;
       font-size: small;
       color: #D7D3D0;
-      align: center;
       }
       
 
@@ -175,7 +175,7 @@ div.section { margin-top: 2.0em; margin-bottom: 2.0em }
 { 
     margin-left: 5%; 
     margin-right: 10%; 
-    font-style: bold;
+    font-weight: bold;
     text-align: justify;
     text-indent: 0;
 }

@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Widget;
 #=====================================================================
 #
@@ -17,19 +17,13 @@ package Para::Widget;
 #=====================================================================
 
 use strict;
+use utf8;
+
 use Carp;
 use Template 2;
 use Data::Dumper;
 use Text::ParagraphDiff;
 use List::Util qw( max min );
-
-use locale;
-
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Reload;
 use Para::Frame::Time qw( now );
@@ -186,6 +180,7 @@ sub html_psi
     my $old_block = 1;
     while( $intext =~ /(.*?) *(?:\r?\n( *\r?\n)?|\Z)/g )
     {
+#	warn "Parsing intext\n";
 	next unless $1;
 	$_ = $1;
 
@@ -239,18 +234,18 @@ sub html_psi
 	    }
 	}
 
-#	warn "\nIndent: $indent ($old_indent)  Type: $type ($old_type)\n";
+#	warn "\nIndent: $indent ($old_indent)  Type: $type ($old_type)\n"; ### DEBUG
 
 
 	# BEFORE BLOCK
 	#
 	if( $indent > $old_indent )
 	{
-#	    warn "Indent from $old_indent to $indent\n";
+#	    warn "Indent from $old_indent to $indent\n"; ###
 	    foreach( 1 .. ($indent-$old_indent))
 	    {
 		push @type_stack, $old_type;
-#		warn('  'x$#type_stack."+ $type\n");
+#		warn('  'x$#type_stack."+ $type\n"); ### DEBUG
 
 		if( $type eq 'uli' )
 		{
@@ -269,7 +264,7 @@ sub html_psi
 		# Old type does not matter until we back out
 		$old_type = $type;
 	    }
-#	    warn "Old type is now $old_type\n";
+#	    warn "Old type is now $old_type\n"; ###
 	}
 	elsif( $indent < $old_indent )
 	{
@@ -297,17 +292,17 @@ sub html_psi
 		    }
 		}
 
-#		warn('  'x$#type_stack."- $old_type\n");
+#		warn('  'x$#type_stack."- $old_type\n"); ### DEBUG
 
 		$old_type = pop @type_stack;
-#	    warn "Old type is now $old_type\n";
+#	    warn "Old type is now $old_type\n"; ### DEBUG
 	    }
 	}
 
 	if( $type ne $old_type )
 	{
-#	    warn('  'x$#type_stack."- $old_type\n");
-#	    warn('  'x$#type_stack."+ $type\n");
+#	    warn('  'x$#type_stack."- $old_type\n"); ### 
+#	    warn('  'x$#type_stack."+ $type\n"); ###
 
 	    if( $old_type eq 'uli' )
 	    {
@@ -344,15 +339,15 @@ sub html_psi
 	    }
 	}
 
+
 	# BEFORE BLOCK
 	#
 	s/\*{1,3}(.*?)\*{1,3}/<strong>$1<\/strong>/g;
 	s/&quot;(.*?)&quot;/<em>$1<\/em>/g;
 
-
 	# BLOCK
 	#
-#	warn "row: $_\n";
+#	warn "row: $_\n"; ###
 	if( $type eq 'uli' )
 	{
 	    $text .= "<li>$_</li>\n";
@@ -404,7 +399,7 @@ sub html_psi
     push @type_stack, $old_type;
     while( defined(my $type = pop @type_stack) )
     {
-#	warn('  'x$#type_stack."- $type\n");
+#	warn('  'x$#type_stack."- $type\n"); ### DEBUG
 	if( $type eq 'uli' )
 	{
 	    $text .= "</ul>\n";
@@ -532,13 +527,14 @@ sub insert_autolinks
 {
     my( $textref, $nolinks, $context ) = @_;
 
+#    use bytes;
     # locale should have been set previously!
 
     return "" unless $textref and length $$textref;
 
     my @links = ();
 
-    # Escape formatting for »...«
+    # Escape formatting for Â»...Â«
     #
     insert_format_quotes( $textref, \@links );
 
@@ -574,8 +570,8 @@ sub insert_autolinks
 	    my $middle = $2 || "";
 	    my $debug_ra_text = ""; # DEBUG
 
-	    # Don't touch ¤ in text
-	    if( $match =~ /¤/ )
+	    # Don't touch Â¤ in text
+	    if( $match =~ /Â¤/ )
 	    {
 		$newtext .= $match . $middle;
 		next;
@@ -613,13 +609,13 @@ sub insert_autolinks
 				    {
 					# This text has laready been linked
 					push @links, $looking;
-					$newtext .= "¤$#links¤$last";
+					$newtext .= "Â¤$#linksÂ¤$last";
 				    }
 				    else
 				    {
 #					debug(3,"    Matched $looking!");
 					push @links, set_autolink( $rec, $looking );
-					$newtext .= "¤$#links¤$last";
+					$newtext .= "Â¤$#linksÂ¤$last";
 				    }
 				    last SEARCH;
 				}
@@ -662,13 +658,13 @@ sub insert_autolinks
 				    {
 					# This text has laready been linked
 					push @links, $match;
-					$newtext .= "¤$#links¤$middle";
+					$newtext .= "Â¤$#linksÂ¤$middle";
 				    }
 				    else
 				    {
 					debug(3,"    Matched $match!");
 					push @links,  set_autolink( $rec, $match );
-					$newtext .= "¤$#links¤$middle";
+					$newtext .= "Â¤$#linksÂ¤$middle";
 				    }
 				    last SEARCH;
 				}
@@ -731,12 +727,12 @@ sub insert_format_quotes
     my( $textref, $linkref ) = @_;
 
     my $newtext = "";
-    while( $$textref =~ /\G(.*?)\»(.*?)\«/sgc ) #iterate failsafe
+    while( $$textref =~ /\G(.*?)\Â»(.*?)\Â«/sgc ) #iterate failsafe
     {
 	$newtext .= $1;
 	my $quote = CGI::escapeHTML( $2 );
 	push @$linkref, $quote;
-	$newtext .= "¤$#$linkref¤";
+	$newtext .= "Â¤$#$linkrefÂ¤";
     }
     $newtext .= substr( $$textref, pos($$textref)||0);
     $$textref = $newtext;
@@ -751,7 +747,7 @@ sub insert_email_links
     {
 	$newtext .= $1;
 	push @$linkref, "<a href=\"mailto:$2\">$2</a>";
-	$newtext .= "¤$#$linkref¤";
+	$newtext .= "Â¤$#$linkrefÂ¤";
     }
     $newtext .= substr( $$textref, pos($$textref)||0);
     $$textref = $newtext;
@@ -767,7 +763,7 @@ sub insert_web_links
 	$newtext .= $1;
 	my $link = $2.$3;
 	push @$linkref, link_page($link, $link);
-	$newtext .= "¤$#$linkref¤";
+	$newtext .= "Â¤$#$linkrefÂ¤";
     }
     $newtext .= substr( $$textref, pos($$textref)||0);
     $$textref = $newtext;
@@ -887,8 +883,16 @@ sub insert_explicit_links
 	if( $url )
 	{
 	    debug(3,"Inserting link to $url with name $name");
-	    push @$linkref, link_page($url, $name);
-	    $newtext .= "¤$#$linkref¤";
+
+	    if( $url =~ /.jpg$/ or $url =~ /.png$/ or $url =~ /.gif$/ ) # Inlining an image
+	    {
+		push @$linkref, "<img alt=\"$namehtml\" src=\"$url\" class=\"inline_image\">";
+	    }
+	    else
+	    {
+		push @$linkref, link_page($url, $name);
+	    }
+	    $newtext .= "Â¤$#$linkrefÂ¤";
 	}
 	elsif( @topics )
 	{
@@ -899,7 +903,7 @@ sub insert_explicit_links
 		debug(3,"Inserting link to several files with name $name");
 		my $tids = join '&', @tids;
 		push @$linkref, "<a href=\"/search/alternatives.tt?run=topic_search_published&$tids\">$namehtml</a>";
-		$newtext .= "¤$#$linkref¤";
+		$newtext .= "Â¤$#$linkrefÂ¤";
 	    }
 	    else
 	    {
@@ -925,7 +929,7 @@ sub insert_explicit_links
 			    my $block = $context->include("static/default/spacy_image.tt", \%params);
 			    push @$linkref, $block;
 			}
-			$newtext .= "¤$#$linkref¤";
+			$newtext .= "Â¤$#$linkrefÂ¤";
 		    }
 		    else
 		    {
@@ -940,7 +944,7 @@ sub insert_explicit_links
 			}
 
 			debug(3,"Inserting media link to $url with name $name");
-			$newtext .= "¤$#$linkref¤";
+			$newtext .= "Â¤$#$linkrefÂ¤";
 		    }
 		}
 		else
@@ -957,7 +961,7 @@ sub insert_explicit_links
 			push @$linkref, "[<a href=\"$file\">$namehtml</a>]";
 		    }
 		    debug(3,"Inserting nonmedia link to $file with name $name");
-		    $newtext .= "¤$#$linkref¤";
+		    $newtext .= "Â¤$#$linkrefÂ¤";
 		}
 	    }
 	}
@@ -965,14 +969,14 @@ sub insert_explicit_links
 	{
 	    # Another way to keep string from autolinking
 	    push @$linkref, $namehtml;
-	    $newtext .= "¤$#$linkref¤";
+	    $newtext .= "Â¤$#$linkrefÂ¤";
 	}
 	else
 	{
 	    debug(3,"No topics or URL found.  Leaving text");
 	    my $targethtml =  CGI::escapeHTML($target);
 	    push @$linkref, "\"$namehtml\"[$targethtml]";
-	    $newtext .= "¤$#$linkref¤";
+	    $newtext .= "Â¤$#$linkrefÂ¤";
 	}
     }
 #    warn sprintf " -- Adding text from pos $pos: '%s'\n", substr( $$textref, $pos||0);
@@ -1054,8 +1058,7 @@ sub primary_choice
 sub deploy_links
 {
     my( $text, $links ) = @_;
-
-    while( $text =~ s!¤(\d+)¤! $links->[ $1 ] !e ){};
+    while( $text =~ s/Â¤(\d+)Â¤/ $links->[ $1 ] /e ){};
     return $text;
 }
 

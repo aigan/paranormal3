@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Mailbox;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Mailbox;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -23,17 +23,13 @@ Para::Mailbox - Representing local member mailbox
 =cut
 
 use strict;
+use warnings;
+
 use vars qw( $VERSION );
 use Carp qw( croak );
 
 use IMAP::Admin;
 use Data::Dumper;
-
-BEGIN
-{
-    $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
 
 use Para::Frame::Reload;
 
@@ -103,6 +99,7 @@ sub exist
 	throw('validate', "Folder $folder does not belong to member");
     }
 
+    debug "Checking for $folder";
     return $mbx->imap->list( $folder ) ? 1 : 0;
 }
 

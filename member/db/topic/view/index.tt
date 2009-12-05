@@ -1,6 +1,7 @@
 ﻿[% META
 	otitle = 'Ämne'
         level = 0
+        next_template = '/member/db/topic/view/'
 %]
 
 [%

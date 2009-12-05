@@ -7,23 +7,23 @@
 <script language="JavaScript"><!--
 function setjs() {
  if(navigator.product == 'Gecko') {
-   document.f["interface"].value = 'mozilla';
+   document.forms['f']["interface"].value = 'mozilla';
  }else if(navigator.appName == 'Microsoft Internet Explorer' &&
     navigator.userAgent.indexOf("Mac_PowerPC") > 0) {
-    document.f["interface"].value = 'konqueror';
+    document.forms['f']["interface"].value = 'konqueror';
  }else if(navigator.appName == 'Microsoft Internet Explorer') {
-   document.f["interface"].value = 'ie';
+   document.forms['f']["interface"].value = 'ie';
  }else if(navigator.appName == 'Konqueror') {
-    document.f["interface"].value = 'konqueror';
+    document.forms['f']["interface"].value = 'konqueror';
  }else if(window.opera) {
-   document.f["interface"].value = 'opera';
+   document.forms['f']["interface"].value = 'opera';
  }
 
  // validate nick
- if(document.f.Nickname.value.length == 0)
+ if(document.forms['f'].Nickname.value.length == 0)
  {
     alert("Välj ett unikt alias innan du börjar!");
-    document.f.action='$me';
+    document.forms['f'].action='$me';
  }
 
 }
@@ -91,6 +91,9 @@ Mest aktivitet är det vid arbetsdagens slut samt senare på
 
 	  [% jump('#Paranormalt', "/topic/paranormalt.html") %] - Huvudkanalen för paranormala diskussioner. Hit kommer alla.<br/>
 	  #Torget - En kanal där ordet står fritt. Prata om vad ni vill. Anarki. Hit kommer alla.<br/>
+	  [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, få hjälp med att skapa texter och ämnen<br/>
+          <input name="Channel" type="hidden" value="#Paranormalt,#devel,#Torget">
+[% IF 0 %]
 Välj dessutom en nedan:<br/>
 	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Hjalp" checked="1"/> [% jump('#Hjalp', "/topic/hjalp.html") %] - Få hjälp med hur man hanterar chatten<br/>
 	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#devel"/> [% jump('#devel', "/topic/devel.html") %] - Om utvecklingen av paranormal.se, få hjälp med att skapa texter och ämnen<br/>
@@ -99,6 +102,7 @@ Välj dessutom en nedan:<br/>
 	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#Guide"/> [% jump('#Guide', "/topic/paranormalse/guide.html") %] - För de som söker, vill ha hjälp, vägledning, stöd, bekräftelse. Också för hjälparna inom [% jump("Sveriges spökjägarnätverk", "/topic/sveriges_spokjagarnatverk.html") %]<br/>
 
 	  <input name="Channel" type="radio" value="#Paranormalt,#Torget,#healing"/> [% jump('#healing', "/topic/healing.html") %] - Kom in och låt dig bli omsvept av helande ljus<br/>
+[% END %]
 
 	  <p>Du kan gå in på fler kanaler när du är på chatten genom att säga: <strong>/join #kanalnamn</strong>. Använd <strong>/list</strong> för att se vad som finns.<br/>
 <br>

@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Email::Address;
 #=====================================================================
 #
@@ -9,7 +9,7 @@ package Para::Email::Address;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -23,12 +23,9 @@ Para::Email::Address
 =cut
 
 use strict;
+use warnings;
 
-BEGIN
-{
-    our $VERSION  = sprintf("%d.%02d", q$Revision$ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
-}
+use Carp qw( confess );
 
 use Para::Frame::Reload;
 use Para::Frame::Utils qw( throw );
@@ -40,6 +37,7 @@ sub validate
     my( $a, $m ) = @_;
 
     my $astr = $a->address;
+    $m or confess "m param missing";
 
     if( $astr =~ /^(.*?)\@paranormal\.se$/ )
     {

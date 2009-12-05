@@ -1,4 +1,4 @@
-#  $Id$  -*-cperl-*-
+# -*-cperl-*-
 package Para::Action::cron_daily;
 
 use strict;

@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::interest_update_multi;
 
 use strict;
@@ -60,7 +60,7 @@ sub handler
 
 	    warn "    Defining interest $tid\n";
 
-	    my $i = $m->interest($tid);
+	    my $i = $m->interests->getset($tid);
 
 	    my $rec =
 	    {
@@ -96,7 +96,7 @@ sub handler
     if( $tid )
     {
 	warn "    Updating interest in $tid\n";
-	$m->interest($tid)->update_by_query()
+	$m->interests->getset($tid)->update_by_query()
     }
 
     return( "Antal intressen uppdaterade: ".

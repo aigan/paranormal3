@@ -7,6 +7,7 @@ use Image::Info qw( image_info);
 use File::stat;
 use IO::File;
 use Data::Dumper;
+use File::Slurp; # exports read_file
 
 use constant SIZESCALE => 200;
 use constant SIZETHUMB => 60;
@@ -30,14 +31,17 @@ sub handler
 
     my $tid = $q->param('tid') || die "tid missing";
 
+    my $t = Para::Topic->get_by_id($tid) or die "Couldn't find tid $tid";
+
 
     my $filename =  $q->param('file_name')
         or throw('incomplete', "Filnamn saknas");
 
-    my $infile = $req->env->{'paraframe-upload-file_name'} or
-	die "No file handler\n".Dumper($req->env);
+    my $infile = $req->uploaded('file_name')->tempfile;
+    debug "Infile is $infile";
 
-    my $dataref = read_all( $infile );
+    my $dataref = $infile->content;
+    debug "Dataref is $dataref";
 
     my $img = {};
 
@@ -57,6 +61,15 @@ sub handler
 	    die $img->{$variant}->errstr;
 	chmod_file( $file_out, {umask=>0});
     }
+
+
+
+    #### Set topic
+
+    my $mime_str = "image/png";
+    my $url_str = "/images/db/$tid/scaled.png";
+
+    $t->media_set($url_str, $mime_str);
 
 
 #    my $dbh = $req->app->dbix->dbh;
@@ -116,7 +129,6 @@ sub get_image
     }
     else
     {
-        require File::Slurp;
         my $data = read_file($file);
         $dataref = \$data;
         $suffix = get_suffix($dataref, $file);

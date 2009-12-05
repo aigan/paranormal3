@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::topic_update;
 
 use strict;
@@ -297,7 +297,7 @@ sub check_rel_create
 				},
 				);
 	    };
-	    if( $@ )
+	    if( my $err = $@ )
 	    {
 		if( ref $@ and $@->[0] eq 'alternatives' )
 		{
@@ -305,10 +305,10 @@ sub check_rel_create
 		    $res->{'info'}{'alternatives'}{'replace'} = "_rel__n_${row}_rel";
 		    $res->{'info'}{'alternatives'}{'view'} = "/member/db/topic/edit/meta.tt";
 
-		    $req->page->set_error_template('/alternatives.tt');
 		    $req->s->route->bookmark;
+		    $req->set_error_response_path('/alternatives.tt');
 		}
-		die $@; # Propagate error
+		die $err; # Propagate error
 	    }
 	    push @Para::clear_fields, "_rel__n_${row}_rel_type", "_rel__n_${row}_rel", "_rel__n_${row}_rel_comment";
 	}

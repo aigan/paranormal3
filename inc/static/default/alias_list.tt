@@ -1,4 +1,5 @@
 ﻿<p id="alias">Alias:
+<!-- google_ad_section_start -->
 [% FOREACH kw = select_list("from talias where talias_t=? and talias_active is true and talias_index is true", tid) %]
    [%- IF loop.first %]
    [% ELSIF loop.last %] och
@@ -6,3 +7,4 @@
    [% END %]
    <em>$kw.talias</em>
 [%- END %]</p>
+<!-- google_ad_section_end -->

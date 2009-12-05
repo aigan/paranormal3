@@ -1,11 +1,11 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::member_create;
 
 use strict;
 
 use Para::Frame::Utils qw( throw debug );
 
-use Para::Member qw( name2nick name2chat_nick trim_name );
+use Para::Member;
 
 sub handler
 {
@@ -19,10 +19,10 @@ sub handler
     #
     my $name = $q->param('nick');
     my $name_orig = $name;
-    trim_name(\$name);
+    Para::Member::trim_name(\$name);
 
-    my $nick = name2nick($name);
-    my $chat_nick = name2chat_nick($name);
+    my $nick = Para::Member::name2nick($name);
+    my $chat_nick = Para::Member::name2chat_nick($name);
 
     Para::Member->validate_nick( $nick ); # Validate before the below tests
 

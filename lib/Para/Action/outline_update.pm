@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::outline_update;
 
 use strict;
@@ -163,7 +163,7 @@ sub handler
 	}
 
 	$q->param('tid', $eid);
-	$req->page->set_template( "/member/db/topic/edit/text.tt" );
+	$req->set_response_path( "/member/db/topic/edit/text.tt" );
     }
 
 

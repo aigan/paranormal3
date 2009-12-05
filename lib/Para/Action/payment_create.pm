@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-cperl-*-
 package Para::Action::payment_create;
 
 use strict;
@@ -8,6 +8,7 @@ use Para::Frame::Utils qw( throw trim );
 use Para::Frame::Time qw( date );
 
 use Para::Topic;
+use Para::Constants qw( $C_T_PARANORMAL_SWEDEN );
 
 sub handler
 {
@@ -40,7 +41,7 @@ sub handler
     my $vat        = $q->param('vat');
     my $quantity   = $q->param('quantity');
     my $method     = Para::Topic->get_by_id( $q->param('method') );
-    my $receiver   = Para::Topic->get_by_id( T_PARANORMAL_SWEDEN );
+    my $receiver   = Para::Topic->get_by_id( $C_T_PARANORMAL_SWEDEN );
     my $vernr      = $q->param('vernr');
     my $reference  = $q->param('reference');
     my $comment    = $q->param('comment');

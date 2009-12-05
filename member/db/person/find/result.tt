@@ -66,6 +66,9 @@
 
 
 <p>[% go('Skicka brevet','result.tt','email_combined_list') %]
+[% IF u.level > 40 %]
+[% go('Skapa lista','result_external.tt','email_combined_list_external') %]
+[% END %]
 
 [% END %]
 

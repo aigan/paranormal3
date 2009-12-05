@@ -1,4 +1,4 @@
-#  $Id$  -*-perl-*-
+# -*-perl-*-
 package Para::Action::topic_create;
 
 use strict;

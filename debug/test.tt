@@ -12,3 +12,6 @@
 [%# PROCESS typelist.tt tid=390340 %]
 
 <p>[% jump('ENV', 'env.tt') %]
+
+[% INCLUDE app_debug.tt %]
+[% INCLUDE wrong.tt %]

@@ -1,6 +1,6 @@
 ﻿[% red = select_possible_record("from intrest, member
               where intrest_member = member and intrest_topic=?
-              and editor>=30 and intrest_defined>=50 and present_contact_public>=12 order by member_level*(editor+knowledge) desc,
+              and editor>=30 and intrest_defined>=50 and present_contact_public>=12 order by member_level*(COALESCE(editor,0)+COALESCE(knowledge,0)) desc,
               member limit 1", tid) %]
 [% IF red %]
 Försteredaktör: [% members.get_by_id(red.member, red).link %]<br />

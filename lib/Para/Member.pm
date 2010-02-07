@@ -1641,7 +1641,8 @@ sub create_topic
     my( $m ) = @_;
 
     return if $m->topic;
-    return if $m->level < 6;
+#    return if $m->level < 6;  DISABLED
+    return if $m->level < 100;
     return if $m->present_contact_public < 5;
 
     my $t = Para::Topic->create( $m->_nickname );

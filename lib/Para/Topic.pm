@@ -43,6 +43,7 @@ use Para::Frame::DBIx;
 use Para::Frame::Utils qw( deunicode trim throw debug create_file );
 use Para::Frame::Time qw( now date );
 use Para::Frame::Widget qw( jump forward );
+use Para::Frame::Template::Stash::CheckUTF8;
 
 use Para::Arcs;
 use Para::Arc;

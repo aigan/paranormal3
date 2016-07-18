@@ -5,7 +5,7 @@
 	focus = 'sys_email'
 %]
 
-[% record = select_record("from member, nick where member=nick_member and uid=lower(?)", q.param('nick') ) %]
+[% record = select_record("from member, nick where member=nick_member and nickname=?", q.param('nick') ) %]
 
 <h2>Välkommen, [% record.nickname %]!</h2>
 

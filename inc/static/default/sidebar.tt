@@ -55,7 +55,10 @@
 [% PROCESS topic/list_pdfs.tt UNLESS multi == 'rev_ts' %]
 [% PROCESS topic/ts_rev.tt UNLESS multi == 'rev_ts' %]
 
+[% nogoog = select_list("from rel where rev=? and rel=723065 and rel_active is true and rel_strength >= 30 and rel_type=3", tid) %]
+[% UNLESS nogoog.size %]
   <div id="googlead" style="margin-top: 2em; margin-bottom: 1em; widht: 100%">
+Google ads
     <script type="text/javascript">
       <!--
 	  google_ad_client = "pub-3489621922353147";
@@ -69,4 +72,5 @@
 	    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
     </script>
   </div>
+[% END %]
 </div>

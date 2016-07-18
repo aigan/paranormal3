@@ -58,14 +58,14 @@
 [% ELSE %]
 
 [% IF u.complexity >= 10 %]
-<table>
+<table class="wide form">
 [% IF t.entry %]
-   <tr><td>Rubrik <td>[% input('t_title', t.title, size=50 maxlength=128) %]
+   <tr><td>Rubrik <td>[% input('t_title', t.title, tag_attr={maxlength=128,class="wide"}) %]
 [% ELSE %]
-   <tr><td>Fullständig titel <td>[% input('t_title', t.title, size=50 maxlength=128) %] Singular. <strong>ej undertitel</strong>
-   <tr><td>Kort titel <td>[% input('t_title_short', t.real_short, size=25 maxlength=50) %]
+   <tr><td>Fullständig titel <td>[% input('t_title', t.title, tag_attr={size=50 maxlength=128}) %] Singular. <strong>ej undertitel</strong>
+   <tr><td>Kort titel <td>[% input('t_title_short', t.real_short, tag_attr={size=25 maxlength=50}) %]
       Att användas när vi vet kontexten. När överämnet är känt.
-   <tr><td>Pluralform <td>[% input('t_title_short_plural', t.real_plural, size=25 maxlength=50) %]
+   <tr><td>Pluralform <td>[% input('t_title_short_plural', t.real_plural, tag_attr={size=25 maxlength=50}) %]
       som rubrik för listor av instanser. (ex lista på <em>böcker</em>)
 [% END %]
 </table>
@@ -77,7 +77,7 @@
    Kortbeskrivning:
 [% END %]
 <br>
-[% textarea('t_text', t.text, cols=70 rows=rows class="big_input") %]
+[% textarea('t_text', t.text, tag_attr={rows=rows class="big_input"}) %]
 
 <p>[% step('Uppdatera') %]<br>
 [% IF u.complexity > 10 %]

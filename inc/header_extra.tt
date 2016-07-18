@@ -4,4 +4,9 @@
 <link rel="Index" href="/topic/" />
 <link rel="Help" href="/topic/paranormalse.html" />
 <link rel="Search" href="/search/" />
-<meta name="verify-v1" content="iGbHTe75ubbur/z373EcUpTvOUldPbUfjwMnQgTcsI0=" />
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="http://paranormal.se/" />
+<meta property="og:image" content="http://paranormal.se/images/icon/paranormala_fenomen_3.jpg"/>
+<meta property="og:site_name" content="Paranormal.se"/>
+<meta property="fb:admins" content="aigan"/>
+

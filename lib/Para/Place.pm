@@ -721,6 +721,9 @@ sub exist_zip
 
 sub worthy_zip
 {
+    ### TEMPORARILY DISABLE GEO HARVEST
+    return undef;
+
     my $sth = $Para::dbh->prepare(
 	  "select * from member
            where home_postal_code is not null and

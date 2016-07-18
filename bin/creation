@@ -80,7 +80,7 @@ use WA::Domains;
 
     my $cfg =
     {
-	'paraframe' => $PARAFRAME,
+	'paraframe' => $PARAFRAME.'/share',
 	'ttcdir'    => "$APPROOT/var/ttc",
 	'paraframe_group' => 'psi_cgi',
 
@@ -168,7 +168,8 @@ use WA::Domains;
 
     Para::Frame::Site->add({
 #	'webhost'    => "göteborg.para.se",
-	'webhost'    => "xn--gteborg-90a.para.se",
+#	'webhost'    => "xn--gteborg-90a.para.se",
+	'webhost'    => "goteborg.para.se",
 	'code'       => 'goteborg',
 	'css'        =>
 	{
@@ -200,26 +201,26 @@ use WA::Domains;
 	},
     });
 
-    Para::Frame::Site->add({
-			    'code'        => 'emelie',
-			    'webhome'     => '',
-#			    'webhome'     => '/test',
-			    'webhost'     => 'www.emelie.tangelin.se',
-#			    'appbase'     => 'Emelie',
-#			    'approot'     => $Emelie::APPROOT,
-			    'is_compiled' => 0,
-			    'css'         =>
-			    {
-			     persistent =>
-			     [
-			      "pref/styles.css",
-			     ],
-			    },
-			    'params' 	  =>
-			    {
-			     'favicon'           => "/pref/images/orb.ico",
-			    },
-			   });
+#    Para::Frame::Site->add({
+#			    'code'        => 'emelie',
+#			    'webhome'     => '',
+##			    'webhome'     => '/test',
+#			    'webhost'     => 'emelie.tangelin.se',
+##			    'appbase'     => 'Emelie',
+##			    'approot'     => $Emelie::APPROOT,
+#			    'is_compiled' => 0,
+#			    'css'         =>
+#			    {
+#			     persistent =>
+#			     [
+#			      "pref/styles.css",
+#			     ],
+#			    },
+#			    'params' 	  =>
+#			    {
+#			     'favicon'           => "/pref/images/orb.ico",
+#			    },
+#			   });
 
 
     # Make sure we can read/write generated files

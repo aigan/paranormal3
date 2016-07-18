@@ -1,22 +1,36 @@
 ﻿[% META
-	otitle = "Paranormal.se - Index"
+	otitle = "Paranormal.se"
         next_template='-site.login_page'
 	next_action = "user_login"
 	body_class = "front"
+	description="Ett uppslagsverk om paranormala fenomen"
 %]
+
+<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({appId: '143726359001152', status: true, cookie: true,
+             xfbml: true});
+  };
+  (function() {
+    var e = document.createElement('script'); e.async = true;
+    e.src = document.location.protocol +
+      '//connect.facebook.net/sv_SE/all.js';
+    document.getElementById('fb-root').appendChild(e);
+  }());
+</script>
+
+
 <table>
 <tr><td style="width:75px"><a href="/topic/bilden_pa_boken.html"><img src="/images/icon/paranormala_fenomen_icon.jpg" alt="" style="border:0" /></a></td><td style="vertical-align: bottom">
-<h1><a href="/">Paranormal.se</a></h1>
+<h1 ><a href="/">Paranormal.se</a></h1>
 <p class="slogan">[% display_slogan %]</p>
-
-</td><td style="font-size: 0.7em; text-align: right">
-
-<a href="/welcome.en.html">Go to site in english</a>
 
 </td></tr>
 </table>
 
 [% IF u.level %]
+<br/>
 [% ELSE %]
    <p>Här finns tusentals uppslagsord. Sök med sökrutan uppe till höger. Du kan också bläddra i [% jump("indexet", "/topic") %]. Eller klicka dig fram bland korshänvisningarna i uppslagsorden.</p>
 
@@ -77,11 +91,17 @@
 
 <h2>LÄNKAR:</h2>
 <div class="indent">
+<a href="http://www.facebook.com/groups/5743101423">Paranormal.se på Facebook</a><br/>
 <a href="/meta/banners.html">Banners</a><br/>
 <a href="http://parapsykologi.se/">SPF</a><br/>
 <a href="/topic/lankbyte.html">L&auml;nkbyte</a><br/>
 </div>
 
+</td><td>
 
 </td></tr>
 </table>
+
+<div style="font-size: 0.7em; text-align: right">
+<a href="/welcome.en.html">Go to site in english</a>
+</div>

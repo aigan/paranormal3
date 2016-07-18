@@ -4,6 +4,13 @@
 	onsubmit = "setjs()"
 	form_enctype = "application/x-www-form-urlencoded"
 %]
+<p>Chatten på paranormal.se finns inte längre. Du kan hitta liknande chattrum på <a href="http://www.efnet.org/">Efnet</a>. Se exempelvis <a href="irc://irc.swepipe.se/torget">#torget</a>.<br> Paranormal.se har absolut inget ansvar för den eller dess innehåll.
+
+
+<p style="font-style:oblique; font-weight:bold">Vi har dock <a href="http://www.facebook.com/groups/5743101423">en chatt på facebook</a>!</p>
+
+[% IF 0 %]
+
 <script language="JavaScript"><!--
 function setjs() {
  if(navigator.product == 'Gecko') {
@@ -158,3 +165,5 @@ bjuda in en kändis eller expert på något område?</p>
 
       </ul>
 
+
+[% END %]

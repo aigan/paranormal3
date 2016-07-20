@@ -4,6 +4,8 @@
 <h1><a href="/member/payment/"><img src="/images/icon/arrow.gif" alt=
       "Meny"></a> Gåvor till Paranormal.se: Bankgiro</h1>
 
+[% IF 0 %]
+
 <p>Val av period innebär inte några åtaganden.  Du avgör själv vid
 varje tillfälle om, när och hur mycket du vill ge.  Om du inte loggar in
 kommer du heller inte höra något från oss.</p>
@@ -38,3 +40,6 @@ Ange medlemsnamn och prenumerationens längd
 en liten blankett du hittar på ditt bank-kontor. Du fyller i
 blanketten och lämnar in den i kassan och betalar där direkt ur
 plånboken.</p>
+
+[% END %]
+

@@ -2,6 +2,7 @@
 	level=0
 %]
 
+[% IF 0 %]
 <script type="text/javascript">
 /* <![CDATA[ */
     (function() {
@@ -19,12 +20,14 @@
 <div style="float:right">
 <a class="FlattrButton" style="display:none;"
 href="http://paranormal.se/"></a></div>
-
+[% END %]
 
 <h1><a href="/member/db/"><img src="/images/icon/arrow.gif" alt=
       "Meny"></a> Gåvor till Paranormal.se</h1>
 
 [% PROCESS payment_menu.tt %]
+
+[% IF 0 %]
 
 <!-- p>Du kan stödja Paranormal.se genom ett <a
 href="/topic/prenumeration_pa_paranormalse.html">stödmedlemskap</a>.
@@ -66,3 +69,7 @@ utveckla webbplatsen.</p>
 <p>Hur mycket är denna webbplats värd för dig?  Hur mycket du vill
 bidra med, och hur ofta du vill göra det, är helt frivilligt. Även
 gåvor på 1 krona hjälper till!</p>
+[% END %]
+
+<br>
+<p>Tack alla för så många år med fina minnen.</p>

@@ -6,6 +6,7 @@
 
 [% PROCESS payment_menu.tt %]
 
+[% IF 0 %]
 <p>Skicka mig ett meddelande när ni sätter in pengar på kontot.</p>
 
 <p>Nedan är kontonummer till Paranormal Sweden. Det här är inte
@@ -41,5 +42,5 @@ S-417 04  Göteborg
 <p>Innehar F-skattebevis.  Momsregnr: SE720529509501</p>
 
 [% hr %]
-
+[% END %]
 <p>[% jump('Tillbaka', '/member/payment/') %]

@@ -1,93 +1,91 @@
 ﻿[% PROCESS doctype.tt %]
 <html>
-<head>
-   [% PROCESS head_meta.tt %]
-   <title>[% t.title | html %]</title>
-</head>
-<body class="with_sidebar">
-   [% m = t.member %]
-   [% PROCESS body_top.tt %]
-   [% UNLESS m.id %]
-      <h1>[% t.title %]</h1>
-      <h2>Koppling till medlem saknas</h2>
-      [% PROCESS footer.tt %]
-      </body>
-      </html>
-      [% RETURN %]
-   [% END %]
+	<head>
+		[% PROCESS head_meta.tt %]
+		<script src="/js/topic_sidebar_adjust.js"></script>
+	</head>
+	<body class="with_sidebar">
+		<main>
+			<article>
+				[% m = t.member %]
+				[% PROCESS body_top.tt %]
 
-   <h1>
-      [% m.desig(1) | html %]
-   </h1>
+				[% UNLESS m.id %]
+				<h1>[% t.title %]</h1><h2>Koppling till medlem saknas</h2>
+				[% PROCESS footer.tt; "</article></main></body></html>"; RETURN %][% END %]
 
-   [% PROCESS setup.tt %]
+				<header>
+					<h1>
+						[% m.desig(1) | html %]
+					</h1>
 
-   <div id="main">
-      <div id="topic_header">
-         [% INCLUDE meta.tt entry=t %]
+					[% PROCESS setup.tt %]
+					<section class="header">
+						[% INCLUDE meta.tt entry=t %]
 
-         [% IF t.text and m.present_contact_public >= 5 %]
-            <p id="description">[% t.text | html %]</p>
-         [% END %]
-      </div>
+						[% IF t.text and m.present_contact_public >= 5 %]
+							<p id="description">[% t.text | html %]</p>
+						[% END %]
+					</section>
+				</header>
+				<section class="content">
+					<div class="entry">
+						[% CALL new_entry(tid) %]
+						[% IF m.presentation and m.present_contact_public >= 10 %]
+							<a name="presentation"></a>
+							<h2>Presentation</h2>
+							[% PROCESS illustration %]
 
-      <div class="entry">
-         [% CALL new_entry(tid) %]
-      [% IF m.presentation and m.present_contact_public >= 10 %]
-         <a name="presentation"></a>
-         <h2>Presentation</h2>
-         [% PROCESS illustration %]
+							<p>[% m.presentation | html_psi %]</p>
+						[% ELSE %]
+							[% PROCESS illustration %]
+						[% END %]
+					</div>
 
-         <p>[% m.presentation | html_psi %]
-      [% ELSE %]
-         [% PROCESS illustration %]
-      [% END %]
-      </div>
+					[% PROCESS entry_list.tt %]
 
-      [% PROCESS entry_list.tt %]
-
-      <div id="member_data">
-	[% INCLUDE present_rel_links type=3 %]
-	[% INCLUDE present_rel_links type=31 %]
-	[% INCLUDE present_rel_links type=30 %]
-	[% INCLUDE present_rel_links type=32 %]
-	[% INCLUDE present_rel_links type=21 %]
-	[% INCLUDE present_rev_links type=11 %]
-	[% INCLUDE present_rev_links type=3 %]
-	[% INCLUDE present_rev_links type=31 %]
-	[% INCLUDE present_rev_links type=30 %]
-	[% INCLUDE present_rev_links type=32 present='short' %]
-	[% INCLUDE present_rev_links type=21 %]
-	[% INCLUDE present_rev_links type=2 %]
-	[% INCLUDE present_rev_links type=4 %]
-	[% INCLUDE present_rev_links type=6 %]
-	[% INCLUDE present_rev_links type=9 %]
-	[% INCLUDE present_rev_links type=14 %]
-	[% INCLUDE present_rev_links type=16 %]
-	[% INCLUDE present_rev_links type=29 %]
-	[% INCLUDE present_rev_links type=7 %]
-	[% INCLUDE present_rev_links type=1 %]
-	[% INCLUDE present_rev_links type=8 %]
-	[% INCLUDE present_rev_links type=22 %]
-	[% INCLUDE present_rev_links type=23 %]
-	[% INCLUDE present_rev_links type=28 %]
-	[% INCLUDE present_rev_links type=12 %]
-	[% INCLUDE present_rel_links type=10 %]
-	[% INCLUDE present_rev_links type=10 %]
-	[% INCLUDE present_rel_links type=36 present='plural' %]
-	[% INCLUDE present_rev_links type=36 present='plural' %]
+					<div id="member_data">
+						[% INCLUDE present_rel_links type=3 %]
+						[% INCLUDE present_rel_links type=31 %]
+						[% INCLUDE present_rel_links type=30 %]
+						[% INCLUDE present_rel_links type=32 %]
+						[% INCLUDE present_rel_links type=21 %]
+						[% INCLUDE present_rev_links type=11 %]
+						[% INCLUDE present_rev_links type=3 %]
+						[% INCLUDE present_rev_links type=31 %]
+						[% INCLUDE present_rev_links type=30 %]
+						[% INCLUDE present_rev_links type=32 present='short' %]
+						[% INCLUDE present_rev_links type=21 %]
+						[% INCLUDE present_rev_links type=2 %]
+						[% INCLUDE present_rev_links type=4 %]
+						[% INCLUDE present_rev_links type=6 %]
+						[% INCLUDE present_rev_links type=9 %]
+						[% INCLUDE present_rev_links type=14 %]
+						[% INCLUDE present_rev_links type=16 %]
+						[% INCLUDE present_rev_links type=29 %]
+						[% INCLUDE present_rev_links type=7 %]
+						[% INCLUDE present_rev_links type=1 %]
+						[% INCLUDE present_rev_links type=8 %]
+						[% INCLUDE present_rev_links type=22 %]
+						[% INCLUDE present_rev_links type=23 %]
+						[% INCLUDE present_rev_links type=28 %]
+						[% INCLUDE present_rev_links type=12 %]
+						[% INCLUDE present_rel_links type=10 %]
+						[% INCLUDE present_rev_links type=10 %]
+						[% INCLUDE present_rel_links type=36 present='plural' %]
+						[% INCLUDE present_rev_links type=36 present='plural' %]
 
 
-	[% PROCESS topic/list_websites.tt %]
-	[% PROCESS topic/list_pdfs.tt %]
-	[% PROCESS topic/ts_rev.tt %]
-      </div>
-
-      <br clear="all">
-   </div>
-
-   [% PROCESS sidebar.tt %]
-   [% PROCESS footer.tt %]
-</body>
+						[% PROCESS topic/list_websites.tt %]
+						[% PROCESS topic/list_pdfs.tt %]
+						[% PROCESS topic/ts_rev.tt %]
+					</div>
+				</section>
+			</article>
+			
+			[% PROCESS sidebar.tt %]
+		</main>
+		[% PROCESS footer.tt %]
+	</body>
 </html>
 

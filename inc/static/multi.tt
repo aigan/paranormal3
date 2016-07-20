@@ -1,44 +1,46 @@
 ﻿[% PROCESS doctype.tt %]
 <html>
-<head>
-   [% PROCESS head_meta.tt %]
-   <title>[% t.title | html %]</title>
-</head>
-<body class="with_sidebar">
-   [% PROCESS body_top.tt %]
-   <h1>
-      [% t.title | html %] [% INCLUDE typelist.tt %]
-   </h1>
-   [% FOREACH arc = t.rel(type=15).arcs %]
-      <h2>[% arc.value | html %]</h2>
-   [% END %]
+	<head>
+		[% PROCESS head_meta.tt %]
+		<script src="/js/topic_sidebar_adjust.js"></script>
+	</head>
+	<body class="with_sidebar">
+		<main>
+			<article>
+				[% PROCESS body_top.tt %]
+				<header>
+					<h1>
+						[% t.title | html %] [% INCLUDE typelist.tt %]
+					</h1>
+					[% FOREACH arc = t.rel(type=15).arcs %]
+						<h2>[% arc.value | html %]</h2>
+					[% END %]
 
-   [% PROCESS setup.tt %]
+					[% PROCESS setup.tt %]
+					<section class="header">
+						[% INCLUDE meta.tt entry=t %]
 
-   <div id="main">
-      <div id="topic_header">
-         [% INCLUDE meta.tt entry=t %]
+						[% IF t.text %]
+							<p id="description">[% t.text | html %]</p>
+						[% END %]
 
-         [% IF t.text %]
-            <p id="description">[% t.text | html %]</p>
-         [% END %]
+						[% PROCESS alias_list.tt %]
+					</section>
+				</header>
+				<section class="content">
+					[% IF multi %]
+						[% PROCESS multi/main.tt %]
+					[% ELSE %]
+						[% THROW file "This template should only be used in case of multi" %]
+					[% END %]
+					
+					[% PROCESS multi/list.tt %]
+				</section>
+			</article>
 
-         [% PROCESS alias_list.tt %]
-      </div>
-
-      [% IF multi %]
-         [% PROCESS multi/main.tt %]
-      [% ELSE %]
-         [% THROW file "This template should only be used in case of multi" %]
-      [% END %]
-
-      [% PROCESS multi/list.tt %]
-
-      <br clear="all">
-   </div>
-
-   [% PROCESS sidebar.tt %]
-   [% PROCESS footer.tt %]
-</body>
+			[% PROCESS sidebar.tt %]
+		</main>
+		[% PROCESS footer.tt %]
+	</body>
 </html>
 

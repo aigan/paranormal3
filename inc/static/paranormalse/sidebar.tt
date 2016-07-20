@@ -1,24 +1,25 @@
-﻿[% IF m.present_interests >= 10 %]
-[%
-	max   = 20;
-	cutof = 85;
-	interests = m.interests.summary( max, cutof );
-%]
+﻿<nav>
+	[% IF m.present_interests >= 10 %]
+		[%
+		max   = 20;
+		cutof = 85;
+		interests = m.interests.summary( max, cutof );
+		%]
+		<aside>
+			<h2>Intressen</h2>
+			[% FOREACH intr = interests %]
+				<span class="link">
+					[% intr.topic.link %]<br>
+					[% IF intr.comment %]
+						- [% intr.comment | html %]<br>
+					[% END %]
+				</span>
+			[% END %]
+			
+			[% INCLUDE present_rel_links type=12 %]
+			[% PROCESS present_0_links %]
+		</aside>
 
-<div id="sidebar">
-
-<h2>Intressen</h2>
-[% FOREACH intr = interests %]
-   <span class="link">
-      [% intr.topic.link %]<br>
-      [% IF intr.comment %]
-         - [% intr.comment | html %]<br>
-      [% END %]
-   </span>
-[% END %]
-
-[% INCLUDE present_rel_links type=12 %]
-[% PROCESS present_0_links %]
-
-</div>
+		<form action="/search/alternatives.tt" id="search_field"><input type="hidden" name="run" value="topic_search_published"><input type="search" name="talias" placeholder="Sök"></form>
+</nav>
 [% END %]

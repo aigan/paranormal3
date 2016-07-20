@@ -1,142 +1,137 @@
 ﻿[% PROCESS doctype.tt %]
-<html>
-<head>
-   [% PROCESS head_meta.tt %]
-   <title>[% t.title | html %]</title>
-</head>
-<body class="with_sidebar">
-   [% PROCESS body_top.tt %]
+<html lang="sv">
+	<head>
+		[% PROCESS head_meta.tt %]
+		<script src="/js/topic_sidebar_adjust.js"></script>
+	</head>
+	<body class="with_sidebar">
+		<main>
+			<article>
+				[% PROCESS body_top.tt %]
+				<header>
+					[% eng = t.has_rel(33, 396598); # English %]
 
-   [% eng = t.has_rel(33, 396598); # English %]
+					[% ### From topic/media ### %]
+					[% media_rec = select_possible_record("from media where media=?", t.id) %]
+					[% IF media_rec.media == t.id %]
+						[% IF media_rec.media_mimetype == 'text/html' %]
+							[% url =  media_rec.media_url %]
+						[% END %]
+					[% END %]
 
-   [% ### From topic/media ### %]
-   [% media_rec = select_possible_record("from media where media=?", t.id) %]
-   [% IF media_rec.media == t.id %]
-      [% IF media_rec.media_mimetype == 'text/html' %]
-         [% url =  media_rec.media_url %]
-      [% END %]
-   [% END %]
+					[% IF t.title.search('^Paranormal.se') %]
+						<h1>
+							[% t.title | html %]
+							[% IF t.arc('start') or t.arc('slut') %]
+								<span class="living_years">
+									(
+									[% t.arc('start').value %]
+									-
+									[% t.arc('slut').value %]
+									)
+								</span>
+							[% END %]
+							[% INCLUDE typelist.tt %]
+						</h1>
+					[% ELSE %]
+						[% IF eng %]
+							<h1><a href="/">Paranormal.se</a></h1>
+							<p class="slogan">A Swedish encyclopedia about Paranormal Phenomena</p>
+						[% ELSE %]
+							<h1><a href="/">Paranormal.se</a></h1>
+							<p class="slogan">Uppslagsverk för paranormala fenomen</p>
+						[% END %]
 
-   [% IF t.title.search('^Paranormal.se') %]
-      <h1>
-         [% t.title | html %]
-         [% IF t.arc('start') or t.arc('slut') %]
-         <span class="living_years">
-         (
-            [% t.arc('start').value %]
-            -
-            [% t.arc('slut').value %]
-         )
-         </span>
-         [% END %]
-         [% INCLUDE typelist.tt %]
-      </h1>
-   [% ELSE %]
-      [% IF eng %]
-         <h1><a href="/">Paranormal.se</a></h1>
-         <p class="slogan">A Swedish encyclopedia about Paranormal Phenomena</p>
-      [% ELSE %]
-         <h1><a href="/">Paranormal.se</a></h1>
-         <p class="slogan">Uppslagsverk för paranormala fenomen</p>
-      [% END %]
+						<hr>
+						[% IF t.arc('slut') %]
+							<h2 class="contained">
+								[% t.title %]
+								<span class="living_years">
+									(
+									[% t.arc('start').value %]
+									-
+									[% t.arc('slut').value %]
+									)
+								</span>
+								[% INCLUDE typelist.tt %]
+							</h2>
+						[% ELSE %]
+							<h2 class="contained">
+								[% jump(t.title, url) %]
+								[% IF t.arc('start') or t.arc('slut') %]
+									<span class="living_years">
+										(
+										[% t.arc('start').value %]
+										-
+										[% t.arc('slut').value %]
+										)
+									</span>
+								[% END %]
+								[% INCLUDE typelist.tt %]
+								<br>
+								[% IF eng %]
+									[% jump('Go to site »', url) %]
+								[% ELSE %]
+									[% jump('Gå till webbplatsen', url) %]
+								[% END %]
+							</h2>
+							
+							<h2 class="contained">[% jump(url, url) %]</h2>
+						[% END %]
+					[% END %]
+					[% PROCESS setup.tt %]
+					<section class="header">
+						[% INCLUDE meta.tt entry=t %]
 
-      <hr>
-      [% IF t.arc('slut') %]
-      <h2 class="contained">
-         [% t.title %]
-         <span class="living_years">
-         (
-            [% t.arc('start').value %]
-            -
-            [% t.arc('slut').value %]
-         )
-         </span>
-         [% INCLUDE typelist.tt %]
-      </h2>
-      [% ELSE %]
-      <h2 class="contained">
-         [% jump(t.title, url) %]
-         [% IF t.arc('start') or t.arc('slut') %]
-         <span class="living_years">
-         (
-            [% t.arc('start').value %]
-            -
-            [% t.arc('slut').value %]
-         )
-         </span>
-         [% END %]
-         [% INCLUDE typelist.tt %]
-         [% IF eng %]
-            [% jump('Go to site »', url) %]
-         [% ELSE %]
-            [% jump('Gå till webbplatsen', url) %]
-         [% END %]
-      </h2>
+						[% IF t.text %]
+							<p id="description">[% t.text | html %]</p>
+						[% END %]
 
-      <h2 class="contained">[% jump(url, url) %]</h2>
+						[% PROCESS alias_list.tt %]
+					</section>
+				</header>
+				<section class="content">
+					[% IF url AND NOT t.title.search('^Paranormal.se') %]
+						<div class="entry">
+							[% IF t.arc('slut') %]
+								[% IF eng %]
+									<p>The site [% url %] was discontinued in [% t.arc('slut').value %]</p>
+								[% ELSE %]
+									<p>Webbplatsen [% url %] lades ned [% t.arc('slut').value %]</p>
+								[% END %]
+							[% ELSE %]
+								[% UNLESS t.has_rel(28); # Tillåtelse %]
+								  [% IF eng %]
+										<p>This page is a reference to [% jump(url, url) %]. It exists because we want to say something <strong>about</strong> the site. It may have been used as a source of an article, citation or may just be recommended for it's content regarding a specific topic. <strong>Paranormal.se is not behind that site.</strong></p>
+									[% ELSE %]
+										<p>Denna sida är en referens till [% jump(url, url) %]. <strong>Paranormal.se står inte bakom webbplatsen.</strong></p>
+									[% END %]
+							  [% END %]
 
-      [% END %]
-   [% END %]
+								[% IF eng %]
+									<p align="center">Follow the link to go to the site:</p>
+								[% ELSE %]
+									<p align="center">Följ länken för att gå till webbplatsen:</p>
+								[% END %]
 
-
-   [% PROCESS setup.tt %]
-
-   <div id="main">
-      <div id="topic_header">
-         [% INCLUDE meta.tt entry=t %]
-
-         [% IF t.text %]
-            <p id="description">[% t.text | html %]</p>
-         [% END %]
-
-         [% PROCESS alias_list.tt %]
-      </div>
-
-   [% IF url AND NOT t.title.search('^Paranormal.se') %]
-   <div class="entry">
-   [% IF t.arc('slut') %]
-      [% IF eng %]
-        <p>The site [% url %] was discontinued in [% t.arc('slut').value %]</p>
-      [% ELSE %]
-        <p>Webbplatsen [% url %] lades ned [% t.arc('slut').value %]</p>
-      [% END %]
-   [% ELSE %]
-      [% UNLESS t.has_rel(28); # Tillåtelse %]
-         [% IF eng %]
-            <p>This page is a reference to [% jump(url, url) %]. It exists because we want to say something <strong>about</strong> the site. It may have been used as a source of an article, citation or may just be recommended for it's content regarding a specific topic. <strong>Paranormal.se is not behind that site.</strong></p>
-         [% ELSE %]
-            <p>Denna sida är en referens till [% jump(url, url) %]. <strong>Paranormal.se står inte bakom webbplatsen.</strong></p>
-         [% END %]
-      [% END %]
-
-      [% IF eng %]
-         <p align="center">Follow the link to go to the site:</p>
-      [% ELSE %]
-         <p align="center">Följ länken för att gå till webbplatsen:</p>
-      [% END %]
-
-      <h2 align="center">[% jump(url, url, href_target='external') %]</h2>
-   [% END %]
-   </div>
-
-   <div class="entry">
-      <p>Se [% jump("arkivet hos WayBack Machine för denna webbplats", "http://web.archive.org/web/*/$url") %]
-   </div>
-
-   <br clear="all">
-   [% END %]
-
-      [% IF multi_content %]
-         [% PROCESS multi/list.tt %]
-      [% ELSIF multi %]
-         [% PROCESS multi/main.tt %]
-      [% END %]
-
-      [% PROCESS entry_list.tt %]
-      <br clear="all">
-   </div>
-
-   [% PROCESS sidebar.tt %]
+								<h2 align="center">[% jump(url, url, href_target='external') %]</h2>
+					    [% END %]
+						</div>
+						<div class="entry">
+							<p>Se [% jump("arkivet hos WayBack Machine för denna webbplats", "http://web.archive.org/web/*/$url") %]</p>
+						</div>
+          [% END %]
+					[% IF multi_content %]
+						[% PROCESS multi/list.tt %]
+					[% ELSIF multi %]
+						[% PROCESS multi/main.tt %]
+					[% END %]
+					
+					[% PROCESS entry_list.tt %]
+				</section>
+			</article>
+			[% PROCESS sidebar.tt %]
+		</main>
    [% PROCESS footer.tt %]
-</body>
+	</body>
 </html>

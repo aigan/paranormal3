@@ -1,0 +1,47 @@
+﻿[% META otitle="Index"
+   no_robots_follow="-q.param('part').replace('^.', '')"
+   no_robots_index="1"
+%]
+[%
+   part = q.param('part');
+
+   THROW notfound "Can't find the page $me?part=$part" IF q.param('no_robots');
+
+   IF part;
+      sel = "like '$part%'";
+   ELSE;
+      sel = "< 'a'";
+   END;
+%]
+
+[% IF part %]
+<h2>- [% part | upper %] -</h2>
+[% ELSE %]
+<h1 align="center">Index</h1>
+[% END %]
+
+<p align="center">Allt som börjar på [% alfanum_bar('/topic/', 'part') %]
+[% IF part %]
+<br>Sök på <code><big><strong>[% part | upper %]</strong></big></code> följt av [% alfanum_bar('/topic/', 'part', part) %]
+[% END %]
+</p>
+
+[% USE Sorted_table %]
+[% recs = cached_select_list("select talias, t from t, talias where t=talias_t and talias $sel and talias_index is true and t_active is true and talias_active is true and not exists (select media from media where media=t) order by talias, talias_t") %]
+
+<p align="center">[% recs.size %] uppslagsord: [% recs.pagelist %]</p>
+
+<table cellpadding="10" width="100%">
+[% FOREACH rec IN recs.from_page%]
+    [% tr2 %]
+      <td valign="top">
+[% t = topic(rec.t) %]
+[% jump(rec.talias, t.file) %]
+</td>
+      <td class="plain">[% PROCESS typelist.tt %]</td>
+      <td valign="top">$t.text</td>
+   </tr>
+[% END %]
+</table>
+
+<p align="center">[% recs.size %] uppslagsord: [% recs.pagelist %]</p>

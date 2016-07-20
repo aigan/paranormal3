@@ -1,87 +1,86 @@
 ﻿[% PROCESS doctype.tt %]
 <html>
-<head>
-   [% PROCESS head_meta.tt %]
-   <title>[% t.title | html %]</title>
-</head>
-<body class="with_sidebar">
-   [% PROCESS body_top.tt %]
+	<head>
+		[% PROCESS head_meta.tt %]
+		<script src="/js/topic_sidebar_adjust.js"></script>
+	</head>
+	<body class="with_sidebar">
+		<main>
+			<article>
+				[% PROCESS body_top.tt %]
+				<header>
+					[% eng = t.has_rel(33, 396598); # English %]
+					[% IF eng %]
+						<h1><a href="/">Paranormal.se</a></h1>
+						<p class="slogan">A Swedish encyclopedia about Paranormal Phenomena</p>
+					[% ELSE %]
+						<h1><a href="/">Paranormal.se</a></h1>
+						<p class="slogan">Uppslagsverk för paranormala fenomen</p>
+					[% END %]
+					<hr>
+					<h2 class="contained">
+						[% t.title %]
+						[% IF t.arc('start') or t.arc('slut') %]
+							<span class="living_years">
+								(
+								[% t.arc('start').value %]
+								-
+								[% t.arc('slut').value %]
+								)
+							</span>
+						[% END %]
+						[%-  INCLUDE typelist.tt %]
+					</h2>
 
-   [% eng = t.has_rel(33, 396598); # English %]
+					[%- PROCESS setup.tt -%]
+					<section class="header">
+						[% INCLUDE meta.tt entry=t %]
 
-      [% IF eng %]
-         <h1><a href="/">Paranormal.se</a></h1>
-         <p class="slogan">A Swedish encyclopedia about Paranormal Phenomena</p>
-      [% ELSE %]
-         <h1><a href="/">Paranormal.se</a></h1>
-         <p class="slogan">Uppslagsverk för paranormala fenomen</p>
+						[% IF t.text %]
+							<p id="description">[% t.text | html %]</p>
+						[% END %]
+
+						[% PROCESS alias_list.tt %]
+					</section>
+				</header>
+				<section class="content">
+					[% UNLESS t.arc('slut') %]
+					[% UNLESS t.has_rel(28); # Tillåtelse %]
+					<div class="entry">
+						[% IF eng %]
+							<p>This is the listing of <em>[% t.title %]</em> from the <a href="/">Paranormal.se encyclopedia</a>. This is an unofficial web page. <strong>Paranormal.se doesn not represent this group.</strong></p>
+						[% ELSE %]
+							<p>Detta är uppslagsordet för <em>[% t.title %]</em>. <strong><a href="/">Paranormal.se</a> representerar inte denna grupp / [% t.type_list.first.link %].</strong></p>
+						[% END %]
+					</div>
       [% END %]
-
-      <hr>
-      <h2 class="contained">
-         [% t.title %]
-         [% IF t.arc('start') or t.arc('slut') %]
-         <span class="living_years">
-         (
-            [% t.arc('start').value %]
-            -
-            [% t.arc('slut').value %]
-         )
-         </span>
-         [% END %]
-         [% INCLUDE typelist.tt %]
-      </h2>
-
-   [% PROCESS setup.tt %]
-
-   <div id="main">
-      <div id="topic_header">
-         [% INCLUDE meta.tt entry=t %]
-
-         [% IF t.text %]
-            <p id="description">[% t.text | html %]</p>
-         [% END %]
-
-         [% PROCESS alias_list.tt %]
-      </div>
-
-      [% UNLESS t.arc('slut') %]
-      [% UNLESS t.has_rel(28); # Tillåtelse %]
-      <div class="entry">
-         [% IF eng %]
-            <p>This is the listing of <em>[% t.title %]</em> from the <a href="/">Paranormal.se encyclopedia</a>. This is an unofficial web page. <strong>Paranormal.se doesn not represent this group.</strong></p>
-         [% ELSE %]
-            <p>Detta är uppslagsordet för <em>[% t.title %]</em>. <strong><a href="/">Paranormal.se</a> representerar inte denna grupp / [% t.type_list.first.link %].</strong></p>
-         [% END %]
-      </div>
-      [% END %]
-
+			
       [% FOREACH ts = select_list("from ts, t, media where t=media and ts_topic=? and ts_entry=t and t_active is true and ts_active is true and media_mimetype like 'text/%' order by t_title", t.id) %]
-         [% IF loop.first %]
-         <div class="entry">
+        [% IF loop.first %]
+					<div class="entry">
             <h2>Besök</h2>
-         [% END %]
-         <h2>[% jump(ts.t_title, ts.media_url, href_target="media") %]</h2>
-	 <p class="attatched">[% jump(ts.media_url, ts.media_url, href_target="media") %]</p>
-         [% IF ts.ts_comment %]
-            <p><em>[% ts.ts_comment | html %]</em></p>
-         [% END %]
-         [% IF loop.last %]</div>[% END %]
+        [% END %]
+        <h2>[% jump(ts.t_title, ts.media_url, href_target="media") %]</h2>
+				<p class="attatched">[% jump(ts.media_url, ts.media_url, href_target="media") %]</p>
+        [% IF ts.ts_comment %]
+          <p><em>[% ts.ts_comment | html %]</em></p>
+        [% END %]
+        [% IF loop.last %]</div>[% END %]
       [% END %]
       [% END %]
-
 
       [% IF multi_content %]
-         [% PROCESS multi/list.tt %]
+        [% PROCESS multi/list.tt %]
       [% ELSIF multi %]
-         [% PROCESS multi/main.tt %]
+        [% PROCESS multi/main.tt %]
       [% END %]
 
       [% PROCESS entry_list.tt %]
-      <br clear="all">
-   </div>
+				</section>
+			</article>
 
-   [% PROCESS sidebar.tt %]
-   [% PROCESS footer.tt %]
-</body>
+			[% PROCESS sidebar.tt %]
+		</main>
+		[% PROCESS footer.tt %]
+	</body>
 </html>

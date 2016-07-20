@@ -1,68 +1,71 @@
 ﻿[% PROCESS doctype.tt %]
-<html>
-<head>
-   [% PROCESS head_meta.tt %]
-   <title>[% t.title | html %]</title>
-</head>
-<body class="with_sidebar">
-   [% PROCESS body_top.tt %]
-   <h1>
-      [% t.title | html %]
-      [% IF t.arc('slut') %]
-      <span class="living_years">
-      (
-         [% t.arc('start').value %]
-         -
-         [% t.arc('slut').value %]
-      )
-      </span>
-      [% END %]
-      [% INCLUDE typelist.tt %]
-   </h1>
-   [% FOREACH arc = t.rel(type=15).arcs %]
-      <h2>[% arc.value | html %]</h2>
-   [% END %]
+<html lang="sv">
+	<head>
+		[% PROCESS head_meta.tt %]
+		<script src="/js/topic_sidebar_adjust.js"></script>
+	</head>
+	<body class="with_sidebar">
+		<main>
+			<article>
+				[% PROCESS body_top.tt %]
+				<header>
+					<h1>
+						[%- t.title | html -%]
+						[% IF t.arc('slut') %]
+							<span class="living_years">
+								(
+								[% t.arc('start').value %]
+								-
+								[% t.arc('slut').value %]
+								)
+							</span>
+						[% END %]
+						[%- INCLUDE typelist.tt -%]
+					</h1>
+					[% FOREACH arc = t.rel(type=15).arcs %]
+						<h2>[% arc.value | html %]</h2>
+					[% END -%]
+					
+					[%- PROCESS setup.tt -%]
+					<section class="header"> 
+						[% INCLUDE meta.tt entry=t %]
+						
+						[% IF t.text %]
+							<p id="description">[% t.text | html %]</p>
+						[% END %]
+						
+						[% PROCESS alias_list.tt %]
+					</section>
+				</header>
+				<section class="content">
+					[% IF t.is_image %]
+						<div  class="spacy_image">
+							[% IF t.media_url_full %]
+								<a href="[% t.media_url_full %]"><img alt="[% t.desig | html %]" src="[% t.media_url | html %]"></a>
+							[% ELSE %]
+								[% IF t.media_type == 'image/svg+xml' %]
+									<embed alt="[% t.desig | html %]" src="[% t.media_url | html %]" style="width: auto; height: auto"
+										type="image/svg+xml" pluginspage="http://www.adobe.com/svg/viewer/install/" />
+								[% ELSE %]
+									<img alt="[% t.desig | html %]" src="[% t.media_url | html %]"/>
+								[% END %]
+							[% END %]
+						</div>
+					[% END %]
 
-   [% PROCESS setup.tt %]
+					[% IF multi_content %]
+						[% PROCESS multi/list.tt %]
+					[% ELSIF multi %]
+						[% PROCESS multi/main.tt %]
+					[% END %]
+				
+					[% PROCESS entry_list.tt %]
+				</section>
+			</article>
 
-   <div id="main">
-      <div id="topic_header">
-         [% INCLUDE meta.tt entry=t %]
-
-         [% IF t.text %]
-            <p id="description">[% t.text | html %]</p>
-         [% END %]
-
-         [% PROCESS alias_list.tt %]
-      </div>
-
-      [% IF t.is_image %]
-         <div  class="spacy_image">
-         [% IF t.media_url_full %]
-            <a href="[% t.media_url_full %]"><img alt="[% t.desig | html %]" src="[% t.media_url | html %]"></a>
-         [% ELSE %]
-	    [% IF t.media_type == 'image/svg+xml' %]
-	      <embed alt="[% t.desig | html %]" src="[% t.media_url | html %]" style="width: auto; height: auto"
-		     type="image/svg+xml" pluginspage="http://www.adobe.com/svg/viewer/install/" />
-	    [% ELSE %]
-	      <img alt="[% t.desig | html %]" src="[% t.media_url | html %]"/>
-	    [% END %]
-         [% END %]
-         </div>
-      [% END %]
-
-      [% IF multi_content %]
-         [% PROCESS multi/list.tt %]
-      [% ELSIF multi %]
-         [% PROCESS multi/main.tt %]
-      [% END %]
-
-      [% PROCESS entry_list.tt %]
-
-   </div>
-
-   [% PROCESS sidebar.tt %]
-   [% PROCESS footer.tt %]
-</body>
+			[% PROCESS sidebar.tt %]
+		</main>
+		[% PROCESS footer.tt %]
+	</body>
 </html>
 

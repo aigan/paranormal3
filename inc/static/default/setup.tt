@@ -141,7 +141,6 @@
 
   </ul>
 [% END %]
-
 [% BLOCK subentry %]
    [% DEFAULT level=2 %]
    [% FOREACH se = e.entry_list %]
@@ -176,7 +175,6 @@
    [% ELSE %]
    [% END %]
 [% END %]
-
 [% BLOCK new_illustration %]
    [% IF ill.recs.${ill.count} %]
       [% i = ill.recs.${ill.count} %]
@@ -215,7 +213,6 @@
       [% END %]
    [% END %]
 [% END %]
-
 [% BLOCK present_rel_links %]
    [% DEFAULT present = 'short' %]
    [% pres = t.rel(type=type, direct=1).presentation %]
@@ -237,7 +234,6 @@
       [% END %]
    [% END %]
 [% END %]
-
 [% BLOCK present_rev_links %]
    [% DEFAULT present = 'plural' %]
    [% pres = t.rev(type=type, direct=1).presentation %]

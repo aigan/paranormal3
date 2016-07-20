@@ -1,5 +1,4 @@
-﻿<div class="entry">
-<table cellpadding="10">
+﻿<table class ="entry">
 [% FOREACH pair = multi_content %]
    [% te = pair.1 %]
    [% alias = pair.0 %]
@@ -17,4 +16,3 @@
    </tr>
 [% END %]
 </table>
-</div>

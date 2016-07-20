@@ -1,0 +1,1043 @@
+
+
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com ================ */
+
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-spacing:0}hr{margin:0}tr{vertical-align:top}
+
+/* Additional CSS reset */
+
+button,input[type="reset"],input[type="button"],input[type="submit"] {
+    padding: 0;
+}
+
+html {
+  box-sizing : border-box;
+	font-size: 16px;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+
+article h1
+{
+		font-size: 2em;
+}
+
+
+/************ GENERAL FORMATTING *******************/
+
+label:hover+input,
+label:hover+br+input,
+label:hover,
+input:hover,
+label:hover+textarea,
+label:hover+br+textarea
+{
+  background-color: lightyellow;
+  color: black;
+}
+
+
+
+
+/*******************************************************/
+
+body
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+body main
+{
+	max-width: 70em;
+	width: 95%;
+	margin: auto;
+	margin-top: 0.5em;
+}
+
+body.with_sidebar main
+{
+	display: flex;
+	justify-content: space-between;
+}
+
+body.with_sidebar main article
+{
+	flex-grow: 2;
+	flex-basis: 65%;
+}
+	
+body.with_sidebar main nav
+{
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 2em;
+	max-width:15em;
+}
+
+body.with_sidebar main nav.below
+{
+	max-width: none;
+}
+
+
+/*
+.with_sidebar h1
+{
+	margin: 0.5em 7em 0.0em 0.5em;
+}
+*/
+
+h1
+{
+	padding: 0.5em 0.5em 0.0em 0.0em;
+}
+
+.slogan
+{
+	font-style: italic;
+	margin: -0.5em 1em 2.0em 4em;
+	font-size: 80%;
+}
+
+/* acronyms are not styled per default in Internet Explorer */
+abbr, acronym
+{
+        border-bottom: 1px dotted;
+        cursor: help;
+}
+
+
+.search_result h1
+{
+	margin-bottom: 0.5em;
+}
+
+div#section_icon
+{
+	float: left;
+/*	margin: 0.5em 0.0em 0.0em 0.5em;*/
+}
+div#section_icon a img { border: 0 }
+
+#search_field
+{
+	order: 1;
+	height: 57px;
+}
+
+#search_field input
+{
+	width: 100%;
+	padding: 0.5em 0.3em;
+}
+
+article
+{
+/*
+	margin: 0 1em 0 1em;
+	padding: 0.0em 0.0em 1em 0em;
+*/
+	margin-bottom: 2em;
+}
+
+article > section, article > header > section
+{
+		border: 1px solid;
+}
+
+/*
+body.with_sidebar article
+{
+	margin: 0 14.4em 0 10%;
+}
+*/
+
+#illustration
+{
+	clear: left;
+	float: left;
+}
+
+#illustration .details
+{
+	font-size: 60%;
+}
+
+.illustration
+{
+	clear: left;
+	float: left;
+	margin-right: 1em;
+	padding: 0;
+/*	width: min-intrinsic;*/
+}
+
+.illustration .details
+{
+	font-size: 60%;
+}
+
+.test
+{
+	border: thin solid red;
+}
+
+.entry, #member_data
+{
+	border-top: 2px groove;
+}
+
+.entry
+{
+	padding: 1em 0.5em 1em 1em;
+}
+
+table.entry
+{
+	padding: 0;
+}
+
+table.entry td
+{
+	padding: 0.3em;
+}
+
+.subentry
+{
+}
+
+.entry th
+{
+  border: 1px solid;
+  padding: 0 0.3em 0 0.2em;
+  text-align: left;
+}
+
+.entry tr:first-child th
+{
+  border: 0;
+  border-bottom: 2px solid;
+  text-align: center;
+}
+
+.entry th.colheader, .entry tr:first-child th.colheader
+{
+  border: 1px solid;
+  padding: 0 0.3em 0 0.2em;
+  text-align: left;
+  border-right: 2px solid;
+}
+
+.entry td
+{
+  border: 1px solid;
+  padding: 0 0.3em 0 0.2em;
+  vertical-align: top;
+}
+
+.entry table
+{
+  border-collapse: collapse;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 0;
+  border-bottom: 1px solid;
+}
+
+#illustration td
+{
+  border: 0;
+}
+
+section.header table
+{
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.5em;
+}
+
+section.header tr, section.header td
+{
+  border-bottom: 1px solid ;
+  padding-right: 0.5em;
+}
+
+section.header
+{
+	padding: 0.5em 0.5em 0.5em 0.5em;
+	border-bottom: 1px solid;
+	font-size: 80%;
+	clear: left;
+}
+
+section.header code
+{
+	font-size: 2.0em;
+}
+
+a { text-decoration: none }
+
+section.header a.link_button
+{
+	FLOAT: right;
+}
+
+
+a.link_button
+{
+	padding: 0.2em 0.5em 0.1em 0.4em;
+	border: 0.2em outset;
+	margin: 0 0.1em;
+}
+
+a.link_button:visited
+{
+}
+
+a.link_button:active
+{
+	BORDER-STYLE: inset;
+}
+
+a.link_button:hover
+{
+}
+
+a#topic_change
+{
+	float: right;
+}
+
+a#intrest_specify
+{
+	float: right;
+}
+
+a#member_details
+{
+	float: right;
+}
+
+#coins
+{
+	float: right;
+	border: 0;
+}
+
+p#description
+{
+	font-weight: bold;
+	padding: 0;
+	margin-left: 2em;
+}
+
+p#alias
+{
+	font-size: 80%;
+	padding: 0;
+	margin: 0.3em 0 0 0;
+}
+
+p#alias em
+{
+	font-style: normal;
+}
+
+h2
+{
+	text-align: center;
+	margin: 0.5em 1em 0.5em 1em;
+	padding: 0;
+}
+
+h2.contained
+{
+	text-align: center;
+	font-size: 120%;
+	margin: 0.0em 1em 0.0em 1em;
+	padding: 0.0em 0 0.5em 0;
+}
+
+.attatched
+{
+	text-align: center;
+	margin: -0.3em 0.0em 0.0em 0.0em;
+	padding: 0.0em 0 0.0em 0;
+}
+
+.entry h2, #member_data h2
+{
+	margin: 0.0em 0 0.2em 0;
+	padding: 0;
+}
+
+h3
+{
+	margin: 0.5em 0.2em 0.5em 0.8em;
+	padding: 0;
+}
+
+h4
+{
+	margin: 0.5em 0.2em 0.5em 1.2em;
+	padding: 0;
+}
+
+p
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+pre
+{
+	padding: 0 1.0em 0 1.0em;
+}
+
+th img
+{
+	border: 0;
+}
+
+aside
+{
+	order: 2;
+	flex-grow: 1;
+
+	margin: 0 0em;
+
+	padding: 0 0.5em;
+	text-align: left;
+
+	font-size: 80%;
+	border: 3px solid;
+}
+
+aside h2
+{
+	font-size: 1.2em;
+	text-align: left;
+	margin: 0.5em 0 0 0;
+}
+
+aside h3
+{
+	font-size: 1em;
+	text-align: left;
+	margin: 0.3em 0 0 0.5em;
+}
+
+div#member_data .link
+{
+	display: block;
+	font-size: 80%;
+	padding: 0.0em 1.0em;
+}
+
+div#member_data .link br
+{
+	display: none !important;
+}
+
+aside .link
+{
+	display: block;
+	border-bottom: 1px solid;
+}
+
+aside br
+{
+	display: none !important;
+}
+
+aside #googlead
+{
+	margin: 2em 0 1em;
+	width: 100%;
+}
+
+footer
+{
+	font-size: 80%;
+	margin-top: 0.5em;
+	padding: 0.5em 1em 0.5em;
+	border: 1px solid;
+	border-width: 1px 0;
+	text-align: center;	
+	clear: both;
+}
+
+/*
+body.with_sidebar div#footer p
+{
+	margin-right: 16em;
+}
+*/
+
+#admin_menu
+{
+	font-size: 80%;
+	margin: 0 0 1em;
+	padding: 0 0 0.1em;
+	border: 1px solid;
+	border-width: 0 0 1px;
+}
+
+td.plain
+{
+	vertical-align: top;
+}
+
+.plain .typelist
+{
+	white-space: normal;
+	font-size: 100%;
+}
+.plain .typelist:before { content: "" }
+.plain .typelist:after  { content: "" }
+
+.typelist
+{
+	font-size: 80%;
+	vertical-align: text-top;
+}
+.typelist:before { content: "(" }
+.typelist:after  { content: ")" }
+h1 .typelist     { font-size: 50% }
+
+.living_years
+{
+	font-size: 80%;
+	white-space: nowrap;
+}
+
+.meta
+{
+	display: block;
+	border-bottom: 1px solid ;
+}
+
+.entry_meta
+{
+	font-size: 80%;
+	padding-left: 1em;
+	margin: 0 0 0.2em 0;
+}
+
+img
+{
+	margin: 0;
+}
+
+section.header img
+{
+	margin: 0em;
+}
+
+img.inline_image 
+{
+	margin: 0em;
+	float: right;
+	clear: right;
+}
+
+.search_result img
+{
+	margin: 0em;
+}
+
+.spacy_image
+{
+	padding: 0em;
+	margin-top: 1em;
+	text-align: center;
+}
+
+.spacy_image table
+{
+	border: 0em;
+	padding: 0em;
+	margin: 0em;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.spacy_image img, .spacy_image td
+{
+	border: 0em;
+	padding: 0em;
+	margin: 0em;
+}
+
+.spacy_image td.details
+{
+	font-size: 60%;
+	text-align: left;
+}
+
+dl
+{
+	margin-left: 1em;
+}
+
+.topic_status
+{
+	float: right;
+	font-size:   small;
+      	font-style: italic;
+	margin-right: 1em;
+}
+
+
+.top_category_persons
+{
+	text-align: center;
+}
+
+.top_category_persons a
+{
+	padding:  0 0 0 1em;
+}
+
+
+
+hr
+{
+	margin-top: 1.0em;
+	margin-bottom: 1.0em;
+	width: auto;
+}
+
+hr.subdivider
+{
+	width: 15%;
+        clear: both;
+}
+
+.address_block
+{
+	float: right;
+	border: 1px solid;
+	font-style: italic;
+	font-size: 80%;
+	padding: 0.5em;
+	padding-top: 0.2em;
+	margin: 0 0 0.2em 0.3em;
+}
+
+.address
+{
+	text-align: left;
+	font-style: normal;
+}
+
+.important
+{
+	BORDER: thick solid;
+	PADDING: 1em;
+}
+
+.important A
+{
+}
+
+.important A:visited
+{
+}
+
+
+.big
+{
+	FONT-SIZE: 200%
+}
+
+.small
+{
+	FONT-SIZE: 80%
+}
+
+.center
+{
+	text-align: center;
+}
+
+.indent
+{
+	MARGIN-LEFT: 1.2em
+}
+
+.diff
+{
+	BORDER: 0.3em groove;
+	PADDING: 1em;
+}
+
+DIV.clearing
+{
+	CLEAR: both
+}
+
+TEXTAREA.big_input
+{
+	WIDTH: 100%;
+}
+
+
+.selected
+{
+	BORDER: 0.1em groove;
+	PADDING: 0.1em;
+	MARGIN: 0px 0.1em;
+	TEXT-DECORATION: underline
+}
+
+.same_place
+{
+	PADDING: 0.1em;
+	MARGIN: 0px 0.1em;
+}
+
+
+.viewbox
+{
+	float: left;
+	padding: 0.0em;
+}
+
+.viewbox .inner
+{
+	border: 1px solid;
+}
+
+.viewbox h3
+{
+	font-size: 1.0em;
+	display: block;
+	padding: 0.2em;
+	margin: 0.0em;
+}
+
+.viewbox p
+{
+	padding: 0.2em;
+	margin: 0.0em;
+}
+
+.front h2
+{
+	font-size: 0.7em;
+	letter-spacing:	0.3em;
+	margin: 0;
+	padding-top: 1em;
+	text-align: left;
+}
+
+.front table
+{
+	border-collapse: collapse;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.front table.login
+{
+	width: auto;
+}
+
+table.login
+{
+	margin: 0 auto;
+}
+
+.front h1
+{
+	margin: 0;
+	padding: 0;
+}
+
+.front .slogan
+{
+	font-style: italic;
+	margin: 0;
+}
+
+.front td
+{
+	padding: 0;
+	vertical-align: top;
+}
+
+.front img
+{
+	display: block;
+	padding-right: 0.2em;
+}
+
+body.front article, body.meta article
+{
+	margin: 0 5%;
+	padding: 0;
+	border: 0;
+}
+
+.notice
+{
+	border: thin solid;
+	padding: 0.5em;
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+.notice h2
+{
+	text-align: center;
+}
+
+.notice p
+{
+	font-size: 80%;
+	padding-bottom: 0.5em;
+	margin: 0.0em;
+	text-align: left;
+}
+
+input
+{
+	padding: 0;
+	margin: 0;
+}
+
+form
+{
+	margin: 0;
+}
+
+
+label { margin-right: 1em }
+td label
+{
+	width: 100%;
+	display: block;
+}
+
+
+table.minimal
+{
+	border-spacing: 0;
+}
+table.minimal td
+{
+	padding: 0;
+}
+
+
+
+  /*******************************************************/
+ /***  PARAFRAME STANDARD CSS - COPY  *******************/
+/*******************************************************/
+
+/************ GENERAL FORMATTING *******************/
+
+label:hover+input,
+label:hover+br+input,
+label:hover,
+input:hover,
+label:hover+textarea,
+label:hover+br+textarea
+{
+  background-color: #FFFFF8;
+  color: black;
+}
+
+form
+{
+	margin-bottom: 0em; /* Konqueror */
+}
+
+
+/****** GENERAL PARAFRAME STYLES ****************************/
+
+.debug
+{
+  padding: 1em;
+  border-style: dotted;
+  border-width: 0.0em 0.2em 0.2em 0.2em;
+}
+
+tr.even
+{
+  background: #E0E0E0;
+}
+
+tr.odd
+{
+  background: #D0D0D0;
+}
+
+
+/****** SPECIFIC PARAFRAME STYLES ***************************/
+
+.paraframe_menu_top p
+{
+  margin-top: 0em;
+  margin-bottom: 0em;
+  text-align: center;
+  padding: 0.2em;
+}
+
+.paraframe_pagelist
+{
+  font-weight: bold;
+}
+
+.paraframe_pagelist .same_place
+{
+  background: inherit;
+}
+
+.paraframe_pagelist .selected
+{
+  font-weight: bold;
+  background: none;
+}
+
+.paraframe_previous, .paraframe_next
+{
+  text-decoration: none;
+}
+
+.paraframe_info
+{
+  font-weight: bold;
+  font-family:  verdana, Arial, helvetica, san-serif;
+  font-size: 10pt;
+}
+
+.paraframe_box
+{
+  border-style: outset;
+}
+
+.paraframe_box table
+{
+  border-style: inset;
+}
+
+.paraframe_menu_admin input[type="button"]
+{
+    border-width: 0.2em;
+    padding: 2px 6px 2px 6px;
+}
+
+.paraframe_menu_admin input[type="button"]:hover
+{
+    background-color: #FFFFF8;	
+}
+
+.paraframe_menu_admin
+{
+	margin: 0;
+}
+
+/********* imgexpand **************/
+
+.paraframe_imgexpanded
+{
+      background: #EEFFEE;
+      border: 2px solid black;
+      padding: 0.5em 0em 0em 1em;
+/*      -moz-border-radius: 0.5em;*/
+}
+
+.paraframe_imgexpand
+{
+      background: #E0E0A0;
+      padding: 0.2em;
+}
+
+.paraframe_imgexpand img         { vertical-align: middle }
+.paraframe_imgexpand a:hover img { background: #FFFF00 }
+.paraframe_imgexpand a           { color: black }
+.paraframe_imgexpand a:hover     { background: #F0F0D0 }
+
+/****************************/
+
+p#pi
+{
+	text-align: right;
+}
+
+p#pi img
+{
+	border: 0;
+}
+
+/* Table form  ======================================== */
+
+table.form>tbody>tr>td:first-child {
+    white-space: nowrap;
+    width: 1%;
+}
+
+
+/*  Quick Styles  ============================================================================= */
+
+.wide {width: 100% }
+.narrow {width: 1%}
+.valign {vertical-align: middle;}
+.right {text-align: right !important} 
+.left {text-align: left !important}
+.center {text-align: center}
+.float_right {float: right !important }
+.float_left {float:left !important }
+.float_center {margin-left:auto;margin-right:auto}
+.clear {clear: both;}
+.small {font-size: 80%;}
+.hidden {display: none;}
+.bold {font-weight: bold;}
+.pad_right {padding-right:.4em}
+
+
+@media only screen and (max-width: 800px) {
+	body.with_sidebar main
+	{
+		flex-wrap: wrap;
+	}
+}
+
+@media only screen and (max-width: 500px) {
+	html {
+		font-size: 20px;
+	}
+
+	body main
+	{
+		width: 100%;
+	}
+
+	body.with_sidebar main nav
+	{
+		margin: 0.7em;
+	}
+
+	div#section_icon
+	{
+		margin-left: 0.7em;
+	}
+
+	.illustration
+	{
+		float: none;
+		margin: 0;
+		width: 100% !important;
+	}
+
+	.illustration img
+	{
+		width: 100% !important;
+	}
+}

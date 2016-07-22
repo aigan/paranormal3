@@ -27,8 +27,8 @@ use MIME::Lite;
 
 BEGIN
 {
-    our $VERSION  = sprintf("%d.%02d", q$Revision: 1.7 $ =~ /(\d+)\.(\d+)/);
-    print "Loading ".__PACKAGE__." $VERSION\n";
+	our $VERSION  = sprintf("%d.%02d", q$Revision: 1.7 $ =~ /(\d+)\.(\d+)/);
+	print "Loading ".__PACKAGE__." $VERSION\n";
 }
 
 use Para::Frame::Utils qw( debug datadump );
@@ -39,110 +39,110 @@ use Para::Frame::Renderer::Custom;
 
 sub handler
 {
-    my( $req ) = shift;
+	my( $req ) = shift;
 
-    # This handler recieves payment confirmation (PaymentPOST) from Paynova.
+	# This handler recieves payment confirmation (PaymentPOST) from Paynova.
 
-    debug "Paynova_notify from $ENV{REMOTE_ADDR}";
+	debug "Paynova_notify from $ENV{REMOTE_ADDR}";
 
-    my $q = $req->q;
-    my $u = $req->s->u;
+	my $q = $req->q;
+	my $u = $req->s->u;
 
-    my $secret_key = $Para::SITE_CFG->{'paynova'}{'secret_key'};
+	my $secret_key = $Para::SITE_CFG->{'paynova'}{'secret_key'};
 
 
-    my $trans_id = $q->param("trans_id") || '';
-    # The Paynova transaction ID. Length 18 characters.
+	my $trans_id = $q->param("trans_id") || '';
+	# The Paynova transaction ID. Length 18 characters.
 
-    my $status = $q->param("paymentstatus") || -1;
-    # 1 = OK , -1 = Failed
+	my $status = $q->param("paymentstatus") || -1;
+	# 1 = OK , -1 = Failed
 
-    my $order_id = $q->param("order_id") || '';
+	my $order_id = $q->param("order_id") || '';
 
-    my $checksum_recieved = $q->param("checksum") || '';
-    # Recieved checksum.
+	my $checksum_recieved = $q->param("checksum") || '';
+	# Recieved checksum.
 
-    my $checksum = md5_hex( $status, $order_id, $trans_id, $secret_key );
+	my $checksum = md5_hex( $status, $order_id, $trans_id, $secret_key );
 
-    if( debug )
-    {
+	if ( debug )
+	{
 #	debug "checksum_calculated: $checksum\n";
 #	debug "checksum_recieved  : $checksum_recieved\n";
 #	debug "$trans_id|$status|$order_id\n";
 
-	foreach my $key ( $q->param() )
-	{
+		foreach my $key ( $q->param() )
+		{
 	    debug " Key $key: ".$q->param($key)."\n";
+		}
 	}
-    }
 
 
-    my $out = "";
-    if( $checksum eq $checksum_recieved )
-    {
-	if( $status eq "1" )
+	my $out = "";
+	if ( $checksum eq $checksum_recieved )
 	{
-	    if( not confirm_payment($order_id, $trans_id) )
+		if ( $status eq "1" )
+		{
+	    if ( not confirm_payment($order_id, $trans_id) )
 	    {
-		$out .= "CANCEL|Uppgifterna har försvunnit. Ni måste börja om!";
+				$out .= "CANCEL|Uppgifterna har försvunnit. Ni måste börja om!";
 	    }
 	    else
 	    {
-		# To be able to confirm the POST, Paynova requires the
-		# first two characters in the response to be "OK".
-		#
-		$out .= "OK|OK";
+				# To be able to confirm the POST, Paynova requires the
+				# first two characters in the response to be "OK".
+				#
+				$out .= "OK|OK";
 	    }
+		}
+		else
+		{
+	    cancel_payment($order_id);
+	    $out .= "OK|Cancelled";
+		}
 	}
 	else
 	{
-	    cancel_payment($order_id);
-	    $out .= "OK|Cancelled";
-	}
-    }
-    else
-    {
-	# Do not cancel the payment, since we can't trust the order_id
+		# Do not cancel the payment, since we can't trust the order_id
 
-	$out .= "Error|Checksum mismatch!";
+		$out .= "Error|Checksum mismatch!";
 
-	if( debug )
-	{
+		if ( debug )
+		{
 #	    debug "-----\n";
 	    debug "checksum_calculated: $checksum\n";
 	    debug "checksum_recieved  : $checksum_recieved\n";
 	    debug "$trans_id|$status|$order_id\n";
-	}
+		}
 
-    }
+	}
 
 
 #    $req->response->set_content( \$out );
 
-    my $renderer = Para::Frame::Renderer::Custom->new({content=>\$out});
-    $req->response->set_renderer($renderer);
+	my $renderer = Para::Frame::Renderer::Custom->new({content=>\$out});
+	$req->response->set_renderer($renderer);
 
-    debug "$out\n";
+	debug "$out\n";
 
-    return "";
+	return "";
 }
 
 sub cancel_payment
 {
-    my( $order_id ) = @_;
+	my( $order_id ) = @_;
 
-    my $sth = $Para::dbh->prepare("delete from payment where payment_id=?");
-    $sth->execute( $order_id );
+	my $sth = $Para::dbh->prepare("delete from payment where payment_id=?");
+	$sth->execute( $order_id );
 
 }
 
 sub confirm_payment
 {
-    my( $order_id, $trans_id ) = @_;
+	my( $order_id, $trans_id ) = @_;
 
-    my $payment = Para::Payment->new( $order_id ) or return 0;
-    $payment->set_completed( $trans_id ); # TODO: Tiny race condition here
-    return 1;
+	my $payment = Para::Payment->new( $order_id ) or return 0;
+	$payment->set_completed( $trans_id ); # TODO: Tiny race condition here
+	return 1;
 }
 
 1;

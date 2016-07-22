@@ -30,144 +30,144 @@ use Para::Topic;
 
 sub new
 {
-    # Get relation(s) matching the params
-    #
-    my( $this, $rec ) = @_;
-    my $class = ref($this) || $this;
+	# Get relation(s) matching the params
+	#
+	my( $this, $rec ) = @_;
+	my $class = ref($this) || $this;
 
-    my $name = $rec;
+	my $name = $rec;
 
-    if( ref $rec eq 'HASH' )
-    {
-	# Assume its the DB record
-    }
-    elsif( $rec =~ /^\d+$/ )
-    {
-	$rec = $Para::dbix->select_record("from reltype where reltype=?", $rec);
-    }
-    else
-    {
-	$rec = $Para::dbix->select_possible_record("from reltype where lower(rel_name)=lower(?) or lower(rev_name)=lower(?)", $rec, $rec);
-    }
+	if ( ref $rec eq 'HASH' )
+	{
+		# Assume its the DB record
+	}
+	elsif ( $rec =~ /^\d+$/ )
+	{
+		$rec = $Para::dbix->select_record("from reltype where reltype=?", $rec);
+	}
+	else
+	{
+		$rec = $Para::dbix->select_possible_record("from reltype where lower(rel_name)=lower(?) or lower(rev_name)=lower(?)", $rec, $rec);
+	}
 
-    unless( ref $rec eq 'HASH' )
-    {
-	die "Arctype '$name' doesn't exist\n";
-    }
+	unless( ref $rec eq 'HASH' )
+	{
+		die "Arctype '$name' doesn't exist\n";
+	}
 
-    # Marks as utf8
-    foreach my $key (keys %$rec)
-    {
-	utf8::decode( $rec->{$key} );
-    }
+	# Marks as utf8
+	foreach my $key (keys %$rec)
+	{
+		utf8::decode( $rec->{$key} );
+	}
 
-    return bless( $rec, $class );
+	return bless( $rec, $class );
 }
 
 sub list
 {
-    my( $class, $crits ) = @_;
+	my( $class, $crits ) = @_;
 
-    my @list = ();
-    my $recs;
+	my @list = ();
+	my $recs;
 
-    if( $crits )
-    {
-	if( ref $crits eq 'ARRAY' )
+	if ( $crits )
 	{
+		if ( ref $crits eq 'ARRAY' )
+		{
 	    $recs = Para::Frame::List->new($crits);
-	}
-	elsif( $crits eq 'literals' )
-	{
+		}
+		elsif ( $crits eq 'literals' )
+		{
 	    $recs = $Para::dbix->select_list('from reltype where reltype_literal is true order by reltype');
+		}
+		else
+		{
+	    die "Method not implemented: $crits";
+		}
 	}
 	else
 	{
-	    die "Method not implemented: $crits";
+		$recs = $Para::dbix->select_list('from reltype order by reltype');
 	}
-    }
-    else
-    {
-	$recs = $Para::dbix->select_list('from reltype order by reltype');
-    }
 
-    foreach my $rec ($recs->as_array)
-    {
-	push @list, $class->new( $rec );
-    }
+	foreach my $rec ($recs->as_array)
+	{
+		push @list, $class->new( $rec );
+	}
 
-    return \@list;
+	return \@list;
 }
 
 sub create
 {
-    my( $class ) = @_;
+	my( $class ) = @_;
 
-    my $m = $Para::Frame::U;
+	my $m = $Para::Frame::U;
 
-    my $id = $Para::dbix->get_nextval( "reltype_seq" );
+	my $id = $Para::dbix->get_nextval( "reltype_seq" );
 
-    my $sth_reltype = $Para::dbh->prepare(
-	  "insert into reltype (reltype, reltype_updated, reltype_changedby)
+	my $sth_reltype = $Para::dbh->prepare(
+																				"insert into reltype (reltype, reltype_updated, reltype_changedby)
            values ( ?, now(), ? )");
-    $sth_reltype->execute($id, $m->id) or die;
+	$sth_reltype->execute($id, $m->id) or die;
 
-    return Para::Arctype->new( $id );
+	return Para::Arctype->new( $id );
 }
 
 sub update
 {
-    my( $at, $rec_in ) = @_;
+	my( $at, $rec_in ) = @_;
 
-    my $rec_new =
-    {
-	'rel_name'            => $rec_in->{'rel_name'},
-	'rev_name'            => $rec_in->{'rev_name'},
-	'reltype_super'       => $rec_in->{'super'},
-	'reltype_topic'       => $rec_in->{'topic'},
-	'reltype_description' => $rec_in->{'description'},
-	'reltype_literal'     => $rec_in->{'literal'},
-    };
-
-    my $types =
-    {
-	'reltype_literal'     => 'boolean',
-	'reltype_updated'     => 'date',
-    };
-
-    return $Para::dbix->save_record({
-	rec_new => $rec_new,
-	rec_old => $at,
-	table   => 'reltype',
-	keyval  => $at->id,
-	types   => $types,
-	on_update =>
+	my $rec_new =
 	{
-	    reltype_updated   => now(),
-	    reltype_changedby => $Para::Frame::U->id,
-	},
-    });
+	 'rel_name'            => $rec_in->{'rel_name'},
+	 'rev_name'            => $rec_in->{'rev_name'},
+	 'reltype_super'       => $rec_in->{'super'},
+	 'reltype_topic'       => $rec_in->{'topic'},
+	 'reltype_description' => $rec_in->{'description'},
+	 'reltype_literal'     => $rec_in->{'literal'},
+	};
+
+	my $types =
+	{
+	 'reltype_literal'     => 'boolean',
+	 'reltype_updated'     => 'date',
+	};
+
+	return $Para::dbix->save_record({
+																	 rec_new => $rec_new,
+																	 rec_old => $at,
+																	 table   => 'reltype',
+																	 keyval  => $at->id,
+																	 types   => $types,
+																	 on_update =>
+																	 {
+																		reltype_updated   => now(),
+																		reltype_changedby => $Para::Frame::U->id,
+																	 },
+																	});
 }
 
 sub name
 {
-    my( $type, $dir ) = @_;
-    if( $dir eq 'rel' )
-    {
-	return $type->{'rel_name'};
-    }
-    elsif( $dir eq 'rev' )
-    {
-	return $type->{'rev_name'};
-    }
-    elsif( not defined $dir )
-    {
-	croak "No direction specified for arc.name(dir)\n";
-    }
-    else
-    {
-	croak "What kind of direction do you think that $dir is?!?";
-    }
+	my( $type, $dir ) = @_;
+	if ( $dir eq 'rel' )
+	{
+		return $type->{'rel_name'};
+	}
+	elsif ( $dir eq 'rev' )
+	{
+		return $type->{'rev_name'};
+	}
+	elsif ( not defined $dir )
+	{
+		croak "No direction specified for arc.name(dir)\n";
+	}
+	else
+	{
+		croak "What kind of direction do you think that $dir is?!?";
+	}
 }
 
 sub rel_name { $_[0]->{'rel_name'} }
@@ -179,13 +179,13 @@ sub topic    { Para::Topic->get_by_id( $_[0]->{'reltype_topic'} ) }
 
 sub super
 {
-    return undef unless $_[0]->{'reltype_super'};
-    return Para::Arctype->new($_[0]->{'reltype_super'});
+	return undef unless $_[0]->{'reltype_super'};
+	return Para::Arctype->new($_[0]->{'reltype_super'});
 }
 
 sub description
 {
-    $_[0]->{'reltype_description'};
+	$_[0]->{'reltype_description'};
 }
 
 1;

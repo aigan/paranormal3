@@ -32,144 +32,144 @@ use base 'Para::Email::Address';
 
 sub new
 {
-    my( $this, $m, $email_str, $rec ) = @_;
-    my $class = ref($this) || $this;
+	my( $this, $m, $email_str, $rec ) = @_;
+	my $class = ref($this) || $this;
 
-    $m ||= $Para::Frame::U;
+	$m ||= $Para::Frame::U;
 
-    my $ea = Para::Frame::Email::Address->parse( $email_str );
-    $ea->name($m->nickname); # Set the address name
+	my $ea = Para::Frame::Email::Address->parse( $email_str );
+	$ea->name($m->nickname);			# Set the address name
 
-    if( $rec )
-    {
-	$ea->equals( $rec->{mailalias} ) or die "record mismatch for $ea in ".$m->sysdesig."\n";
-	$rec->{mailalias_member} == $m->id or die "record mismatch";
-    }
-    else
-    {
-	$rec = $Para::dbix->select_possible_record('from mailalias where mailalias_member=? and mailalias=?', $m->id, $ea->as_string );
-
-	unless( $rec )
+	if ( $rec )
 	{
+		$ea->equals( $rec->{mailalias} ) or die "record mismatch for $ea in ".$m->sysdesig."\n";
+		$rec->{mailalias_member} == $m->id or die "record mismatch";
+	}
+	else
+	{
+		$rec = $Para::dbix->select_possible_record('from mailalias where mailalias_member=? and mailalias=?', $m->id, $ea->as_string );
+
+		unless( $rec )
+		{
 	    # Is this an initiation of sys_email?
-	    if( $m->{'sys_email'} eq $email_str )
+	    if ( $m->{'sys_email'} eq $email_str )
 	    {
-		# Add the address
-		eval
-		{
-		    $this->add( $m, $ea );
-		};
-		if( my $err = catch($@) )
-		{
-		    $Para::Frame::REQ->result->message($err->info);
-		}
+				# Add the address
+				eval
+				{
+					$this->add( $m, $ea );
+				};
+				if ( my $err = catch($@) )
+				{
+					$Para::Frame::REQ->result->message($err->info);
+				}
 	    }
 	    else
 	    {
-		croak "Email $email_str is not coupled to member ".$m->id."\n";
+				croak "Email $email_str is not coupled to member ".$m->id."\n";
 	    }
+		}
 	}
-    }
 
-    # Copy to Para::Email::Address object
-    foreach my $key ( keys %$rec )
-    {
-	$ea->{$key} = $rec->{$key};
-    }
+	# Copy to Para::Email::Address object
+	foreach my $key ( keys %$rec )
+	{
+		$ea->{$key} = $rec->{$key};
+	}
 
-    return bless( $ea, $class );
+	return bless( $ea, $class );
 }
 
 sub add
 {
-    my( $this, $m, $email_address_in ) = @_;
-    my $class = ref($this) || $this;
+	my( $this, $m, $email_address_in ) = @_;
+	my $class = ref($this) || $this;
 
-    my $ea = Para::Frame::Email::Address->parse( $email_address_in );
+	my $ea = Para::Frame::Email::Address->parse( $email_address_in );
 
-    my $st = "insert into mailalias
+	my $st = "insert into mailalias
               ( mailalias_member, mailalias, mailalias_created )
               values ( ?, ?, now() )";
-    my $sth = $Para::dbh->prepare( $st );
-    eval
-    {
-	$sth->execute($m->id, $ea->address);
-    };
-    if( $@ )
-    {
-	cluck "Error: $@";
-	if( $Para::dbh->errstr and $Para::dbh->errstr =~ /duplicate key/ )
+	my $sth = $Para::dbh->prepare( $st );
+	eval
 	{
-	    if( $Para::dbh->errstr =~ /mailalias_pkey/ )
+		$sth->execute($m->id, $ea->address);
+	};
+	if ( $@ )
+	{
+		cluck "Error: $@";
+		if ( $Para::dbh->errstr and $Para::dbh->errstr =~ /duplicate key/ )
+		{
+	    if ( $Para::dbh->errstr =~ /mailalias_pkey/ )
 	    {
-		# Must throw an error
-		throw('validation', "E-postadressen '$email_address_in' är knuten till en annan medlems alternativa e-postadresser\nÄr det din adress kan du få lösenordet postat till dig för det existerande medlemskapet");
+				# Must throw an error
+				throw('validation', "E-postadressen '$email_address_in' är knuten till en annan medlems alternativa e-postadresser\nÄr det din adress kan du få lösenordet postat till dig för det existerande medlemskapet");
 	    }
+		}
+		die $@;
 	}
-	die $@;
-    }
 
-    push @{$m->{'mailaliases'}}, $this->new($m, $ea);
+	push @{$m->{'mailaliases'}}, $this->new($m, $ea);
 
-    $sth->rows and return 1;
-    return 0;
+	$sth->rows and return 1;
+	return 0;
 }
 
 sub delete
 {
-    my( $e ) = @_;
+	my( $e ) = @_;
 
-    my $m = $e->member;
+	my $m = $e->member;
 
-    # Do not allow to remove an alias if its the sys_email
-    if( $m->sys_email and $m->sys_email->equals($e) )
-    {
-	throw('email', "Du kan inte ta bort din primära e-postadress");
-    }
+	# Do not allow to remove an alias if its the sys_email
+	if ( $m->sys_email and $m->sys_email->equals($e) )
+	{
+		throw('email', "Du kan inte ta bort din primära e-postadress");
+	}
 
-    my $st = "delete from mailalias where
+	my $st = "delete from mailalias where
               mailalias_member=? and mailalias=?";
-    my $sth = $Para::dbh->prepare( $st );
-    $sth->execute($m->id, $e->as_string);
+	my $sth = $Para::dbh->prepare( $st );
+	$sth->execute($m->id, $e->as_string);
 
-    # Reset mailalias list
-    undef $m->{'mailaliases'};
+	# Reset mailalias list
+	undef $m->{'mailaliases'};
 
-    $sth->rows and return 1;
-    return 0;
+	$sth->rows and return 1;
+	return 0;
 }
 
 sub member
 {
-    my( $e ) = @_;
+	my( $e ) = @_;
 #    warn "Getting mailalias member by: ".Dumper($e);
-    return Para::Member->get( $e->{'mailalias_member'} )
+	return Para::Member->get( $e->{'mailalias_member'} )
 }
 
 sub created
 {
-    unless( ref $_[0]->{'mailalias_created'} )
-    {
-	return $_[0]->{'mailalias_created'} =
+	unless ( ref $_[0]->{'mailalias_created'} )
+	{
+		return $_[0]->{'mailalias_created'} =
 	    Para::Frame::Time->get($_[0]->{'mailalias_created'} );
-    }
-    return $_[0]->{'mailalias_created'};
+	}
+	return $_[0]->{'mailalias_created'};
 }
 
 sub working
 {
-    unless( ref $_[0]->{'mailalias_working'} )
-    {
-	return $_[0]->{'mailalias_working'} =
+	unless ( ref $_[0]->{'mailalias_working'} )
+	{
+		return $_[0]->{'mailalias_working'} =
 	    Para::Frame::Time->get($_[0]->{'mailalias_working'} );
-    }
-    return $_[0]->{'mailalias_working'};
+	}
+	return $_[0]->{'mailalias_working'};
 }
 
 sub failed
 {
-    my( $e ) = @_;
-    return $e->{'mailalias_failed'};
+	my( $e ) = @_;
+	return $e->{'mailalias_failed'};
 }
 
 

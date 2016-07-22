@@ -17,7 +17,7 @@ sub handler
 
     if( $u->level < 2 )
     {
-	throw('denied', "Du har inte access för att skapa ett ämne");
+				throw('denied', "Du har inte access för att skapa ett ämne");
     }
 
     my( $title ) = $q->param('title');
@@ -28,7 +28,7 @@ sub handler
 
     foreach my $alias ( @aliases )
     {
-	$t->title2aliases( $alias );
+				$t->title2aliases( $alias );
     }
 
     $req->s->route->plan_next( uri "/member/db/topic/view/", {tid => $t->id});

@@ -7,7 +7,7 @@ use Image::Info qw( image_info);
 use File::stat;
 use IO::File;
 use Data::Dumper;
-use File::Slurp; # exports read_file
+use File::Slurp;								# exports read_file
 
 use constant SIZESCALE => 200;
 use constant SIZETHUMB => 60;
@@ -20,56 +20,56 @@ use Para::Frame::Utils qw( debug throw create_dir chmod_file );
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    if( $req->user->level < 10 )
-    {
-        throw('denied', "Du har inte access.");
-    }
+	if ( $req->user->level < 10 )
+	{
+		throw('denied', "Du har inte access.");
+	}
 
-    my $q = $req->q;
+	my $q = $req->q;
 
-    my $tid = $q->param('tid') || die "tid missing";
+	my $tid = $q->param('tid') || die "tid missing";
 
-    my $t = Para::Topic->get_by_id($tid) or die "Couldn't find tid $tid";
+	my $t = Para::Topic->get_by_id($tid) or die "Couldn't find tid $tid";
 
 
-    my $filename =  $q->param('file_name')
-        or throw('incomplete', "Filnamn saknas");
+	my $filename =  $q->param('file_name')
+		or throw('incomplete', "Filnamn saknas");
 
-    my $infile = $req->uploaded('file_name')->tempfile;
-    debug "Infile is $infile";
+	my $infile = $req->uploaded('file_name')->tempfile;
+	debug "Infile is $infile";
 
-    my $dataref = $infile->content;
-    debug "Dataref is $dataref";
+	my $dataref = $infile->content;
+	debug "Dataref is $dataref";
 
-    my $img = {};
+	my $img = {};
 
-    $img->{'orig'}   = get_image($dataref);
-    $img->{'scaled'} = $img->{'orig'}->scale(xpixels=>SIZESCALE);
-    $img->{'thumb'}  = $img->{'scaled'}->scale(ypixels=>SIZETHUMB);
+	$img->{'orig'}   = get_image($dataref);
+	$img->{'scaled'} = $img->{'orig'}->scale(xpixels=>SIZESCALE);
+	$img->{'thumb'}  = $img->{'scaled'}->scale(ypixels=>SIZETHUMB);
 
-    my $dir_base = "/var/www/paranormal.se/images/db";
-    my $dir = $dir_base.'/'.$tid.'/';
-    create_dir( $dir, {umask=>0});
+	my $dir_base = "/var/www/paranormal.se/images/db";
+	my $dir = $dir_base.'/'.$tid.'/';
+	create_dir( $dir, {umask=>0});
 
-    foreach my $variant ( keys %$img )
-    {
-	my $file_out = $dir.$variant.'.png';
-	debug "Storing image as: $file_out\n";
-	$img->{$variant}->write(file=>$file_out) or
+	foreach my $variant ( keys %$img )
+	{
+		my $file_out = $dir.$variant.'.png';
+		debug "Storing image as: $file_out\n";
+		$img->{$variant}->write(file=>$file_out) or
 	    die $img->{$variant}->errstr;
-	chmod_file( $file_out, {umask=>0});
-    }
+		chmod_file( $file_out, {umask=>0});
+	}
 
 
 
-    #### Set topic
+	#### Set topic
 
-    my $mime_str = "image/png";
-    my $url_str = "/images/db/$tid/scaled.png";
+	my $mime_str = "image/png";
+	my $url_str = "/images/db/$tid/scaled.png";
 
-    $t->media_set($url_str, $mime_str);
+	$t->media_set($url_str, $mime_str);
 
 
 #    my $dbh = $req->app->dbix->dbh;
@@ -94,117 +94,117 @@ sub handler
 #                        );
 #    $q->param('id', $code);
 
-    return "Image created";
+	return "Image created";
 }
 
 sub read_all
 {
-    my( $fh_in ) = @_;
+	my( $fh_in ) = @_;
 
-    my $fh = new IO::File $fh_in, "r"
-	or die "Could not read from $fh_in: $!";
+	my $fh = new IO::File $fh_in, "r"
+		or die "Could not read from $fh_in: $!";
 
-    my $buf;
-    my $fname; ## Temporary filenames
-    my $bufsize = 2048;
-    my $data; ### Image data
-    while( (my $len = sysread($fh, $buf, $bufsize)) > 0 )
-    {
-        $data .= $buf;
-    }
-    close($fh);
+	my $buf;
+	my $fname;										## Temporary filenames
+	my $bufsize = 2048;
+	my $data;											### Image data
+	while ( (my $len = sysread($fh, $buf, $bufsize)) > 0 )
+	{
+		$data .= $buf;
+	}
+	close($fh);
 
-    return \$data;
+	return \$data;
 }
 
 sub get_image
 {
-    my( $file ) = @_;
+	my( $file ) = @_;
 
-    my( $dataref, $suffix );
-    if( ref $file )
-    {
-        $dataref = $file;
-        $suffix = get_suffix($dataref);
-    }
-    else
-    {
-        my $data = read_file($file);
-        $dataref = \$data;
-        $suffix = get_suffix($dataref, $file);
-    }
+	my( $dataref, $suffix );
+	if ( ref $file )
+	{
+		$dataref = $file;
+		$suffix = get_suffix($dataref);
+	}
+	else
+	{
+		my $data = read_file($file);
+		$dataref = \$data;
+		$suffix = get_suffix($dataref, $file);
+	}
 
-    my $img = Imager->new();
-    unless( $img->read(data=>$$dataref, type => $suffix ) )
-    {
-        # We faild reading the image
-        # Call upon the immense power of ImageMagick!
-        #
-        warn $img->errstr;
+	my $img = Imager->new();
+	unless( $img->read(data=>$$dataref, type => $suffix ) )
+	{
+		# We faild reading the image
+		# Call upon the immense power of ImageMagick!
+		#
+		warn $img->errstr;
 
-        my $size = length($$dataref);
-        unless( $size )
-        {
-            die "Dataref has no size\n";
-        }
-        warn "$$: Size of dataref is $size\n";
+		my $size = length($$dataref);
+		unless( $size )
+		{
+			die "Dataref has no size\n";
+		}
+		warn "$$: Size of dataref is $size\n";
 
-        require Image::Magick;
-        my $p = new Image::Magick;
-        $p->BlobToImage( $$dataref );
+		require Image::Magick;
+		my $p = new Image::Magick;
+		$p->BlobToImage( $$dataref );
 
-        my( $fh, $fname ) = tempfile();
-        $p->Write( file => $fh, magick => 'png' );
+		my( $fh, $fname ) = tempfile();
+		$p->Write( file => $fh, magick => 'png' );
 
-        seek( $fh, 0, 0 ); # Back to start
+		seek( $fh, 0, 0 );					# Back to start
 
-        warn "New atempt to read file $fname via fh\n";
-        $img->read(fh=>$fh, type => 'png' )
-            or die $img->errstr;
-    }
-    return $img;
+		warn "New atempt to read file $fname via fh\n";
+		$img->read(fh=>$fh, type => 'png' )
+			or die $img->errstr;
+	}
+	return $img;
 }
 
 sub get_suffix
 {
-    my( $dataref, $filename ) = @_;
+	my( $dataref, $filename ) = @_;
 
-    # Use filename if Image::Info failes
+	# Use filename if Image::Info failes
 
-    my $imginfo = image_info( $dataref );
-    my $media = $imginfo->{file_media_type};
+	my $imginfo = image_info( $dataref );
+	my $media = $imginfo->{file_media_type};
 
-    $media ||= guess_media_type( $filename )
-        or die "$filename: Faild to get media type";
+	$media ||= guess_media_type( $filename )
+		or die "$filename: Faild to get media type";
 
-    my $suffix = media_suffix($media);
+	my $suffix = media_suffix($media);
 
-    unless( $suffix )
-    {
-        die "Can't find suffix for media $media\n";
-    }
+	unless( $suffix )
+	{
+		die "Can't find suffix for media $media\n";
+	}
 
-    return $suffix;
+	return $suffix;
 }
 
 sub create_blob
 {
-    my( $req, $img, $suffix ) = @_;
-    $suffix ||= 'jpg';
+	my( $req, $img, $suffix ) = @_;
+	$suffix ||= 'jpg';
 
-    my( $fh, $fname ) = tempfile();
-    $img->write(fd=>fileno($fh), type=>$suffix)
-        or die $img->errstr;
+	my( $fh, $fname ) = tempfile();
+	$img->write(fd=>fileno($fh), type=>$suffix)
+		or die $img->errstr;
 
-    seek( $fh, 0, 0 ); # Back to start
+	seek( $fh, 0, 0 );						# Back to start
 
-    my $size = stat($fh)->size;
-    warn "Blob with size $size\n";
+	my $size = stat($fh)->size;
+	warn "Blob with size $size\n";
 
-    my $oid = $req->app->dbh->func($fname, 'lo_import')
-        or die "$fname: import failed\n";
+	my $oid = $req->app->dbh->func($fname, 'lo_import')
+		or die "$fname: import failed\n";
 
-    return( $oid, $size );
+	return( $oid, $size );
 }
 
 1;

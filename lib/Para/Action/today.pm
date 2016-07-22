@@ -10,26 +10,26 @@ use Para::Topic;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
-    my $u = $req->s->u;
+	my $q = $req->q;
+	my $u = $req->s->u;
 
-    if( $u->level < 11 )
-    {
-	throw('denied', "Du har inte access för att ändra ändra MOTD");
-    }
+	if ( $u->level < 11 )
+	{
+		throw('denied', "Du har inte access för att ändra ändra MOTD");
+	}
 
-    my $statement = $q->param('statement');
-    defined $statement or throw('validation',"statement param missing");
+	my $statement = $q->param('statement');
+	defined $statement or throw('validation',"statement param missing");
 
-    my $m = Para::Member->skapelsen;
-    $m->set_field_block('presentation', $statement );
+	my $m = Para::Member->skapelsen;
+	$m->set_field_block('presentation', $statement );
 
-    Para::Widget::new_entry(undef, 'static');
-    $Para::MOTD = Para::Widget::html_psi( $m->presentation );
+	Para::Widget::new_entry(undef, 'static');
+	$Para::MOTD = Para::Widget::html_psi( $m->presentation );
 
-    return "MOTD changed";
+	return "MOTD changed";
 }
 
 1;

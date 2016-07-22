@@ -11,33 +11,33 @@ use Para::Member;
 
 sub handler
 {
-    my( $req, $event ) = @_;
+	my( $req, $event ) = @_;
 
-    my $u = $req->s->u;
-    if( $u->level < 42 )
-    {
-	throw('denied', "Reserverat för sysadmin");
-    }
-
-    debug "Running CRON DAILY TEST";
-
-    my $file = "/etc/mail/mailboxes";
-    open( FILE, ">", $file) or die "Could not create file $file: $!\n";
-
-    my $db = paraframe_dbm_open( $C_DB_PASSWD );
-    foreach my $key ( keys %$db )
-    {
-	unless( $key )
+	my $u = $req->s->u;
+	if ( $u->level < 42 )
 	{
-	    delete $db->{$key};
-	    next;
+		throw('denied', "Reserverat för sysadmin");
 	}
 
-	print FILE $key."\n";
-    }
-    close FILE;
+	debug "Running CRON DAILY TEST";
 
-    return "Klar";
+	my $file = "/etc/mail/mailboxes";
+	open( FILE, ">", $file) or die "Could not create file $file: $!\n";
+
+	my $db = paraframe_dbm_open( $C_DB_PASSWD );
+	foreach my $key ( keys %$db )
+	{
+		unless( $key )
+		{
+	    delete $db->{$key};
+	    next;
+		}
+
+		print FILE $key."\n";
+	}
+	close FILE;
+
+	return "Klar";
 }
 
 1;

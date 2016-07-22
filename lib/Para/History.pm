@@ -35,30 +35,30 @@ sub begin
 
 sub add
 {
-    my( $this, $hclass, $action, $args ) = @_;
+	my( $this, $hclass, $action, $args ) = @_;
 
-    my $id = $Para::dbix->get_nextval('history_seq');
-    my $status = $args->{status} || $C_HS_CREATED;
-    my $created = now();
-    my $created_out = $Para::dbix->format_datetime( $created );
+	my $id = $Para::dbix->get_nextval('history_seq');
+	my $status = $args->{status} || $C_HS_CREATED;
+	my $created = now();
+	my $created_out = $Para::dbix->format_datetime( $created );
 
-    my $createdby = $args->{createdby} || $Para::Frame::U;
-    my $secret = $args->{secret} || 0;
-    my $partof = $args->{partof};
-    $partof ||= $Para::query->param('history_partof') if $ENV{MOD_PERL};
+	my $createdby = $args->{createdby} || $Para::Frame::U;
+	my $secret = $args->{secret} || 0;
+	my $partof = $args->{partof};
+	$partof ||= $Para::query->param('history_partof') if $ENV{MOD_PERL};
 
-    my $topic = $args->{topic} || undef;
-    my $topic_id = $topic ? $topic->id : undef;
-    my $member = $args->{member};
-    my $member_id = $member ? $member->id : undef;
-    my $skey = $args->{skey};
-    my $slot = $args->{slot};
-    my $vold = $args->{vold};
-    my $vnew = $args->{vnew};
-    my $comment = $args->{comment};
+	my $topic = $args->{topic} || undef;
+	my $topic_id = $topic ? $topic->id : undef;
+	my $member = $args->{member};
+	my $member_id = $member ? $member->id : undef;
+	my $skey = $args->{skey};
+	my $slot = $args->{slot};
+	my $vold = $args->{vold};
+	my $vnew = $args->{vnew};
+	my $comment = $args->{comment};
  
 
-    my $sth = $Para::dbh->prepare("insert into history (
+	my $sth = $Para::dbh->prepare("insert into history (
                           history_id, history_status, history_created,
                           history_createdby, history_secret,
                           history_partof, history_topic,

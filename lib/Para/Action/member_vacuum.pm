@@ -10,18 +10,18 @@ use Para::Topic;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
-    my $u = $req->s->u;
+	my $q = $req->q;
+	my $u = $req->s->u;
 
-    my $mid = $q->param('mid')
-	or throw('incomplete', "mid param missing");
+	my $mid = $q->param('mid')
+		or throw('incomplete', "mid param missing");
 
-    my $m = Para::Member->get( $mid );
-    $m->vacuum;
+	my $m = Para::Member->get( $mid );
+	$m->vacuum;
 
-    return "Medlem städad";
+	return "Medlem städad";
 }
 
 1;

@@ -11,66 +11,66 @@ use Para::Frame::Utils qw( throw );
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    if( $req->user->level < 10 )
-    {
-        throw('denied', "Du har inte access.");
-    }
+	if ( $req->user->level < 10 )
+	{
+		throw('denied', "Du har inte access.");
+	}
 
-    my $q = $req->q;
+	my $q = $req->q;
 
-    my $filename_in =  $q->param('file_name')
-        or throw('incomplete', "Filnamn saknas");
-    my $fh =  $q->upload('file_name')
-        or die "No file handler\n";
+	my $filename_in =  $q->param('file_name')
+		or throw('incomplete', "Filnamn saknas");
+	my $fh =  $q->upload('file_name')
+		or die "No file handler\n";
 
-    $filename = lc($filename_in);
+	$filename = lc($filename_in);
 
-    my $dataref = read_all( $fh );
+	my $dataref = read_all( $fh );
 
 
-    return "Image created";
+	return "Image created";
 }
 
 sub read_all
 {
-    my( $fh ) = @_;
+	my( $fh ) = @_;
 
-    my $buf;
-    my $fname; ## Temporary filenames
-    my $bufsize = 2048;
-    my $data; ### Image data
-    while( (my $len = sysread($fh, $buf, $bufsize)) > 0 )
-    {
-        $data .= $buf;
-    }
-    close($fh);
+	my $buf;
+	my $fname;										## Temporary filenames
+	my $bufsize = 2048;
+	my $data;											### Image data
+	while ( (my $len = sysread($fh, $buf, $bufsize)) > 0 )
+	{
+		$data .= $buf;
+	}
+	close($fh);
 
-    return \$data;
+	return \$data;
 }
 
 
 sub get_suffix
 {
-    my( $dataref, $filename ) = @_;
+	my( $dataref, $filename ) = @_;
 
-    # Use filename if Image::Info failes
+	# Use filename if Image::Info failes
 
-    my $imginfo = image_info( $dataref );
-    my $media = $imginfo->{file_media_type};
+	my $imginfo = image_info( $dataref );
+	my $media = $imginfo->{file_media_type};
 
-    $media ||= guess_media_type( $filename )
-        or die "$filename: Faild to get media type";
+	$media ||= guess_media_type( $filename )
+		or die "$filename: Faild to get media type";
 
-    my $suffix = media_suffix($media);
+	my $suffix = media_suffix($media);
 
-    unless( $suffix )
-    {
-        die "Can't find suffix for media $media\n";
-    }
+	unless( $suffix )
+	{
+		die "Can't find suffix for media $media\n";
+	}
 
-    return $suffix;
+	return $suffix;
 }
 
 

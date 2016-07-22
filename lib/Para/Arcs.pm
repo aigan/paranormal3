@@ -33,11 +33,11 @@ use constant BATCH => 50;
 
 sub new
 {
-    my( $this, $props ) = @_;
-    my $class = ref($this) || $this;
+	my( $this, $props ) = @_;
+	my $class = ref($this) || $this;
 
-    $props->{'content'} = [];
-    return bless $props, $class;
+	$props->{'content'} = [];
+	return bless $props, $class;
 }
 
 
@@ -46,175 +46,175 @@ sub new
 
 sub init_rel
 {
-    # Look up all (true active) arcs for this topic
-    #
-    my( $class, $t ) = @_;
+	# Look up all (true active) arcs for this topic
+	#
+	my( $class, $t ) = @_;
 
 #    warn "find rels for $t->{t}\n";
 
-    my $arcs =
-    {
-     t => $t,
-     dir => 'rel',
-     content => [],
-    };
+	my $arcs =
+	{
+	 t => $t,
+	 dir => 'rel',
+	 content => [],
+	};
 
-    # Set up indexes
-    #
-    my $topic_idx = $arcs->{'topic_idx'} ||= {};
-    my $reltype_idx = $arcs->{'reltype_idx'} ||= {};
-    my $reltype_direct_idx = $arcs->{'reltype_direct_idx'} ||= {};
+	# Set up indexes
+	#
+	my $topic_idx = $arcs->{'topic_idx'} ||= {};
+	my $reltype_idx = $arcs->{'reltype_idx'} ||= {};
+	my $reltype_direct_idx = $arcs->{'reltype_direct_idx'} ||= {};
 
 
-    # Could include active relations to inactive topics
-    my $rels = $Para::dbix->select_list("from rel where rev=? and rel_active is true
+	# Could include active relations to inactive topics
+	my $rels = $Para::dbix->select_list("from rel where rev=? and rel_active is true
                             and rel_strength >= ?", $t->id, $C_TRUE_MIN);
-    foreach my $rel ( $rels->as_array )
-    {
-	defined $rel->{'rel_type'} or die "rel_type undef: ".Dumper( $rel );
-	my $type = $rel->{'rel_type'};
-	my $relt = $rel->{'rel'};
-	my $relval = $rel->{'rel_value'};
-	my $arc =  Para::Arc->new($rel);
-
-	## Insert context info in arc object
-	$arc->{'dir'} = 'rel';
-
-	## Full idx
-	push @{ $arcs->{'content'} }, $arc;
-
-	## Topic idx
-	if( $relt )
+	foreach my $rel ( $rels->as_array )
 	{
+		defined $rel->{'rel_type'} or die "rel_type undef: ".Dumper( $rel );
+		my $type = $rel->{'rel_type'};
+		my $relt = $rel->{'rel'};
+		my $relval = $rel->{'rel_value'};
+		my $arc =  Para::Arc->new($rel);
+
+		## Insert context info in arc object
+		$arc->{'dir'} = 'rel';
+
+		## Full idx
+		push @{ $arcs->{'content'} }, $arc;
+
+		## Topic idx
+		if ( $relt )
+		{
 	    $topic_idx->{$relt} ||= $class->new({
-		dir    => 'rel',
-		select => 'topic',
-		topic  => $rel,
-	    });
+																					 dir    => 'rel',
+																					 select => 'topic',
+																					 topic  => $rel,
+																					});
 	    push @{ $topic_idx->{$relt}{'content'} }, $arc;
-	}
+		}
 
-	## Reltype idx
-	$reltype_idx->{$type} ||= $class->new({
-	    dir     => 'rel',
-	    select  =>'reltype',
-	    reltype => $type,
-	});
-	push @{ $reltype_idx->{$type}{'content'} }, $arc;
+		## Reltype idx
+		$reltype_idx->{$type} ||= $class->new({
+																					 dir     => 'rel',
+																					 select  =>'reltype',
+																					 reltype => $type,
+																					});
+		push @{ $reltype_idx->{$type}{'content'} }, $arc;
 
-	## Reltype direct idx
-	unless( $rel->{'rel_indirect'} )
-	{
+		## Reltype direct idx
+		unless ( $rel->{'rel_indirect'} )
+		{
 	    $reltype_direct_idx->{$type} ||= $class->new({
-		dir     => 'rel',
-		select  =>'reltype',
-		reltype => $type,
-	    });
+																										dir     => 'rel',
+																										select  =>'reltype',
+																										reltype => $type,
+																									 });
 	    push @{ $reltype_direct_idx->{$type}{'content'} }, $arc;
-	}
+		}
 
-    }
+	}
 
 #    warn Dumper $arcs;
-    return bless $arcs, $class;
+	return bless $arcs, $class;
 }
 
 sub init_rev
 {
-    # Look up all rev arcs for this topic
-    #
-    my( $class, $t ) = @_;
+	# Look up all rev arcs for this topic
+	#
+	my( $class, $t ) = @_;
 
 #    warn "find revs for $t->{t}\n";
 
-    my $arcs =
-    {
-	t => $t,
-	dir => 'rev',
-    };
-
-    # Set up indexes
-    #
-    my $topic_idx = $arcs->{'topic_idx'} ||= {};
-    my $reltype_idx = $arcs->{'reltype_idx'} ||= {};
-    my $reltype_direct_idx = $arcs->{'reltype_direct_idx'} ||= {};
-
-
-    my $revs = $Para::dbix->select_list("from rel where rel=? and rel_active is true
-                            and rel_strength >= ?", $t->id, $C_TRUE_MIN);
-    foreach my $rev ( $revs->as_array )
-    {
-	defined $rev->{'rel_type'} or die "rel_type undef: ".Dumper( $rev );
-	my $type = $rev->{'rel_type'};
-	my $revt = $rev->{'rev'};
-	my $arc =  Para::Arc->new($rev);
-
-	## Insert context info in arc object
-	$arc->{'dir'} = 'rev';
-
-	## Full idx
-	push @{ $arcs->{'content'} }, $arc;
-
-	## Topic idx
-	$topic_idx->{$revt} ||= $class->new({
-	    dir    => 'rev',
-	    select => 'topic',
-	    topic  => $rev,
-	});
-	push @{ $topic_idx->{$revt}{'content'} }, $arc;
-
-	## Reltype idx
-	$reltype_idx->{$type} ||= $class->new({
-	    dir     => 'rev',
-	    select  => 'reltype',
-	    reltype => $type,
-	});
-	push @{ $reltype_idx->{$type}{'content'} }, $arc;
-
-	## Reltype direct idx
-	unless( $rev->{'rel_indirect'} )
+	my $arcs =
 	{
+	 t => $t,
+	 dir => 'rev',
+	};
+
+	# Set up indexes
+	#
+	my $topic_idx = $arcs->{'topic_idx'} ||= {};
+	my $reltype_idx = $arcs->{'reltype_idx'} ||= {};
+	my $reltype_direct_idx = $arcs->{'reltype_direct_idx'} ||= {};
+
+
+	my $revs = $Para::dbix->select_list("from rel where rel=? and rel_active is true
+                            and rel_strength >= ?", $t->id, $C_TRUE_MIN);
+	foreach my $rev ( $revs->as_array )
+	{
+		defined $rev->{'rel_type'} or die "rel_type undef: ".Dumper( $rev );
+		my $type = $rev->{'rel_type'};
+		my $revt = $rev->{'rev'};
+		my $arc =  Para::Arc->new($rev);
+
+		## Insert context info in arc object
+		$arc->{'dir'} = 'rev';
+
+		## Full idx
+		push @{ $arcs->{'content'} }, $arc;
+
+		## Topic idx
+		$topic_idx->{$revt} ||= $class->new({
+																				 dir    => 'rev',
+																				 select => 'topic',
+																				 topic  => $rev,
+																				});
+		push @{ $topic_idx->{$revt}{'content'} }, $arc;
+
+		## Reltype idx
+		$reltype_idx->{$type} ||= $class->new({
+																					 dir     => 'rev',
+																					 select  => 'reltype',
+																					 reltype => $type,
+																					});
+		push @{ $reltype_idx->{$type}{'content'} }, $arc;
+
+		## Reltype direct idx
+		unless ( $rev->{'rel_indirect'} )
+		{
 	    $reltype_direct_idx->{$type} ||= $class->new({
-		dir     => 'rev',
-		select  =>'reltype',
-		reltype => $type,
-	    });
+																										dir     => 'rev',
+																										select  =>'reltype',
+																										reltype => $type,
+																									 });
 	    push @{ $reltype_direct_idx->{$type}{'content'} }, $arc;
+		}
+
 	}
 
-      }
-
-    return bless $arcs, $class;
+	return bless $arcs, $class;
 }
 
 sub find
 {
-    my( $arcs, $props ) = @_;
+	my( $arcs, $props ) = @_;
 
-    if( my $tid = $props->{'topic'} )
-    {
-	$tid = $tid->id if ref $tid eq 'Para::Topic';
-	return $arcs->{'topic_idx'}{$tid} || $arcs->new;
-    }
-    elsif(defined( my $type = $props->{'type'} ))
-    {
-	if( $props->{'direct'} )
+	if ( my $tid = $props->{'topic'} )
 	{
+		$tid = $tid->id if ref $tid eq 'Para::Topic';
+		return $arcs->{'topic_idx'}{$tid} || $arcs->new;
+	}
+	elsif (defined( my $type = $props->{'type'} ))
+	{
+		if ( $props->{'direct'} )
+		{
 	    return $arcs->{'reltype_direct_idx'}{$type} || $arcs->new;
+		}
+		else
+		{
+	    return $arcs->{'reltype_idx'}{$type} || $arcs->new;
+		}
+	}
+	elsif ( my @keys = keys %$props )
+	{
+		die "Keys @keys not implemented";
 	}
 	else
 	{
-	    return $arcs->{'reltype_idx'}{$type} || $arcs->new;
+		return $arcs;
 	}
-    }
-    elsif( my @keys = keys %$props )
-    {
-	die "Keys @keys not implemented";
-    }
-    else
-    {
-	return $arcs;
-    }
 }
 
 
@@ -222,92 +222,92 @@ sub find
 
 sub type
 {
-    # Just return first match or undef
-    #
-    my( $arcs, $type ) = @_;
+	# Just return first match or undef
+	#
+	my( $arcs, $type ) = @_;
 
-    foreach my $arc ( @{$arcs->{'content'}} )
-    {
-	if( $arc->{'rel_type'} == $type )
+	foreach my $arc ( @{$arcs->{'content'}} )
 	{
+		if ( $arc->{'rel_type'} == $type )
+		{
 	    return $arc;
+		}
 	}
-    }
-    return undef;
+	return undef;
 }
 
 sub types
 {
-    # List of types represented among direct active rels
-    #
-    my( $arcs ) = @_;
+	# List of types represented among direct active rels
+	#
+	my( $arcs ) = @_;
 
-    my @types;
-    if( $arcs->{'reltype_direct_idx'} )
-    {
-	push @types, map Para::Arctype->new($_), sort keys %{$arcs->{'reltype_direct_idx'}};
-    }
-    else
-    {
-	die "not implemented";
-    }
-    return \@types;
+	my @types;
+	if ( $arcs->{'reltype_direct_idx'} )
+	{
+		push @types, map Para::Arctype->new($_), sort keys %{$arcs->{'reltype_direct_idx'}};
+	}
+	else
+	{
+		die "not implemented";
+	}
+	return \@types;
 }
 
 sub topics
 {
-    my( $arcs ) = @_;
+	my( $arcs ) = @_;
 
-    unless( $arcs->{'topics'} )
-    {
-	my $dir = $arcs->{'dir'};
-	my @t;
-	foreach my $arc ( @{$arcs->{'content'}} )
+	unless ( $arcs->{'topics'} )
 	{
+		my $dir = $arcs->{'dir'};
+		my @t;
+		foreach my $arc ( @{$arcs->{'content'}} )
+		{
 	    push @t, Para::Topic->get_by_id( $arc->{$dir} );
+		}
+		$arcs->{'topics'} = \@t;
 	}
-	$arcs->{'topics'} = \@t;
-    }
-    return $arcs->{'topics'};
+	return $arcs->{'topics'};
 }
 
 sub arcs
 {
-    my( $arcs ) = @_;
-    return $arcs->{'content'}  || [];
+	my( $arcs ) = @_;
+	return $arcs->{'content'}  || [];
 }
 
 sub size
 {
-    return scalar @{$_[0]->{'content'}} || 0;
+	return scalar @{$_[0]->{'content'}} || 0;
 }
 
 sub dir
 {
-    return shift->{'dir'};
+	return shift->{'dir'};
 }
 
 sub rdir
 {
-    my( $arcs ) = @_;
-    my $dir = $arcs->{'dir'};
-    if( $dir eq 'rev' )
-    {
-	return 'rel';
-    }
-    elsif( $dir eq 'rel' )
-    {
-	return 'rev';
-    }
-    else
-    {
-	die "Object $arcs has invalid dir: $dir\n";
-    }
+	my( $arcs ) = @_;
+	my $dir = $arcs->{'dir'};
+	if ( $dir eq 'rev' )
+	{
+		return 'rel';
+	}
+	elsif ( $dir eq 'rel' )
+	{
+		return 'rev';
+	}
+	else
+	{
+		die "Object $arcs has invalid dir: $dir\n";
+	}
 }
 
 sub topic
 {
-    return $_[0]->{'topic'};
+	return $_[0]->{'topic'};
 }
 
 
@@ -315,211 +315,211 @@ use constant NORMSIZE => 7;
 
 sub by_deviation
 {
-    return( abs( ( scalar keys %{ $b->{'content'} } ) - NORMSIZE/2 )
-	    <=>
-	    abs( ( scalar keys %{ $a->{'content'} } ) - NORMSIZE/2 )
-	    );
+	return( abs( ( scalar keys %{ $b->{'content'} } ) - NORMSIZE/2 )
+					<=>
+					abs( ( scalar keys %{ $a->{'content'} } ) - NORMSIZE/2 )
+				);
 }
 
 sub presentation
 {
-    my( $arcs ) = @_;
+	my( $arcs ) = @_;
 
 
-    ### TODO: Include "Övrigt" and insert topics without group there
-    # (also remove small groups and move their topics to Övrigt)
-    # Also, support large groups
+	### TODO: Include "Övrigt" and insert topics without group there
+	# (also remove small groups and move their topics to Övrigt)
+	# Also, support large groups
 
-    ### Returns hashref:
-    #
-    #	size    => the number of arcs to present
-    #	groups  => ref to orderd list of $group hashes
-    #	arcs    => the $arcs object
-    #	title   => the reltype name for the direction
-    #
-    # Each $group hash has:
-    #
-    #   title   => Title of the group
-    #   content => listref to $xarc orderd by name of related node
-    #
-    # Each $xarc hash has:
-    #
-    #   arc     => the actual arc object in the group
-    #   topic   => the related node in the arc
+	### Returns hashref:
+	#
+	#	size    => the number of arcs to present
+	#	groups  => ref to orderd list of $group hashes
+	#	arcs    => the $arcs object
+	#	title   => the reltype name for the direction
+	#
+	# Each $group hash has:
+	#
+	#   title   => Title of the group
+	#   content => listref to $xarc orderd by name of related node
+	#
+	# Each $xarc hash has:
+	#
+	#   arc     => the actual arc object in the group
+	#   topic   => the related node in the arc
 
-    my $topics = $arcs->topics;
-    my $dir = $arcs->dir;
-    my $total_size = scalar @$topics;
-    my $groups_number; # The number of groups left for presentation
+	my $topics = $arcs->topics;
+	my $dir = $arcs->dir;
+	my $total_size = scalar @$topics;
+	my $groups_number;			# The number of groups left for presentation
 
-    unless( defined  $arcs->{'reltype'} )
-    {
-	# No arcs in this object
-	return
+	unless ( defined  $arcs->{'reltype'} )
 	{
-	 size => 0,
-	 groups => [],
-	 arcs => [],
-	 title => 'Empty',
-	};
-    }
+		# No arcs in this object
+		return
+		{
+		 size => 0,
+		 groups => [],
+		 arcs => [],
+		 title => 'Empty',
+		};
+	}
 
-    my $type_rec = $Para::dbix->select_record("from reltype where reltype=?", $arcs->{'reltype'});
-    my $title = $type_rec->{$dir."_name"}; # Reltype name in the selected direction
+	my $type_rec = $Para::dbix->select_record("from reltype where reltype=?", $arcs->{'reltype'});
+	my $title = $type_rec->{$dir."_name"}; # Reltype name in the selected direction
 
-    my @group_list = ();
+	my @group_list = ();
 
-    if( $total_size < NORMSIZE * 2 )
-    {
-	my @content;
-	foreach my $basearc ( @{$arcs->arcs} )
+	if ( $total_size < NORMSIZE * 2 )
 	{
+		my @content;
+		foreach my $basearc ( @{$arcs->arcs} )
+		{
 	    $basearc or die Dumper $arcs->arcs;
 	    push @content,
 	    {
-		arc => $basearc,
-		topic => $basearc->node($dir),
+			 arc => $basearc,
+			 topic => $basearc->node($dir),
 	    };
+		}
+		my $group =
+		{
+		 title => '',
+		 content => [ sort {$a->{'topic'}->desig cmp $b->{'topic'}->desig} @content ],
+		};
+		push @group_list, $group;
 	}
-	my $group =
+	else
 	{
-	    title => '',
-	    content => [ sort {$a->{'topic'}->desig cmp $b->{'topic'}->desig} @content ],
-	};
-	push @group_list, $group;
-    }
-    else
-    {
-	my %groups;
-	my %groupsize;
-	my %placements;
-	my $other;
-	my %temp_others;
+		my %groups;
+		my %groupsize;
+		my %placements;
+		my $other;
+		my %temp_others;
 
-	### %groups holds data about the related nodes, hashed by the
-	# group:
-	#
-	# $groups{ $group_topic_id } = $group_a;
-	#
-	# $group_a =
-	# {
-	#   content => ref to hash with $related_topic_id => $xarc,
-	#   topic   => $group_topic_object,
-	# };
-	#
-	# $xarc is the same as in the return data structure
+		### %groups holds data about the related nodes, hashed by the
+		# group:
+		#
+		# $groups{ $group_topic_id } = $group_a;
+		#
+		# $group_a =
+		# {
+		#   content => ref to hash with $related_topic_id => $xarc,
+		#   topic   => $group_topic_object,
+		# };
+		#
+		# $xarc is the same as in the return data structure
 
-	### %groupsize is not curently used
+		### %groupsize is not curently used
 
-	### %placements lets you look up the grops each related node
-	# belongs to:
-	#
-	# $placements{ $t_id }{ $group_topic_id } =
-	#   $group_topic_object;
+		### %placements lets you look up the grops each related node
+		# belongs to:
+		#
+		# $placements{ $t_id }{ $group_topic_id } =
+		#   $group_topic_object;
 
-	### %other is the rest group for topics not shown in any other
-	# group
-	#
-	# $other = $group_a;
+		### %other is the rest group for topics not shown in any other
+		# group
+		#
+		# $other = $group_a;
 
-	if( debug >= 3 )
-	{
+		if ( debug >= 3 )
+		{
 	    warn "\n";
 	    warn "Relation: $title\n";
 	    warn "Reltype $arcs->{reltype}\n";
 	    warn "  Size: $total_size arcs to present\n";
-	}
+		}
 
-	# These will not be used for grouping
-	#
-	my @taboo = (2, 3, 4, 6, 7, 8, 35601, 10, 11, 12, 3719, );
+		# These will not be used for grouping
+		#
+		my @taboo = (2, 3, 4, 6, 7, 8, 35601, 10, 11, 12, 3719, );
 
-	# We will group on topics related to through these reltypes
-	#
-	foreach my $type ( 1, 2, 3 )
-	{
+		# We will group on topics related to through these reltypes
+		#
+		foreach my $type ( 1, 2, 3 )
+		{
 	    # Foreach arc to be presented
 	    #
 	    foreach my $basearc ( @{$arcs->arcs} )
 	    {
-		debug(3,"basearc ".$basearc->desig);
+				debug(3,"basearc ".$basearc->desig);
 
-		# The related node to be presented (may be entry)
-		#
-		my $t = $basearc->node($dir);
-		unless( $t )
-		{
-		    die sprintf("Basearc %s has no node in dir %s", $basearc->id, $dir);
-		}
+				# The related node to be presented (may be entry)
+				#
+				my $t = $basearc->node($dir);
+				unless( $t )
+				{
+					die sprintf("Basearc %s has no node in dir %s", $basearc->id, $dir);
+				}
 
-		##
-		#
-		$placements{$t->id} ||= {};
+				##
+				#
+				$placements{$t->id} ||= {};
 
-		# The related topic. Same as $t unless $t are an entry
-		#
-		my $topic = (($t->entry ? $t->topic : $t ) || $t );
+				# The related topic. Same as $t unless $t are an entry
+				#
+				my $topic = (($t->entry ? $t->topic : $t ) || $t );
 
-		$Para::Frame::REQ->yield unless
-		    $Para::Frame::BATCHCOUNT++ % BATCH;
+				$Para::Frame::REQ->yield unless
+					$Para::Frame::BATCHCOUNT++ % BATCH;
 
 
-		# Does the related topic have a relation of the
-		# reltype for this iteration?  This will be the
-		# relations of the related topic:
-		#
-		if( my $rels = $topic->rel({type => $type}) )
-		{
-		    my $count = $rels->size;
-		    debug(3,"\tHas $count arcs");
+				# Does the related topic have a relation of the
+				# reltype for this iteration?  This will be the
+				# relations of the related topic:
+				#
+				if ( my $rels = $topic->rel({type => $type}) )
+				{
+					my $count = $rels->size;
+					debug(3,"\tHas $count arcs");
 
-		    # Iterate through the related topic relations
-		    #
-		    foreach my $arc (@{ $rels->arcs })
-		    {
-			# The node of the relation from the related
-			# topic. This will be one of the topics we may
-			# group the arcs to be presented
-			#
-			my $relt = $arc->node('rel');
-			unless( $relt )
-			{
-			    die Dumper $rels->arcs;
+					# Iterate through the related topic relations
+					#
+					foreach my $arc (@{ $rels->arcs })
+					{
+						# The node of the relation from the related
+						# topic. This will be one of the topics we may
+						# group the arcs to be presented
+						#
+						my $relt = $arc->node('rel');
+						unless( $relt )
+						{
+							die Dumper $rels->arcs;
 #			    die sprintf("Arc %s has no node in dir %s", $arc->id, $arcs->rdir);
-			}
-			my $reltid = $relt->id;
+						}
+						my $reltid = $relt->id;
 
-			# Skip grouping topic if its in taboo list
-			#
-			next if grep $reltid == $_, @taboo;
+						# Skip grouping topic if its in taboo list
+						#
+						next if grep $reltid == $_, @taboo;
 
-			debug(3,"\t\tInserting ".$relt->desig);
-			$groups{$reltid}{'content'}{$t->id}{'arc'} = $basearc;
-			$groups{$reltid}{'content'}{$t->id}{'topic'} = $t;
-			$groups{$reltid}{'topic'} ||= $relt;
-			$placements{$t->id}{$reltid} = $relt;
-		    }
-		    debug(3,"\tdone");
-		}
-		else
-		{
-		    debug(3,"\tNo arcs of type $type");
-		}
-		debug(3,"more basearcs?");
+						debug(3,"\t\tInserting ".$relt->desig);
+						$groups{$reltid}{'content'}{$t->id}{'arc'} = $basearc;
+						$groups{$reltid}{'content'}{$t->id}{'topic'} = $t;
+						$groups{$reltid}{'topic'} ||= $relt;
+						$placements{$t->id}{$reltid} = $relt;
+					}
+					debug(3,"\tdone");
+				}
+				else
+				{
+					debug(3,"\tNo arcs of type $type");
+				}
+				debug(3,"more basearcs?");
 	    }
 	    debug(3,"Type $type done");
-	}
+		}
 
-	debug(3,"\nChecking topics\n\n");
+		debug(3,"\nChecking topics\n\n");
 
-	# Go through the groups, starting with the worst
-	# groups. Groups with to many or to few members.
-	#
-	# By eliminating the worst choices, we hope to have the best
-	# groups left.
-	#
-	foreach my $group_a ( sort by_deviation values %groups )
-	{
+		# Go through the groups, starting with the worst
+		# groups. Groups with to many or to few members.
+		#
+		# By eliminating the worst choices, we hope to have the best
+		# groups left.
+		#
+		foreach my $group_a ( sort by_deviation values %groups )
+		{
 	    my $super = $group_a->{'topic'};
 
 	    debug(3,"Check group ".$super->desig);
@@ -535,29 +535,29 @@ sub presentation
 	    #
 	    foreach my $tid ( keys %{$group_a->{'content'}} )
 	    {
-		# Belongs this topic only to one group?
-		#
-		if( (scalar keys %{$placements{$tid}}) == 1 )
-		{
-		    if( debug )
-		    {
-			my $t = Para::Topic->get_by_id($tid);
-			my $title = $t->desig;
-			if( debug >= 3 )
-			{
-			    debug "\t$title has no other belongings";
-			    foreach my $relt ( values %{$placements{$tid}} )
-			    {
-				debug "\t\t".$relt->desig;
-			    }
-			}
-		    }
+				# Belongs this topic only to one group?
+				#
+				if ( (scalar keys %{$placements{$tid}}) == 1 )
+				{
+					if ( debug )
+					{
+						my $t = Para::Topic->get_by_id($tid);
+						my $title = $t->desig;
+						if ( debug >= 3 )
+						{
+							debug "\t$title has no other belongings";
+							foreach my $relt ( values %{$placements{$tid}} )
+							{
+								debug "\t\t".$relt->desig;
+							}
+						}
+					}
 
-		    # If so, mark group as exclusive
-		    #
-		    $group_a->{'exclusive'} ++;
-		    last;
-		}
+					# If so, mark group as exclusive
+					#
+					$group_a->{'exclusive'} ++;
+					last;
+				}
 	    }
 
 	    # Remove group unless it's exclusive. This will continue
@@ -574,186 +574,186 @@ sub presentation
 	    next if $groups_number < NORMSIZE;
 
 	    my $group_size = scalar(keys %{$group_a->{'content'}});
-	    if( $group_a->{'exclusive'} and $group_size == $total_size )
+	    if ( $group_a->{'exclusive'} and $group_size == $total_size )
 	    {
-		debug(3,"\tremoved because all inclusive");
-		foreach my $tid ( keys %{$group_a->{'content'}} )
-		{
-		    $temp_others{ $tid } = $group_a->{'content'}{ $tid };
-		    delete $placements{$tid}{$super->id};
-		}
-		delete $groups{$super->id};
+				debug(3,"\tremoved because all inclusive");
+				foreach my $tid ( keys %{$group_a->{'content'}} )
+				{
+					$temp_others{ $tid } = $group_a->{'content'}{ $tid };
+					delete $placements{$tid}{$super->id};
+				}
+				delete $groups{$super->id};
 	    }
 
-	    if( not $group_a->{'exclusive'} )
+	    if ( not $group_a->{'exclusive'} )
 	    {
-		debug(3,"\tremoved");
-		foreach my $tid ( keys %{$group_a->{'content'}} )
-		{
-		    delete $placements{$tid}{$super->id};
-		}
-		delete $groups{$super->id};
+				debug(3,"\tremoved");
+				foreach my $tid ( keys %{$group_a->{'content'}} )
+				{
+					delete $placements{$tid}{$super->id};
+				}
+				delete $groups{$super->id};
 	    }
-	}
+		}
 
 
-	# Create a group others by removing the largest groups and see
-	# if it shrunk
-	#
-	my %points; # points for each group
-	foreach my $group_a ( values %groups )
-	{
+		# Create a group others by removing the largest groups and see
+		# if it shrunk
+		#
+		my %points;									# points for each group
+		foreach my $group_a ( values %groups )
+		{
 	    my $size = scalar keys %{$group_a->{'content'}};
 
 	    my $count = 0;
 	    foreach my $tid ( keys %{$group_a->{'content'}} )
 	    {
-		$count++ if scalar(keys %{$placements{$tid}}) > 1;
+				$count++ if scalar(keys %{$placements{$tid}}) > 1;
 	    }
 
 	    # The higher the points, the better to make to %other
 	    $points{ $group_a->{'topic'}->id } = $size - $count;
-	}
-	my @best_other = sort { $points{ $b } <=> $points{ $a } } keys %points;
-	foreach my $group_id ( @best_other )
-	{
+		}
+		my @best_other = sort { $points{ $b } <=> $points{ $a } } keys %points;
+		foreach my $group_id ( @best_other )
+		{
 	    my $gname = Para::Topic->get_by_id( $group_id )->desig;
 	    debug(3,"group $gname has $points{ $group_id } points");
-	    if( $points{ $group_id } > NORMSIZE*2 )
+	    if ( $points{ $group_id } > NORMSIZE*2 )
 	    {
-		$other = {};
-		if( debug >= 3 )
-		{
-		    warn "    Moving topics from group $gname to others\n";
-		}
+				$other = {};
+				if ( debug >= 3 )
+				{
+					warn "    Moving topics from group $gname to others\n";
+				}
 
-		# Clean out the group
-		foreach my $tid ( keys %{$groups{ $group_id }{'content'}} )
-		{
-		    if( scalar(keys %{$placements{$tid}}) == 1 )
-		    {
-			$other->{ $tid } =
-			  $groups{ $group_id }{'content'}{ $tid };
-		    }
-		    delete $placements{$tid}{$group_id};
-		    $placements{$tid}{'other'} = $other;
-		}
-		delete $groups{$group_id};
+				# Clean out the group
+				foreach my $tid ( keys %{$groups{ $group_id }{'content'}} )
+				{
+					if ( scalar(keys %{$placements{$tid}}) == 1 )
+					{
+						$other->{ $tid } =
+							$groups{ $group_id }{'content'}{ $tid };
+					}
+					delete $placements{$tid}{$group_id};
+					$placements{$tid}{'other'} = $other;
+				}
+				delete $groups{$group_id};
 	    }
-	}
+		}
 
 
-	## Remove small groups
-	#
-	foreach my $group_a ( values %groups )
-	{
+		## Remove small groups
+		#
+		foreach my $group_a ( values %groups )
+		{
 	    debug(3,"Check group ".$group_a->{'topic'}->desig);
-	    if( scalar(keys %{$group_a->{'content'}}) < NORMSIZE/2 )
+	    if ( scalar(keys %{$group_a->{'content'}}) < NORMSIZE/2 )
 	    {
-		debug(3,"\tremoved because too small");
-		foreach my $tid ( keys %{$group_a->{'content'}} )
-		{
-		    $temp_others{ $tid } = $group_a->{'content'}{ $tid };
-		    delete $placements{$tid}{$group_a->{'topic'}->id};
-		}
-		delete $groups{$group_a->{'topic'}->id};
+				debug(3,"\tremoved because too small");
+				foreach my $tid ( keys %{$group_a->{'content'}} )
+				{
+					$temp_others{ $tid } = $group_a->{'content'}{ $tid };
+					delete $placements{$tid}{$group_a->{'topic'}->id};
+				}
+				delete $groups{$group_a->{'topic'}->id};
 
 	    }
-	}
+		}
 
-	# Reinsert from %temp_others to others
-	#
-	foreach my $tid ( keys %temp_others )
-	{
+		# Reinsert from %temp_others to others
+		#
+		foreach my $tid ( keys %temp_others )
+		{
 	    next if scalar(keys %{$placements{$tid}}) > 0;
 	    $other->{ $tid } = $temp_others{ $tid };
 	    $placements{$tid}{'other'} = $other;
-	}
+		}
 
-	## Remove all groups that are wholy contained in a larger group
-	#
-      CHECK:
-	foreach my $group_a ( values %groups )
-	{
+		## Remove all groups that are wholy contained in a larger group
+		#
+	CHECK:
+		foreach my $group_a ( values %groups )
+		{
 	    debug(3,"Check group ".$group_a->{'topic'}->desig);
 	    foreach my $tid ( keys %{$group_a->{'content'}} )
 	    {
-		if( scalar( keys %{$placements{$tid}} ) == 1 )
-		{
-		    if( debug >= 3 )
-		    {
-			my $title = Para::Topic->get_by_id($tid)->desig;
-			debug "\t$title has no other place";
-		    }
-		    next CHECK;
-		}
+				if ( scalar( keys %{$placements{$tid}} ) == 1 )
+				{
+					if ( debug >= 3 )
+					{
+						my $title = Para::Topic->get_by_id($tid)->desig;
+						debug "\t$title has no other place";
+					}
+					next CHECK;
+				}
 
 	    }
 	    
 	    debug(3,"\tremoved");
 	    foreach my $tid ( keys %{$group_a->{'content'}} )
 	    {
-		delete $placements{$tid}{$group_a->{'topic'}->id};
+				delete $placements{$tid}{$group_a->{'topic'}->id};
 	    }
 	    delete $groups{$group_a->{'topic'}->id};
-	}
+		}
 
 
-	# Do show header for just one group
-	my $no_headers = 0;
-	$groups_number = scalar(keys %groups);
-	$groups_number ++ if $other;
-	if( $groups_number == 1 )
-	{
+		# Do show header for just one group
+		my $no_headers = 0;
+		$groups_number = scalar(keys %groups);
+		$groups_number ++ if $other;
+		if ( $groups_number == 1 )
+		{
 	    $no_headers = 1;
-	}
+		}
 
-	# Build the list of groups to return. sort content on topic
-	# desig.
-	#
-	my $link_cnt;
-	my $group_cnt;
-	foreach my $super_id ( keys %groups )
-	{
+		# Build the list of groups to return. sort content on topic
+		# desig.
+		#
+		my $link_cnt;
+		my $group_cnt;
+		foreach my $super_id ( keys %groups )
+		{
 	    my $super = Para::Topic->get_by_id( $super_id );
 	    my $group = {};
 	    $group->{title} = $super->title unless $no_headers;
 	    my @sorted = sort( {$a->{'topic'}->desig cmp $b->{'topic'}->desig}
-			       values %{$groups{$super_id}{'content'}}
-			       );
+												 values %{$groups{$super_id}{'content'}}
+											 );
 	    $group->{content} = \@sorted;
 	    push @group_list, $group;
 	    $link_cnt += @sorted;
 	    $group_cnt ++;
-	}
+		}
 
-	# Add group %other
-	#
-	if( $other )
-	{
+		# Add group %other
+		#
+		if ( $other )
+		{
 	    my $group = {};
 	    $group->{title} = 'Övriga' unless $no_headers;
 	    my @sorted = sort( {$a->{'topic'}->desig cmp $b->{'topic'}->desig}
-			       values %{$other}
-			     );
+												 values %{$other}
+											 );
 	    $group->{content} = \@sorted;
 	    push @group_list, $group;
 	    $link_cnt += @sorted;
 	    $group_cnt ++;
+		}
+
+		debug(3,"Inserted $link_cnt links over $group_cnt groups");
 	}
 
-	debug(3,"Inserted $link_cnt links over $group_cnt groups");
-    }
+	my $result =
+	{
+	 size => $total_size,
+	 groups => [sort {$a->{'title'} cmp $b->{'title'}} @group_list ],
+	 arcs => $arcs,
+	 title => $title,
+	};
 
-    my $result =
-    {
-	size => $total_size,
-	groups => [sort {$a->{'title'} cmp $b->{'title'}} @group_list ],
-	arcs => $arcs,
-	title => $title,
-    };
-
-    return $result;
+	return $result;
 }
 
 1;

@@ -26,42 +26,42 @@ use Para::Member;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
+	my $q = $req->q;
 
-    my $nick = $q->param('nick') or die "Nick param missing\n";
+	my $nick = $q->param('nick') or die "Nick param missing\n";
 
-    my $mlist = Para::Member->by_name( $nick );
+	my $mlist = Para::Member->by_name( $nick );
 
-    unless( @$mlist )
-    {
-	throw('notfound', "Hittar inte medlemmen $nick");
-    }
-    if( @$mlist > 1 )
-    {
-	throw('alternatives', "Flera medlemmar matchade din sökning");
-    }
+	unless( @$mlist )
+	{
+		throw('notfound', "Hittar inte medlemmen $nick");
+	}
+	if ( @$mlist > 1 )
+	{
+		throw('alternatives', "Flera medlemmar matchade din sökning");
+	}
 
-    my $m = $mlist->[0]; # Get the only result
-    my $e = Para::Email->new;
-    $e->set({
-	subject => "Lösenord till Paranormal.se",
-	m => $m,
-	template => 'password_reminder.tt',
-    });
+	my $m = $mlist->[0];					# Get the only result
+	my $e = Para::Email->new;
+	$e->set({
+					 subject => "Lösenord till Paranormal.se",
+					 m => $m,
+					 template => 'password_reminder.tt',
+					});
 
-    my $fork = $req->create_fork;
-    if( $fork->in_child )
-    {
-	# Become root in order to get access to passwords
-	Para::Member->become_root;
-	$e->send or throw('email', $e->error_msg);
-	Para::Member->revert_from_temporary_user;
-	$fork->return("E-post med lösenordet har nu skickats till minst en av adresserna för $nick.\n");
-      }
+	my $fork = $req->create_fork;
+	if ( $fork->in_child )
+	{
+		# Become root in order to get access to passwords
+		Para::Member->become_root;
+		$e->send or throw('email', $e->error_msg);
+		Para::Member->revert_from_temporary_user;
+		$fork->return("E-post med lösenordet har nu skickats till minst en av adresserna för $nick.\n");
+	}
 
-    return "";
+	return "";
 }
 
 1;

@@ -34,94 +34,94 @@ our $LAST_RUN;
 
 sub do_planned_actions
 {
-    my( $req ) = @_;
-    my $c = "Para::Calendar";
+	my( $req ) = @_;
+	my $c = "Para::Calendar";
 
-    my $last_run = $c->last_run;
-    my $now = now();
+	my $last_run = $c->last_run;
+	my $now = now();
 
-    my $span = DateTime::Span->from_datetimes( after => $last_run,
-					       end => $now );
+	my $span = DateTime::Span->from_datetimes( after => $last_run,
+																						 end => $now );
 
-    return if $span < duration(minutes => 5);
+	return if $span < duration(minutes => 5);
 
-    $c->add_events_to_plan( $span );
+	$c->add_events_to_plan( $span );
 
-    $c->do_action_events($now);
-    $LAST_RUN = $now;
+	$c->do_action_events($now);
+	$LAST_RUN = $now;
 }
 
 ### Methods
 
 sub do_action_events
 {
-    my( $c, $til ) = @_;
+	my( $c, $til ) = @_;
 
-    # 1. Do the do_all events
-    # 2. Do the do_latest events (backwards)
-    # 3. Do the rest of the events
+	# 1. Do the do_all events
+	# 2. Do the do_latest events (backwards)
+	# 3. Do the rest of the events
 
-    my $recs = $Para::dbix->select_list("from plan where plan_finished is false and plan_is_action is true and plan_start <= ? and plan_started is null", $til);
-    debug "Check for plans til $til";
+	my $recs = $Para::dbix->select_list("from plan where plan_finished is false and plan_is_action is true and plan_start <= ? and plan_started is null", $til);
+	debug "Check for plans til $til";
 
-    my %plan_one;
-    foreach my $rec ( @$recs )
-    {
-	my $plan = Para::Plan->new( $rec );
-	if( $plan->do_all )
+	my %plan_one;
+	foreach my $rec ( @$recs )
 	{
+		my $plan = Para::Plan->new( $rec );
+		if ( $plan->do_all )
+		{
 	    $plan->execute;
-	}
-	else
-	{
+		}
+		else
+		{
 	    $plan_one{ $plan->event->id } ||= [];
 	    push @{ $plan_one{ $plan->event->id } }, $plan;
+		}
 	}
-    }
 
-    foreach my $plan_list ( values %plan_one )
-    {
-	my $one_plan = pop @$plan_list;
-	$one_plan->execute_as_job;
-
-	foreach my $plan (@$plan_list )
+	foreach my $plan_list ( values %plan_one )
 	{
+		my $one_plan = pop @$plan_list;
+		$one_plan->execute_as_job;
+
+		foreach my $plan (@$plan_list )
+		{
 	    $plan->do_not_execute;
+		}
 	}
-    }
 }
 
 sub add_events_to_plan
 {
-    my( $c, $span ) = @_;
+	my( $c, $span ) = @_;
 
-    my $recs = $Para::dbix->select_list("from event where event_active is true");
-    foreach my $rec ( @$recs )
-    {
-	my $event = Para::Event->new( $rec );
-	$event->add_to_plan( $span );
-    }
+	my $recs = $Para::dbix->select_list("from event where event_active is true");
+	foreach my $rec ( @$recs )
+	{
+		my $event = Para::Event->new( $rec );
+		$event->add_to_plan( $span );
+	}
 }
 
 sub last_run
 {
-    my( $c ) = @_;
+	my( $c ) = @_;
 
-    unless( $LAST_RUN )
-    {
-	my $rec = $Para::dbix->select_possible_record("select plan_start from plan where plan_finished is true order by plan_start desc limit 1");
-	if( $rec )
+	unless( $LAST_RUN )
 	{
+		my $rec = $Para::dbix->select_possible_record("select plan_start from plan where plan_finished is true order by plan_start desc limit 1");
+		if ( $rec )
+		{
 	    $LAST_RUN = date( $rec->{'plan_start'} );
-	}
-	else
-	{
+		}
+		else
+		{
 	    $LAST_RUN = now() - duration(days=>1);
+		}
+		debug "Initiating LAST_RUN to $LAST_RUN";
 	}
-	debug "Initiating LAST_RUN to $LAST_RUN";
-    }
 
-    return $LAST_RUN;
+	return $LAST_RUN;
 }
 
 1;

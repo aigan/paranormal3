@@ -23,48 +23,48 @@ use Para::Frame::Utils qw( throw passwd_crypt );
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
+	my $q = $req->q;
 
-    # Validation
-    #
-    my $username = $q->param('username')
-	or throw('incomplete', "Namn saknas\n");
-    my $password = $q->param('password') || "";
-    my $remember = $q->param('remember_login') || 0;
+	# Validation
+	#
+	my $username = $q->param('username')
+		or throw('incomplete', "Namn saknas\n");
+	my $password = $q->param('password') || "";
+	my $remember = $q->param('remember_login') || 0;
 
-    my @extra = ();
-    if( $remember )
-    {
-	push @extra, -expires => '+10y';
-    }
+	my @extra = ();
+	if ( $remember )
+	{
+		push @extra, -expires => '+10y';
+	}
 
-    my $u = Para::Member->get_by_nickname( $username, 0 );
-    $u or throw('validation', "Medlemmen $username existerar inte");
+	my $u = Para::Member->get_by_nickname( $username, 0 );
+	$u or throw('validation', "Medlemmen $username existerar inte");
     
-    Para::Member->change_current_user( $u );
+	Para::Member->change_current_user( $u );
 
-    my $password_encrypted = passwd_crypt( $password );
+	my $password_encrypted = passwd_crypt( $password );
 
-    if( Para::Member->authenticate_user( $password_encrypted ) )
-    {
-	$req->cookies->add({
-	    'username' => $username,
-	    'password' => $password_encrypted,
-	},{
-	    @extra,
-	});
+	if ( Para::Member->authenticate_user( $password_encrypted ) )
+	{
+		$req->cookies->add({
+												'username' => $username,
+												'password' => $password_encrypted,
+											 },{
+													@extra,
+												 });
 
-	$q->delete('username');
-	$q->delete('password');
+		$q->delete('username');
+		$q->delete('password');
 
-	$req->run_hook('user_login');
+		$req->run_hook('user_login');
 
-	return "$username loggar in";
-    }
+		return "$username loggar in";
+	}
 
-    return "Inloggningen misslyckades\n";
+	return "Inloggningen misslyckades\n";
 }
 
 1;

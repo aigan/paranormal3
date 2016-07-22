@@ -22,21 +22,21 @@ use Para::Member;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $u = $Para::Frame::U;
+	my $u = $Para::Frame::U;
 
-    # Promote user if this is the first login
-    #
-    if( $u->level == 1 )
-    {
-	my $sys = Para::Member->get(-1);
-	$u->level( 2, $sys );
-	$req->set_page("/member/db/person/quest/level_02/welcome.tt");
-	return "Nivå 2";
-    }
+	# Promote user if this is the first login
+	#
+	if ( $u->level == 1 )
+	{
+		my $sys = Para::Member->get(-1);
+		$u->level( 2, $sys );
+		$req->set_page("/member/db/person/quest/level_02/welcome.tt");
+		return "Nivå 2";
+	}
 
-    return "Ingen ändring av nivån";
+	return "Ingen ändring av nivån";
 }
 
 1;

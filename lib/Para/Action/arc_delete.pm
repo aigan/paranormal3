@@ -10,28 +10,28 @@ use Para::Arc;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
-    my $u = $req->s->u;
+	my $q = $req->q;
+	my $u = $req->s->u;
 
-    if( $u->level < 12 )
-    {
-	throw('denied', "Du måste vara minst nivå 12");
-    }
+	if ( $u->level < 12 )
+	{
+		throw('denied', "Du måste vara minst nivå 12");
+	}
 
-    my $rel_topic = $q->param('rel_topic')
-	or throw('incomplete', "rel_topic param missing");
+	my $rel_topic = $q->param('rel_topic')
+		or throw('incomplete', "rel_topic param missing");
 
-    my $arc = Para::Arc->get( $rel_topic ) or die "Arc $rel_topic not found";
+	my $arc = Para::Arc->get( $rel_topic ) or die "Arc $rel_topic not found";
 
-    $arc->remove;
+	$arc->remove;
 
 
 
-    clear_params(qw( rel_topic rel_type rel ));
+	clear_params(qw( rel_topic rel_type rel ));
 
-    return "De nya uppgifterna har sparats";
+	return "De nya uppgifterna har sparats";
 }
 
 1;

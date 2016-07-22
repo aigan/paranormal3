@@ -10,23 +10,23 @@ use Para::Arctype;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
-    my $u = $req->session->user;
+	my $q = $req->q;
+	my $u = $req->session->user;
 
-    if( $u->level < 40 )
-    {
-	throw('denied', "Du har inte access för att skapa reltype");
-    }
+	if ( $u->level < 40 )
+	{
+		throw('denied', "Du har inte access för att skapa reltype");
+	}
 
-    my $type = Para::Arctype->create();
+	my $type = Para::Arctype->create();
 
-    my $atid = $type->id;
+	my $atid = $type->id;
 
-    $q->param('atid', $atid);
+	$q->param('atid', $atid);
 
-    return "Ny arctype skapad";
+	return "Ny arctype skapad";
 }
 
 1;

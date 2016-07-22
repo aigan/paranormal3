@@ -10,29 +10,29 @@ use Para::Topic;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
-    my $u = $req->s->u;
+	my $q = $req->q;
+	my $u = $req->s->u;
 
-    if( $u->level < 41 )
-    {
-	throw('denied', "Du har inte access för att ändra quota");
-    }
+	if ( $u->level < 41 )
+	{
+		throw('denied', "Du har inte access för att ändra quota");
+	}
 
-    my $mid = $q->param('mid')
-	or throw('incomplete', "mid param missing");
+	my $mid = $q->param('mid')
+		or throw('incomplete', "mid param missing");
 
-    my $m = Para::Member->get_by_id( $mid );
+	my $m = Para::Member->get_by_id( $mid );
 
-    my $quota = $q->param('quota')||10000;
-    $m->mailbox->quota( $quota );
+	my $quota = $q->param('quota')||10000;
+	$m->mailbox->quota( $quota );
 
-    my $name = $m->nickname;
+	my $name = $m->nickname;
 
-    $q->delete('quota');
+	$q->delete('quota');
 
-    return "Quota ändrad till $quota för $name";
+	return "Quota ändrad till $quota för $name";
 }
 
 1;

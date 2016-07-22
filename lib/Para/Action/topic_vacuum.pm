@@ -10,23 +10,23 @@ use Para::Topic;
 
 sub handler
 {
-    my( $req ) = @_;
+	my( $req ) = @_;
 
-    my $q = $req->q;
-    my $u = $req->s->u;
+	my $q = $req->q;
+	my $u = $req->s->u;
 
-    if( $u->level < 12 )
-    {
-	throw('denied', "Enbart för väktare");
-    }
+	if ( $u->level < 12 )
+	{
+		throw('denied', "Enbart för väktare");
+	}
 
-    my $tid = $q->param('tid') || $q->param('eid')
-	or throw('incomplete', "tid/eid param missing\n");
+	my $tid = $q->param('tid') || $q->param('eid')
+		or throw('incomplete', "tid/eid param missing\n");
 
-    my $t = Para::Topic->get_by_id( $tid );
-    $t->vacuum;
+	my $t = Para::Topic->get_by_id( $tid );
+	$t->vacuum;
 
-    return "Ämnet städat\n";
+	return "Ämnet städat\n";
 }
 
 1;

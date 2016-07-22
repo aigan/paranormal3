@@ -1,20 +1,19 @@
-﻿</div>
-<div id="footer">
-[% UNLESS u.level %]
-<p>Detta är en sida från webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.
-Materialet kommer från flera olika författare och medarbetare.  Du kan
-<a href="/member/db/person/quest/level_00/">vara en del av denna
-webbplats</a>.</p>
-[% END %]
+﻿</main>
+<footer>
+	[% UNLESS u.level %]
+	<p>Detta är en sida från webbplatsen <a href="/topic/paranormalse.html">PARANORMAL.SE</a>.
+		Materialet kommer från flera olika författare och medarbetare.  Du kan
+		<a href="/member/db/person/quest/level_00/">vara en del av denna
+			webbplats</a>.</p>
+  [% END %]
 
-<p><a href="/">Hem</a> |
-<a href="/topic/">Index</a> |
-<a href="/search/">Fritextsökning</a>
-</p>
+	<p><a href="/">Hem</a> |
+		<a href="/topic/">Index</a> |
+		<a href="/search/">Fritextsökning</a>
+	</p>
+</footer>
 
-</div>
-
-</div></form>
+</form>
 
 [% IF u.complexity > 15 %]
 [% PROCESS menu_admin_pf.tt %]

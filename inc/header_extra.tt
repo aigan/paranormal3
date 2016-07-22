@@ -1,12 +1,9 @@
-﻿<meta http-equiv="Content-Language" content="sv" />
-<link rel="Top" href="/" />
-<link rel="Contents" href="/" />
-<link rel="Index" href="/topic/" />
-<link rel="Help" href="/topic/paranormalse.html" />
-<link rel="Search" href="/search/" />
-<meta property="og:type" content="website"/>
-<meta property="og:url" content="http://paranormal.se/" />
-<meta property="og:image" content="http://paranormal.se/images/icon/paranormala_fenomen_3.jpg"/>
-<meta property="og:site_name" content="Paranormal.se"/>
-<meta property="fb:admins" content="aigan"/>
-
+﻿<meta property="fb:app_id" content="108217159240271">
+<meta property="og:type" content="website">
+<meta property="og:url" content="[% req.page.url.canonical %]">
+<meta property="og:image" content="http://paranormal.se/images/icon/paranormala_fenomen_4.png">
+<meta property="og:site_name" content="Paranormal.se">
+<meta property="fb:admins" content="aigan">
+<link rel="home" href="/">
+<link rel="contents" href="/topic/">
+<link rel="help" href="/topic/paranormalse.html">

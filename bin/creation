@@ -116,11 +116,11 @@ use WA::Domains;
 
     my $para_css =
     {
-	persistent => [ "/css/default.css" ],
+	persistent => [ "/css/default-2016.css" ],
 	alternate =>
 	{
-	    light => [ "/css/light.css" ],
-	    blue => [ "/css/blue.css" ],
+	    light => [ "/css/light-2016.css" ],
+#	    blue => [ "/css/blue.css" ],
 	},
 	default => 'light',
     };

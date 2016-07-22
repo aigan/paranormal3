@@ -1,34 +1,32 @@
-﻿<div id="admin_menu">
-<form action="/search/alternatives.tt"><div style="float: right"><input type="hidden" name="run" value="topic_search_published"/><label for="top_talias">Sök <input size="10" name="talias" id="top_talias"/></label></div></form>
-
-<form action="/member/db/topic/view/">
-<div>
-  [[% u.level +%] [%+ jump('Hem', '/') %]
- | [%+ jump('Index', '/topic/') %]
-[% IF u.level >= 2 %]
-  |  [% jump('Torget', '/member/db/') %]
-  [% IF u.complexity >= 5 %]
-     |  [% jump('Admin', '/member/db/topic/') %]
-     [% IF u.level >= 5 %]
-        |  [% jump('Medlemmar', '/member/db/person/find/') %]
-     [% END %]
-  [% END %]
-  [% IF u.complexity >= 10 %]
-     |  <input name="search" size="10">
-  [% END %]
- |  [% jump('Inställningar', '/member/db/person/edit/') %]
- |  [% jump('Logga ut', '/', run='user_logout', href_class="") %]
- ]
-[% ELSE %]
- |  [% jump('Logga in','/login.tt') %]
- |  [% jump('Bli medlem','/member/db/person/quest/level_00/') %]
- ]
-[% END %]
-</div>
-</form>
-</div>
+﻿<nav id="admin_menu">
+	<form action="/search/alternatives.tt"><input type="hidden" name="run" value="topic_search_published"><input size="10" name="talias" placeholder="Sök" id="top_talias" style="float:right"></form>
+	<form action="/member/db/topic/view/">
+		<div>
+			[[% u.level +%] [%+ jump('Hem', '/') %]
+			| [%+ jump('Index', '/topic/') %]
+			[% IF u.level >= 2 %]
+				|  [% jump('Torget', '/member/db/') %]
+				[% IF u.complexity >= 5 %]
+					|  [% jump('Admin', '/member/db/topic/') %]
+					[% IF u.level >= 5 %]
+						|  [% jump('Medlemmar', '/member/db/person/find/') %]
+					[% END %]
+				[% END %]
+				[% IF u.complexity >= 10 %]
+					|  <input name="search" size="10">
+				[% END %]
+				|  [% jump('Inställningar', '/member/db/person/edit/') %]
+				|  [% jump('Logga ut', '/', run='user_logout', href_class="") %]
+				]
+			[% ELSE %]
+				|  [% jump('Logga in','/login.tt') %]
+				]
+			[% END %]
+		</div>
+	</form>
+</nav>
 
 [% PROCESS form_start.tt %]
-[% PROCESS headline.tt %]
 [% PROCESS info_box.tt %]
-<div id="main">
+<main>
+[% PROCESS headline.tt %]

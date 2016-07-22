@@ -56,6 +56,11 @@ body main
 	margin-top: 0.5em;
 }
 
+body.with_sidebar
+{
+	max-width: 100%;
+}
+
 body.with_sidebar main
 {
 	display: flex;
@@ -189,6 +194,24 @@ body.with_sidebar article
 {
 	border-top: 2px groove;
 }
+
+section.content
+{
+	position: relative;
+}
+
+.content .entry
+{
+	max-width: 55em;
+/*
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	word-break: break-word;
+	text-overflow: ellipsis;
+	overflow: hidden;
+*/
+}
+
 
 .entry
 {
@@ -726,31 +749,90 @@ TEXTAREA.big_input
 	margin: 0.0em;
 }
 
+
+.login
+{
+	text-align: center;
+}
+
+.login container
+{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	text-align: left;
+}
+
+container p-col
+{
+	float:left;
+	display: block;
+	margin: 0.3em;
+}
+
+container row
+{
+	display: block;
+}
+
+.login h1
+{
+	font-size: 1.2em;
+}
+.login p
+{
+}
+
+.login button
+{
+	float: right;
+  font-size: 1em;
+  padding: 0.2em 0.4em;
+	margin: 0.3em;
+}
+
+
+
+nav.google.search
+{
+	box-sizing: content-box;
+	margin-bottom: 5em;
+}
+
+nav.search .gsc-control-cse
+{
+	margin-top: 2em;
+	padding: 0;
+}
+
+
+/*********** FRONTPAGE **************/
+
+.front .boxes {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+.front .boxes section {
+	margin: 1em 3em 2em 1em;
+}
+
 .front h2
 {
 	font-size: 0.7em;
 	letter-spacing:	0.3em;
-	margin: 0;
 	padding-top: 1em;
 	text-align: left;
 }
 
-.front table
-{
-	border-collapse: collapse;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-}
 
-.front table.login
-{
-	width: auto;
-}
 
-table.login
+.front .logo
 {
-	margin: 0 auto;
+	margin: auto;
+	width: 238px;
+	display: block;
 }
 
 .front h1
@@ -763,6 +845,7 @@ table.login
 {
 	font-style: italic;
 	margin: 0;
+	text-align: center;
 }
 
 .front td
@@ -771,18 +854,32 @@ table.login
 	vertical-align: top;
 }
 
-.front img
+.front header
 {
-	display: block;
-	padding-right: 0.2em;
+	margin: 2em 0 4em;
 }
 
-body.front article, body.meta article
+
+.front article, body.meta article
 {
 	margin: 0 5%;
 	padding: 0;
 	border: 0;
 }
+
+.front section.intro
+{
+	max-width: 32em;
+	margin: auto;
+	padding: 1em;
+}
+
+.front section.intro p
+{
+	margin-bottom: 0.7em;
+}
+
+/******************************************************************/
 
 .notice
 {

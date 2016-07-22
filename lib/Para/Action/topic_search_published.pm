@@ -170,7 +170,7 @@ sub handler
 	{
 	    my $query = $q->escapeHTML($talias);
 #	    $response->redirect("/cgi-bin/htsearch?config=htdig&words=$query");
-	    $response->redirect("/cgi-bin/search.cgi?q=$query");
+	    $response->redirect("/search/?q=$query");
 	    return "$talias Not found";
 	}
 	elsif( $err->type eq 'alternatives' )
@@ -186,7 +186,7 @@ sub handler
 	{
 	    my $query = $q->escapeHTML($talias);
 #	    $response->redirect("/cgi-bin/htsearch?config=htdig&words=$query");
-	    $response->redirect("/cgi-bin/search.cgi?q=$query");
+	    $response->redirect("/search/?q=$query");
 	    return "$talias Not found";
 	}
 	else

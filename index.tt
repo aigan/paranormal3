@@ -1,106 +1,83 @@
 ﻿[% META
-	otitle = "Paranormal.se"
-        next_template='-site.login_page'
-	next_action = "user_login"
-	body_class = "front"
-	description="Ett uppslagsverk om paranormala fenomen"
+	 otitle = "Paranormal.se"
+   next_template='-site.login_page'
+	 next_action = "user_login"
+	 body_class = "front"
+	 description="Ett uppslagsverk om paranormala fenomen"
+	 header_extra="header_extra_index.tt"
 %]
 
-<div id="fb-root"></div>
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({appId: '143726359001152', status: true, cookie: true,
-             xfbml: true});
-  };
-  (function() {
-    var e = document.createElement('script'); e.async = true;
-    e.src = document.location.protocol +
-      '//connect.facebook.net/sv_SE/all.js';
-    document.getElementById('fb-root').appendChild(e);
-  }());
-</script>
-
-
-<table>
-<tr><td style="width:75px"><a href="/topic/bilden_pa_boken.html"><img src="/images/icon/paranormala_fenomen_icon.jpg" alt="" style="border:0" /></a></td><td style="vertical-align: bottom">
-<h1 ><a href="/">Paranormal.se</a></h1>
-<p class="slogan">[% display_slogan %]</p>
-
-</td></tr>
-</table>
+<header>
+	<a class="logo" href="#content"><img src="/images/icon/paranormala_fenomen_4.png" alt="Paranormal.se" width="238" height="346"></a>
+	<p class="slogan">[% display_slogan %]</p>
+</header>
 
 [% IF u.level %]
-<br/>
 [% ELSE %]
-   <p>Här finns tusentals uppslagsord. Sök med sökrutan uppe till höger. Du kan också bläddra i [% jump("indexet", "/topic") %]. Eller klicka dig fram bland korshänvisningarna i uppslagsorden.</p>
-
-   <p>Som medlem kan du få webbplatsen anpassad efter dina egna intressen och önskemål och komma i kontakt med andra medlemmar.</p>
+	<section class="intro">
+		<p>Här finns tusentals uppslagsord. Sök med sökrutan uppe till höger. Du kan också bläddra i [% jump("indexet", "/topic") %]. Eller klicka dig fram bland korshänvisningarna i uppslagsorden.</p>
+	</section>
 
    [% PROCESS login_compact.tt %]
 [% END %]
 
-<table>
-<tr><td>
-<h1>Innehåll</h1>
-
-<h2><a href="/topic/toppkategori.html">OMRÅDEN:</a></h2>
-<div class="indent">
-<a href="/topic/kategori_magi.html">Magi</a><br/>
-<a href="/topic/kategori_halsa.html">Hälsa</a><br/>
-<a href="/topic/kategori_spadom.html">Spådom</a><br/>
-<a href="/topic/kategori_vetenskap.html">Vetenskap</a><br/>
-</div>
-
-<h2>SORTER:</h2>
-<div class="indent">
-<a href="/topic/person.html">Personer</a><br/>
-<a href="/topic/grupp.html">Grupper</a><br/>
-<a href="/topic/bok.html">Böcker</a><br/>
-<a href="/topic/film.html">Filmer</a><br/>
-</div>
-
-<h2><a href="/member/db/topic/list/latest_texts.tt">SENAST ÄNDRADE TEXTER:</a></h2>
-
-<div style="font-size: 0.7em" class="indent">
-   [% FOREACH rec = select_list("from t where t_entry is true and t_active is true and t_status>3 and t_published is true order by t_created desc limit 5") %]
-      [% t = topic(rec.t) %]
-      [% PROCESS tlink.tt %]<br/>
-   [% END %]
-</div>
-
-</td><td>
-
-<h2><a href="/topic/kontaktuppgifter_for_paranormalse.html">DITT KONTAKTNÄT:</a></h2>
-<div class="indent">
-<a href="/topic/paratraff.html">Träffas</a><br/>
-<a href="/help/">Hjälp-linjen</a><br/>
-<a href="/member/db/">Medlemssida</a><br/>
-<a href="/topic/diskussionslistan_for_paranormalse.html">Diskussionslista</a><br/>
-<a href="/member/chat/login.tt">Chatta</a><br/>
-</div>
-
-
-<h2>OM WEBBPLATSEN:</h2>
-<div class="indent">
-<a href="/topic/paranormalse.html">Paranormal.se</a><br/>
-<a href="/member/payment/">Gåvor</a><br/>
-<a href= "/topic/malsattningen_med_paranormalse.html">M&aring;ls&auml;ttning</a><br/>
-<a href= "/meta/news.html">Nyheter</a><br/>
-</div>
-
-
-<h2>LÄNKAR:</h2>
-<div class="indent">
-<a href="http://www.facebook.com/groups/5743101423">Paranormal.se på Facebook</a><br/>
-<a href="/meta/banners.html">Banners</a><br/>
-<a href="http://parapsykologi.se/">SPF</a><br/>
-<a href="/topic/lankbyte.html">L&auml;nkbyte</a><br/>
-</div>
-
-</td><td>
-
-</td></tr>
-</table>
+<nav class="boxes" id="content" name="content">
+	<section>
+		<h2><a href="/topic/toppkategori.html">OMRÅDEN:</a></h2>
+		<div class="indent">
+			<a href="/topic/kategori_magi.html">Magi</a><br>
+			<a href="/topic/kategori_halsa.html">Hälsa</a><br>
+			<a href="/topic/kategori_spadom.html">Spådom</a><br>
+			<a href="/topic/kategori_vetenskap.html">Vetenskap</a><br>
+		</div>
+	</section>
+	<section>
+		<h2>SORTER:</h2>
+		<div class="indent">
+			<a href="/topic/person.html">Personer</a><br>
+			<a href="/topic/grupp.html">Grupper</a><br>
+			<a href="/topic/bok.html">Böcker</a><br>
+			<a href="/topic/film.html">Filmer</a><br>
+		</div>
+	</section>
+	<section>
+		<h2><a href="/member/db/topic/list/latest_texts.tt">SENAST ÄNDRADE TEXTER:</a></h2>
+		<div style="font-size: 70%; margin-left: 1.7em">
+			[% FOREACH rec = select_list("from t where t_entry is true and t_active is true and t_status>3 and t_published is true order by t_created desc limit 5") %]
+				[% t = topic(rec.t) %]
+				[% PROCESS tlink.tt %]<br>
+			[% END %]
+		</div>
+	</section>
+	<section>
+		<h2><a href="/topic/kontaktuppgifter_for_paranormalse.html">DITT KONTAKTNÄT:</a></h2>
+		<div class="indent">
+			<a href="/topic/paratraff.html">Träffas</a><br>
+			<a href="/help/">Hjälp-linjen</a><br>
+			<a href="/member/db/">Medlemssida</a><br>
+			<a href="/topic/diskussionslistan_for_paranormalse.html">Diskussionslista</a><br>
+			<a href="/member/chat/login.tt">Chatta</a><br>
+		</div>
+	</section>
+	<section>
+		<h2>OM WEBBPLATSEN:</h2>
+		<div class="indent">
+			<a href="/topic/paranormalse.html">Paranormal.se</a><br>
+			<a href="/member/payment/">Gåvor</a><br>
+			<a href= "/topic/malsattningen_med_paranormalse.html">M&aring;ls&auml;ttning</a><br>
+			<a href= "/meta/news.html">Nyheter</a><br>
+		</div>
+	</section>
+	<section>
+		<h2>LÄNKAR:</h2>
+		<div class="indent">
+			<a href="http://www.facebook.com/groups/5743101423">Paranormal.se på Facebook</a><br>
+			<a href="/meta/banners.html">Banners</a><br>
+			<a href="http://parapsykologi.se/">SPF</a><br>
+			<a href="/topic/lankbyte.html">L&auml;nkbyte</a><br>
+		</div>
+	</section>
+</nav>
 
 <div style="font-size: 0.7em; text-align: right">
 <a href="/welcome.en.html">Go to site in english</a>

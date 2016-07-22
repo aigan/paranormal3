@@ -9,7 +9,7 @@ package Para::Topic;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2016 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -456,6 +456,7 @@ sub publish_from_queue
 #	debug "Adding publish from queue for $t->{t} ($t)";
 		$req->add_job('run_code', 'publish', sub
 									{
+										$t->generate_url;
 										$t->publish;
 									});
 		$cnt++;
@@ -3534,6 +3535,7 @@ sub generate_url
 		if ( $m->present_contact_public < 5 )
 		{
 			$t->file('');							# This will make filename undef
+			$t->set_status($C_S_DENIED);
 			debug(1,sprintf "That is a anonumous user");
 			return [];
 		}
@@ -3541,6 +3543,7 @@ sub generate_url
 		if ( $m->level < 0 )
 		{
 			$t->file('');							# This will make filename undef
+			$t->set_status($C_S_DENIED);
 			debug(1,sprintf "%s is an old user", $m->desig);
 			return [];
 		}

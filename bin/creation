@@ -11,7 +11,7 @@ package Para;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2016 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -20,7 +20,7 @@ package Para;
 
 BEGIN
 {
-	our $VERSION  = 1.73;
+	our $VERSION  = 1.74;
 	print "Starting creation $VERSION\n";
 
 	use FindBin;

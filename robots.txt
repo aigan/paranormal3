@@ -2,10 +2,8 @@
 User-agent: *
 Disallow: /admin/
 Disallow: /bin/
-Disallow: /css/
 Disallow: /CVS/
 Disallow: /email/
-Disallow: /images/
 Disallow: /inc/
 Disallow: /lib/
 Disallow: /logs/

@@ -17,18 +17,25 @@
 	<section class="intro">
 		<p>Här finns tusentals uppslagsord. Sök med sökrutan uppe till höger. Du kan också bläddra i [% jump("indexet", "/topic") %]. Eller klicka dig fram bland korshänvisningarna i uppslagsorden.</p>
 	</section>
-
-   [% PROCESS login_compact.tt %]
 [% END %]
 
 <nav class="boxes" id="content" name="content">
 	<section>
-		<h2><a href="/topic/toppkategori.html">OMRÅDEN:</a></h2>
+		<h2>OMRÅDEN:</h2>
 		<div class="indent">
 			<a href="/topic/kategori_magi.html">Magi</a><br>
 			<a href="/topic/kategori_halsa.html">Hälsa</a><br>
 			<a href="/topic/kategori_spadom.html">Spådom</a><br>
 			<a href="/topic/kategori_vetenskap.html">Vetenskap</a><br>
+		</div>
+	</section>
+	<section>
+		<h2>DESSUTOM:</h2>
+		<div class="indent">
+			<a href="/topic/kategori_estetik.html">Estetik</a><br>
+			<a href="/topic/kategori_samhalle.html">Samhälle</a><br>
+			<a href="/topic/kategori_sociologi.html">Sociologi</a><br>
+			<a href="/topic/kategori_underhallning.html">Underhållning</a><br>
 		</div>
 	</section>
 	<section>
@@ -40,6 +47,7 @@
 			<a href="/topic/film.html">Filmer</a><br>
 		</div>
 	</section>
+	[% IF 0 %]
 	<section>
 		<h2><a href="/member/db/topic/list/latest_texts.tt">SENAST ÄNDRADE TEXTER:</a></h2>
 		<div style="font-size: 70%; margin-left: 1.7em">
@@ -59,13 +67,14 @@
 			<a href="/member/chat/login.tt">Chatta</a><br>
 		</div>
 	</section>
+	[% END %]
 	<section>
 		<h2>OM WEBBPLATSEN:</h2>
 		<div class="indent">
 			<a href="/topic/paranormalse.html">Paranormal.se</a><br>
-			<a href="/member/payment/">Gåvor</a><br>
 			<a href= "/topic/malsattningen_med_paranormalse.html">M&aring;ls&auml;ttning</a><br>
 			<a href= "/meta/news.html">Nyheter</a><br>
+			<a href="/topic/historia_for_paranormalse.html">Historia</a><br>
 		</div>
 	</section>
 	<section>

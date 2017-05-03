@@ -805,6 +805,13 @@ nav.search .gsc-control-cse
 	padding: 0;
 }
 
+nav.search .gsc-wrapper
+{
+	margin-top: 2em;
+	box-sizing: border-box;
+}
+
+
 
 /*********** FRONTPAGE **************/
 

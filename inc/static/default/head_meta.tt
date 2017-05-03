@@ -3,7 +3,7 @@
 <title>[% t.title | html %]</title>
 <meta name="description" content="[% t.text | html %]" >
 <meta name="robots" content="[% IF no_robots_index;'no';END %]index,[% IF no_robots_follow;'no';END %]follow">
-<meta property="og:image" content="http://beta.paranormal.se/images/icon/paranormala_fenomen_4.png">
+<meta property="og:image" content="https://paranormal.se/images/icon/paranormala_fenomen_4.png">
 <meta property="fb:app_id" content="108217159240271">
 <link rel="top" href="/" >
 <link rel="contents" href="/" >

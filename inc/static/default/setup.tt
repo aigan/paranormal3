@@ -18,8 +18,7 @@
             <a href="[% it.media_url_full %]"><img alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url %]"></a>
          [% ELSE %]
 	    [% IF it.media_type == 'image/svg+xml' %]
-	      <embed alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url | html %]" 
-		     type="image/svg+xml" pluginspage="http://www.adobe.com/svg/viewer/install/" />
+	      <embed alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url | html %]" type="image/svg+xml" >
 	    [% ELSE %]
 	      <img alt="[% it.title | html %]"[% width_str %][% hight_str %] src="[% it.media_url %]">
 	    [% END %]

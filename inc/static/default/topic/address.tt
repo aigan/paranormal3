@@ -8,7 +8,7 @@
    <div class="address">
    [% matches = street.match('^(.+) (\d+)') %]
    [% IF t.arc(25) AND t.arc(26) and matches.1 %]
-      <a href="[% uri("http://kartor.eniro.se/query", stq=0, streetname= matches.0, streetnumber= matches.1, city= t.arc(26).value, what='map', asearch=1) %]" target="external">
+      <a href="[% uri("https://kartor.eniro.se/query", stq=0, streetname= matches.0, streetnumber= matches.1, city= t.arc(26).value, what='map', asearch=1) %]" target="external">
       [% street %]<br>
       [% t.arc(25).value %] &nbsp; [% t.arc(26).value %]
       </a>
@@ -29,7 +29,7 @@
    <div class="address">
    [% matches = street.match('^(.+) (\d+)') %]
    [% IF t.arc(25) AND t.arc(26) and matches.1 %]
-      <a href="[% uri("http://kartor.eniro.se/query", stq=0, streetname= matches.0, streetnumber= matches.1, city= t.arc(26).value, what='map', asearch=1) %]" target="external">
+      <a href="[% uri("https://kartor.eniro.se/query", stq=0, streetname= matches.0, streetnumber= matches.1, city= t.arc(26).value, what='map', asearch=1) %]" target="external">
       [% t.arc(24).value %]<br>
       [% t.arc(25).value %] &nbsp; [% t.arc(26).value %]
       </a>

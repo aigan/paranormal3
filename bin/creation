@@ -19,20 +19,20 @@ package Para;
 #=====================================================================
 
 BEGIN
-{
-	our $VERSION  = 1.74;
-	print "Starting creation $VERSION\n";
+  {
+    our $VERSION  = 1.74;
+    print "Starting creation $VERSION\n";
 
-	use FindBin;
-	my $configfile = $FindBin::Bin . "/config.pl";
-	do $configfile or die "Failed to load config $configfile: $! ($@)\n";
-}
+    use FindBin;
+    my $configfile = $FindBin::Bin . "/config.pl";
+    do $configfile or die "Failed to load config $configfile: $! ($@)\n";
+  }
 
 use strict;
 
-our $PARAFRAME;									# Dir without ending /
-our $APPROOT;										# Dir without ending /
-our $SITE_CFG;									# Hashref with rest of config
+our $PARAFRAME;			# Dir without ending /
+our $APPROOT;			# Dir without ending /
+our $SITE_CFG;			# Hashref with rest of config
 
 use lib "$PARAFRAME/lib";
 use lib "$APPROOT/lib";
@@ -58,306 +58,301 @@ use Para::Domains;
 use WA::Domains;
 
 {
-	# Do not daemonize if run with cmdline argument
-	my $daemonize = $ARGV[0] ? 0 : 1;
-	my $watchdog = 1;							# Use watchdog
+  # Do not daemonize if run with cmdline argument
+  my $daemonize = $ARGV[0] ? 0 : 1;
+  my $watchdog = 1;		# Use watchdog
 
-	unless( $SITE_CFG )
-	{
-		die "Site configuration missing";
-	}
+  unless( $SITE_CFG )
+    {
+      die "Site configuration missing";
+    }
 
-	if ( looks_like_number($ARGV[1]) )
-	{
-		$SITE_CFG->{'port'} = $ARGV[1];
-	}
+  if ( looks_like_number($ARGV[1]) ) {
+    $SITE_CFG->{'port'} = $ARGV[1];
+  }
 
-	my $logfile = "$APPROOT/logs/creation.log";
-	if ( looks_like_number($ARGV[1]) )
-	{
-		$logfile =~ s/\.log$/.$ARGV[1].log/;
-	}
+  my $logfile = "$APPROOT/logs/creation.log";
+  if ( looks_like_number($ARGV[1]) ) {
+    $logfile =~ s/\.log$/.$ARGV[1].log/;
+  }
 
-	my $cfg =
-	{
-	 'paraframe' => $PARAFRAME.'/share',
-	 'ttcdir'    => "$APPROOT/var/ttc",
-	 'paraframe_group' => 'psi_cgi',
+  my $cfg =
+    {
+     'paraframe' => $PARAFRAME.'/share',
+     'ttcdir'    => "$APPROOT/var/ttc",
+     'paraframe_group' => 'psi_cgi',
 
-	 'appbase'      => 'Para',
-	 'approot'      => $APPROOT,
+     'appbase'      => 'Para',
+     'approot'      => $APPROOT,
 
-	 'user_class'   => 'Para::Member',
-	 'bg_user_code' => sub{ Para::Member->skapelsen },
-	 'logfile'      => $logfile,
-	 'pidfile'      => "$APPROOT/var/creation.pid",
+     'user_class'   => 'Para::Member',
+     'bg_user_code' => sub{ Para::Member->skapelsen },
+     'logfile'      => $logfile,
+     'pidfile'      => "$APPROOT/var/creation.pid",
 
-	 'port'         => $SITE_CFG->{'port'},
-	 'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
-	 'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
-	 'umask'        => 0007,
-	 'time_stringify'  => 1,
-	 'site_auto'       => 1,
-	 'site_autodetect' => 0,
-	};
-	Para::Frame->configure( $cfg );
+     'port'         => $SITE_CFG->{'port'},
+     'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
+     'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
+     'umask'        => 0007,
+     'time_stringify'  => 1,
+     'site_auto'       => 1,
+     'site_autodetect' => 0,
+    };
+  Para::Frame->configure( $cfg );
 
-	debug "ttcdir is ".$cfg->{ttcdir};
+  debug "ttcdir is ".$cfg->{ttcdir};
 
-	# Configure database
-	#
-	$Para::dbix = Para::Frame::DBIx ->
-		new({
-				 connect => $SITE_CFG->{'dbconnect'},
-				 bind_dbh => \ $Para::dbh,
-				 import_tt_params => 1,
-				});
+  # Configure database
+  #
+  $Para::dbix = Para::Frame::DBIx ->
+    new({
+	 connect => $SITE_CFG->{'dbconnect'},
+	 bind_dbh => \ $Para::dbh,
+	 import_tt_params => 1,
+	});
 
 
-	my $para_css =
-	{
-	 persistent => [ "/css/default-2016.css" ],
-	 alternate =>
-	 {
-		light => [ "/css/light-2016.css" ],
-#	    blue => [ "/css/blue.css" ],
-	 },
-	 default => 'light',
-	};
+  my $para_css =
+    {
+     persistent => [ "/css/default-2016.css" ],
+     alternate =>
+     {
+      light => [ "/css/light-2016.css" ],
+      #	    blue => [ "/css/blue.css" ],
+     },
+     default => 'light',
+    };
 
 
 
-	Para::Frame::Site->add({
-													# Path in  URL to website
-													'webhome'    => '',
-													'webhost'    => $SITE_CFG->{'webhost'},
-													'aliases'    => ['paranormal.se:443'],
-													'last_step'  => "/member/db/",
-													'static_ttc' => "$APPROOT/var/ttc/static",
-													'backup_host'=> $SITE_CFG->{'backup_host'},
-													'loadpage'    => "/meta/loading.html",
-													'languages' => ['sv'],
-													'recaptcha_key_public' => '6Ld-QgIAAAAAAKUksT_YuiLFfJbwEgXSWw-ItCSB',
-													'recaptcha_key_private' => '6Ld-QgIAAAAAAF6picXEcioZgeGl-et9NaC9qdwC',
-													'name'       => 'Paranormal.se',
-													'email'      => 'jonas@paranormal.se',
-													'params'     =>
-													{
-													 'css'        => $para_css,
-													},
-												 });
+  Para::Frame::Site->add({
+			  # Path in  URL to website
+			  'webhome'    => '',
+			  'webhost'    => $SITE_CFG->{'webhost'},
+			  'aliases'    => ['paranormal.se:443'],
+			  'last_step'  => "/member/db/",
+			  'static_ttc' => "$APPROOT/var/ttc/static",
+			  'backup_host'=> $SITE_CFG->{'backup_host'},
+			  'loadpage'    => "/meta/loading.html",
+			  'languages' => ['sv'],
+			  'recaptcha_key_public' => '6Ld-QgIAAAAAAKUksT_YuiLFfJbwEgXSWw-ItCSB',
+			  'recaptcha_key_private' => '6Ld-QgIAAAAAAF6picXEcioZgeGl-et9NaC9qdwC',
+			  'name'       => 'Paranormal.se',
+			  'email'      => 'jonas@paranormal.se',
+			  'params'     =>
+			  {
+			   'css'        => $para_css,
+			  },
+			 });
 
 
-	Para::Frame::Site->add({
-													'webhost'    => $WA::HOST,
-													'appbase'    => "WA",
-													'params'     =>
-													{
-													 'css'        => $para_css,
-													 'wa_domains'        => WA::Domains->new,
-													},
-												 });
+  Para::Frame::Site->add({
+			  'webhost'    => $WA::HOST,
+			  'appbase'    => "WA",
+			  'params'     =>
+			  {
+			   'css'        =>
+			   {
+			    persistent => ["css/default.css"],
+			   },
+			   'wa_domains'        => WA::Domains->new,
+			  },
+			 });
 
-	Para::Frame::Site->add({
-													'webhost'    => "tecken.se",
-													'params'     =>
-													{
-													 'css'        => $para_css,
-													},
-												 });
+  Para::Frame::Site->add({
+			  'webhost'    => "tecken.se",
+			  'params'     =>
+			  {
+			   'css'        => $para_css,
+			  },
+			 });
 
-	Para::Frame::Site->add({
-#	'webhost'    => "göteborg.para.se",
-#	'webhost'    => "xn--gteborg-90a.para.se",
-													'webhost'    => "goteborg.para.se",
-													'code'       => 'goteborg',
-													'css'        =>
-													{
-													 persistent => ["pf/css/paraframe.css_tt",
-																					"css/goteborg.css"],
-													},
-													'params'     =>
-													{
-													},
-												 });
+  Para::Frame::Site->add({
+			  #	'webhost'    => "göteborg.para.se",
+			  #	'webhost'    => "xn--gteborg-90a.para.se",
+			  'webhost'    => "goteborg.para.se",
+			  'code'       => 'goteborg',
+			  'css'        =>
+			  {
+			   persistent => ["pf/css/paraframe.css_tt",
+					  "css/goteborg.css"],
+			  },
+			  'params'     =>
+			  {
+			  },
+			 });
 
-	Para::Frame::Site->add({
-													'webhost'    => "frame.para.se",
-													'params' =>
-													{
-													},
-												 });
+  Para::Frame::Site->add({
+			  'webhost'    => "frame.para.se",
+			  'params' =>
+			  {
+			  },
+			 });
 
-	Para::Frame::Site->add({
-													'webhost'    => "parapsychology.se",
-													'webhome'    => "/PA-stockholm/photo",
-													'css'        =>
-													{
-													 persistent => ["/PA-stockholm/css_styles/ordinary.css",
-																					"pf/css/paraframe.css_tt"],
-													},
-													'params' =>
-													{
-													},
-												 });
+  Para::Frame::Site->add({
+			  'webhost'    => "parapsychology.se",
+			  'webhome'    => "/PA-stockholm/photo",
+			  'css'        =>
+			  {
+			   persistent => ["/PA-stockholm/css_styles/ordinary.css",
+					  "pf/css/paraframe.css_tt"],
+			  },
+			  'params' =>
+			  {
+			  },
+			 });
 
-#    Para::Frame::Site->add({
-#			    'code'        => 'emelie',
-#			    'webhome'     => '',
-##			    'webhome'     => '/test',
-#			    'webhost'     => 'emelie.tangelin.se',
-##			    'appbase'     => 'Emelie',
-##			    'approot'     => $Emelie::APPROOT,
-#			    'is_compiled' => 0,
-#			    'css'         =>
-#			    {
-#			     persistent =>
-#			     [
-#			      "pref/styles.css",
-#			     ],
-#			    },
-#			    'params' 	  =>
-#			    {
-#			     'favicon'           => "/pref/images/orb.ico",
-#			    },
-#			   });
-
-
-	# Make sure we can read/write generated files
-	chmod_tree( "$APPROOT/var" );
-	# Takes too long
-#    chmod_tree( "$APPROOT/topic",
-#		{
-#		    umask => 0,
-#		    dirmode => 02775,
-#		    filemode => 0664,
-#		});
+  #    Para::Frame::Site->add({
+  #			    'code'        => 'emelie',
+  #			    'webhome'     => '',
+  ##			    'webhome'     => '/test',
+  #			    'webhost'     => 'emelie.tangelin.se',
+  ##			    'appbase'     => 'Emelie',
+  ##			    'approot'     => $Emelie::APPROOT,
+  #			    'is_compiled' => 0,
+  #			    'css'         =>
+  #			    {
+  #			     persistent =>
+  #			     [
+  #			      "pref/styles.css",
+  #			     ],
+  #			    },
+  #			    'params' 	  =>
+  #			    {
+  #			     'favicon'           => "/pref/images/orb.ico",
+  #			    },
+  #			   });
 
 
-	# Define TT filters
-	#
-	Para::Frame::Burner->get_by_type('html')->add_filters({
-																												 'html_psi' => \&Para::Widget::html_psi_factory,
-																												 'html_psi_nolinks' => \&Para::Widget::html_psi_nolinks_factory,
-																												}, 1);
-
-	# Attatch code to hooks
-	#
-
-	# Just in case we temporarily switched to root and got an exception
-	Para::Frame->add_hook('on_error_detect', sub
-												{
-													Para::Member->revert_from_temporary_user();
-												});
-
-	Para::Frame->add_hook('before_user_logout', sub
-												{
-													$_[0]->on_logout;
-												});
-
-	Para::Frame->add_hook('user_login', sub
-												{
-													$_[0]->on_login;
-												});
-	Para::Frame->add_hook('before_db_commit', sub
-												{
-													Para::Member->commit();
-													Para::Topic->commit();
-												});
-	Para::Frame->add_hook('after_db_rollback', sub
-												{
-													Para::Member->rollback();
-													Para::Topic->rollback();
-												});
-	Para::Frame->add_hook('done', \&Para::Topic::publish_urgent);
-	Para::Frame->add_hook('on_startup', sub
-												{
-													$Para::dbix->connect;
-
-													Para::Constants->init;
-
-													# Take shortcut...
-													return unless $SITE_CFG->{'do_bgjob'};
-
-													# Setup MOTD
-													Para::Widget::new_entry(undef, 'static');
-													$Para::MOTD = Para::Widget::html_psi( Para::Member->skapelsen->presentation );
-												});
-	Para::Frame->add_hook('add_background_jobs', \&Para::add_background_jobs);
-	Para::Frame->add_hook('on_memory', \&Para::on_memory);
-	Para::Frame->add_hook('busy_background_job', \&Para::clear_caches);
+  # Make sure we can read/write generated files
+  chmod_tree( "$APPROOT/var" );
+  # Takes too long
+  #    chmod_tree( "$APPROOT/topic",
+  #		{
+  #		    umask => 0,
+  #		    dirmode => 02775,
+  #		    filemode => 0664,
+  #		});
 
 
-	$Para::dbix->connect;					### Need the DB for this
-	my $global_params =
-	{
-	 'diff'              => \&Para::Widget::diff,
-	 'tfilter_init'      => \&Para::Widget::tfilter_init,
-	 'new_entry'         => \&Para::Widget::new_entry,
+  # Define TT filters
+  #
+  Para::Frame::Burner->get_by_type('html')->add_filters({
+							 'html_psi' => \&Para::Widget::html_psi_factory,
+							 'html_psi_nolinks' => \&Para::Widget::html_psi_nolinks_factory,
+							}, 1);
 
-	 'members'           => bless({}, 'Para::Member'),
+  # Attatch code to hooks
+  #
 
-	 'topic'             => sub{ Para::Topic->get_by_id( @_ ) },
-	 'find_topic'        => sub{ Para::Topic->find( @_ ) },
-	 'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
+  # Just in case we temporarily switched to root and got an exception
+  Para::Frame->add_hook('on_error_detect', sub
+			{
+			  Para::Member->revert_from_temporary_user();
+			});
 
-	 'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
+  Para::Frame->add_hook('before_user_logout', sub
+			{
+			  $_[0]->on_logout;
+			});
 
-	 'getarc'            => sub{ Para::Arc->get( @_ ) },
-	 'getarctype'        => sub{ Para::Arctype->new( @_ ) },
-	 'getarctype_list'   => sub{ Para::Arctype->list( @_ ) },
+  Para::Frame->add_hook('user_login', sub
+			{
+			  $_[0]->on_login;
+			});
+  Para::Frame->add_hook('before_db_commit', sub
+			{
+			  Para::Member->commit();
+			  Para::Topic->commit();
+			});
+  Para::Frame->add_hook('after_db_rollback', sub
+			{
+			  Para::Member->rollback();
+			  Para::Topic->rollback();
+			});
+  Para::Frame->add_hook('done', \&Para::Topic::publish_urgent);
+  Para::Frame->add_hook('on_startup', sub
+			{
+			  $Para::dbix->connect;
 
-	 'getalias_list'     => sub{ Para::Alias->find_by_name( @_ ) },
+			  Para::Constants->init;
 
-	 'getevent'          => sub{ Para::Event->get_by_id( @_ ) },
-	 'getevent_list'     => sub{ Para::Event->list( @_ ) },
+			  # Take shortcut...
+			  return unless $SITE_CFG->{'do_bgjob'};
 
-	 'getpayment'        => sub{ Para::Payment->new( @_ ) },
+			  # Setup MOTD
+			  Para::Widget::new_entry(undef, 'static');
+			  $Para::MOTD = Para::Widget::html_psi( Para::Member->skapelsen->presentation );
+			});
+  Para::Frame->add_hook('add_background_jobs', \&Para::add_background_jobs);
+  Para::Frame->add_hook('on_memory', \&Para::on_memory);
+  Para::Frame->add_hook('busy_background_job', \&Para::clear_caches);
 
-	 'year'              => sub{ now->year },
-	 'now'               => \&Para::Frame::Time::now,
-	 'date'              => \&Para::Frame::Time::date,
-	 'elapsed_time'      => \&Para::Frame::Utils::elapsed_time,
-	 'timespan'          => \&Para::Frame::Time::timespan,
 
-	 'uc'                => sub{ "\U$_[0]" },
-	 'lc'                => sub{ "\L$_[0]" },
+  $Para::dbix->connect;		### Need the DB for this
+  my $global_params =
+    {
+     'diff'              => \&Para::Widget::diff,
+     'tfilter_init'      => \&Para::Widget::tfilter_init,
+     'new_entry'         => \&Para::Widget::new_entry,
 
-	 'timediff'          => \&Para::Frame::Utils::timediff,
-	 'favicon'           => "/favicon.ico",
-	 'body_class'        => "meta",
-	 'motd'              => sub{ $Para::MOTD },
-	 'display_slogan'    => \&Para::display_slogan,
-	 'C'                 => Para::Constants->new,
-	 'domains'           => Para->domains,
+     'members'           => bless({}, 'Para::Member'),
 
-	};
-	$Para::dbix->disconnect;			### Done with DB
-	Para::Frame->add_global_tt_params( $global_params );
+     'topic'             => sub{ Para::Topic->get_by_id( @_ ) },
+     'find_topic'        => sub{ Para::Topic->find( @_ ) },
+     'find_one_topic'    => sub{ Para::Topic->find_one( @_ ) },
 
-	$Data::Dumper::Maxdepth = 5;
+     'interest_tree'     => sub{ Para::Interest::Tree->new( @_ ) },
 
-	if ( $ARGV[0] and not looks_like_number($ARGV[0]) )
-	{
-		Para::Frame->startup;
-		Para::Frame::main_loop() if $ARGV[0] eq 'no_watchdog';
-		print "Server stops\n";
-		exit;
-	}
+     'getarc'            => sub{ Para::Arc->get( @_ ) },
+     'getarctype'        => sub{ Para::Arctype->new( @_ ) },
+     'getarctype_list'   => sub{ Para::Arctype->list( @_ ) },
 
-	if ( $daemonize )
-	{
-		Para::Frame->daemonize( $watchdog );
-	}
-	elsif ( $watchdog )
-	{
-		Para::Frame->watchdog_startup();
-	}
-	else
-	{
-		Para::Frame->startup();
-		Para::Frame::main_loop();
-	}
+     'getalias_list'     => sub{ Para::Alias->find_by_name( @_ ) },
+
+     'getevent'          => sub{ Para::Event->get_by_id( @_ ) },
+     'getevent_list'     => sub{ Para::Event->list( @_ ) },
+
+     'getpayment'        => sub{ Para::Payment->new( @_ ) },
+
+     'year'              => sub{ now->year },
+     'now'               => \&Para::Frame::Time::now,
+     'date'              => \&Para::Frame::Time::date,
+     'elapsed_time'      => \&Para::Frame::Utils::elapsed_time,
+     'timespan'          => \&Para::Frame::Time::timespan,
+
+     'uc'                => sub{ "\U$_[0]" },
+     'lc'                => sub{ "\L$_[0]" },
+
+     'timediff'          => \&Para::Frame::Utils::timediff,
+     'favicon'           => "/favicon.ico",
+     'body_class'        => "meta",
+     'motd'              => sub{ $Para::MOTD },
+     'display_slogan'    => \&Para::display_slogan,
+     'C'                 => Para::Constants->new,
+     'domains'           => Para->domains,
+
+    };
+  $Para::dbix->disconnect;	### Done with DB
+  Para::Frame->add_global_tt_params( $global_params );
+
+  $Data::Dumper::Maxdepth = 5;
+
+  if ( $ARGV[0] and not looks_like_number($ARGV[0]) ) {
+    Para::Frame->startup;
+    Para::Frame::main_loop() if $ARGV[0] eq 'no_watchdog';
+    print "Server stops\n";
+    exit;
+  }
+
+  if ( $daemonize ) {
+    Para::Frame->daemonize( $watchdog );
+  } elsif ( $watchdog ) {
+    Para::Frame->watchdog_startup();
+  } else {
+    Para::Frame->startup();
+    Para::Frame::main_loop();
+  }
 }
 
 #########################################################

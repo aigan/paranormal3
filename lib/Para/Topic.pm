@@ -4070,10 +4070,10 @@ sub title2url
 	$url =~ s/\s+/_/g;
 	$url =~ s/( ^_+ | _+$ )//gx;
 
-	debug "URL for '$title' is '$url'";
-	my $firstchar = substr($title,0,1);
-	my $num = ord($firstchar);
-	debug "Firstchar '$firstchar' has ord $num";
+#	debug "URL for '$title' is '$url'";
+#	my $firstchar = substr($title,0,1);
+#	my $num = ord($firstchar);
+#	debug "Firstchar '$firstchar' has ord $num";
 
 	return $url;
 }

@@ -1,7 +1,7 @@
 ﻿<meta property="fb:app_id" content="108217159240271">
 <meta property="og:type" content="website">
 <meta property="og:url" content="[% req.page.url.canonical %]">
-<meta property="og:image" content="http://paranormal.se/images/icon/paranormala_fenomen_4.png">
+<meta property="og:image" content="https://paranormal.se/images/icon/paranormala_fenomen_4.png">
 <meta property="og:site_name" content="Paranormal.se">
 <meta property="fb:admins" content="aigan">
 <link rel="home" href="/">

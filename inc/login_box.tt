@@ -1,15 +1,25 @@
-﻿<h1 align="center">Logga in</h1>
-
-<p align="center"><strong>[% message | html %]</strong></p>
-
-<table class="login">
-<tr><td>Namn </td><td><input name="username"></td></tr>
-<tr><td>Lösenord </td><td><input type="password" name="password"></td></tr>
-<tr><td colspan="2" align="right"><input type="submit" border="0" value="Login"></td></tr>
-</table>
-
-<p align="center"><input type='checkbox' name="remember_login" value="1"> Kom ihåg inloggningen</p>
-
-<p align="center">[% jump('Skriv in dig','/member/db/person/quest/level_00/') %] om du är nykomling</p>
-
-<p align="center"><a href="/member/db/person/find/password.tt">E-posta lösenord</a> som påminnelse</p>
+﻿<section class="login">
+	<h1>Logga in</h1>
+	[% IF message %]<p>[% message | html %]</p>[% END %]
+	<container>
+		<p-col>
+			<row>
+				<p-col>Namn</p-col>
+				<p-col><input tabindex="1" name="username" type="text" autocomplete="username"></p-col>
+			</row>
+			<row>
+				<p-col>Lösen</p-col>
+				<p-col><input tabindex="2" type="password" name="password"></p-col>
+			</row>
+			<row>
+				<button tabindex="3" type="submit">Login</button>
+			</row>
+		</p-col>
+		<p-col>
+			[% jump('Skriv in dig','/member/db/person/quest/level_00/') %] om du är nykomling<br>
+			Fortsätt med en [% jump('påbörjad registrering','/member/db/person/quest/level_01/list_new.tt') %]<br>
+			<a href="/member/db/person/find/password.tt">Har du glömt lösenordet?</a><br>
+			<input type='checkbox' name="remember_login" value="1"> Kom ihåg inloggningen
+		</p-col>
+	</container>
+</section>

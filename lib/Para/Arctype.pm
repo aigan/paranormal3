@@ -9,7 +9,7 @@ package Para::Arctype;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2020 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -58,7 +58,7 @@ sub new
 	# Marks as utf8
 	foreach my $key (keys %$rec)
 	{
-		utf8::decode( $rec->{$key} );
+		utf8::decode( $rec->{$key} ) if $rec->{$key};
 	}
 
 	return bless( $rec, $class );

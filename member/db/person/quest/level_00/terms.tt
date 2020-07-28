@@ -4,7 +4,7 @@
 %]
 
 <p>Uppdaterad 2003-10-18 kl 07.  Detta är en [% jump("förtydling av
-tidigare villkor", "terms_old,tt") %].</p>
+tidigare villkor", "terms_old.tt") %].</p>
 
 <p>Allt du säger, skriver, gör och laddar upp på
 <code>paranormal.se</code> kan komma att lagras i våra arkiv.  Vi

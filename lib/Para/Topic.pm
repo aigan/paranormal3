@@ -9,7 +9,7 @@ package Para::Topic;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2016 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2020 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -3930,6 +3930,7 @@ sub write_page
 
 	eval
 	{
+		debug "FILE $file";
 		my $page = $th->process($template_file, $params);
 		utf8::encode($page);
 

@@ -9,7 +9,7 @@ package Para::Event;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2009 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2020 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -130,7 +130,16 @@ sub add_span_to_plan
 	}
 
 	debug "Checking events during $span";
-	my $iter = $e->dts->iterator( span => $span );
+	my $iter;
+	eval
+	{
+		$iter = $e->dts->iterator( span => $span );
+	};
+	if( $@ )
+	{
+		debug "Event iteration error ".$@;
+		return;
+	}
 
 	my $cnt=0;
 	while ()

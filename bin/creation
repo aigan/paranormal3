@@ -11,7 +11,7 @@ package Para;
 #   Jonas Liljegren   <jonas@paranormal.se>
 #
 # COPYRIGHT
-#   Copyright (C) 2004-2016 Jonas Liljegren.  All Rights Reserved.
+#   Copyright (C) 2004-2020 Jonas Liljegren.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
@@ -337,6 +337,9 @@ use WA::Domains;
   Para::Frame->add_global_tt_params( $global_params );
 
   $Data::Dumper::Maxdepth = 5;
+
+  $Para::Frame::Watchdog::LIMIT_SYSTOTAL = $SITE_CFG->{'limit_systotal'} || 2.2;
+
 
   if ( $ARGV[0] and not looks_like_number($ARGV[0]) ) {
     Para::Frame->startup;

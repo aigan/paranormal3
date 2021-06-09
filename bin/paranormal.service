@@ -1,0 +1,13 @@
+# systemd service file to be symlinked from /etc/systemd/system/paranormal.service
+
+# NOT finished...
+
+[Unit]
+Description=paranormal.se creation
+After=apache2.service
+
+[Service]
+Type=exec
+User=psi_cgi
+ExecStart=/var/www/paranormal.se/bin/creation no_watchdog
+Restart=on-failure

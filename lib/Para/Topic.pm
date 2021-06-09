@@ -2389,9 +2389,10 @@ sub image_size_xy
 	my $file = $t->media_url;
 	$file =~ s/^http:\/\/(www\.)?paranormal\.se\b//;
 	return undef unless $file =~ /^\//;
-    
+
 	my( $x, $y, $err ) = imgsize( "/var/www/paranormal.se".$file );
-	$y or die $err;
+	warn $err if $err;
+	return undef unless $y;
 
 	return( $x, $y );
 }

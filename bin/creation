@@ -61,6 +61,10 @@ use WA::Domains;
   # Do not daemonize if run with cmdline argument
   my $daemonize = $ARGV[0] ? 0 : 1;
   my $watchdog = 1;		# Use watchdog
+	my $debug =  $ARGV[0];
+	if( $ARGV[0] eq 'no_watchdog' ) {
+		$debug = 0;
+	}
 
   unless( $SITE_CFG )
     {
@@ -75,6 +79,8 @@ use WA::Domains;
   if ( looks_like_number($ARGV[1]) ) {
     $logfile =~ s/\.log$/.$ARGV[1].log/;
   }
+
+	
 
   my $cfg =
     {
@@ -91,7 +97,7 @@ use WA::Domains;
      'pidfile'      => "$APPROOT/var/creation.pid",
 
      'port'         => $SITE_CFG->{'port'},
-     'debug'        => $ARGV[0] || $SITE_CFG->{'debug'} || 0,
+     'debug'        => $debug || $SITE_CFG->{'debug'} || 0,
      'do_bgjob'     => $SITE_CFG->{'do_bgjob'},
      'umask'        => 0007,
      'time_stringify'  => 1,
